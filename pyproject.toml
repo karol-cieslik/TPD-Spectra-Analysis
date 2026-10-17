@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tpd-spectra"
+version = "0.9.1"
+description = "Reproducible analysis tools for thermal desorption spectroscopy (TPD/TDS)"
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "pandas>=2.0", "scipy>=1.10", "matplotlib>=3.7"]
+
+[project.scripts]
+tpd-spectra = "tpd_spectra.cli:main"
+tpd-spectra-gui = "tpd_spectra.gui:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["tpd_spectra*"]
+exclude = ["tests*", "scripts*", "input*", "output*", "images*"]

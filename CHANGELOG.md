@@ -1,0 +1,81 @@
+## 0.9.1 — License scope and release-readiness update
+
+- Added a scoped MIT license for project-authored software code and declared the package license metadata.
+- Clarified that example spectra, the historical notebook, images, and thesis-derived/third-party materials are not automatically covered by the code license.
+- Updated the Windows release workflow to include the license and a clearer distribution notice in the portable beta package.
+- Updated the release checklist and validation report to distinguish code licensing from data/asset redistribution rights.
+- Fixed explicit setuptools package discovery after a wheel-build check exposed flat-layout ambiguity; package build is now included in release-readiness verification.
+- Added an asset-rights inventory and excluded generated output manifests containing stale absolute paths from the clean release archive. The Windows beta no longer bundles experimental CSVs until redistribution rights are confirmed.
+
+# Changelog
+
+## 0.9.0 — Phase 7 desktop GUI and release metadata
+
+- Added an optional Tkinter desktop interface for selecting input/output paths, configuring classical analysis, and enabling optional numerical kinetic fitting.
+- Reused the CLI pipeline from the GUI to avoid diverging scientific implementations; background execution keeps the window responsive.
+- Added headless unit tests for GUI argument construction and validation.
+- Added the `tpd-spectra-gui` entry point, `CITATION.cff`, and a public-release checklist.
+- Updated Windows packaging to build both CLI and GUI executables. The Windows artifacts still require smoke testing on a clean Windows machine.
+- Kept licensing unresolved rather than assuming rights to the source or example spectra.
+
+## 0.7.0 — Phase 5 overlapping-state model comparison
+
+- Added an exploratory two-state Polanyi–Wigner fitter with separate energies, prefactors and signal scales plus a shared baseline and reaction order.
+- Added AIC/AICc/BIC, Jacobian condition number, and warnings for ill-conditioning, weak components, close state energies, optimizer failure and high residual error.
+- Added `--kinetic-model single|two-state|compare`, comparison CSV rows, and two-state diagnostic plots. Single-state remains the default.
+- Added synthetic two-state recovery and invalid-input tests.
+- Documented model assumptions and cautions about overfitting and parameter identifiability.
+
+
+## 0.2.0 — 2026-10-14
+
+- Added modular `tpd_spectra` analysis package and batch CLI while preserving the historical notebook.
+- Fixed Redhead calculation to use kelvin consistently inside the logarithm and use heating rate in K/s.
+- Fixed leading-edge region selection to apply the same mask to temperature and signal.
+- Replaced off-by-one rolling filters with centered rolling mean/median and explicit edge behavior.
+- Made temperature cleaning configurable and applied endpoint checks consistently.
+- Added input schema validation, sorted CSV discovery, per-file error handling, fit diagnostics, portable output paths, and machine-readable exports.
+- Added unit and example-data import tests.
+- The original notebook's corresponding filter, Redhead, leading-edge mask and CSV export cells were patched. Full notebook execution remains unverified.
+
+
+## 0.3.0 — Phase 1 scientific diagnostics
+
+- Added ordinary least-squares residual RMSE, slope standard error and a regression-only 95% confidence interval for leading-edge energy.
+- Added screening metrics for negative signal, signal dynamic range, low-signal proxy and temperature points altered by heuristic cleaning; no automatic baseline correction is performed.
+- Added explicit warnings for questionable regression quality, missing leading-edge fits, non-positive leading-edge energies, peak maxima at search-window boundaries, and potentially appreciable low-signal offsets.
+- Added Redhead prefactor sensitivity scenarios at 0.1× and 10× the assumed prefactor.
+- Added per-spectrum diagnostic plots and an aggregated `analysis_warnings.csv` export.
+- Documented the interpretation and limitations of each diagnostic and added regression tests.
+
+
+## 0.4.0 — Phase 2 numerical kinetic fitting
+
+- Added numerical coverage integration for the Polanyi–Wigner rate equation under a linear heating ramp.
+- Added bounded full-trace least-squares fitting for activation energy, prefactor (log-space), signal scale and optional constant baseline; reaction order can be fixed or estimated.
+- Added optional CLI workflow (`--kinetic-fit`) with fit summary CSV and overlaid experimental/model plots. The CLI reconstructs a monotonic linear-ramp coordinate from acquisition time and fitted heating rate for the model, while retaining measured temperature for display.
+- Added synthetic recovery, reaction-order behavior, exhausted-coverage and input-validation tests.
+- Documented model assumptions and limitations, including energy–prefactor correlation and the distinction between fit quality and mechanistic validation.
+
+## 0.5.0 — Phase 3
+
+- Added named analysis presets and JSON configuration loading/saving; explicit CLI flags take precedence over config values.
+- Added a combined batch summary table and a project manifest with effective parameters, input file hashes, run timestamp, software version and run status.
+- Improved repeat-run hygiene by removing stale warning/error CSVs when a new run has none.
+- Added automated tests for project provenance and config precedence.
+
+## 0.6.0 — Phase 4 validation and beta packaging
+
+- Added an independent first-order analytical/quadrature cross-check for the Polanyi–Wigner coverage trajectory, plus physical-bound checks and validation of all included example CSVs.
+- Expanded kinetic-fit input validation: non-finite coverage, constant signals, and invalid evaluation limits now fail explicitly rather than yielding misleading fits.
+- Added additional tests for analytic recovery, physical coverage bounds, degenerate data, and duplicate temperature samples.
+- Added a Windows GitHub Actions workflow that runs tests/reference validation and builds a portable PyInstaller executable ZIP on Windows; tagged versions attach the ZIP to a GitHub Release.
+- Added build requirements and a dedicated executable entry point. A Windows binary must be built on a Windows runner; it is not claimed to have been built in this Linux environment.
+- Documented scientific limitations, beta build instructions, and the need to establish an explicit license before public redistribution.
+
+## 0.8.0 — Phase 6 global kinetics and noise recovery
+
+- Added a joint Polanyi–Wigner fit that shares activation energy and prefactor across multiple heating-rate traces while retaining per-trace scale and baseline nuisance parameters.
+- Added per-trace residual metrics, approximate energy/log-prefactor correlation, Jacobian conditioning, information criteria, and warnings.
+- Added synthetic multi-rate parameter recovery tests and a reproducible noise-level benchmark script that exports CSV and JSON results.
+- Documented shared-model assumptions and cautions on identifiability and experimental comparability.

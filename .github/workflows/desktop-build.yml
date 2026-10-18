@@ -70,7 +70,8 @@ jobs:
           Get-ChildItem $sitePackages -Recurse -File -Include 'LICENSE*','COPYING*' |
             Where-Object { $_.FullName -match '\.dist-info\\' } |
             ForEach-Object {
-              $packageName = (Split-Path (Split-Path $_.FullName -Parent) -Leaf) -replace '\.dist-info$',''
+              $distInfo = Split-Path $_.FullName -Parent
+              $packageName = (Split-Path $distInfo -Leaf) -replace '\.dist-info$',''
               Copy-Item $_.FullName (Join-Path 'release-package/THIRD-PARTY-LICENSES' ($packageName + '-' + $_.Name))
             }
           Compress-Archive -Path release-package/* -DestinationPath tpd-spectra-windows-x64.zip -Force

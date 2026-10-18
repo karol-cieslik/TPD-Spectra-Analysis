@@ -63,7 +63,7 @@ def main(argv=None) -> int:
             raise SystemExit(f'Invalid --config: {exc}')
 
     parser = argparse.ArgumentParser(description='Batch analysis of TPD/TDS instrument CSV files')
-    parser.add_argument('input', nargs='?', default='input', help='CSV file or directory (default: input/)')
+    parser.add_argument('input', nargs='+', default=['input'], help='one or more CSV files or directories (default: input/)')
     parser.add_argument('--output', default='output', help='output directory (default: output/)')
     parser.add_argument('--config', help='load analysis parameters from a JSON file')
     parser.add_argument('--preset', choices=('standard', 'broad-peak', 'unsmoothed'), help='named parameter preset; explicit CLI flags override preset/config')
@@ -111,10 +111,20 @@ def main(argv=None) -> int:
         save_path = Path(args.save_config)
         save_path.parent.mkdir(parents=True, exist_ok=True)
         save_path.write_text(json.dumps(effective_config, indent=2) + '\n', encoding='utf-8')
-    source = Path(args.input)
-    files = [source] if source.is_file() else sorted(source.rglob('*.csv')) if source.is_dir() else []
+    sources = [Path(item) for item in args.input]
+    files = []
+    missing_sources = []
+    for source in sources:
+        if source.is_file():
+            files.append(source)
+        elif source.is_dir():
+            files.extend(sorted(source.rglob('*.csv')))
+        else:
+            missing_sources.append(str(source))
+    if missing_sources:
+        parser.error(f'Input path does not exist: {", ".join(missing_sources)}')
     if not files:
-        parser.error(f'No CSV files found at {source}')
+        parser.error(f'No CSV files found at {", ".join(str(path) for path in sources)}')
     outdir = Path(args.output); outdir.mkdir(parents=True, exist_ok=True)
     results, failures, warning_rows, kinetic_rows = [], [], [], []
     input_manifest = []
@@ -263,7 +273,7 @@ def main(argv=None) -> int:
         'project_format_version': 1,
         'software': 'tpd-spectra', 'software_version': __version__,
         'created_utc': datetime.now(timezone.utc).isoformat(),
-        'input_source': str(source.resolve()),
+        'input_source': str(sources[0].resolve()) if len(sources) == 1 else [str(p.resolve()) for p in sources],
         'parameters': effective_config,
         'inputs_processed': input_manifest,
         'successful_files': [r.get('file_name') for r in results],

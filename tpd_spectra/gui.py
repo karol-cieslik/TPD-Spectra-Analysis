@@ -1,46 +1,55 @@
-"""Optional Tkinter desktop front end for the TPD/TDS batch CLI.
-
-Tkinter is part of many standard Python installations. The GUI deliberately
-reuses the existing CLI pipeline so GUI and command-line results stay aligned.
-"""
+"""Interactive desktop workspace for importing, comparing, and analyzing TPD/TDS data."""
 from __future__ import annotations
 
-import contextlib
 import queue
+import subprocess
+import sys
 import threading
-import tkinter as tk
 from pathlib import Path
+import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-from typing import Callable
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
 
 from . import __version__
+from .analysis import load_spectrum, smooth_signal
+
+
+PALETTE = ["#2563eb", "#e76f51", "#059669", "#9333ea", "#d97706", "#0891b2",
+           "#db2777", "#4f46e5", "#65a30d", "#475569"]
+BG = "#f3f6fb"
+INK = "#172b4d"
+MUTED = "#64748b"
+BLUE = "#2563eb"
 
 
 def build_cli_arguments(settings: dict[str, object]) -> list[str]:
-    """Validate GUI settings and translate them into CLI arguments.
-
-    Kept independent of Tk so it can be unit-tested on headless systems.
-    """
-    input_path = str(settings.get("input_path", "")).strip()
+    """Validate the desktop settings and map them to the established CLI."""
+    configured_inputs = settings.get("input_files")
+    if configured_inputs is None:
+        input_paths = [str(settings.get("input_path", "")).strip()]
+    elif isinstance(configured_inputs, (list, tuple)):
+        input_paths = [str(path).strip() for path in configured_inputs if str(path).strip()]
+    else:
+        raise ValueError("Input files must be provided as a list.")
     output_path = str(settings.get("output_path", "")).strip()
-    if not input_path:
-        raise ValueError("Choose an input CSV file or folder.")
-    if not Path(input_path).exists():
-        raise ValueError(f"Input path does not exist: {input_path}")
+    if not input_paths or not input_paths[0]:
+        raise ValueError("Import one or more CSV spectra first.")
+    missing = [path for path in input_paths if not Path(path).exists()]
+    if missing:
+        raise ValueError(f"Input path does not exist: {missing[0]}")
     if not output_path:
         raise ValueError("Choose an output folder.")
 
     def number(key: str, label: str) -> float:
         try:
-            value = float(settings[key])
+            return float(settings[key])
         except (KeyError, TypeError, ValueError) as exc:
             raise ValueError(f"{label} must be a number.") from exc
-        return value
 
-    edge_low = number("leading_low", "Leading-edge lower limit")
-    edge_high = number("leading_high", "Leading-edge upper limit")
-    red_low = number("redhead_low", "Redhead lower limit")
-    red_high = number("redhead_high", "Redhead upper limit")
+    edge_low, edge_high = number("leading_low", "Leading-edge lower limit"), number("leading_high", "Leading-edge upper limit")
+    red_low, red_high = number("redhead_low", "Peak-search lower limit"), number("redhead_high", "Peak-search upper limit")
     prefactor = number("prefactor", "Redhead prefactor")
     initial_energy = number("kinetic_initial_energy", "Initial kinetic energy")
     initial_prefactor = number("kinetic_initial_prefactor", "Initial kinetic prefactor")
@@ -48,257 +57,490 @@ def build_cli_arguments(settings: dict[str, object]) -> list[str]:
         window = int(str(settings["window"]))
     except (KeyError, TypeError, ValueError) as exc:
         raise ValueError("Smoothing window must be a positive integer.") from exc
-
     if edge_low >= edge_high or red_low >= red_high:
-        raise ValueError("Each temperature interval must have lower limit < upper limit.")
-    if prefactor <= 0 or initial_energy <= 0 or initial_prefactor <= 0:
+        raise ValueError("Each temperature interval needs a lower value below its upper value.")
+    if min(prefactor, initial_energy, initial_prefactor) <= 0:
         raise ValueError("Prefactors and initial kinetic energy must be positive.")
     if window < 1:
         raise ValueError("Smoothing window must be at least 1.")
-    filter_method = str(settings.get("filter", "median"))
-    if filter_method not in {"median", "mean", "none"}:
-        raise ValueError("Filter must be median, mean, or none.")
-
-    args = [
-        input_path, "--output", output_path,
-        "--leading-edge", str(edge_low), str(edge_high),
-        "--redhead-region", str(red_low), str(red_high),
-        "--prefactor", str(prefactor), "--window", str(window),
-        "--filter", filter_method, "--max-time-min", str(number("max_time_min", "Maximum time")),
-    ]
+    method = str(settings.get("filter", "median"))
+    if method not in {"median", "mean", "none"}:
+        raise ValueError("Choose median, mean, or no smoothing.")
+    args = [*input_paths, "--output", output_path, "--leading-edge", str(edge_low), str(edge_high),
+            "--redhead-region", str(red_low), str(red_high), "--prefactor", str(prefactor),
+            "--window", str(window), "--filter", method,
+            "--max-time-min", str(number("max_time_min", "Heating-fit time limit"))]
     if bool(settings.get("kinetic_fit", False)):
-        model = str(settings.get("kinetic_model", "single"))
-        order = str(settings.get("kinetic_order", "1"))
-        if model not in {"single", "two-state", "compare"}:
-            raise ValueError("Choose a valid kinetic model.")
-        if order not in {"0", "1", "2", "fit"}:
-            raise ValueError("Reaction order must be 0, 1, 2, or fit.")
-        args.extend([
-            "--kinetic-fit", "--kinetic-model", model, "--kinetic-order", order,
-            "--kinetic-initial-energy", str(initial_energy),
-            "--kinetic-initial-prefactor", str(initial_prefactor),
-        ])
+        model, order = str(settings.get("kinetic_model", "single")), str(settings.get("kinetic_order", "1"))
+        if model not in {"single", "two-state", "compare"} or order not in {"0", "1", "2", "fit"}:
+            raise ValueError("Choose a valid kinetic model and reaction order.")
+        args.extend(["--kinetic-fit", "--kinetic-model", model, "--kinetic-order", order,
+                     "--kinetic-initial-energy", str(initial_energy),
+                     "--kinetic-initial-prefactor", str(initial_prefactor)])
         if bool(settings.get("kinetic_no_baseline", False)):
             args.append("--kinetic-no-baseline")
     return args
 
 
-class _QueueWriter:
-    def __init__(self, output_queue: queue.Queue[str], prefix: str = "") -> None:
-        self.output_queue = output_queue
-        self.prefix = prefix
-        self.pending = ""
-
-    def write(self, value: str) -> int:
-        self.pending += value
-        while "\n" in self.pending:
-            line, self.pending = self.pending.split("\n", 1)
-            if line.strip():
-                self.output_queue.put(self.prefix + line)
-        return len(value)
-
-    def flush(self) -> None:
-        if self.pending.strip():
-            self.output_queue.put(self.prefix + self.pending)
-        self.pending = ""
-
-
 class TpdSpectraApp:
+    """Compact three-panel app: import, tune, compare, then export or analyze."""
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
-        root.title(f"TPD Spectra Analysis {__version__}")
-        root.geometry("850x760")
-        root.minsize(720, 640)
-        self.messages: queue.Queue[str] = queue.Queue()
+        root.title(f"TPD Spectra Studio  ·  {__version__}")
+        root.geometry("1380x900")
+        root.minsize(1040, 700)
+        root.configure(background=BG)
+        self.spectra: dict[str, dict] = {}
+        self.worker_messages: queue.Queue[tuple[str, str]] = queue.Queue()
         self.running = False
+        self.view_mode = tk.StringVar(value="Overlay")
+        self.x_mode = tk.StringVar(value="Temperature")
+        self.filter_method = tk.StringVar(value="median")
+        self.normalize = tk.BooleanVar(value=False)
+        self.show_raw = tk.BooleanVar(value=True)
+        self.kinetic_fit = tk.BooleanVar(value=False)
+        self.kinetic_model = tk.StringVar(value="single")
+        self.kinetic_order = tk.StringVar(value="1")
+        self.output_path = tk.StringVar(value=str(Path.home() / "TPD-Spectra-Results"))
+        self.leading_low = tk.DoubleVar(value=130)
+        self.leading_high = tk.DoubleVar(value=170)
+        self.peak_low = tk.DoubleVar(value=230)
+        self.peak_high = tk.DoubleVar(value=400)
+        self.window = tk.IntVar(value=10)
+        self.prefactor = tk.StringVar(value="1e20")
+        self.max_time = tk.StringVar(value="10")
+        self.kinetic_energy = tk.StringVar(value="1.0")
+        self.kinetic_prefactor = tk.StringVar(value="1e13")
+        self.no_baseline = tk.BooleanVar(value=False)
+        self._style()
+        self._build()
+        self.root.after(100, self._poll_worker)
+        self.root.protocol("WM_DELETE_WINDOW", self._close)
 
-        self.vars: dict[str, tk.Variable] = {
-            "input_path": tk.StringVar(value="input"),
-            "output_path": tk.StringVar(value="output"),
-            "leading_low": tk.StringVar(value="130"),
-            "leading_high": tk.StringVar(value="170"),
-            "redhead_low": tk.StringVar(value="230"),
-            "redhead_high": tk.StringVar(value="400"),
-            "prefactor": tk.StringVar(value="1e20"),
-            "window": tk.StringVar(value="10"),
-            "filter": tk.StringVar(value="median"),
-            "max_time_min": tk.StringVar(value="10"),
-            "kinetic_fit": tk.BooleanVar(value=False),
-            "kinetic_model": tk.StringVar(value="single"),
-            "kinetic_order": tk.StringVar(value="1"),
-            "kinetic_initial_energy": tk.StringVar(value="1.0"),
-            "kinetic_initial_prefactor": tk.StringVar(value="1e13"),
-            "kinetic_no_baseline": tk.BooleanVar(value=False),
-        }
-        self._build_ui()
-        self.root.after(100, self._drain_messages)
+    def _style(self) -> None:
+        style = ttk.Style(self.root)
+        try:
+            style.theme_use("clam")
+        except tk.TclError:
+            pass
+        style.configure("TFrame", background=BG)
+        style.configure("Card.TFrame", background="#ffffff")
+        style.configure("TLabel", background=BG, foreground=INK, font=("Segoe UI", 9))
+        style.configure("Card.TLabel", background="#ffffff", foreground=INK, font=("Segoe UI", 9))
+        style.configure("Title.TLabel", background="#102a43", foreground="white", font=("Segoe UI", 19, "bold"))
+        style.configure("Subtitle.TLabel", background="#102a43", foreground="#d7e5f5", font=("Segoe UI", 9))
+        style.configure("Section.TLabel", background="#ffffff", foreground=INK, font=("Segoe UI", 10, "bold"))
+        style.configure("Muted.TLabel", background="#ffffff", foreground=MUTED, font=("Segoe UI", 8))
+        style.configure("Primary.TButton", font=("Segoe UI", 9, "bold"), padding=(13, 8),
+                        foreground="white", background=BLUE)
+        style.map("Primary.TButton", background=[("active", "#1d4ed8"), ("disabled", "#94a3b8")])
+        style.configure("TButton", font=("Segoe UI", 9), padding=(9, 6))
+        style.configure("Treeview", rowheight=28, font=("Segoe UI", 9), background="white", fieldbackground="white")
+        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
+        style.configure("TCheckbutton", background="#ffffff", foreground=INK)
+        style.configure("TCombobox", padding=4)
 
-    def _entry(self, parent: ttk.Frame, label: str, key: str, row: int, col: int,
-               width: int = 13) -> None:
-        ttk.Label(parent, text=label).grid(row=row, column=col * 2, sticky="w", padx=(4, 6), pady=5)
-        ttk.Entry(parent, textvariable=self.vars[key], width=width).grid(
-            row=row, column=col * 2 + 1, sticky="ew", padx=(0, 12), pady=5)
+    def _build(self) -> None:
+        header = tk.Frame(self.root, bg="#102a43", padx=22, pady=16)
+        header.pack(fill="x")
+        title = ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel")
+        title.pack(anchor="w")
+        ttk.Label(header, text="Explore, compare, and analyze temperature-programmed desorption data",
+                  style="Subtitle.TLabel").pack(anchor="w", pady=(3, 0))
 
-    def _build_ui(self) -> None:
-        outer = ttk.Frame(self.root, padding=14)
-        outer.pack(fill="both", expand=True)
-        ttk.Label(outer, text="TPD Spectra Analysis", font=("TkDefaultFont", 17, "bold")).pack(anchor="w")
-        ttk.Label(outer, text="Batch analysis and optional Polanyi–Wigner kinetic fitting").pack(anchor="w", pady=(0, 12))
+        toolbar = ttk.Frame(self.root, padding=(18, 10))
+        toolbar.pack(fill="x")
+        self.import_button = ttk.Button(toolbar, text="＋  Import CSV files", style="Primary.TButton", command=self._import_files)
+        self.import_button.pack(side="left")
+        ttk.Button(toolbar, text="＋  Add folder", command=self._import_folder).pack(side="left", padx=(8, 0))
+        ttk.Button(toolbar, text="Export plot PNG", command=self._export_png).pack(side="left", padx=(8, 0))
+        self.run_button = ttk.Button(toolbar, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
+        self.run_button.pack(side="right")
+        self.status = tk.StringVar(value="Import CSV files or a folder to begin.")
+        ttk.Label(toolbar, textvariable=self.status, foreground=MUTED).pack(side="right", padx=12)
 
-        paths = ttk.LabelFrame(outer, text="Input and output", padding=8)
-        paths.pack(fill="x", pady=(0, 10))
-        ttk.Label(paths, text="Input CSV or folder").grid(row=0, column=0, sticky="w", padx=4, pady=5)
-        ttk.Entry(paths, textvariable=self.vars["input_path"]).grid(row=0, column=1, sticky="ew", padx=4, pady=5)
-        ttk.Button(paths, text="Choose file…", command=self._choose_file).grid(row=0, column=2, padx=4, pady=5)
-        ttk.Button(paths, text="Choose folder…", command=self._choose_input_folder).grid(row=0, column=3, padx=4, pady=5)
-        ttk.Label(paths, text="Output folder").grid(row=1, column=0, sticky="w", padx=4, pady=5)
-        ttk.Entry(paths, textvariable=self.vars["output_path"]).grid(row=1, column=1, sticky="ew", padx=4, pady=5)
-        ttk.Button(paths, text="Browse…", command=self._choose_output_folder).grid(row=1, column=2, padx=4, pady=5)
-        paths.columnconfigure(1, weight=1)
+        body = ttk.Frame(self.root, padding=(18, 0, 18, 10))
+        body.pack(fill="both", expand=True)
+        body.columnconfigure(0, weight=0, minsize=322)
+        body.columnconfigure(1, weight=1)
+        body.rowconfigure(0, weight=1)
+        sidebar_frame = ttk.Frame(body, style="Card.TFrame", width=322)
+        sidebar_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
+        sidebar_frame.grid_propagate(False)
+        sidebar_frame.rowconfigure(0, weight=1)
+        sidebar_frame.columnconfigure(0, weight=1)
+        sidebar_canvas = tk.Canvas(sidebar_frame, background="white", highlightthickness=0, width=306)
+        sidebar_scroll = ttk.Scrollbar(sidebar_frame, orient="vertical", command=sidebar_canvas.yview)
+        sidebar_canvas.configure(yscrollcommand=sidebar_scroll.set)
+        sidebar_canvas.grid(row=0, column=0, sticky="nsew")
+        sidebar_scroll.grid(row=0, column=1, sticky="ns")
+        self.sidebar = ttk.Frame(sidebar_canvas, style="Card.TFrame", padding=14)
+        sidebar_window = sidebar_canvas.create_window((0, 0), window=self.sidebar, anchor="nw")
+        self.sidebar.bind("<Configure>", lambda _event: sidebar_canvas.configure(scrollregion=sidebar_canvas.bbox("all")))
+        sidebar_canvas.bind("<Configure>", lambda event: sidebar_canvas.itemconfigure(sidebar_window, width=event.width))
+        sidebar_canvas.bind("<MouseWheel>", lambda event: sidebar_canvas.yview_scroll(-1 if event.delta > 0 else 1, "units"))
+        workspace = ttk.Frame(body, style="Card.TFrame", padding=(12, 10))
+        workspace.grid(row=0, column=1, sticky="nsew")
+        workspace.columnconfigure(0, weight=1)
+        workspace.rowconfigure(1, weight=1)
 
-        classic = ttk.LabelFrame(outer, text="Classical analysis settings", padding=8)
-        classic.pack(fill="x", pady=(0, 10))
-        self._entry(classic, "Leading edge (°C): low", "leading_low", 0, 0)
-        self._entry(classic, "high", "leading_high", 0, 1)
-        self._entry(classic, "Redhead range (°C): low", "redhead_low", 1, 0)
-        self._entry(classic, "high", "redhead_high", 1, 1)
-        self._entry(classic, "Redhead prefactor (s⁻¹)", "prefactor", 2, 0)
-        self._entry(classic, "Smoothing window", "window", 2, 1)
-        self._entry(classic, "Heating fit cutoff (min; -1 = none)", "max_time_min", 3, 0)
-        ttk.Label(classic, text="Smoothing filter").grid(row=3, column=2, sticky="w", padx=4, pady=5)
-        ttk.Combobox(classic, textvariable=self.vars["filter"], values=("median", "mean", "none"),
-                     state="readonly", width=10).grid(row=3, column=3, sticky="w", padx=4, pady=5)
-        for col in (1, 3):
-            classic.columnconfigure(col, weight=1)
+        self._files_panel()
+        self._settings_panel()
+        self._workspace(workspace)
 
-        kinetic = ttk.LabelFrame(outer, text="Optional numerical kinetics", padding=8)
-        kinetic.pack(fill="x", pady=(0, 10))
-        ttk.Checkbutton(kinetic, text="Enable Polanyi–Wigner kinetic fitting", variable=self.vars["kinetic_fit"],
-                        command=self._toggle_kinetic).grid(row=0, column=0, columnspan=4, sticky="w", padx=4, pady=4)
-        ttk.Label(kinetic, text="Model").grid(row=1, column=0, sticky="w", padx=4, pady=5)
-        self.model_combo = ttk.Combobox(kinetic, textvariable=self.vars["kinetic_model"],
-                                        values=("single", "two-state", "compare"), state="disabled", width=12)
-        self.model_combo.grid(row=1, column=1, sticky="w", padx=4, pady=5)
-        ttk.Label(kinetic, text="Reaction order").grid(row=1, column=2, sticky="w", padx=4, pady=5)
-        self.order_combo = ttk.Combobox(kinetic, textvariable=self.vars["kinetic_order"],
-                                        values=("0", "1", "2", "fit"), state="disabled", width=8)
-        self.order_combo.grid(row=1, column=3, sticky="w", padx=4, pady=5)
-        self._entry(kinetic, "Initial energy (eV)", "kinetic_initial_energy", 2, 0)
-        self._entry(kinetic, "Initial prefactor (s⁻¹)", "kinetic_initial_prefactor", 2, 1)
-        self.no_baseline_check = ttk.Checkbutton(kinetic, text="Fix fitted baseline at zero",
-                                                 variable=self.vars["kinetic_no_baseline"], state="disabled")
-        self.no_baseline_check.grid(row=3, column=0, columnspan=3, sticky="w", padx=4, pady=4)
-        for col in (1, 3):
-            kinetic.columnconfigure(col, weight=1)
+        footer = ttk.Frame(self.root, padding=(20, 5))
+        footer.pack(fill="x")
+        ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(side="left")
+        ttk.Button(footer, text="Open results folder", command=self._open_output).pack(side="right")
 
-        actions = ttk.Frame(outer)
-        actions.pack(fill="x", pady=(0, 8))
-        self.run_button = ttk.Button(actions, text="Run analysis", command=self._start)
-        self.run_button.pack(side="left")
-        self.progress = ttk.Progressbar(actions, mode="indeterminate", length=180)
-        self.progress.pack(side="left", padx=12)
-        ttk.Button(actions, text="Open output folder", command=self._open_output).pack(side="right")
+    def _files_panel(self) -> None:
+        ttk.Label(self.sidebar, text="SPECTRA", style="Section.TLabel").pack(anchor="w")
+        ttk.Label(self.sidebar, text="Imported traces appear together in the plot.", style="Muted.TLabel").pack(anchor="w", pady=(2, 8))
+        columns = ("visible", "name", "points")
+        self.file_table = ttk.Treeview(self.sidebar, columns=columns, show="headings", height=7, selectmode="extended")
+        self.file_table.heading("visible", text="On")
+        self.file_table.heading("name", text="File")
+        self.file_table.heading("points", text="Points")
+        self.file_table.column("visible", width=34, anchor="center", stretch=False)
+        self.file_table.column("name", width=184, anchor="w")
+        self.file_table.column("points", width=55, anchor="e", stretch=False)
+        self.file_table.pack(fill="x")
+        self.file_table.bind("<Button-1>", self._toggle_row)
+        self.file_table.bind("<Double-1>", self._toggle_row)
+        row = ttk.Frame(self.sidebar, style="Card.TFrame")
+        row.pack(fill="x", pady=(6, 12))
+        ttk.Button(row, text="Show all", command=lambda: self._set_visible(True)).pack(side="left")
+        ttk.Button(row, text="Hide all", command=lambda: self._set_visible(False)).pack(side="left", padx=5)
+        ttk.Button(row, text="Remove", command=self._remove_selected).pack(side="right")
 
-        log_frame = ttk.LabelFrame(outer, text="Run log", padding=6)
-        log_frame.pack(fill="both", expand=True)
-        self.log = tk.Text(log_frame, height=12, wrap="word", state="disabled")
-        scrollbar = ttk.Scrollbar(log_frame, orient="vertical", command=self.log.yview)
-        self.log.configure(yscrollcommand=scrollbar.set)
-        self.log.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-        self._append_log("Ready. Review analysis warnings and fit diagnostics before interpreting parameters physically.")
+        ttk.Label(self.sidebar, text="RESULTS FOLDER", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
+        output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
+        output_row.pack(fill="x", pady=(0, 8))
+        ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)
+        ttk.Button(output_row, text="Browse", command=self._choose_output).pack(side="left", padx=(5, 0))
 
-    def _toggle_kinetic(self) -> None:
-        enabled = bool(self.vars["kinetic_fit"].get())
-        state = "readonly" if enabled else "disabled"
-        self.model_combo.configure(state=state)
-        self.order_combo.configure(state=state)
-        self.no_baseline_check.configure(state="normal" if enabled else "disabled")
+        ttk.Separator(self.sidebar).pack(fill="x", pady=5)
+        ttk.Label(self.sidebar, text="PLOT CONTROLS", style="Section.TLabel").pack(anchor="w", pady=(7, 6))
+        self._choice("Chart layout", self.view_mode, ("Overlay", "Small multiples"))
+        self._choice("X axis", self.x_mode, ("Temperature", "Time"))
+        self._choice("Smoothing", self.filter_method, ("median", "mean", "none"))
+        self._slider("Smoothing window", self.window, 1, 60, " points")
+        ttk.Checkbutton(self.sidebar, text="Overlay raw signal", variable=self.show_raw,
+                        command=self._draw_plot).pack(anchor="w", pady=(5, 0))
+        ttk.Checkbutton(self.sidebar, text="Normalize each trace to 0–1", variable=self.normalize,
+                        command=self._draw_plot).pack(anchor="w", pady=(3, 9))
 
-    def _choose_file(self) -> None:
-        path = filedialog.askopenfilename(title="Select a spectrum CSV", filetypes=(("CSV files", "*.csv"), ("All files", "*.*")))
+        ttk.Separator(self.sidebar).pack(fill="x", pady=5)
+        ttk.Label(self.sidebar, text="ANALYSIS WINDOWS  ·  °C", style="Section.TLabel").pack(anchor="w", pady=(7, 4))
+        self._slider("Leading edge · from", self.leading_low, 0, 700, " °C", on_change=self._range_changed)
+        self._slider("Leading edge · to", self.leading_high, 0, 700, " °C", on_change=self._range_changed)
+        self._slider("Peak search · from", self.peak_low, 0, 700, " °C", on_change=self._range_changed)
+        self._slider("Peak search · to", self.peak_high, 0, 700, " °C", on_change=self._range_changed)
+        ttk.Label(self.sidebar, text="Shaded bands mark the selected analysis regions.", style="Muted.TLabel").pack(anchor="w", pady=(3, 8))
+        details = ttk.Frame(self.sidebar, style="Card.TFrame")
+        details.pack(fill="x", pady=(0, 7))
+        ttk.Label(details, text="Redhead prefactor (s⁻¹)", style="Card.TLabel").grid(row=0, column=0, sticky="w", pady=2)
+        ttk.Entry(details, textvariable=self.prefactor, width=11).grid(row=0, column=1, sticky="e")
+        ttk.Label(details, text="Heating-fit time limit (min; −1 = all)", style="Card.TLabel").grid(row=1, column=0, sticky="w", pady=2)
+        ttk.Entry(details, textvariable=self.max_time, width=11).grid(row=1, column=1, sticky="e")
+        self._advanced_panel()
+
+    def _choice(self, label: str, variable: tk.StringVar, values: tuple[str, ...]) -> None:
+        row = ttk.Frame(self.sidebar, style="Card.TFrame")
+        row.pack(fill="x", pady=3)
+        ttk.Label(row, text=label, style="Card.TLabel").pack(side="left")
+        combo = ttk.Combobox(row, textvariable=variable, values=values, state="readonly", width=17)
+        combo.pack(side="right")
+        combo.bind("<<ComboboxSelected>>", lambda _event: self._draw_plot())
+
+    def _slider(self, label: str, variable: tk.Variable, low: int, high: int, suffix: str,
+                on_change=None) -> None:
+        row = ttk.Frame(self.sidebar, style="Card.TFrame")
+        row.pack(fill="x", pady=1)
+        ttk.Label(row, text=label, style="Card.TLabel").pack(side="left")
+        value_label = ttk.Label(row, text=f"{variable.get()}{suffix}", style="Card.TLabel", foreground=BLUE)
+        value_label.pack(side="right")
+        def changed(value) -> None:
+            value_label.configure(text=f"{int(float(value))}{suffix}")
+            if on_change:
+                on_change()
+            else:
+                self._draw_plot()
+        tk.Scale(self.sidebar, from_=low, to=high, orient="horizontal", showvalue=False, resolution=1,
+                 variable=variable, command=changed, bg="white", fg=INK, troughcolor="#dbeafe",
+                 activebackground=BLUE, highlightthickness=0, bd=0, sliderrelief="flat", length=270).pack(fill="x", pady=(0, 3))
+
+    def _advanced_panel(self) -> None:
+        ttk.Checkbutton(self.sidebar, text="Enable numerical kinetic fitting", variable=self.kinetic_fit,
+                        command=self._toggle_kinetics).pack(anchor="w", pady=(2, 5))
+        row = ttk.Frame(self.sidebar, style="Card.TFrame")
+        row.pack(fill="x")
+        self.kinetic_combo = ttk.Combobox(row, textvariable=self.kinetic_model,
+                values=("single", "two-state", "compare"), state="disabled", width=12)
+        self.kinetic_combo.pack(side="left")
+        self.order_combo = ttk.Combobox(row, textvariable=self.kinetic_order,
+                values=("0", "1", "2", "fit"), state="disabled", width=7)
+        self.order_combo.pack(side="right")
+        ttk.Label(row, text="order", style="Muted.TLabel").pack(side="right", padx=5)
+        self.kinetic_options = ttk.Frame(self.sidebar, style="Card.TFrame")
+        self.kinetic_options.pack(fill="x", pady=5)
+        ttk.Label(self.kinetic_options, text="Initial energy (eV)", style="Card.TLabel").grid(row=0, column=0, sticky="w", pady=2)
+        ttk.Entry(self.kinetic_options, textvariable=self.kinetic_energy, width=10).grid(row=0, column=1, sticky="e")
+        ttk.Label(self.kinetic_options, text="Initial prefactor (s⁻¹)", style="Card.TLabel").grid(row=1, column=0, sticky="w", pady=2)
+        ttk.Entry(self.kinetic_options, textvariable=self.kinetic_prefactor, width=10).grid(row=1, column=1, sticky="e")
+        ttk.Checkbutton(self.kinetic_options, text="Fix baseline at zero", variable=self.no_baseline).grid(row=2, column=0, columnspan=2, sticky="w")
+        self.kinetic_options.grid_remove()
+
+    def _toggle_kinetics(self) -> None:
+        enabled = self.kinetic_fit.get()
+        self.kinetic_combo.configure(state="readonly" if enabled else "disabled")
+        self.order_combo.configure(state="readonly" if enabled else "disabled")
+        if enabled:
+            self.kinetic_options.grid()
+        else:
+            self.kinetic_options.grid_remove()
+
+    def _workspace(self, parent: ttk.Frame) -> None:
+        top = ttk.Frame(parent, style="Card.TFrame")
+        top.grid(row=0, column=0, sticky="ew", pady=(0, 7))
+        ttk.Label(top, text="Spectrum comparison", style="Section.TLabel").pack(side="left")
+        self.count_label = ttk.Label(top, text="0 traces", style="Muted.TLabel")
+        self.count_label.pack(side="right")
+        plot_wrap = ttk.Frame(parent, style="Card.TFrame")
+        plot_wrap.grid(row=1, column=0, sticky="nsew")
+        plot_wrap.rowconfigure(0, weight=1)
+        plot_wrap.columnconfigure(0, weight=1)
+        self.figure = Figure(figsize=(8.7, 6.4), dpi=100, facecolor="white")
+        self.axis = self.figure.add_subplot(111)
+        self.canvas = FigureCanvasTkAgg(self.figure, master=plot_wrap)
+        self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+        nav = ttk.Frame(plot_wrap, style="Card.TFrame")
+        nav.grid(row=1, column=0, sticky="ew")
+        self.nav_toolbar = NavigationToolbar2Tk(self.canvas, nav, pack_toolbar=False)
+        self.nav_toolbar.update()
+        self.nav_toolbar.pack(side="left")
+        self._empty_plot()
+
+    def _empty_plot(self) -> None:
+        self.axis.clear()
+        self.axis.set_facecolor("#ffffff")
+        self.axis.text(.5, .54, "Import spectra to start exploring", transform=self.axis.transAxes,
+                       ha="center", va="center", fontsize=16, color="#64748b", weight="bold")
+        self.axis.text(.5, .47, "Use Import CSV files or Add folder above", transform=self.axis.transAxes,
+                       ha="center", va="center", fontsize=10, color="#94a3b8")
+        self.axis.set_xticks([]); self.axis.set_yticks([])
+        for edge in self.axis.spines.values(): edge.set_visible(False)
+        self.figure.tight_layout()
+        self.canvas.draw_idle()
+
+    def _import_files(self) -> None:
+        paths = filedialog.askopenfilenames(parent=self.root, title="Choose spectra to compare",
+                filetypes=(("CSV spectra", "*.csv"), ("All files", "*.*")))
+        if paths:
+            self._load_paths([Path(p) for p in paths])
+
+    def _import_folder(self) -> None:
+        folder = filedialog.askdirectory(parent=self.root, title="Choose a folder containing CSV spectra")
+        if folder:
+            self._load_paths(sorted(Path(folder).rglob("*.csv")))
+
+    def _choose_output(self) -> None:
+        folder = filedialog.askdirectory(parent=self.root, title="Choose where analysis results will be saved",
+                                         initialdir=str(Path(self.output_path.get()).expanduser().parent))
+        if folder:
+            self.output_path.set(folder)
+
+    def _load_paths(self, paths: list[Path]) -> None:
+        added, errors = 0, []
+        for path in paths:
+            key = str(path.resolve())
+            if key in self.spectra:
+                continue
+            try:
+                spec = load_spectrum(path)
+                self.spectra[key] = {"path": path, "spec": spec, "visible": True}
+                self.file_table.insert("", "end", iid=key, values=("✓", path.name, f"{spec.signal.size:,}"))
+                added += 1
+            except Exception as exc:
+                errors.append(f"{path.name}: {exc}")
+        self.status.set(f"Added {added} trace{'s' if added != 1 else ''}." if added else "No new spectra were added.")
+        self._draw_plot()
+        if errors:
+            messagebox.showwarning("Some files could not be imported", "\n".join(errors[:10]), parent=self.root)
+
+    def _toggle_row(self, event) -> str | None:
+        row = self.file_table.identify_row(event.y)
+        column = self.file_table.identify_column(event.x)
+        if row and column == "#1" and row in self.spectra:
+            item = self.spectra[row]
+            item["visible"] = not item["visible"]
+            self.file_table.set(row, "visible", "✓" if item["visible"] else "—")
+            self._draw_plot()
+            return "break"
+        return None
+
+    def _set_visible(self, visible: bool) -> None:
+        for key, item in self.spectra.items():
+            item["visible"] = visible
+            self.file_table.set(key, "visible", "✓" if visible else "—")
+        self._draw_plot()
+
+    def _remove_selected(self) -> None:
+        for key in self.file_table.selection():
+            self.spectra.pop(key, None)
+            self.file_table.delete(key)
+        self._draw_plot()
+
+    def _range_changed(self) -> None:
+        if self.leading_low.get() >= self.leading_high.get():
+            self.leading_high.set(min(700, self.leading_low.get() + 1))
+        if self.peak_low.get() >= self.peak_high.get():
+            self.peak_high.set(min(700, self.peak_low.get() + 1))
+        self._draw_plot()
+
+    def _draw_plot(self) -> None:
+        if not hasattr(self, "axis"):
+            return
+        visible = [(key, row) for key, row in self.spectra.items() if row["visible"]]
+        self.count_label.configure(text=f"{len(visible)} of {len(self.spectra)} traces shown")
+        if not visible:
+            self._empty_plot()
+            return
+        self.figure.clear()
+        mode = self.view_mode.get()
+        count = len(visible) if mode == "Small multiples" else 1
+        if count > 1:
+            cols = 2 if count > 2 else count
+            rows = (count + cols - 1) // cols
+            axes = [self.figure.add_subplot(rows, cols, i + 1) for i in range(count)]
+        else:
+            axes = [self.figure.add_subplot(111)]
+        self.axis = axes[0]
+        palette = PALETTE
+        for i, (key, row) in enumerate(visible):
+            target_axes = axes[i] if mode == "Small multiples" else axes[0]
+            spec = row["spec"]
+            x = spec.temperature_clean_c if self.x_mode.get() == "Temperature" else spec.time_min
+            raw = spec.signal
+            smooth = smooth_signal(raw, int(self.window.get()), self.filter_method.get())
+            if self.normalize.get():
+                span = max(float(smooth.max() - smooth.min()), 1e-15)
+                smooth = (smooth - smooth.min()) / span
+                if self.show_raw.get():
+                    raw_span = max(float(raw.max() - raw.min()), 1e-15)
+                    raw = (raw - raw.min()) / raw_span
+            color = palette[i % len(palette)]
+            if self.show_raw.get():
+                target_axes.plot(x, raw, color=color, alpha=.20, linewidth=.8)
+            target_axes.plot(x, smooth, color=color, linewidth=1.7, label=Path(key).stem)
+            if self.x_mode.get() == "Temperature":
+                target_axes.axvspan(self.leading_low.get(), self.leading_high.get(), color="#f59e0b", alpha=.08)
+                target_axes.axvspan(self.peak_low.get(), self.peak_high.get(), color="#8b5cf6", alpha=.07)
+            if mode == "Small multiples":
+                target_axes.set_title(Path(key).name, loc="left", fontsize=9, color=INK)
+            target_axes.grid(True, color="#e7edf5", linewidth=.7)
+            target_axes.tick_params(labelsize=8, colors=MUTED)
+            for spine in target_axes.spines.values(): spine.set_color("#d9e2ec")
+        x_label = "Temperature (°C)" if self.x_mode.get() == "Temperature" else "Time (min)"
+        y_label = "Normalized signal (0–1)" if self.normalize.get() else "Signal (a.u.)"
+        for ax in axes:
+            ax.set_xlabel(x_label, color=INK, fontsize=9)
+            ax.set_ylabel(y_label, color=INK, fontsize=9)
+        if mode == "Overlay":
+            axes[0].legend(loc="best", fontsize=8, frameon=True, framealpha=.92)
+            axes[0].set_title("Overlay comparison" if len(visible) > 1 else Path(visible[0][0]).name,
+                              loc="left", color=INK, fontsize=11, weight="bold")
+        self.figure.tight_layout(pad=2.0)
+        self.canvas.draw_idle()
+
+    def _export_png(self) -> None:
+        if not self.spectra:
+            messagebox.showinfo("Nothing to export", "Import at least one spectrum before exporting a plot.", parent=self.root)
+            return
+        path = filedialog.asksaveasfilename(parent=self.root, title="Export plot as PNG",
+                defaultextension=".png", initialfile="tpd-spectra-comparison.png",
+                filetypes=(("PNG image", "*.png"),))
         if path:
-            self.vars["input_path"].set(path)
+            self.figure.savefig(path, dpi=300, bbox_inches="tight", facecolor="white")
+            self.status.set(f"PNG exported: {Path(path).name}")
 
-    def _choose_input_folder(self) -> None:
-        path = filedialog.askdirectory(title="Select input folder")
-        if path:
-            self.vars["input_path"].set(path)
+    def _settings(self, input_files: list[Path], output_folder: Path) -> dict[str, object]:
+        return {"input_files": [str(path) for path in input_files], "output_path": str(output_folder),
+                "leading_low": self.leading_low.get(), "leading_high": self.leading_high.get(),
+                "redhead_low": self.peak_low.get(), "redhead_high": self.peak_high.get(),
+                "prefactor": self.prefactor.get(), "window": self.window.get(), "filter": self.filter_method.get(),
+                "max_time_min": self.max_time.get(), "kinetic_fit": self.kinetic_fit.get(),
+                "kinetic_model": self.kinetic_model.get(), "kinetic_order": self.kinetic_order.get(),
+                "kinetic_initial_energy": self.kinetic_energy.get(),
+                "kinetic_initial_prefactor": self.kinetic_prefactor.get(),
+                "kinetic_no_baseline": self.no_baseline.get()}
 
-    def _choose_output_folder(self) -> None:
-        path = filedialog.askdirectory(title="Select output folder")
-        if path:
-            self.vars["output_path"].set(path)
-
-    def _settings(self) -> dict[str, object]:
-        return {key: variable.get() for key, variable in self.vars.items()}
-
-    def _start(self) -> None:
+    def _run_analysis(self) -> None:
         if self.running:
             return
+        selected = [(key, row["path"]) for key, row in self.spectra.items() if row["visible"]]
+        if not selected:
+            messagebox.showinfo("No spectra selected", "Import spectra and turn on at least one trace to analyze.", parent=self.root)
+            return
+        outdir = Path(self.output_path.get()).expanduser()
         try:
-            args = build_cli_arguments(self._settings())
-        except ValueError as exc:
-            messagebox.showerror("Check settings", str(exc), parent=self.root)
+            outdir.mkdir(parents=True, exist_ok=True)
+            settings = self._settings([path for _, path in selected], outdir)
+            args = build_cli_arguments(settings)
+        except Exception as exc:
+            messagebox.showerror("Could not prepare analysis", str(exc), parent=self.root)
             return
         self.running = True
         self.run_button.configure(state="disabled")
-        self.progress.start(10)
-        self._append_log("\n$ python -m tpd_spectra " + " ".join(args))
-        thread = threading.Thread(target=self._worker, args=(args,), daemon=True)
-        thread.start()
+        self.status.set(f"Analyzing {len(selected)} spectrum{'s' if len(selected) != 1 else ''}…")
+        threading.Thread(target=self._analysis_worker, args=(args,), daemon=True).start()
 
-    def _worker(self, args: list[str]) -> None:
-        from .cli import main as cli_main
-        out = _QueueWriter(self.messages)
-        err = _QueueWriter(self.messages, prefix="[stderr] ")
-        code = 0
+    def _analysis_worker(self, args: list[str]) -> None:
         try:
-            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-                try:
-                    code = int(cli_main(args) or 0)
-                except SystemExit as exc:
-                    code = int(exc.code or 0) if isinstance(exc.code, (int, type(None))) else 2
-                except Exception as exc:  # keep the GUI responsive on unexpected failures
-                    print(f"Unhandled error: {exc}", file=err)
-                    code = 1
-        finally:
-            out.flush()
-            err.flush()
-            self.messages.put(f"__DONE__:{code}")
+            if getattr(sys, "frozen", False):
+                cli = Path(sys.executable).with_name("tpd-spectra.exe")
+                if not cli.exists():
+                    raise FileNotFoundError("Keep tpd-spectra.exe beside tpd-spectra-gui.exe to run analysis.")
+                command = [str(cli), *args]
+            else:
+                command = [sys.executable, "-m", "tpd_spectra", *args]
+            completed = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                       errors="replace", check=False)
+            for line in completed.stdout.splitlines():
+                self.worker_messages.put(("log", line))
+            self.worker_messages.put(("done", str(completed.returncode)))
+        except Exception as exc:
+            self.worker_messages.put(("error", str(exc)))
 
-    def _drain_messages(self) -> None:
+    def _poll_worker(self) -> None:
         try:
             while True:
-                message = self.messages.get_nowait()
-                if message.startswith("__DONE__:"):
-                    code = int(message.split(":", 1)[1])
+                kind, value = self.worker_messages.get_nowait()
+                if kind == "done":
                     self.running = False
-                    self.progress.stop()
                     self.run_button.configure(state="normal")
-                    self._append_log(f"\nFinished with exit code {code}. Output: {self.vars['output_path'].get()}")
+                    if value == "0":
+                        self.status.set(f"Analysis complete · results saved to {self.output_path.get()}")
+                        messagebox.showinfo("Analysis complete", f"Your tables, comparison plot, and diagnostics are in:\n{self.output_path.get()}", parent=self.root)
+                    else:
+                        self.status.set("Analysis finished with errors; review the run log.")
+                elif kind == "error":
+                    self.running = False
+                    self.run_button.configure(state="normal")
+                    self.status.set("Could not start the analysis.")
+                    messagebox.showerror("Analysis could not start", value, parent=self.root)
                 else:
-                    self._append_log(message)
+                    self.status.set(value[:100])
         except queue.Empty:
             pass
-        self.root.after(100, self._drain_messages)
-
-    def _append_log(self, message: str) -> None:
-        self.log.configure(state="normal")
-        self.log.insert("end", message + "\n")
-        self.log.see("end")
-        self.log.configure(state="disabled")
+        self.root.after(120, self._poll_worker)
 
     def _open_output(self) -> None:
-        path = Path(str(self.vars["output_path"].get())).expanduser()
-        if not path.exists():
-            messagebox.showinfo("Output folder", "The output folder will be created when analysis runs.", parent=self.root)
-            return
+        path = Path(self.output_path.get()).expanduser()
+        path.mkdir(parents=True, exist_ok=True)
         try:
-            import os
-            import subprocess
-            import sys
             if sys.platform == "win32":
+                import os
                 os.startfile(str(path))  # type: ignore[attr-defined]
             elif sys.platform == "darwin":
                 subprocess.Popen(["open", str(path)])
@@ -306,6 +548,11 @@ class TpdSpectraApp:
                 subprocess.Popen(["xdg-open", str(path)])
         except Exception as exc:
             messagebox.showerror("Cannot open folder", str(exc), parent=self.root)
+
+    def _close(self) -> None:
+        if self.running and not messagebox.askyesno("Analysis is running", "Close the app while analysis is in progress?", parent=self.root):
+            return
+        self.root.destroy()
 
 
 def main() -> int:

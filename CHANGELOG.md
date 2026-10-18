@@ -1,3 +1,11 @@
+## 0.10.0 — Interactive desktop studio
+
+- Rebuilt the desktop interface as an import-and-explore workspace with multi-file and folder import, trace visibility controls, overlay and small-multiple views, temperature/time axes, and normalized comparison.
+- Added responsive smoothing and analysis-window controls, an output-folder picker, a high-resolution PNG export action, and direct full-batch analysis with optional kinetic fits.
+- Added automatic delimiter/decimal detection for comma, semicolon, and tabular CSV data with common temperature header variants.
+- Added a Windows desktop build workflow that packages a no-console GUI executable with its CLI partner and documentation.
+- Refreshed the repository landing page with a visual preview, clearer install/download guidance, feature overview, output guide, and scientific-scope notes.
+
 ## 0.9.1 — License scope and release-readiness update
 
 - Added a scoped MIT license for project-authored software code and declared the package license metadata.

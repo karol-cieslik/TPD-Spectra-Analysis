@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="860" viewBox="0 0 1440 860" role="img" aria-labelledby="title desc">
+  <title id="title">TPD Spectra Studio interface preview</title>
+  <desc id="desc">A clean desktop analysis workspace with import controls, a list of spectra, temperature interval sliders, and an overlay graph comparing four desorption traces.</desc>
+  <defs>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102a43"/><stop offset="1" stop-color="#173f67"/></linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#21354f" flood-opacity=".10"/></filter>
+    <clipPath id="chart"><rect x="483" y="276" width="895" height="466" rx="4"/></clipPath>
+  </defs>
+  <rect width="1440" height="860" fill="#f3f6fb"/>
+  <path d="M0 0h1440v126H0z" fill="url(#header)"/>
+  <circle cx="1384" cy="8" r="120" fill="#ffffff" opacity=".035"/><circle cx="1310" cy="128" r="78" fill="#ffffff" opacity=".035"/>
+  <text x="42" y="52" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="700">TPD Spectra Studio</text>
+  <text x="42" y="82" fill="#d7e5f5" font-family="Segoe UI,Arial,sans-serif" font-size="14">Explore, compare, and analyze temperature-programmed desorption data</text>
+  <g filter="url(#shadow)"><rect x="32" y="148" width="1376" height="74" rx="13" fill="#fff"/></g>
+  <rect x="51" y="163" width="194" height="44" rx="8" fill="#2563eb"/><text x="72" y="191" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="700">＋  Import CSV files</text>
+  <rect x="258" y="163" width="140" height="44" rx="8" fill="#f8fafc" stroke="#dce5ef"/><text x="279" y="191" fill="#243b53" font-family="Segoe UI,Arial,sans-serif" font-size="14">＋  Add folder</text>
+  <rect x="411" y="163" width="152" height="44" rx="8" fill="#f8fafc" stroke="#dce5ef"/><text x="431" y="191" fill="#243b53" font-family="Segoe UI,Arial,sans-serif" font-size="14">Export plot PNG</text>
+  <text x="1054" y="190" fill="#64748b" font-family="Segoe UI,Arial,sans-serif" font-size="13">4 traces ready</text>
+  <rect x="1204" y="163" width="182" height="44" rx="8" fill="#2563eb"/><text x="1229" y="191" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="14" font-weight="700">Run full analysis</text>
+  <g filter="url(#shadow)"><rect x="32" y="242" width="390" height="565" rx="13" fill="#fff"/><rect x="440" y="242" width="968" height="565" rx="13" fill="#fff"/></g>
+  <text x="55" y="277" fill="#172b4d" font-family="Segoe UI,Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="1.2">SPECTRA</text>
+  <text x="55" y="299" fill="#64748b" font-family="Segoe UI,Arial,sans-serif" font-size="12">Click a trace to show or hide it</text>
+  <rect x="54" y="318" width="344" height="37" rx="5" fill="#f8fafc"/><text x="65" y="342" fill="#64748b" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="700">ON     FILE                                           POINTS</text>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#334e68">
+    <path d="M54 355h344v42H54z" fill="#fff"/><text x="69" y="381" fill="#2563eb" font-size="17">✓</text><text x="102" y="381">sample_01.csv</text><text x="348" y="381">1,248</text>
+    <path d="M54 397h344v42H54z" fill="#f8fafc"/><text x="69" y="423" fill="#e76f51" font-size="17">✓</text><text x="102" y="423">sample_02.csv</text><text x="348" y="423">1,246</text>
+    <path d="M54 439h344v42H54z" fill="#fff"/><text x="69" y="465" fill="#059669" font-size="17">✓</text><text x="102" y="465">sample_03.csv</text><text x="348" y="465">1,249</text>
+    <path d="M54 481h344v42H54z" fill="#f8fafc"/><text x="69" y="507" fill="#9333ea" font-size="17">✓</text><text x="102" y="507">sample_04.csv</text><text x="348" y="507">1,247</text>
+  </g>
+  <text x="55" y="556" fill="#172b4d" font-family="Segoe UI,Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="1.1">PLOT CONTROLS</text>
+  <text x="55" y="587" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="12">Chart layout</text><rect x="269" y="566" width="123" height="30" rx="5" fill="#fff" stroke="#dce5ef"/><text x="286" y="586" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="12">Overlay  ▾</text>
+  <text x="55" y="628" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="12">Smoothing window</text><text x="347" y="628" fill="#2563eb" font-family="Segoe UI,Arial,sans-serif" font-size="12">10 points</text>
+  <rect x="57" y="645" width="327" height="6" rx="3" fill="#dbeafe"/><circle cx="119" cy="648" r="9" fill="#2563eb"/>
+  <text x="57" y="690" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="12">✓  Overlay raw signal</text><text x="57" y="719" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="12">□  Normalize each trace to 0–1</text>
+  <path d="M54 739h344" stroke="#e2e8f0"/><text x="55" y="768" fill="#172b4d" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="1">ANALYSIS WINDOWS · °C</text>
+  <text x="467" y="278" fill="#172b4d" font-family="Segoe UI,Arial,sans-serif" font-size="17" font-weight="700">Spectrum comparison</text><text x="1312" y="278" fill="#64748b" font-family="Segoe UI,Arial,sans-serif" font-size="12">4 traces shown</text>
+  <g clip-path="url(#chart)">
+    <rect x="483" y="276" width="895" height="466" fill="#fff"/>
+    <path d="M483 370h895M483 464h895M483 557h895M483 650h895M632 276v466M781 276v466M930 276v466M1079 276v466M1228 276v466" stroke="#e7edf5" stroke-width="1"/>
+    <rect x="620" y="276" width="80" height="466" fill="#f59e0b" opacity=".08"/><rect x="1050" y="276" width="210" height="466" fill="#8b5cf6" opacity=".07"/>
+    <path d="M488 685 C545 684 567 670 606 649 S660 607 698 595 S740 608 773 630 S839 665 892 660 S965 629 1012 572 S1076 469 1106 408 S1151 518 1190 598 S1263 659 1372 675" fill="none" stroke="#2563eb" stroke-width="3.5"/>
+    <path d="M488 692 C538 690 570 674 612 653 S670 626 703 613 S750 626 787 646 S852 673 908 665 S967 641 1017 600 S1088 501 1122 451 S1167 537 1202 613 S1283 669 1372 682" fill="none" stroke="#e76f51" stroke-width="3.5"/>
+    <path d="M488 675 C554 676 588 664 628 643 S680 598 716 584 S763 607 800 627 S870 651 924 646 S978 610 1027 553 S1093 431 1135 379 S1172 500 1218 576 S1301 645 1372 666" fill="none" stroke="#059669" stroke-width="3.5"/>
+    <path d="M488 698 C553 697 585 680 626 661 S676 631 719 623 S769 637 813 653 S871 675 927 667 S982 641 1035 593 S1104 481 1141 436 S1185 539 1228 610 S1309 675 1372 686" fill="none" stroke="#9333ea" stroke-width="3.5"/>
+  </g>
+  <text x="908" y="783" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="13">Temperature (°C)</text><text transform="translate(468 570) rotate(-90)" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="13">Signal (a.u.)</text>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#475569"><text x="475" y="761">0</text><text x="624" y="761">100</text><text x="773" y="761">200</text><text x="922" y="761">300</text><text x="1071" y="761">400</text><text x="1220" y="761">500</text><text x="1363" y="761">600</text></g>
+  <rect x="688" y="294" width="303" height="37" rx="8" fill="#fff" stroke="#dce5ef"/><path d="M708 312h21" stroke="#2563eb" stroke-width="3"/><text x="736" y="317" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="11">sample_01</text><path d="M818 312h21" stroke="#e76f51" stroke-width="3"/><text x="846" y="317" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="11">sample_02</text><path d="M928 312h21" stroke="#059669" stroke-width="3"/><text x="956" y="317" fill="#334e68" font-family="Segoe UI,Arial,sans-serif" font-size="11">sample_03</text>
+</svg>

@@ -74,10 +74,17 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
         raise FileNotFoundError(path)
     errors = []
     df = None
-    # Try the documented legacy export first, then a conventional header row.
-    for rows in (skiprows, 0):
+    # Prefer the documented legacy export, then accept ordinary comma/tab CSVs
+    # with either decimal style and a conventional header row.
+    layouts = [(skiprows, delimiter, decimal), (0, delimiter, decimal),
+               (0, ',', '.'), (0, '\t', '.'), (0, ';', '.')]
+    seen = set()
+    for rows, sep, decimal_mark in layouts:
+        if (rows, sep, decimal_mark) in seen:
+            continue
+        seen.add((rows, sep, decimal_mark))
         try:
-            candidate = pd.read_csv(path, skiprows=rows, sep=delimiter, decimal=decimal)
+            candidate = pd.read_csv(path, skiprows=rows, sep=sep, decimal=decimal_mark)
             if len(candidate.columns) > 1:
                 df = candidate
                 break
@@ -86,9 +93,10 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
     if df is None:
         raise ValueError(f"Could not parse {path.name} as a delimited instrument export. {errors}")
     df.columns = [str(c).strip() for c in df.columns]
-    tcol = _numeric_column(df, time_column, ('ms', 'Time_ms', 'time_ms', 'Time (ms)'), 'time (ms)')
-    scol = _numeric_column(df, signal_column, ('DHTA+', 'Signal', 'signal', 'Intensity', 'intensity'), 'signal')
-    tempcol = _numeric_column(df, temperature_column, ('Temperatura', 'Temperature', 'temperature', 'Temp', 'temp'), 'temperature')
+    tcol = _numeric_column(df, time_column, ('ms', 'Time_ms', 'time_ms', 'Time (ms)', 'Time', 'time'), 'time (ms)')
+    scol = _numeric_column(df, signal_column, ('DHTA+', 'Signal', 'signal', 'Intensity', 'intensity', 'Signal (a.u.)'), 'signal')
+    tempcol = _numeric_column(df, temperature_column, ('Temperatura', 'Temperature', 'temperature', 'Temp', 'temp',
+                                                       'Temperature (°C)', 'Temperature_C', 'Temp_C'), 'temperature')
     frame = pd.DataFrame({
         'time_ms': pd.to_numeric(df[tcol], errors='coerce'),
         'signal': pd.to_numeric(df[scol], errors='coerce'),

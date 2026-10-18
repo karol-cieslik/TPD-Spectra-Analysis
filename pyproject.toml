@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tpd-spectra"
-version = "0.9.1"
-description = "Reproducible analysis tools for thermal desorption spectroscopy (TPD/TDS)"
+version = "0.10.0"
+description = "Interactive desktop workspace and reproducible analysis tools for TPD/TDS spectra"
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.10"

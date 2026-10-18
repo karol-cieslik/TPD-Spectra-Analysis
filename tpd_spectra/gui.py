@@ -185,7 +185,6 @@ class TpdSpectraApp:
         workspace.rowconfigure(1, weight=1)
 
         self._files_panel()
-        self._settings_panel()
         self._workspace(workspace)
 
         footer = ttk.Frame(self.root, padding=(20, 5))
@@ -498,10 +497,8 @@ class TpdSpectraApp:
     def _analysis_worker(self, args: list[str]) -> None:
         try:
             if getattr(sys, "frozen", False):
-                cli = Path(sys.executable).with_name("tpd-spectra.exe")
-                if not cli.exists():
-                    raise FileNotFoundError("Keep tpd-spectra.exe beside tpd-spectra-gui.exe to run analysis.")
-                command = [str(cli), *args]
+                # The GUI executable doubles as a hidden CLI entry point.
+                command = [sys.executable, "--tpd-cli", *args]
             else:
                 command = [sys.executable, "-m", "tpd_spectra", *args]
             completed = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,

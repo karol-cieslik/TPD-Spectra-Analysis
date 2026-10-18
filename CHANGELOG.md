@@ -1,3 +1,9 @@
+## 0.10.1 — Windows startup and single-file fix
+
+- Fixed a startup crash caused by calling a missing desktop setup method.
+- Combined the desktop app and batch-analysis engine into one Windows executable.
+- Updated Windows downloads and quick-start instructions to present one app file.
+
 ## 0.10.0 — Interactive desktop studio
 
 - Rebuilt the desktop interface as an import-and-explore workspace with multi-file and folder import, trace visibility controls, overlay and small-multiple views, temperature/time axes, and normalized comparison.

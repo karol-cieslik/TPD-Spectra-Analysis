@@ -27,22 +27,16 @@ jobs:
           python -m pip install -e .
       - name: Run tests
         run: python -m pytest -q
-      - name: Build standalone CLI executable
-        run: >-
-          pyinstaller --clean --noconfirm --onefile
-          --name tpd-spectra
-          run_tpd_spectra.py
-      - name: Build standalone desktop GUI executable
+      - name: Build single-file desktop application
         run: >-
           pyinstaller --clean --noconfirm --onefile --windowed
-          --name tpd-spectra-gui
+          --name TPD-Spectra-Studio
           run_tpd_spectra_gui.py
       - name: Assemble portable beta package
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force release-package | Out-Null
-          Copy-Item dist/tpd-spectra.exe release-package/
-          Copy-Item dist/tpd-spectra-gui.exe release-package/
+          Copy-Item dist/TPD-Spectra-Studio.exe release-package/
           Copy-Item README.md release-package/
           Copy-Item CHANGELOG.md release-package/
           Copy-Item CITATION.cff release-package/
@@ -61,12 +55,9 @@ jobs:
           @'
           TPD Spectra Analysis — Windows beta
 
-          Desktop interface: double-click tpd-spectra-gui.exe
-          Command line (PowerShell; replace the path with your own CSV folder):
-            .\tpd-spectra.exe C:\path\to\csv-folder --output output
-
-          Numerical Polanyi–Wigner fit:
-            .\tpd-spectra.exe C:\path\to\csv-folder --output output --kinetic-fit --kinetic-order 1
+          Desktop interface: double-click TPD-Spectra-Studio.exe.
+          This single application includes the complete batch-analysis engine.
+          Import CSV files, compare traces, export PNG plots, and run analysis from the GUI.
 
           Experimental files are not bundled in this beta because their redistribution
           rights must be confirmed separately. Outputs are written to the selected

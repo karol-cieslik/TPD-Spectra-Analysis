@@ -74,11 +74,10 @@ jobs:
               $packageName = (Split-Path $distInfo -Leaf) -replace '\.dist-info$',''
               Copy-Item $_.FullName (Join-Path 'release-package/THIRD-PARTY-LICENSES' ($packageName + '-' + $_.Name))
             }
-          Compress-Archive -Path release-package/* -DestinationPath tpd-spectra-windows-x64.zip -Force
       - name: Publish downloadable build
         uses: actions/upload-artifact@v4
         with:
           name: tpd-spectra-windows-x64
-          path: tpd-spectra-windows-x64.zip
+          path: release-package/*
           if-no-files-found: error
           retention-days: 90

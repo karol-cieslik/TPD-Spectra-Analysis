@@ -1,3 +1,7 @@
+## 0.10.2 — Display-aware startup
+
+- The desktop app now opens maximized to the available display area and adjusts its minimum size for smaller screens.
+
 ## 0.10.1 — Windows startup and single-file fix
 
 - Fixed a startup crash caused by calling a missing desktop setup method.

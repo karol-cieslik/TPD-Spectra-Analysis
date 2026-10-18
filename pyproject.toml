@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tpd-spectra"
-version = "0.10.1"
+version = "0.10.2"
 description = "Interactive desktop workspace and reproducible analysis tools for TPD/TDS spectra"
 license = "MIT"
 readme = "README.md"

@@ -87,8 +87,18 @@ class TpdSpectraApp:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         root.title(f"TPD Spectra Studio  ·  {__version__}")
-        root.geometry("1380x900")
-        root.minsize(1040, 700)
+        screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
+        min_width = min(1040, max(480, screen_width - 48))
+        min_height = min(700, max(400, screen_height - 96))
+        root.minsize(min_width, min_height)
+        root.geometry(f"{max(min_width, min(1380, screen_width - 48))}x"
+                      f"{max(min_height, min(900, screen_height - 96))}+0+0")
+        try:
+            root.state("zoomed")
+        except tk.TclError:
+            # Retain the screen-fitted bordered geometry on window managers
+            # that do not expose Tk's maximized state.
+            pass
         root.configure(background=BG)
         self.spectra: dict[str, dict] = {}
         self.worker_messages: queue.Queue[tuple[str, str]] = queue.Queue()

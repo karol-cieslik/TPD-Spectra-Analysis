@@ -34,3 +34,20 @@ def test_invalid_dimensions_and_nonfinite_inputs_rejected():
         jacobian_diagnostics(np.eye(3), [0, 1], [0, 0], [1, 1])
     with pytest.raises(ValueError):
         jacobian_diagnostics([[np.nan]], [0.5], [0], [1])
+
+
+def test_single_state_fit_exposes_diagnostics_without_error_bars():
+    from tpd_spectra.kinetics import fit_polanyi_wigner, simulate_tpd
+
+    temperature = np.linspace(80, 350, 100)
+    _, rate = simulate_tpd(temperature, 1.0, 1.2, 1e13, 1.0)
+    result, prediction = fit_polanyi_wigner(
+        temperature, 4.0 + 1e5 * rate, 1.0, reaction_order=1.0,
+        initial_energy_ev=1.1, initial_prefactor_s_inv=1e13, max_nfev=100,
+    )
+    diagnostics = result.identifiability_diagnostics
+    assert diagnostics["n_parameters"] == 4
+    assert 0 <= diagnostics["jacobian_rank"] <= 4
+    assert isinstance(diagnostics["warnings"], list)
+    assert prediction.shape == temperature.shape
+    assert "confidence_interval" not in diagnostics

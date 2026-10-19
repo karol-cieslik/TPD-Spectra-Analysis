@@ -11,9 +11,11 @@ from tkinter import filedialog, messagebox, ttk
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
+from matplotlib.widgets import SpanSelector
 
 from . import __version__
 from .analysis import load_spectrum, smooth_signal
+from .gui_ranges import validate_temperature_window, window_from_drag
 
 
 PALETTE = ["#2563eb", "#e76f51", "#059669", "#9333ea", "#d97706", "#0891b2",
@@ -137,6 +139,8 @@ class TpdSpectraApp:
         self.kinetic_energy = tk.StringVar(value="1.0")
         self.kinetic_prefactor = tk.StringVar(value="1e13")
         self.no_baseline = tk.BooleanVar(value=False)
+        self._span_selector = None
+        self._selection_kind = None
         self._style()
         self._build()
         self.root.after(100, self._poll_worker)
@@ -298,6 +302,13 @@ class TpdSpectraApp:
         self._slider("Leading edge · to", self.leading_high, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Peak search · from", self.peak_low, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Peak search · to", self.peak_high, 0, 700, " °C", on_change=self._range_changed)
+        ttk.Button(self.sidebar, text="Select leading edge on plot",
+                   command=lambda: self._start_span("leading")).pack(fill="x", pady=(7, 2))
+        ttk.Button(self.sidebar, text="Select peak interval on plot",
+                   command=lambda: self._start_span("peak")).pack(fill="x", pady=2)
+        ttk.Label(self.sidebar, text="Use the temperature axis; disable pan/zoom first.",
+                  style="Muted.TLabel").pack(anchor="w")
+        self._precise_windows()
         ttk.Label(self.sidebar, text="Shaded bands mark the selected analysis regions.", style="Muted.TLabel").pack(anchor="w", pady=(3, 8))
         details = ttk.Frame(self.sidebar, style="Card.TFrame")
         details.pack(fill="x", pady=(0, 7))
@@ -391,6 +402,88 @@ class TpdSpectraApp:
         self.nav_toolbar.pack(side="left")
         self._empty_plot()
 
+
+    def _precise_windows(self) -> None:
+        """Typed temperature windows also permit sub-degree selections."""
+        frame = ttk.Frame(self.sidebar, style="Card.TFrame")
+        frame.pack(fill="x", pady=6)
+        self.window_entries = []
+        for i, (label, low, high) in enumerate((
+            ("Leading", self.leading_low, self.leading_high),
+            ("Peak", self.peak_low, self.peak_high),
+        )):
+            ttk.Label(frame, text=label, style="Card.TLabel").grid(row=i, column=0, sticky="w")
+            a, b = ttk.Entry(frame, width=8), ttk.Entry(frame, width=8)
+            a.grid(row=i, column=1, padx=3, pady=3)
+            b.grid(row=i, column=2, padx=3, pady=3)
+            self.window_entries.append((a, b, low, high))
+        self._refresh_window_entries()
+        ttk.Button(self.sidebar, text="Apply exact windows (°C)",
+                   command=self._apply_exact_windows).pack(fill="x", pady=(0, 6))
+
+    def _refresh_window_entries(self) -> None:
+        for a, b, low, high in getattr(self, "window_entries", []):
+            for entry, value in ((a, low.get()), (b, high.get())):
+                entry.delete(0, tk.END)
+                entry.insert(0, f"{value:g}")
+
+    def _apply_exact_windows(self) -> None:
+        try:
+            values = [validate_temperature_window(a.get(), b.get())
+                      for a, b, _, _ in self.window_entries]
+        except (ValueError, OverflowError) as exc:
+            messagebox.showerror("Invalid analysis interval", str(exc), parent=self.root)
+            return
+        for (_, _, low, high), (lo, hi) in zip(self.window_entries, values):
+            low.set(lo)
+            high.set(hi)
+        self._draw_plot()
+
+    def _stop_span(self) -> None:
+        if self._span_selector is not None:
+            self._span_selector.set_active(False)
+            self._span_selector.disconnect_events()
+        self._span_selector = None
+        self._selection_kind = None
+
+    def _start_span(self, which: str) -> None:
+        if self.x_mode.get() != "Temperature":
+            messagebox.showinfo("Temperature axis required",
+                                "Switch the X axis to Temperature.", parent=self.root)
+            return
+        if not any(row["visible"] for row in self.spectra.values()):
+            messagebox.showinfo("Nothing to select", "Show a spectrum first.", parent=self.root)
+            return
+        if self.nav_toolbar.mode:
+            messagebox.showinfo("Pan/zoom active", "Disable plot pan/zoom first.", parent=self.root)
+            return
+        self._stop_span()
+        self._selection_kind = which
+        self._span_selector = SpanSelector(
+            self.axis, self._span_finished, "horizontal",
+            useblit=False, props={"facecolor": "#f59e0b" if which == "leading" else "#8b5cf6",
+                                   "alpha": 0.25},
+        )
+        self.status.set(f"Drag horizontally to select the {which} interval.")
+
+    def _span_finished(self, a: float, b: float) -> None:
+        which = self._selection_kind
+        self._stop_span()
+        if which is None:
+            return
+        try:
+            lo, hi = window_from_drag(a, b)
+        except ValueError as exc:
+            self.status.set(str(exc))
+            return
+        low, high = ((self.leading_low, self.leading_high) if which == "leading"
+                     else (self.peak_low, self.peak_high))
+        low.set(lo)
+        high.set(hi)
+        self._refresh_window_entries()
+        self._draw_plot()
+        self.status.set(f"{which.title()} interval: {lo:.2f}–{hi:.2f} °C.")
+
     def _empty_plot(self) -> None:
         self.axis.clear()
         self.axis.set_facecolor("#ffffff")
@@ -466,6 +559,7 @@ class TpdSpectraApp:
             self.leading_high.set(min(700, self.leading_low.get() + 1))
         if self.peak_low.get() >= self.peak_high.get():
             self.peak_high.set(min(700, self.peak_low.get() + 1))
+        self._refresh_window_entries()
         self._draw_plot()
 
     def _draw_plot(self) -> None:
@@ -482,6 +576,7 @@ class TpdSpectraApp:
                                transform=self.axis.transAxes, ha="center", fontsize=10, color=MUTED)
                 self.canvas.draw_idle()
             return
+        self._stop_span()
         self.figure.clear()
         mode = self.view_mode.get()
         count = len(visible) if mode == "Small multiples" else 1

@@ -7,12 +7,13 @@ that the selected physical model is unique.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.optimize import least_squares
 
 from .analysis import K_B_EV
+from .identifiability import jacobian_diagnostics
 
 
 @dataclass
@@ -35,6 +36,7 @@ class KineticFitResult:
     aicc: float
     bic: float
     jacobian_condition_number: float
+    identifiability_diagnostics: dict = field(default_factory=dict)
 
     def as_dict(self):
         return asdict(self)
@@ -208,10 +210,11 @@ def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
         condition = float(singular_values[0] / singular_values[-1]) if singular_values[-1] > 0 else float('inf')
     except (np.linalg.LinAlgError, IndexError):
         condition = float('inf')
+    diagnostics = jacobian_diagnostics(opt.jac, opt.x, lower, upper)
     result = KineticFitResult(float(order), bool(fit_reaction_order), float(energy),
         float(prefactor), float(scale), float(baseline), rmse, rmse / span, float(r2),
         int(temp.size), bool(opt.success), str(opt.message), float(temp.min()), float(temp.max()),
-        aic, aicc, bic, condition)
+        aic, aicc, bic, condition, diagnostics)
     if original_temp.size != temp.size:
         prediction = np.interp(original_temp, temp, prediction)
     return result, prediction

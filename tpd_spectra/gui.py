@@ -187,31 +187,38 @@ class TpdSpectraApp:
 
         body = ttk.Frame(self.root, padding=(18, 0, 18, 10))
         body.pack(fill="both", expand=True)
-        body.columnconfigure(0, weight=0, minsize=322)
-        body.columnconfigure(1, weight=1)
         body.rowconfigure(0, weight=1)
-        sidebar_frame = ttk.Frame(body, style="Card.TFrame", width=322)
-        sidebar_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
-        sidebar_frame.grid_propagate(False)
-        sidebar_frame.rowconfigure(0, weight=1)
-        sidebar_frame.columnconfigure(0, weight=1)
-        sidebar_canvas = tk.Canvas(sidebar_frame, background="white", highlightthickness=0, width=306)
-        sidebar_scroll = ttk.Scrollbar(sidebar_frame, orient="vertical", command=sidebar_canvas.yview)
-        sidebar_canvas.configure(yscrollcommand=sidebar_scroll.set)
-        sidebar_canvas.grid(row=0, column=0, sticky="nsew")
-        sidebar_scroll.grid(row=0, column=1, sticky="ns")
-        self.sidebar = ttk.Frame(sidebar_canvas, style="Card.TFrame", padding=14)
-        sidebar_window = sidebar_canvas.create_window((0, 0), window=self.sidebar, anchor="nw")
-        self.sidebar.bind("<Configure>", lambda _event: sidebar_canvas.configure(scrollregion=sidebar_canvas.bbox("all")))
-        sidebar_canvas.bind("<Configure>", lambda event: sidebar_canvas.itemconfigure(sidebar_window, width=event.width))
-        sidebar_canvas.bind("<MouseWheel>", lambda event: sidebar_canvas.yview_scroll(-1 if event.delta > 0 else 1, "units"))
-        workspace = ttk.Frame(body, style="Card.TFrame", padding=(12, 10))
-        workspace.grid(row=0, column=1, sticky="nsew")
+        body.columnconfigure(0, weight=1)
+
+        # A draggable divider gives the plot room without hiding controls.
+        self.main_panes = ttk.Panedwindow(body, orient="horizontal")
+        self.main_panes.grid(row=0, column=0, sticky="nsew")
+        controls = ttk.Frame(self.main_panes, style="Card.TFrame", width=365)
+        workspace = ttk.Frame(self.main_panes, style="Card.TFrame", padding=(12, 10))
+        self.main_panes.add(controls, weight=0)
+        self.main_panes.add(workspace, weight=1)
+        controls.rowconfigure(0, weight=1)
+        controls.columnconfigure(0, weight=1)
         workspace.columnconfigure(0, weight=1)
         workspace.rowconfigure(1, weight=1)
 
+        # Separate everyday visualization from scientific settings.
+        self.control_tabs = ttk.Notebook(controls)
+        self.control_tabs.grid(row=0, column=0, sticky="nsew")
+        self.spectra_tab = ttk.Frame(self.control_tabs, style="Card.TFrame")
+        self.analysis_tab = ttk.Frame(self.control_tabs, style="Card.TFrame")
+        self.control_tabs.add(self.spectra_tab, text="Spectra & view")
+        self.control_tabs.add(self.analysis_tab, text="Analysis settings")
+        self.spectra_panel = self._scroll_panel(self.spectra_tab)
+        self.analysis_panel = self._scroll_panel(self.analysis_tab)
+        self.sidebar = self.spectra_panel
         self._files_panel()
+        self.sidebar = self.analysis_panel
+        self._analysis_panel()
         self._workspace(workspace)
+        # The notebook controls are now constructed; remove ambiguity for
+        # any future additions by keeping an explicit analysis container.
+        self.sidebar = self.analysis_panel
 
         footer = ttk.Frame(self.root, padding=(20, 5))
         footer.pack(fill="x")
@@ -236,6 +243,22 @@ class TpdSpectraApp:
             parent=self.root,
         )
 
+    def _scroll_panel(self, parent: ttk.Frame) -> ttk.Frame:
+        """Return a separately scrollable controls region for one notebook tab."""
+        parent.rowconfigure(0, weight=1)
+        parent.columnconfigure(0, weight=1)
+        canvas = tk.Canvas(parent, background="white", highlightthickness=0)
+        scrollbar = ttk.Scrollbar(parent, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        content = ttk.Frame(canvas, style="Card.TFrame", padding=14)
+        window = canvas.create_window((0, 0), window=content, anchor="nw")
+        content.bind("<Configure>", lambda _event: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.bind("<Configure>", lambda event: canvas.itemconfigure(window, width=event.width))
+        canvas.bind("<MouseWheel>", lambda event: canvas.yview_scroll(-1 if event.delta > 0 else 1, "units"))
+        return content
+
     def _files_panel(self) -> None:
         ttk.Label(self.sidebar, text="1  ·  IMPORTED SPECTRA", style="Section.TLabel").pack(anchor="w")
         ttk.Label(self.sidebar, text="Imported traces appear together in the plot.", style="Muted.TLabel").pack(anchor="w", pady=(2, 8))
@@ -256,13 +279,6 @@ class TpdSpectraApp:
         ttk.Button(row, text="Hide all", command=lambda: self._set_visible(False)).pack(side="left", padx=5)
         ttk.Button(row, text="Remove", command=self._remove_selected).pack(side="right")
 
-        ttk.Label(self.sidebar, text="RESULTS DESTINATION", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
-        output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
-        output_row.pack(fill="x", pady=(0, 8))
-        ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)
-        ttk.Button(output_row, text="Browse", command=self._choose_output).pack(side="left", padx=(5, 0))
-
-        ttk.Separator(self.sidebar).pack(fill="x", pady=5)
         ttk.Label(self.sidebar, text="2  ·  EXPLORE SPECTRA", style="Section.TLabel").pack(anchor="w", pady=(7, 6))
         self._choice("Chart layout", self.view_mode, ("Overlay", "Small multiples"))
         self._choice("X axis", self.x_mode, ("Temperature", "Time"))
@@ -273,8 +289,11 @@ class TpdSpectraApp:
         ttk.Checkbutton(self.sidebar, text="Normalize each trace to 0–1", variable=self.normalize,
                         command=self._draw_plot).pack(anchor="w", pady=(3, 9))
 
+
+    def _analysis_panel(self) -> None:
+        ttk.Label(self.sidebar, text="FIT & EXPORT", style="Section.TLabel").pack(anchor="w", pady=(0, 6))
         ttk.Separator(self.sidebar).pack(fill="x", pady=5)
-        ttk.Label(self.sidebar, text="3  ·  SELECT ANALYSIS WINDOWS  ·  °C", style="Section.TLabel").pack(anchor="w", pady=(7, 4))
+        ttk.Label(self.sidebar, text="ANALYSIS WINDOWS  ·  °C", style="Section.TLabel").pack(anchor="w", pady=(7, 4))
         self._slider("Leading edge · from", self.leading_low, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Leading edge · to", self.leading_high, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Peak search · from", self.peak_low, 0, 700, " °C", on_change=self._range_changed)
@@ -287,6 +306,14 @@ class TpdSpectraApp:
         ttk.Label(details, text="Heating-fit time limit (min; −1 = all)", style="Card.TLabel").grid(row=1, column=0, sticky="w", pady=2)
         ttk.Entry(details, textvariable=self.max_time, width=11).grid(row=1, column=1, sticky="e")
         self._advanced_panel()
+
+        ttk.Separator(self.sidebar).pack(fill="x", pady=10)
+        ttk.Label(self.sidebar, text="RESULTS DESTINATION", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
+        output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
+        output_row.pack(fill="x", pady=(0, 8))
+        ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)
+        ttk.Button(output_row, text="Browse", command=self._choose_output).pack(side="left", padx=(5, 0))
+
 
     def _choice(self, label: str, variable: tk.StringVar, values: tuple[str, ...]) -> None:
         row = ttk.Frame(self.sidebar, style="Card.TFrame")

@@ -1,6 +1,6 @@
 # TPD Spectra Studio — User and Scientific Methods Manual
 
-**Document status:** beta working draft · **Software source:** \`release/beta-v0.11-candidate\` · **Package metadata:** 0.10.2 (v0.11 is a proposed release designation, **not yet tagged**)  
+**Document status:** beta working draft · **Software source:** `release/beta-v0.11-candidate` · **Package metadata:** 0.10.2 (v0.11 is a proposed release designation, **not yet tagged**)  
 **Audience:** experimental surface scientists, TPD/TDS users, students, and developers.  
 **Scope:** current application behavior and defensible model assumptions. This is documentation, not a claim of experimental validation. Please open an issue for any discrepancy between this manual and the executable.
 
@@ -27,9 +27,9 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 ### Portable Windows application
 
 1. Open [the Windows desktop build workflow](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
-2. Select the latest **successful** run on \`release/beta-v0.11-candidate\`. Do not accidentally download the older \`main\` build.
-3. Under **Artifacts**, download \`tpd-spectra-windows-x64-beta-candidate\`.
-4. Extract the archive completely, then launch \`TPD-Spectra-Studio.exe\`. No separate Python installation should be required.
+2. Select the latest **successful** run on `release/beta-v0.11-candidate`. Do not accidentally download the older `main` build.
+3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-candidate`.
+4. Extract the archive completely, then launch `TPD-Spectra-Studio.exe`. No separate Python installation should be required.
 5. Keep the package contents together, including licenses and documentation. The executable is not digitally signed; verify its GitHub origin and follow your institution's software policy.
 
 A GitHub Actions green check confirms CI and packaging steps, **not** successful execution on every Windows machine. Confirm launch, imports, fits and export locally before distributing to colleagues.
@@ -38,15 +38,15 @@ A GitHub Actions green check confirms CI and packaging steps, **not** successful
 
 Requirements: Python 3.10+, NumPy, pandas, SciPy, Matplotlib; Tkinter must be present for the GUI.
 
-\`\`\`bash
+```bash
 git clone https://github.com/karol-cieslik/TPD-Spectra-Analysis.git
 cd TPD-Spectra-Analysis
 git checkout release/beta-v0.11-candidate
 python -m pip install -e .
 python run_tpd_spectra_gui.py
-\`\`\`
+```
 
-For tests, install \`requirements-build.txt\` and run \`python -m pytest -q\`. The console command \`tpd-spectra --help\` lists supported options. On Windows, source/installation procedures may depend on PowerShell and the selected Python environment.
+For tests, install `requirements-build.txt` and run `python -m pytest -q`. The console command `tpd-spectra --help` lists supported options. On Windows, source/installation procedures may depend on PowerShell and the selected Python environment.
 
 ## 3. Preparing and importing measurements
 
@@ -56,11 +56,11 @@ The original instrument exports contain a 29-row metadata block and typically us
 
 | Physical channel | Legacy column | Expected content |
 | --- | --- | --- |
-| Time | \`ms\` | Elapsed time in milliseconds |
-| Signal | \`DHTA+\` | Detector signal in instrument-dependent arbitrary units |
-| Temperature | \`Temperatura\` | Sample temperature in degrees Celsius |
+| Time | `ms` | Elapsed time in milliseconds |
+| Signal | `DHTA+` | Detector signal in instrument-dependent arbitrary units |
+| Temperature | `Temperatura` | Sample temperature in degrees Celsius |
 
-The importer also attempts conventional CSV headers (\`Time\`, \`Signal\`, \`Temperature\`, etc.), semicolon/comma/tab separators, and decimal comma/dot conventions. **Check the detected channels and units manually.** Time expressed in seconds but labeled \`ms\` can produce a wrong heating rate; detection does not substitute for instrument metadata.
+The importer also attempts conventional CSV headers (`Time`, `Signal`, `Temperature`, etc.), semicolon/comma/tab separators, and decimal comma/dot conventions. **Check the detected channels and units manually.** Time expressed in seconds but labeled `ms` can produce a wrong heating rate; detection does not substitute for instrument metadata.
 
 Before import, preserve the raw file, document detector channel and background correction, and verify whether the temperature represents the sample rather than a heater setpoint. Prefer one measurement per CSV with monotonically increasing nominal ramp temperature. Files with damaged columns or insufficient usable points may be rejected.
 
@@ -81,7 +81,7 @@ Start with one familiar, well-behaved experimental spectrum and one synthetic te
 
 Use the plot navigation toolbar for zooming, panning and view reset. The **Analysis settings** tab contains leading-edge and peak-search windows.
 
-- **Leading edge:** the temperature interval used for a regression of \`ln(signal)\` against reciprocal absolute temperature. Choose an interval where the intended physical approximation applies, not simply where the straight-line fit has maximum R².
+- **Leading edge:** the temperature interval used for a regression of `ln(signal)` against reciprocal absolute temperature. Choose an interval where the intended physical approximation applies, not simply where the straight-line fit has maximum R².
 - **Peak-search region:** the interval within which the desorption maximum is found for the Redhead-style estimate. If the maximum lies at a boundary, widen the region or reconsider which feature is being measured.
 - **Exact entry:** type increasing lower/upper temperatures in °C; fractional-degree values are permitted.
 - **Plot selection:** switch to the **Temperature** X axis; turn off toolbar pan/zoom; select **Select leading edge on plot** or **Select peak interval on plot**, then drag horizontally.
@@ -103,28 +103,28 @@ Shaded bands are *analysis-window guides*, not baseline estimates. After adjusti
 
 ### 6.1 Heating rate
 
-For a nominally linear heating ramp, the heating rate is \`beta = dT/dt\`, expressed in K s⁻¹. Temperature differences in kelvin and Celsius are equal, but **absolute temperatures in Arrhenius factors must be kelvin**: \`T_K = T_°C + 273.15\`. If the ramp is in °C min⁻¹, divide by 60 to obtain K s⁻¹. A fitted straight ramp, its R² and chosen interval are diagnostic; ramp nonlinearity is not automatically modeled in the kinetic integration.
+For a nominally linear heating ramp, the heating rate is `beta = dT/dt`, expressed in K s⁻¹. Temperature differences in kelvin and Celsius are equal, but **absolute temperatures in Arrhenius factors must be kelvin**: `T_K = T_°C + 273.15`. If the ramp is in °C min⁻¹, divide by 60 to obtain K s⁻¹. A fitted straight ramp, its R² and chosen interval are diagnostic; ramp nonlinearity is not automatically modeled in the kinetic integration.
 
 ### 6.2 Leading-edge approximation
 
 In a selected, positive-signal leading-edge region, the program fits
 
-\`\`\`text
+```text
 ln(S) = a + b / T_K
 E_app = -b * k_B
-\`\`\`
+```
 
-where \`S\` is signal (assumed proportional to desorption rate), \`k_B\` is Boltzmann's constant in eV K⁻¹, and \`E_app\` is an apparent energy in eV. The slope-derived estimate requires a region with an approximately constant effective population and applicable kinetic assumptions. In heterogeneous or coverage-dependent systems it can be an apparent, window-dependent quantity rather than a unique barrier.
+where `S` is signal (assumed proportional to desorption rate), `k_B` is Boltzmann's constant in eV K⁻¹, and `E_app` is an apparent energy in eV. The slope-derived estimate requires a region with an approximately constant effective population and applicable kinetic assumptions. In heterogeneous or coverage-dependent systems it can be an apparent, window-dependent quantity rather than a unique barrier.
 
 The software calculates conventional ordinary least-squares residual statistics and a slope-based 95% confidence interval transformed into energy units. **This interval reflects regression scatter only** and excludes uncertainty in baseline, heating-rate calibration, temperature, choice of window, correlated errors and kinetic model.
 
 ### 6.3 First-order Redhead-style estimate
 
-With \`T_p\` the peak temperature in kelvin, prefactor \`nu\` in s⁻¹, and \`beta\` in K s⁻¹:
+With `T_p` the peak temperature in kelvin, prefactor `nu` in s⁻¹, and `beta` in K s⁻¹:
 
-\`\`\`text
+```text
 E_R = k_B * T_p * [ ln(nu * T_p / beta) - 3.64 ]
-\`\`\`
+```
 
 This is the implemented **first-order** approximation with the conventional constant 3.64; it is not a universal formula for zero- or second-order reactions. It is sensitive to the supplied prefactor, peak assignment, peak overlap, baseline and ramp conditions. The report includes estimates for prefactor divided/multiplied by ten to illustrate sensitivity.
 
@@ -132,16 +132,16 @@ This is the implemented **first-order** approximation with the conventional cons
 
 The modeled desorption rate is
 
-\`\`\`text
+```text
 r(T, theta) = nu * theta^n * exp[-E / (k_B * T)]
 d(theta)/dT = -r / beta
-\`\`\`
+```
 
-where \`theta\` is a normalized adsorbed population, \`n\` the selected kinetic order, \`E\` an activation energy, and \`nu\` a rate coefficient. Numerical integration uses a strictly increasing temperature grid and constant positive heating rate (SciPy \`solve_ivp\`, LSODA).
+where `theta` is a normalized adsorbed population, `n` the selected kinetic order, `E` an activation energy, and `nu` a rate coefficient. Numerical integration uses a strictly increasing temperature grid and constant positive heating rate (SciPy `solve_ivp`, LSODA).
 
 The detector model applies an optimized signal scaling factor and optionally a constant baseline. Parameters are obtained using bounded nonlinear least squares; logarithmic parameterization is used for the prefactor and signal scale. Reaction order is fixed by default, or may be fitted under bounded optimization in the Python fitting API.
 
-**Units caveat:** for general coverage expressed in physical rather than dimensionless units, the kinetic coefficient's dimensions depend on reaction order. The present implementation uses normalized dimensionless coverage, with \`s⁻¹\` as a computational convention. It must not be mistaken for a universally dimensioned physical pre-exponential factor for arbitrary order.
+**Units caveat:** for general coverage expressed in physical rather than dimensionless units, the kinetic coefficient's dimensions depend on reaction order. The present implementation uses normalized dimensionless coverage, with `s⁻¹` as a computational convention. It must not be mistaken for a universally dimensioned physical pre-exponential factor for arbitrary order.
 
 ### 6.5 Multiple populations and multiple heating rates
 
@@ -159,12 +159,12 @@ A complete batch run may produce:
 
 | Artifact | Use |
 | --- | --- |
-| \`all_desorption_parameters.csv\` | Classical per-spectrum apparent estimates, fit-window settings and diagnostics |
-| \`batch_summary.csv\` | Combined batch and optional kinetic fit results |
-| \`all_tds_spectra.png\` | Comparison of spectra |
-| \`diagnostics/*_diagnostics.png\` | Per-spectrum plots for inspection |
-| \`analysis_warnings.csv\`, \`analysis_errors.csv\` | File-level flags and failures, when present |
-| \`analysis_project.json\` | Software version, effective parameters, input file identities and SHA-256 hashes |
+| `all_desorption_parameters.csv` | Classical per-spectrum apparent estimates, fit-window settings and diagnostics |
+| `batch_summary.csv` | Combined batch and optional kinetic fit results |
+| `all_tds_spectra.png` | Comparison of spectra |
+| `diagnostics/*_diagnostics.png` | Per-spectrum plots for inspection |
+| `analysis_warnings.csv`, `analysis_errors.csv` | File-level flags and failures, when present |
+| `analysis_project.json` | Software version, effective parameters, input file identities and SHA-256 hashes |
 
 The **Export plot PNG** button saves the current view as a 300 dpi image, independent of a complete batch analysis.
 
@@ -195,7 +195,7 @@ A practical independent-validation dataset should span: zero-, first-, second- a
 
 ## 10. Reproducing example analyses
 
-\`\`\`bash
+```bash
 # Supported CLI options should always be confirmed for the checked-out version:
 tpd-spectra --help
 
@@ -207,9 +207,9 @@ python -m tpd_spectra path/to/spectrum.csv --output tpd-results --kinetic-fit --
 
 # Run the repository regression tests:
 python -m pytest -q
-\`\`\`
+```
 
-The beta bundle deliberately includes no experimental sample spectra. Review \`ASSET-RIGHTS.md\` before distributing examples. Data from open-access papers can carry different figure licensing and attribution requirements; record and comply with each specific license.
+The beta bundle deliberately includes no experimental sample spectra. Review `ASSET-RIGHTS.md` before distributing examples. Data from open-access papers can carry different figure licensing and attribution requirements; record and comply with each specific license.
 
 ## 11. Known limitations and release boundary
 
@@ -221,7 +221,7 @@ The beta bundle deliberately includes no experimental sample spectra. Review \`A
 - Full experimental evidence supporting uncertainty calibration is not yet established.
 - Software results must be verified against raw spectra and independent scientific knowledge.
 
-See \`docs/BETA_ACCEPTANCE_CHECKLIST.md\` for release checks. Users should report reproducible issues with file format, screen/window state, exact operations, expected and observed outcomes, and software version; share measurement data only when permitted.
+See `docs/BETA_ACCEPTANCE_CHECKLIST.md` for release checks. Users should report reproducible issues with file format, screen/window state, exact operations, expected and observed outcomes, and software version; share measurement data only when permitted.
 
 ## 12. How this manual maps to a future JOSS paper
 
@@ -241,4 +241,4 @@ The user manual is intentionally more detailed than a JOSS article. A paper shou
 
 ## 13. Contributors and maintenance
 
-Project repository: [TPD-Spectra-Analysis](https://github.com/karol-cieslik/TPD-Spectra-Analysis). Citation details: \`CITATION.cff\`. Scope of code license: \`LICENSE\` and \`ASSET-RIGHTS.md\`. Please submit reproducible issues and suggested improvements through GitHub. The manuscript author list and affiliations are separate from code contribution history and must be confirmed with the relevant researchers.
+Project repository: [TPD-Spectra-Analysis](https://github.com/karol-cieslik/TPD-Spectra-Analysis). Citation details: `CITATION.cff`. Scope of code license: `LICENSE` and `ASSET-RIGHTS.md`. Please submit reproducible issues and suggested improvements through GitHub. The manuscript author list and affiliations are separate from code contribution history and must be confirmed with the relevant researchers.

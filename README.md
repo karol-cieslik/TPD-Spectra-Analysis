@@ -84,6 +84,10 @@ Full analysis writes:
 
 The app's **Export plot PNG** button saves the currently visible comparison, including its layout and display settings, at 300 dpi.
 
+## Detailed user and scientific methods manual
+
+For installation, GUI operation, kinetic equations, interpretation warnings, reproducible outputs, and the planned JOSS manuscript structure, see the [User and Scientific Methods Manual](docs/USER_AND_SCIENTIFIC_MANUAL.md). This is a beta working draft; the experimental validation and publication evidence are still being developed.
+
 ## Scientific scope
 
 Reported energies are model-dependent apparent estimates. Leading-edge analysis assumes signal is proportional to desorption rate over the selected interval. The Redhead estimate uses a first-order model and an assumed prefactor. Kinetic fits use the selected Polanyi–Wigner model and heating-ramp assumptions; two-state fits are exploratory. A successful fit or a high R² does not prove a unique mechanism. Inspect the traces, fit intervals, residuals, warnings, calibration, and experimental context before interpreting results.

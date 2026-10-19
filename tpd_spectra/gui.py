@@ -82,6 +82,21 @@ def build_cli_arguments(settings: dict[str, object]) -> list[str]:
     return args
 
 
+
+def workflow_guidance(imported: int, visible: int, *, running: bool = False) -> str:
+    """Give a useful next step without conflating preview and completed analysis."""
+    if running:
+        return "Analyzing spectra… Review warnings and results when the run finishes."
+    if imported == 0:
+        return "Step 1 of 4 · Import CSV spectra or add a folder to begin."
+    if visible == 0:
+        return "Step 2 of 4 · All imported traces are hidden. Select Show all to continue."
+    return (
+        f"Step 2–3 of 4 · {visible} visible of {imported} imported. "
+        "Inspect traces and analysis windows, then select Run full analysis."
+    )
+
+
 class TpdSpectraApp:
     """Compact three-panel app: import, tune, compare, then export or analyze."""
     def __init__(self, root: tk.Tk) -> None:
@@ -167,7 +182,7 @@ class TpdSpectraApp:
         self.run_button = ttk.Button(toolbar, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
         self.run_button.pack(side="right")
         ttk.Button(toolbar, text="Quick start  ?", command=self._show_quick_start).pack(side="right", padx=(0, 10))
-        self.status = tk.StringVar(value="Import CSV files or a folder to begin.")
+        self.status = tk.StringVar(value=workflow_guidance(0, 0))
         ttk.Label(toolbar, textvariable=self.status, foreground=MUTED).pack(side="right", padx=12)
 
         body = ttk.Frame(self.root, padding=(18, 0, 18, 10))
@@ -222,7 +237,7 @@ class TpdSpectraApp:
         )
 
     def _files_panel(self) -> None:
-        ttk.Label(self.sidebar, text="SPECTRA", style="Section.TLabel").pack(anchor="w")
+        ttk.Label(self.sidebar, text="1  ·  IMPORTED SPECTRA", style="Section.TLabel").pack(anchor="w")
         ttk.Label(self.sidebar, text="Imported traces appear together in the plot.", style="Muted.TLabel").pack(anchor="w", pady=(2, 8))
         columns = ("visible", "name", "points")
         self.file_table = ttk.Treeview(self.sidebar, columns=columns, show="headings", height=7, selectmode="extended")
@@ -241,14 +256,14 @@ class TpdSpectraApp:
         ttk.Button(row, text="Hide all", command=lambda: self._set_visible(False)).pack(side="left", padx=5)
         ttk.Button(row, text="Remove", command=self._remove_selected).pack(side="right")
 
-        ttk.Label(self.sidebar, text="RESULTS FOLDER", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
+        ttk.Label(self.sidebar, text="4  ·  RESULTS DESTINATION", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
         output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
         output_row.pack(fill="x", pady=(0, 8))
         ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)
         ttk.Button(output_row, text="Browse", command=self._choose_output).pack(side="left", padx=(5, 0))
 
         ttk.Separator(self.sidebar).pack(fill="x", pady=5)
-        ttk.Label(self.sidebar, text="PLOT CONTROLS", style="Section.TLabel").pack(anchor="w", pady=(7, 6))
+        ttk.Label(self.sidebar, text="2  ·  EXPLORE SPECTRA", style="Section.TLabel").pack(anchor="w", pady=(7, 6))
         self._choice("Chart layout", self.view_mode, ("Overlay", "Small multiples"))
         self._choice("X axis", self.x_mode, ("Temperature", "Time"))
         self._choice("Smoothing", self.filter_method, ("median", "mean", "none"))
@@ -259,7 +274,7 @@ class TpdSpectraApp:
                         command=self._draw_plot).pack(anchor="w", pady=(3, 9))
 
         ttk.Separator(self.sidebar).pack(fill="x", pady=5)
-        ttk.Label(self.sidebar, text="ANALYSIS WINDOWS  ·  °C", style="Section.TLabel").pack(anchor="w", pady=(7, 4))
+        ttk.Label(self.sidebar, text="3  ·  SELECT ANALYSIS WINDOWS  ·  °C", style="Section.TLabel").pack(anchor="w", pady=(7, 4))
         self._slider("Leading edge · from", self.leading_low, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Leading edge · to", self.leading_high, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Peak search · from", self.peak_low, 0, 700, " °C", on_change=self._range_changed)
@@ -352,9 +367,9 @@ class TpdSpectraApp:
     def _empty_plot(self) -> None:
         self.axis.clear()
         self.axis.set_facecolor("#ffffff")
-        self.axis.text(.5, .54, "Import spectra to start exploring", transform=self.axis.transAxes,
+        self.axis.text(.5, .54, "1 · Import CSV spectra to begin", transform=self.axis.transAxes,
                        ha="center", va="center", fontsize=16, color="#64748b", weight="bold")
-        self.axis.text(.5, .47, "Use Import CSV files or Add folder above", transform=self.axis.transAxes,
+        self.axis.text(.5, .47, "Use Import CSV files or Add folder above; then explore and analyze", transform=self.axis.transAxes,
                        ha="center", va="center", fontsize=10, color="#94a3b8")
         self.axis.set_xticks([]); self.axis.set_yticks([])
         for edge in self.axis.spines.values(): edge.set_visible(False)
@@ -431,8 +446,14 @@ class TpdSpectraApp:
             return
         visible = [(key, row) for key, row in self.spectra.items() if row["visible"]]
         self.count_label.configure(text=f"{len(visible)} of {len(self.spectra)} traces shown")
+        if not self.running:
+            self.status.set(workflow_guidance(len(self.spectra), len(visible)))
         if not visible:
             self._empty_plot()
+            if self.spectra:
+                self.axis.text(.5, .38, "All traces hidden · Click Show all in the sidebar",
+                               transform=self.axis.transAxes, ha="center", fontsize=10, color=MUTED)
+                self.canvas.draw_idle()
             return
         self.figure.clear()
         mode = self.view_mode.get()

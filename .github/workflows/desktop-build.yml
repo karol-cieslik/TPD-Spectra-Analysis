@@ -3,7 +3,7 @@ name: Windows desktop build
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, 'feature/gui-usability']
     paths:
       - 'tpd_spectra/**'
       - 'run_tpd_spectra*.py'
@@ -31,6 +31,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-build.txt
           python -m pip install -e .
+      - name: Verify scientific and GUI regression tests
+        run: python -m pytest -q
       - name: Build single-file desktop app
         run: >-
           pyinstaller --clean --noconfirm --onefile --windowed
@@ -70,7 +72,7 @@ jobs:
       - name: Publish downloadable build
         uses: actions/upload-artifact@v4
         with:
-          name: tpd-spectra-windows-x64
+          name: tpd-spectra-windows-x64-${{ github.ref_name == 'main' && 'stable' || 'gui-preview' }}
           path: release-package/*
           if-no-files-found: error
           retention-days: 90

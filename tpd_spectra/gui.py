@@ -256,7 +256,7 @@ class TpdSpectraApp:
         ttk.Button(row, text="Hide all", command=lambda: self._set_visible(False)).pack(side="left", padx=5)
         ttk.Button(row, text="Remove", command=self._remove_selected).pack(side="right")
 
-        ttk.Label(self.sidebar, text="4  ·  RESULTS DESTINATION", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
+        ttk.Label(self.sidebar, text="RESULTS DESTINATION", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
         output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
         output_row.pack(fill="x", pady=(0, 8))
         ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)

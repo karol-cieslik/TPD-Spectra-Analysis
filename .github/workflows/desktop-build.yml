@@ -3,7 +3,7 @@ name: Windows desktop build
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'feature/gui-usability']
+    branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate']
     paths:
       - 'tpd_spectra/**'
       - 'tests/**'
@@ -73,7 +73,7 @@ jobs:
       - name: Publish downloadable build
         uses: actions/upload-artifact@v4
         with:
-          name: tpd-spectra-windows-x64-${{ github.ref_name == 'main' && 'stable' || 'gui-preview' }}
+          name: tpd-spectra-windows-x64-${{ github.ref_name == 'main' && 'stable' || 'beta-candidate' }}
           path: release-package/*
           if-no-files-found: error
           retention-days: 90

@@ -34,6 +34,13 @@ jobs:
           python -m pip install -e .
       - name: Verify scientific and GUI regression tests
         run: python -m pytest -q
+      - name: Validate desktop entrypoint without a display
+        run: |
+          python -c "import tpd_spectra.gui; import tpd_spectra.gui_ranges; import tpd_spectra.identifiability; print('Desktop modules import successfully')"
+          python run_tpd_spectra_gui.py --tpd-cli --help
+      - name: Validate installable command entry points
+        run: |
+          tpd-spectra --help
       - name: Build single-file desktop app
         run: >-
           pyinstaller --clean --noconfirm --onefile --windowed

@@ -5,6 +5,7 @@ not validate experimental mechanisms or calibrate confidence intervals.
 """
 import numpy as np
 import pytest
+from scipy.integrate import trapezoid
 
 from tpd_spectra.kinetics import simulate_tpd, fit_polanyi_wigner
 
@@ -19,7 +20,7 @@ def test_simulated_desorption_obeys_coverage_balance(order):
     assert np.all(np.diff(theta) <= 1e-8)
     assert theta.min() >= 0
     # Trapezoidal quadrature converges toward the coverage decrease.
-    released = np.trapezoid(rate, temperature) / beta
+    released = trapezoid(rate, temperature) / beta
     assert released == pytest.approx(theta[0] - theta[-1], abs=0.02)
 
 

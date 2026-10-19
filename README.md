@@ -92,6 +92,10 @@ For installation, GUI operation, kinetic equations, interpretation warnings, rep
 
 Reported energies are model-dependent apparent estimates. Leading-edge analysis assumes signal is proportional to desorption rate over the selected interval. The Redhead estimate uses a first-order model and an assumed prefactor. Kinetic fits use the selected Polanyi–Wigner model and heating-ramp assumptions; two-state fits are exploratory. A successful fit or a high R² does not prove a unique mechanism. Inspect the traces, fit intervals, residuals, warnings, calibration, and experimental context before interpreting results.
 
+## Development priorities
+
+The [prioritized development roadmap](docs/PRIORITIZED_DEVELOPMENT_ROADMAP.md) tracks beta stabilization, scientific reliability, developer maintainability and future validation. The priority is useful, trustworthy research software; feature expansions are staged according to demonstrated needs.
+
 ## Development
 
 ```bash

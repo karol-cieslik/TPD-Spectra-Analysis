@@ -58,10 +58,10 @@ def test_heating_rate_linear_synthetic_data():
     assert slope == pytest.approx(30)
     assert r2 == pytest.approx(1.0)
 
-def test_all_included_example_csv_files_import():
+def test_all_included_example_csv_files_import(example_spectra):
     from pathlib import Path
     from tpd_spectra.analysis import load_spectrum
-    files = sorted(Path('input').glob('*.csv'))
+    files = example_spectra
     assert len(files) == 9
     for path in files:
         spectrum = load_spectrum(path)
@@ -93,10 +93,10 @@ def test_quality_diagnostics_are_screening_metrics_not_correction():
     assert np.array_equal(signal, before)
 
 
-def test_analysis_reports_prefactor_sensitivity_and_warnings():
+def test_analysis_reports_prefactor_sensitivity_and_warnings(example_spectra):
     from pathlib import Path
     from tpd_spectra.analysis import analyze_file
-    path = sorted(Path('input').glob('*.csv'))[1]
+    path = example_spectra[1]
     result = analyze_file(path)
     assert result['redhead_energy_prefactor_0.1x_eV'] < result['redhead_energy_eV']
     assert result['redhead_energy_prefactor_10x_eV'] > result['redhead_energy_eV']
@@ -105,10 +105,10 @@ def test_analysis_reports_prefactor_sensitivity_and_warnings():
     assert 'leading_edge_energy_CI95_lower_eV_regression_only' in result
 
 
-def test_cli_exports_diagnostic_artifacts(tmp_path):
+def test_cli_exports_diagnostic_artifacts(tmp_path, example_spectra):
     from pathlib import Path
     from tpd_spectra.cli import main
-    source = sorted(Path('input').glob('*.csv'))[1]
+    source = example_spectra[1]
     out = tmp_path / 'results'
     assert main([str(source), '--output', str(out)]) == 0
     assert (out / 'all_desorption_parameters.csv').is_file()
@@ -120,18 +120,19 @@ def test_cli_exports_diagnostic_artifacts(tmp_path):
     assert 'diagnostic_warnings' in result.columns
 
 
-def test_cli_saves_reproducible_project_manifest_and_config(tmp_path):
+def test_cli_saves_reproducible_project_manifest_and_config(tmp_path, example_spectra):
     import json
     from pathlib import Path
     from tpd_spectra.cli import main
-    source = sorted(Path('input').glob('*.csv'))[1]
+    source = example_spectra[1]
     out = tmp_path / 'project-output'
     config = tmp_path / 'saved-config.json'
     assert main([str(source), '--output', str(out), '--window', '7',
                  '--save-config', str(config)]) == 0
     manifest = json.loads((out / 'analysis_project.json').read_text(encoding='utf-8'))
     saved_config = json.loads(config.read_text(encoding='utf-8'))
-    assert manifest['software_version'] == '0.9.1'
+    from tpd_spectra import __version__
+    assert manifest['software_version'] == __version__
     assert manifest['parameters']['window'] == 7
     assert len(manifest['inputs_processed']) == 1
     assert len(manifest['inputs_processed'][0]['sha256']) == 64
@@ -140,11 +141,11 @@ def test_cli_saves_reproducible_project_manifest_and_config(tmp_path):
     assert (out / 'batch_summary.csv').is_file()
 
 
-def test_cli_config_and_explicit_cli_override(tmp_path):
+def test_cli_config_and_explicit_cli_override(tmp_path, example_spectra):
     import json
     from pathlib import Path
     from tpd_spectra.cli import main
-    source = sorted(Path('input').glob('*.csv'))[1]
+    source = example_spectra[1]
     config = tmp_path / 'config.json'
     config.write_text(json.dumps({'window': 4, 'filter': 'mean'}), encoding='utf-8')
     out = tmp_path / 'configured-output'

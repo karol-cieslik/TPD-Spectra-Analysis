@@ -6,6 +6,7 @@ on:
     branches: [main, 'feature/gui-usability']
     paths:
       - 'tpd_spectra/**'
+      - 'tests/**'
       - 'run_tpd_spectra*.py'
       - 'pyproject.toml'
       - 'requirements*.txt'

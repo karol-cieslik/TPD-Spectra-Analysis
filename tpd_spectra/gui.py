@@ -166,6 +166,7 @@ class TpdSpectraApp:
         ttk.Button(toolbar, text="Export plot PNG", command=self._export_png).pack(side="left", padx=(8, 0))
         self.run_button = ttk.Button(toolbar, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
         self.run_button.pack(side="right")
+        ttk.Button(toolbar, text="Quick start  ?", command=self._show_quick_start).pack(side="right", padx=(0, 10))
         self.status = tk.StringVar(value="Import CSV files or a folder to begin.")
         ttk.Label(toolbar, textvariable=self.status, foreground=MUTED).pack(side="right", padx=12)
 
@@ -201,6 +202,24 @@ class TpdSpectraApp:
         footer.pack(fill="x")
         ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(side="left")
         ttk.Button(footer, text="Open results folder", command=self._open_output).pack(side="right")
+
+    def _show_quick_start(self) -> None:
+        """Explain the normal workflow without changing analysis settings."""
+        messagebox.showinfo(
+            "Getting started with TPD Spectra Studio",
+            "1. IMPORT: Select one or more CSV spectra or add a folder.\\n\\n"
+            "2. EXPLORE: Show or hide traces, choose an overlay or small multiples, "
+            "and adjust smoothing. The comparison updates interactively.\\n\\n"
+            "3. SELECT: Set leading-edge and peak-search temperature windows. "
+            "Shaded areas show which data will be analyzed.\\n\\n"
+            "4. ANALYZE: Choose a results folder. Enable kinetic fitting only if "
+            "the model assumptions apply, then click Run full analysis.\\n\\n"
+            "5. REVIEW: Open the results folder and inspect diagnostic plots "
+            "and warnings before interpreting energies.\\n\\n"
+            "TIP: Export plot PNG saves the current view without running the "
+            "full analysis. A good-looking fit does not establish a unique mechanism.",
+            parent=self.root,
+        )
 
     def _files_panel(self) -> None:
         ttk.Label(self.sidebar, text="SPECTRA", style="Section.TLabel").pack(anchor="w")

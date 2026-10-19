@@ -11,9 +11,11 @@ from tkinter import filedialog, messagebox, ttk
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
+from matplotlib.widgets import SpanSelector
 
 from . import __version__
 from .analysis import load_spectrum, smooth_signal
+from .gui_ranges import validate_temperature_window, window_from_drag
 
 
 PALETTE = ["#2563eb", "#e76f51", "#059669", "#9333ea", "#d97706", "#0891b2",
@@ -82,6 +84,21 @@ def build_cli_arguments(settings: dict[str, object]) -> list[str]:
     return args
 
 
+
+def workflow_guidance(imported: int, visible: int, *, running: bool = False) -> str:
+    """Give a useful next step without conflating preview and completed analysis."""
+    if running:
+        return "Analyzing spectra… Review warnings and results when the run finishes."
+    if imported == 0:
+        return "Step 1 of 4 · Import CSV spectra or add a folder to begin."
+    if visible == 0:
+        return "Step 2 of 4 · All imported traces are hidden. Select Show all to continue."
+    return (
+        f"Step 2–3 of 4 · {visible} visible of {imported} imported. "
+        "Inspect traces and analysis windows, then select Run full analysis."
+    )
+
+
 class TpdSpectraApp:
     """Compact three-panel app: import, tune, compare, then export or analyze."""
     def __init__(self, root: tk.Tk) -> None:
@@ -122,6 +139,8 @@ class TpdSpectraApp:
         self.kinetic_energy = tk.StringVar(value="1.0")
         self.kinetic_prefactor = tk.StringVar(value="1e13")
         self.no_baseline = tk.BooleanVar(value=False)
+        self._span_selector = None
+        self._selection_kind = None
         self._style()
         self._build()
         self.root.after(100, self._poll_worker)
@@ -166,44 +185,86 @@ class TpdSpectraApp:
         ttk.Button(toolbar, text="Export plot PNG", command=self._export_png).pack(side="left", padx=(8, 0))
         self.run_button = ttk.Button(toolbar, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
         self.run_button.pack(side="right")
-        self.status = tk.StringVar(value="Import CSV files or a folder to begin.")
+        ttk.Button(toolbar, text="Quick start  ?", command=self._show_quick_start).pack(side="right", padx=(0, 10))
+        self.status = tk.StringVar(value=workflow_guidance(0, 0))
         ttk.Label(toolbar, textvariable=self.status, foreground=MUTED).pack(side="right", padx=12)
 
         body = ttk.Frame(self.root, padding=(18, 0, 18, 10))
         body.pack(fill="both", expand=True)
-        body.columnconfigure(0, weight=0, minsize=322)
-        body.columnconfigure(1, weight=1)
         body.rowconfigure(0, weight=1)
-        sidebar_frame = ttk.Frame(body, style="Card.TFrame", width=322)
-        sidebar_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
-        sidebar_frame.grid_propagate(False)
-        sidebar_frame.rowconfigure(0, weight=1)
-        sidebar_frame.columnconfigure(0, weight=1)
-        sidebar_canvas = tk.Canvas(sidebar_frame, background="white", highlightthickness=0, width=306)
-        sidebar_scroll = ttk.Scrollbar(sidebar_frame, orient="vertical", command=sidebar_canvas.yview)
-        sidebar_canvas.configure(yscrollcommand=sidebar_scroll.set)
-        sidebar_canvas.grid(row=0, column=0, sticky="nsew")
-        sidebar_scroll.grid(row=0, column=1, sticky="ns")
-        self.sidebar = ttk.Frame(sidebar_canvas, style="Card.TFrame", padding=14)
-        sidebar_window = sidebar_canvas.create_window((0, 0), window=self.sidebar, anchor="nw")
-        self.sidebar.bind("<Configure>", lambda _event: sidebar_canvas.configure(scrollregion=sidebar_canvas.bbox("all")))
-        sidebar_canvas.bind("<Configure>", lambda event: sidebar_canvas.itemconfigure(sidebar_window, width=event.width))
-        sidebar_canvas.bind("<MouseWheel>", lambda event: sidebar_canvas.yview_scroll(-1 if event.delta > 0 else 1, "units"))
-        workspace = ttk.Frame(body, style="Card.TFrame", padding=(12, 10))
-        workspace.grid(row=0, column=1, sticky="nsew")
+        body.columnconfigure(0, weight=1)
+
+        # A draggable divider gives the plot room without hiding controls.
+        self.main_panes = ttk.Panedwindow(body, orient="horizontal")
+        self.main_panes.grid(row=0, column=0, sticky="nsew")
+        controls = ttk.Frame(self.main_panes, style="Card.TFrame", width=365)
+        workspace = ttk.Frame(self.main_panes, style="Card.TFrame", padding=(12, 10))
+        self.main_panes.add(controls, weight=0)
+        self.main_panes.add(workspace, weight=1)
+        controls.rowconfigure(0, weight=1)
+        controls.columnconfigure(0, weight=1)
         workspace.columnconfigure(0, weight=1)
         workspace.rowconfigure(1, weight=1)
 
+        # Separate everyday visualization from scientific settings.
+        self.control_tabs = ttk.Notebook(controls)
+        self.control_tabs.grid(row=0, column=0, sticky="nsew")
+        self.spectra_tab = ttk.Frame(self.control_tabs, style="Card.TFrame")
+        self.analysis_tab = ttk.Frame(self.control_tabs, style="Card.TFrame")
+        self.control_tabs.add(self.spectra_tab, text="Spectra & view")
+        self.control_tabs.add(self.analysis_tab, text="Analysis settings")
+        self.spectra_panel = self._scroll_panel(self.spectra_tab)
+        self.analysis_panel = self._scroll_panel(self.analysis_tab)
+        self.sidebar = self.spectra_panel
         self._files_panel()
+        self.sidebar = self.analysis_panel
+        self._analysis_panel()
         self._workspace(workspace)
+        # The notebook controls are now constructed; remove ambiguity for
+        # any future additions by keeping an explicit analysis container.
+        self.sidebar = self.analysis_panel
 
         footer = ttk.Frame(self.root, padding=(20, 5))
         footer.pack(fill="x")
         ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(side="left")
         ttk.Button(footer, text="Open results folder", command=self._open_output).pack(side="right")
 
+    def _show_quick_start(self) -> None:
+        """Explain the normal workflow without changing analysis settings."""
+        messagebox.showinfo(
+            "Getting started with TPD Spectra Studio",
+            "1. IMPORT: Select one or more CSV spectra or add a folder.\\n\\n"
+            "2. EXPLORE: Show or hide traces, choose an overlay or small multiples, "
+            "and adjust smoothing. The comparison updates interactively.\\n\\n"
+            "3. SELECT: Set leading-edge and peak-search temperature windows. "
+            "Shaded areas show which data will be analyzed.\\n\\n"
+            "4. ANALYZE: Choose a results folder. Enable kinetic fitting only if "
+            "the model assumptions apply, then click Run full analysis.\\n\\n"
+            "5. REVIEW: Open the results folder and inspect diagnostic plots "
+            "and warnings before interpreting energies.\\n\\n"
+            "TIP: Export plot PNG saves the current view without running the "
+            "full analysis. A good-looking fit does not establish a unique mechanism.",
+            parent=self.root,
+        )
+
+    def _scroll_panel(self, parent: ttk.Frame) -> ttk.Frame:
+        """Return a separately scrollable controls region for one notebook tab."""
+        parent.rowconfigure(0, weight=1)
+        parent.columnconfigure(0, weight=1)
+        canvas = tk.Canvas(parent, background="white", highlightthickness=0)
+        scrollbar = ttk.Scrollbar(parent, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        content = ttk.Frame(canvas, style="Card.TFrame", padding=14)
+        window = canvas.create_window((0, 0), window=content, anchor="nw")
+        content.bind("<Configure>", lambda _event: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.bind("<Configure>", lambda event: canvas.itemconfigure(window, width=event.width))
+        canvas.bind("<MouseWheel>", lambda event: canvas.yview_scroll(-1 if event.delta > 0 else 1, "units"))
+        return content
+
     def _files_panel(self) -> None:
-        ttk.Label(self.sidebar, text="SPECTRA", style="Section.TLabel").pack(anchor="w")
+        ttk.Label(self.sidebar, text="1  ·  IMPORTED SPECTRA", style="Section.TLabel").pack(anchor="w")
         ttk.Label(self.sidebar, text="Imported traces appear together in the plot.", style="Muted.TLabel").pack(anchor="w", pady=(2, 8))
         columns = ("visible", "name", "points")
         self.file_table = ttk.Treeview(self.sidebar, columns=columns, show="headings", height=7, selectmode="extended")
@@ -222,14 +283,7 @@ class TpdSpectraApp:
         ttk.Button(row, text="Hide all", command=lambda: self._set_visible(False)).pack(side="left", padx=5)
         ttk.Button(row, text="Remove", command=self._remove_selected).pack(side="right")
 
-        ttk.Label(self.sidebar, text="RESULTS FOLDER", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
-        output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
-        output_row.pack(fill="x", pady=(0, 8))
-        ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)
-        ttk.Button(output_row, text="Browse", command=self._choose_output).pack(side="left", padx=(5, 0))
-
-        ttk.Separator(self.sidebar).pack(fill="x", pady=5)
-        ttk.Label(self.sidebar, text="PLOT CONTROLS", style="Section.TLabel").pack(anchor="w", pady=(7, 6))
+        ttk.Label(self.sidebar, text="2  ·  EXPLORE SPECTRA", style="Section.TLabel").pack(anchor="w", pady=(7, 6))
         self._choice("Chart layout", self.view_mode, ("Overlay", "Small multiples"))
         self._choice("X axis", self.x_mode, ("Temperature", "Time"))
         self._choice("Smoothing", self.filter_method, ("median", "mean", "none"))
@@ -239,12 +293,22 @@ class TpdSpectraApp:
         ttk.Checkbutton(self.sidebar, text="Normalize each trace to 0–1", variable=self.normalize,
                         command=self._draw_plot).pack(anchor="w", pady=(3, 9))
 
+
+    def _analysis_panel(self) -> None:
+        ttk.Label(self.sidebar, text="FIT & EXPORT", style="Section.TLabel").pack(anchor="w", pady=(0, 6))
         ttk.Separator(self.sidebar).pack(fill="x", pady=5)
         ttk.Label(self.sidebar, text="ANALYSIS WINDOWS  ·  °C", style="Section.TLabel").pack(anchor="w", pady=(7, 4))
         self._slider("Leading edge · from", self.leading_low, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Leading edge · to", self.leading_high, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Peak search · from", self.peak_low, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Peak search · to", self.peak_high, 0, 700, " °C", on_change=self._range_changed)
+        ttk.Button(self.sidebar, text="Select leading edge on plot",
+                   command=lambda: self._start_span("leading")).pack(fill="x", pady=(7, 2))
+        ttk.Button(self.sidebar, text="Select peak interval on plot",
+                   command=lambda: self._start_span("peak")).pack(fill="x", pady=2)
+        ttk.Label(self.sidebar, text="Use the temperature axis; disable pan/zoom first.",
+                  style="Muted.TLabel").pack(anchor="w")
+        self._precise_windows()
         ttk.Label(self.sidebar, text="Shaded bands mark the selected analysis regions.", style="Muted.TLabel").pack(anchor="w", pady=(3, 8))
         details = ttk.Frame(self.sidebar, style="Card.TFrame")
         details.pack(fill="x", pady=(0, 7))
@@ -253,6 +317,14 @@ class TpdSpectraApp:
         ttk.Label(details, text="Heating-fit time limit (min; −1 = all)", style="Card.TLabel").grid(row=1, column=0, sticky="w", pady=2)
         ttk.Entry(details, textvariable=self.max_time, width=11).grid(row=1, column=1, sticky="e")
         self._advanced_panel()
+
+        ttk.Separator(self.sidebar).pack(fill="x", pady=10)
+        ttk.Label(self.sidebar, text="RESULTS DESTINATION", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
+        output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
+        output_row.pack(fill="x", pady=(0, 8))
+        ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)
+        ttk.Button(output_row, text="Browse", command=self._choose_output).pack(side="left", padx=(5, 0))
+
 
     def _choice(self, label: str, variable: tk.StringVar, values: tuple[str, ...]) -> None:
         row = ttk.Frame(self.sidebar, style="Card.TFrame")
@@ -330,12 +402,94 @@ class TpdSpectraApp:
         self.nav_toolbar.pack(side="left")
         self._empty_plot()
 
+
+    def _precise_windows(self) -> None:
+        """Typed temperature windows also permit sub-degree selections."""
+        frame = ttk.Frame(self.sidebar, style="Card.TFrame")
+        frame.pack(fill="x", pady=6)
+        self.window_entries = []
+        for i, (label, low, high) in enumerate((
+            ("Leading", self.leading_low, self.leading_high),
+            ("Peak", self.peak_low, self.peak_high),
+        )):
+            ttk.Label(frame, text=label, style="Card.TLabel").grid(row=i, column=0, sticky="w")
+            a, b = ttk.Entry(frame, width=8), ttk.Entry(frame, width=8)
+            a.grid(row=i, column=1, padx=3, pady=3)
+            b.grid(row=i, column=2, padx=3, pady=3)
+            self.window_entries.append((a, b, low, high))
+        self._refresh_window_entries()
+        ttk.Button(self.sidebar, text="Apply exact windows (°C)",
+                   command=self._apply_exact_windows).pack(fill="x", pady=(0, 6))
+
+    def _refresh_window_entries(self) -> None:
+        for a, b, low, high in getattr(self, "window_entries", []):
+            for entry, value in ((a, low.get()), (b, high.get())):
+                entry.delete(0, tk.END)
+                entry.insert(0, f"{value:g}")
+
+    def _apply_exact_windows(self) -> None:
+        try:
+            values = [validate_temperature_window(a.get(), b.get())
+                      for a, b, _, _ in self.window_entries]
+        except (ValueError, OverflowError) as exc:
+            messagebox.showerror("Invalid analysis interval", str(exc), parent=self.root)
+            return
+        for (_, _, low, high), (lo, hi) in zip(self.window_entries, values):
+            low.set(lo)
+            high.set(hi)
+        self._draw_plot()
+
+    def _stop_span(self) -> None:
+        if self._span_selector is not None:
+            self._span_selector.set_active(False)
+            self._span_selector.disconnect_events()
+        self._span_selector = None
+        self._selection_kind = None
+
+    def _start_span(self, which: str) -> None:
+        if self.x_mode.get() != "Temperature":
+            messagebox.showinfo("Temperature axis required",
+                                "Switch the X axis to Temperature.", parent=self.root)
+            return
+        if not any(row["visible"] for row in self.spectra.values()):
+            messagebox.showinfo("Nothing to select", "Show a spectrum first.", parent=self.root)
+            return
+        if self.nav_toolbar.mode:
+            messagebox.showinfo("Pan/zoom active", "Disable plot pan/zoom first.", parent=self.root)
+            return
+        self._stop_span()
+        self._selection_kind = which
+        self._span_selector = SpanSelector(
+            self.axis, self._span_finished, "horizontal",
+            useblit=False, props={"facecolor": "#f59e0b" if which == "leading" else "#8b5cf6",
+                                   "alpha": 0.25},
+        )
+        self.status.set(f"Drag horizontally to select the {which} interval.")
+
+    def _span_finished(self, a: float, b: float) -> None:
+        which = self._selection_kind
+        self._stop_span()
+        if which is None:
+            return
+        try:
+            lo, hi = window_from_drag(a, b)
+        except ValueError as exc:
+            self.status.set(str(exc))
+            return
+        low, high = ((self.leading_low, self.leading_high) if which == "leading"
+                     else (self.peak_low, self.peak_high))
+        low.set(lo)
+        high.set(hi)
+        self._refresh_window_entries()
+        self._draw_plot()
+        self.status.set(f"{which.title()} interval: {lo:.2f}–{hi:.2f} °C.")
+
     def _empty_plot(self) -> None:
         self.axis.clear()
         self.axis.set_facecolor("#ffffff")
-        self.axis.text(.5, .54, "Import spectra to start exploring", transform=self.axis.transAxes,
+        self.axis.text(.5, .54, "1 · Import CSV spectra to begin", transform=self.axis.transAxes,
                        ha="center", va="center", fontsize=16, color="#64748b", weight="bold")
-        self.axis.text(.5, .47, "Use Import CSV files or Add folder above", transform=self.axis.transAxes,
+        self.axis.text(.5, .47, "Use Import CSV files or Add folder above; then explore and analyze", transform=self.axis.transAxes,
                        ha="center", va="center", fontsize=10, color="#94a3b8")
         self.axis.set_xticks([]); self.axis.set_yticks([])
         for edge in self.axis.spines.values(): edge.set_visible(False)
@@ -405,6 +559,7 @@ class TpdSpectraApp:
             self.leading_high.set(min(700, self.leading_low.get() + 1))
         if self.peak_low.get() >= self.peak_high.get():
             self.peak_high.set(min(700, self.peak_low.get() + 1))
+        self._refresh_window_entries()
         self._draw_plot()
 
     def _draw_plot(self) -> None:
@@ -412,9 +567,16 @@ class TpdSpectraApp:
             return
         visible = [(key, row) for key, row in self.spectra.items() if row["visible"]]
         self.count_label.configure(text=f"{len(visible)} of {len(self.spectra)} traces shown")
+        if not self.running:
+            self.status.set(workflow_guidance(len(self.spectra), len(visible)))
         if not visible:
             self._empty_plot()
+            if self.spectra:
+                self.axis.text(.5, .38, "All traces hidden · Click Show all in the sidebar",
+                               transform=self.axis.transAxes, ha="center", fontsize=10, color=MUTED)
+                self.canvas.draw_idle()
             return
+        self._stop_span()
         self.figure.clear()
         mode = self.view_mode.get()
         count = len(visible) if mode == "Small multiples" else 1

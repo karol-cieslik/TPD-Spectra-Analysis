@@ -140,7 +140,7 @@ pyinstaller --clean --noconfirm --onefile --windowed --name TPD-Spectra-Studio r
 | Workflow / check | Trigger | Purpose |
 | --- | --- | --- |
 | [Windows desktop build](.github/workflows/desktop-build.yml) | Selected branch pushes and manual dispatch | Installs dependencies, runs tests, performs startup checks, packages an EXE and uploads a ZIP |
-| [Scientific tests](.github/workflows/scientific-tests.yml) | Scientific research branch changes | Scientific regression and benchmark smoke tests |
+| [Scientific tests (research branch)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/feature/kinetic-identifiability-diagnostics/.github/workflows/scientific-tests.yml) | Scientific research branch changes | Scientific regression and benchmark smoke tests |
 
 The [beta candidate PR](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/5) is not merged into the stable main branch. A passing build is **not** the same as final release approval.
 

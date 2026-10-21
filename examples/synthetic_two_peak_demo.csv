@@ -490,132 +490,113 @@ Time_ms,Signal,Temperature
 244000,4.213567244377e-05,314.00
 244500,3.363637941111e-05,314.50
 245000,2.667283042172e-05,315.00
-245500…4424 tokens truncated…ower_c: float, upper_c: float, *, min_points: int = 5) -> FitResult:
-    """Fit ln(signal) vs 1/T for the selected leading-edge interval.
-
-    Implements ln(r) = ln(nu/beta) - E/(k_B T), assuming signal is proportional
-    to rate and the selected region follows the stated zero-order-style model.
-    """
-    temp = np.asarray(temperature_c, dtype=float)
-    sig = np.asarray(signal, dtype=float)
-    if temp.shape != sig.shape:
-        raise ValueError('temperature and signal arrays must have identical shapes')
-    if not (lower_c < upper_c):
-        raise ValueError('lower_c must be smaller than upper_c')
-    if not np.isfinite(beta_k_s) or beta_k_s <= 0:
-        raise ValueError('heating rate beta_k_s must be positive and finite')
-    # One mask is applied to both arrays: no x/y index misalignment.
-    mask = np.isfinite(temp) & np.isfinite(sig) & (temp >= lower_c) & (temp <= upper_c) & (sig > 0)
-    x = 1.0 / (temp[mask] + 273.15)
-    y = np.log(sig[mask])
-    if x.size < min_points:
-        raise ValueError(f'Leading-edge fit has {x.size} positive-signal points; need at least {min_points}')
-    reg = _linear_regression_diagnostics(x, y)
-    slope, intercept = reg["slope"], reg["intercept"]
-    energy = -float(slope) * K_B_EV
-    prefactor = float(beta_k_s * np.exp(np.clip(intercept, -700, 700)))
-    # Transform the slope's OLS confidence interval into energy. This captures
-    # regression scatter only; it excludes systematic/model uncertainty.
-    ci_low = -reg["slope_ci95_upper"] * K_B_EV
-    ci_high = -reg["slope_ci95_lower"] * K_B_EV
-    return FitResult(float(slope), float(intercept), reg["r_squared"], int(x.size), energy, prefactor,
-                     float(beta_k_s), float(lower_c), float(upper_c), reg["residual_rmse"],
-                     reg["slope_stderr"], float(ci_low), float(ci_high))
-
-
-def redhead_energy(t_peak_c: float, prefactor_s_inv: float, beta_k_s: float,
-                   *, peak_order: int = 1, redhead_constant: float = 3.64) -> float:
-    """Return Redhead apparent energy in eV using peak temperature in kelvin.
-
-    Uses E = k_B*T_p*[ln(nu*T_p/beta) - 3.64] for first-order desorption.
-    `prefactor_s_inv` and `beta_k_s` must both use inverse seconds.
-    """
-    if peak_order != 1:
-        raise ValueError('This Redhead implementation is for first-order desorption only')
-    t_k = float(t_peak_c) + 273.15
-    if not np.isfinite(t_k) or t_k <= 0:
-        raise ValueError('peak temperature must correspond to a positive kelvin temperature')
-    if not np.isfinite(prefactor_s_inv) or prefactor_s_inv <= 0:
-        raise ValueError('prefactor_s_inv must be positive and finite')
-    if not np.isfinite(beta_k_s) or beta_k_s <= 0:
-        raise ValueError('beta_k_s must be positive and finite')
-    log_arg = prefactor_s_inv * t_k / beta_k_s
-    if log_arg <= 0 or not np.isfinite(log_arg):
-        raise ValueError('invalid Redhead logarithm argument')
-    return float(K_B_EV * t_k * (math.log(log_arg) - redhead_constant))
-
-
-def short_label(filename: str) -> str:
-    """Use the historical 6CC label when available; otherwise use the stem."""
-    match = re.search(r'6CC_(.*?)_2xPID', filename)
-    return match.group(1) if match else Path(filename).stem
-
-
-def analyze_file(path: str | Path, *, leading_edge_c: tuple[float, float] = (130.0, 170.0),
-                 redhead_region_c: tuple[float, float] = (230.0, 400.0),
-                 prefactor_s_inv: float = 1e20, smoothing_window: int = 10,
-                 smoothing_method: str = 'median', heating_region_c: tuple[float, float] = (125.0, 700.0),
-                 max_time_min: float | None = 10.0) -> dict:
-    spec = load_spectrum(path)
-    beta, beta_r2, beta_slope = heating_rate(spec.time_min, spec.temperature_clean_c,
-        lower_c=heating_region_c[0], upper_c=heating_region_c[1], max_time_min=max_time_min)
-    smooth = smooth_signal(spec.signal, smoothing_window, smoothing_method)
-    fit0 = None
-    leading_error = ''
-    try:
-        fit0 = leading_edge_fit(spec.temperature_clean_c, smooth, beta, *leading_edge_c)
-    except ValueError as exc:
-        # Keep independent analyses available; never fabricate a fit for an empty/invalid region.
-        leading_error = str(exc)
-    mask = (spec.temperature_clean_c >= redhead_region_c[0]) & (spec.temperature_clean_c <= redhead_region_c[1])
-    mask &= np.isfinite(smooth)
-    if not mask.any():
-        raise ValueError(f'{spec.source}: no data in Redhead peak-search interval {redhead_region_c}')
-    peak_index = np.flatnonzero(mask)[np.argmax(smooth[mask])]
-    peak_temp_c = float(spec.temperature_clean_c[peak_index])
-    energy1 = redhead_energy(peak_temp_c, prefactor_s_inv, beta)
-    energy_nu_low = redhead_energy(peak_temp_c, prefactor_s_inv / 10.0, beta)
-    energy_nu_high = redhead_energy(peak_temp_c, prefactor_s_inv * 10.0, beta)
-    quality = spectrum_quality_diagnostics(spec.signal, spec.temperature_clean_c, spec.points_temperature_corrected)
-    warnings = []
-    if beta_r2 < 0.98:
-        warnings.append("Heating-rate regression R² is below 0.98; inspect the selected ramp interval.")
-    if spec.points_temperature_corrected / max(1, spec.signal.size) > 0.02:
-        warnings.append("More than 2% of temperature points were interpolated by heuristic cleaning.")
-    if quality["signal_negative_fraction"] > 0:
-        warnings.append("Signal contains negative values; inspect baseline and detector offset before kinetic analysis.")
-    if fit0 is None:
-        warnings.append("Leading-edge fit unavailable: " + leading_error)
-    else:
-        if fit0.r_squared < 0.98:
-            warnings.append("Leading-edge regression R² is below 0.98; inspect residual structure and fit interval.")
-        if fit0.energy_ev <= 0:
-            warnings.append("Leading-edge slope implies a non-positive apparent energy; check interval, baseline and model suitability.")
-    if peak_index == np.flatnonzero(mask)[0] or peak_index == np.flatnonzero(mask)[-1]:
-        warnings.append("Maximum in the Redhead search interval lies at its boundary; widen the interval or inspect the peak.")
-    if not np.isfinite(quality["signal_p10_proxy_over_range"]) or quality["signal_p10_proxy_over_range"] > 0.1:
-        warnings.append("Low-signal level is appreciable relative to signal range; this is a screening flag, not an automatic baseline estimate.")
-    return {
-        'file_name': spec.source, 'short_name': short_label(spec.source),
-        'n_points': int(spec.signal.size), 'temperature_points_corrected': spec.points_temperature_corrected,
-        'heating_rate_K_s': beta, 'heating_rate_fit_R2': beta_r2, 'heating_rate_slope_C_min': beta_slope,
-        'leading_edge_lower_C': leading_edge_c[0], 'leading_edge_upper_C': leading_edge_c[1],
-        'leading_edge_energy_eV': fit0.energy_ev if fit0 else float('nan'),
-        'leading_edge_prefactor_s_inv': fit0.prefactor_s_inv if fit0 else float('nan'),
-        'leading_edge_fit_R2': fit0.r_squared if fit0 else float('nan'),
-        'leading_edge_fit_points': fit0.n_points if fit0 else 0, 'leading_edge_error': leading_error,
-        'leading_edge_residual_RMSE_ln_signal': fit0.residual_rmse if fit0 else float('nan'),
-        'leading_edge_slope_stderr': fit0.slope_stderr if fit0 else float('nan'),
-        'leading_edge_energy_CI95_lower_eV_regression_only': fit0.energy_ci95_lower_ev if fit0 else float('nan'),
-        'leading_edge_energy_CI95_upper_eV_regression_only': fit0.energy_ci95_upper_ev if fit0 else float('nan'),
-        'redhead_region_lower_C': redhead_region_c[0], 'redhead_region_upper_C': redhead_region_c[1],
-        'second_peak_temperature_C': peak_temp_c, 'redhead_energy_eV': energy1,
-        'redhead_prefactor_assumed_s_inv': prefactor_s_inv,
-        'redhead_energy_prefactor_0.1x_eV': energy_nu_low,
-        'redhead_energy_prefactor_10x_eV': energy_nu_high,
-        'redhead_energy_change_for_prefactor_decade_eV': (energy_nu_high - energy_nu_low) / 2.0,
-        **quality,
-        'diagnostic_warnings': ' | '.join(warnings),
-        'smoothing_method': smoothing_method, 'smoothing_window_points': smoothing_window,
-        'method_note': 'Apparent model-dependent estimate; inspect fits and validate assumptions.'
-    }
+245500,2.100673986948e-05,315.50
+246000,1.642878445311e-05,316.00
+246500,1.275661076116e-05,316.50
+247000,9.832692746792e-06,317.00
+247500,7.522105116383e-06,317.50
+248000,5.710272205652e-06,318.00
+248500,4.300744420733e-06,318.50
+249000,3.213046164952e-06,319.00
+249500,2.380630728171e-06,319.50
+250000,1.748969229407e-06,320.00
+250500,1.273792678352e-06,320.50
+251000,9.194988081896e-07,321.00
+251500,6.577287233470e-07,321.50
+252000,4.661127325722e-07,322.00
+252500,3.271800715331e-07,322.50
+253000,2.274235756446e-07,323.00
+253500,1.565077103965e-07,323.50
+254000,1.066066306517e-07,324.00
+254500,7.185802011737e-08,324.50
+255000,4.791823582058e-08,325.00
+255500,3.160461855901e-08,325.50
+256000,2.061159658649e-08,326.00
+256500,1.328828016634e-08,326.50
+257000,8.466504990366e-09,327.00
+257500,5.329634477827e-09,327.50
+258000,3.313794179187e-09,328.00
+258500,2.034523887340e-09,328.50
+259000,1.233050280939e-09,329.00
+259500,7.374766893461e-10,329.50
+260000,4.351422676686e-10,330.00
+260500,2.532169376675e-10,330.50
+261000,1.452756516561e-10,331.00
+261500,8.214640959565e-11,331.50
+262000,4.576505796133e-11,332.00
+262500,2.511192419117e-11,332.50
+263000,1.356669881665e-11,333.00
+263500,7.213748674856e-12,333.50
+264000,3.773823252951e-12,334.00
+264500,1.941661573890e-12,334.50
+265000,9.821350287309e-13,335.00
+265500,4.882084427152e-13,335.50
+266000,2.383981806484e-13,336.00
+266500,1.143109000014e-13,336.50
+267000,5.379961519038e-14,337.00
+267500,2.484239566240e-14,337.50
+268000,1.124974423190e-14,338.00
+268500,4.993842416622e-15,338.50
+269000,2.172071658433e-15,339.00
+269500,9.252532362834e-16,339.50
+270000,3.858247347991e-16,340.00
+270500,1.574178919443e-16,340.50
+271000,6.281161129113e-17,341.00
+271500,2.449798786595e-17,341.50
+272000,9.334774945402e-18,342.00
+272500,3.473233420140e-18,342.50
+273000,1.261217019876e-18,343.00
+273500,4.467203027234e-19,343.50
+274000,1.542520713744e-19,344.00
+274500,5.189556529960e-20,344.50
+275000,1.700132863005e-20,345.00
+275500,5.420422767720e-21,345.50
+276000,1.680816197337e-21,346.00
+276500,5.066147248075e-22,346.50
+277000,1.483317914484e-22,347.00
+277500,4.216113827995e-23,347.50
+278000,1.162597111092e-23,348.00
+278500,3.108110268710e-24,348.50
+279000,8.050437180870e-25,349.00
+279500,2.018822035055e-25,349.50
+280000,4.898078370581e-26,350.00
+280500,1.148920496111e-26,350.50
+281000,2.603586012775e-27,351.00
+281500,5.695689993818e-28,351.50
+282000,1.201936328161e-28,352.00
+282500,2.444775010031e-29,352.50
+283000,4.789316213476e-30,353.00
+283500,9.028867762555e-31,353.50
+284000,1.636662856387e-31,354.00
+284500,2.850264585305e-32,354.50
+285000,4.764724032793e-33,355.00
+285500,7.638994109952e-34,355.50
+286000,1.173524475756e-34,356.00
+286500,1.725876576488e-35,356.50
+287000,2.427645033045e-36,357.00
+287500,3.262923080426e-37,357.50
+288000,4.186537137422e-38,358.00
+288500,5.122731187737e-39,358.50
+289000,5.971870442227e-40,359.00
+289500,6.625772994680e-41,359.50
+290000,6.989186116586e-42,360.00
+290500,7.001937583093e-43,360.50
+291000,6.654879088352e-44,361.00
+291500,5.993934710732e-45,361.50
+292000,5.110272538073e-46,362.00
+292500,4.119430596850e-47,362.50
+293000,3.136047503193e-48,363.00
+293500,2.251966067938e-49,363.50
+294000,1.523513531606e-50,364.00
+294500,9.698340274728e-52,364.50
+295000,5.801846097351e-53,365.00
+295500,3.257566165493e-54,365.50
+296000,1.714385331262e-55,366.00
+296500,8.445606461234e-57,366.50
+297000,3.889273164635e-58,367.00
+297500,1.671929783565e-59,367.50
+298000,6.699848008415e-61,368.00
+298500,2.499095897201e-62,368.50
+299000,8.664307395455e-64,369.00
+299500,2.787838569904e-65,369.50
+300000,8.312312908533e-67,370.00

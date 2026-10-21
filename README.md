@@ -49,7 +49,7 @@ The software aims to make routine analysis easier to reproduce and inspect witho
 4. Extract the ZIP and double-click `TPD-Spectra-Studio.exe`.
 5. Import your own CSV or [the synthetic example](examples/synthetic_two_peak_demo.csv), explore the plot, and export a figure.
 
-The synthetic two-peak example is for **import and plot testing only**: its peaks are not Polanyi–Wigner desorption profiles and have no reference kinetic parameters. The executable is currently unsigned; verify the GitHub source and follow institutional security policy.
+New beta packages include `examples/synthetic_two_peak_demo.csv`: a clearly labeled, noiseless two-population Polanyi–Wigner simulation with known inputs. Follow the [demo walkthrough](examples/README.md) for settings and expected results. Synthetic tests do not replace experimental validation. The executable is currently unsigned; verify the GitHub source and follow institutional security policy.
 
 ### Option B — Run from Python source
 

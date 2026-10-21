@@ -75,7 +75,18 @@ The visual comparison settings are not all identical to the batch analysis setti
 
 ### Suggested first datasets
 
-Start with one familiar, well-behaved experimental spectrum and one synthetic test case. Keep first tests small. Do not redistribute your own or another author's experimental spectra without verifying permissions.
+Start with one familiar, well-behaved experimental spectrum and the [documented synthetic demo](../examples/README.md). Keep first tests small. Do not redistribute your own or another author's experimental spectra without verifying permissions.
+
+Temperature cleaning is a screening heuristic, not calibration. It retains
+steady ramps even when adjacent samples differ by more than 1.5 °C. Interior
+spikes must show an upward/downward reversal exceeding the 1.5/0.5 °C thresholds;
+the stronger excursion is corrected while its recovery neighbor is retained.
+Nonfinite temperatures, values at or below absolute zero, and values above
+800 °C are invalid. Corrections interpolate on elapsed time; invalid endpoints
+use the nearest valid value. Fewer than two valid anchors cause an error.
+Finite endpoint jumps, sustained steps, and genuine ramp changes remain for
+user review. Inspect the raw/cleaned temperatures and correction fraction;
+these rules cannot identify every sensor fault or distinguish all real reversals.
 
 ## 4. Graph exploration and fit-window selection
 

@@ -26,6 +26,65 @@ MUTED = "#64748b"
 BLUE = "#2563eb"
 
 
+QUICK_START_STEPS = (
+    ("1  Import spectra", "Select Import CSV files or Add folder. For a first test, open "
+     "examples/synthetic_two_peak_demo.csv from the extracted beta package. "
+     "Time is in milliseconds; temperature is in °C; signal is in arbitrary units."),
+    ("2  Explore the plot", "Show or hide traces, choose Overlay or Small multiples, "
+     "and adjust smoothing in Spectra & view. Export plot PNG saves this view."),
+    ("3  Select analysis windows", "Open Analysis settings. Enter the leading-edge and "
+     "peak-search limits or select them on the plot. Shaded areas show the selected data. "
+     "For the demo: leading edge 110–140 °C, peak search 150–210 °C, "
+     "Redhead prefactor 1e13 s⁻¹, and smoothing none."),
+    ("4  Run the analysis", "Choose a results folder and select Run full analysis. "
+     "Leave optional kinetic fitting off for the first demo run. A single-state model "
+     "does not describe both demo peaks."),
+    ("5  Review the results", "Open results folder and inspect diagnostic plots, "
+     "CSV tables, and warnings. The demo is synthetic, not an experimental measurement. "
+     "See examples/README.md for its model, known inputs, and limitations."),
+)
+
+
+class QuickStartDialog(tk.Toplevel):
+    """Readable, keyboard-accessible help that also fits small screens."""
+
+    def __init__(self, parent: tk.Tk):
+        super().__init__(parent)
+        self.title("Quick start · TPD Spectra Studio")
+        self.transient(parent)
+        self.configure(background=BG)
+        width = min(720, self.winfo_screenwidth() - 48)
+        height = min(680, self.winfo_screenheight() - 96)
+        self.geometry(f"{width}x{height}")
+        self.minsize(min(440, width), min(340, height))
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+        ttk.Label(self, text="From CSV to reviewed results", font=("Segoe UI", 15, "bold"),
+                  padding=(20, 16)).grid(row=0, column=0, columnspan=2, sticky="w")
+        self.text = tk.Text(self, wrap="word", font=("Segoe UI", 10), background="white",
+                            foreground=INK, relief="flat", padx=20, pady=12,
+                            cursor="arrow", height=12, width=50)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.text.yview)
+        self.text.configure(yscrollcommand=scrollbar.set)
+        self.text.grid(row=1, column=0, sticky="nsew", padx=(16, 0))
+        scrollbar.grid(row=1, column=1, sticky="ns", padx=(0, 16))
+        self.text.tag_configure("heading", font=("Segoe UI", 11, "bold"),
+                                foreground=BLUE, spacing1=12, spacing3=5)
+        self.text.tag_configure("body", spacing3=8)
+        for heading, body in QUICK_START_STEPS:
+            self.text.insert("end", heading + "\n", "heading")
+            self.text.insert("end", body + "\n", "body")
+        self.text.insert("end", "A good-looking fit does not establish a unique mechanism.\n", "body")
+        self.text.configure(state="disabled")
+        self.close_button = ttk.Button(self, text="Close", command=self.destroy)
+        self.close_button.grid(row=2, column=0, columnspan=2, sticky="e", padx=16, pady=12)
+        self.bind("<Escape>", lambda _event: self.destroy())
+        self.bind("<Return>", lambda _event: self.destroy())
+        self.protocol("WM_DELETE_WINDOW", self.destroy)
+        self.grab_set()
+        self.close_button.focus_set()
+
+
 def build_cli_arguments(settings: dict[str, object]) -> list[str]:
     """Validate the desktop settings and map them to the established CLI."""
     configured_inputs = settings.get("input_files")
@@ -231,21 +290,7 @@ class TpdSpectraApp:
 
     def _show_quick_start(self) -> None:
         """Explain the normal workflow without changing analysis settings."""
-        messagebox.showinfo(
-            "Getting started with TPD Spectra Studio",
-            "1. IMPORT: Select one or more CSV spectra or add a folder.\\n\\n"
-            "2. EXPLORE: Show or hide traces, choose an overlay or small multiples, "
-            "and adjust smoothing. The comparison updates interactively.\\n\\n"
-            "3. SELECT: Set leading-edge and peak-search temperature windows. "
-            "Shaded areas show which data will be analyzed.\\n\\n"
-            "4. ANALYZE: Choose a results folder. Enable kinetic fitting only if "
-            "the model assumptions apply, then click Run full analysis.\\n\\n"
-            "5. REVIEW: Open the results folder and inspect diagnostic plots "
-            "and warnings before interpreting energies.\\n\\n"
-            "TIP: Export plot PNG saves the current view without running the "
-            "full analysis. A good-looking fit does not establish a unique mechanism.",
-            parent=self.root,
-        )
+        QuickStartDialog(self.root)
 
     def _scroll_panel(self, parent: ttk.Frame) -> ttk.Frame:
         """Return a separately scrollable controls region for one notebook tab."""

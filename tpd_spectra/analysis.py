@@ -51,8 +51,10 @@ class FitResult:
 
 
 def _numeric_column(df: pd.DataFrame, requested: str | None, alternatives: Iterable[str], role: str) -> str:
-    if requested and requested in df.columns:
-        return requested
+    if requested:
+        if requested in df.columns:
+            return requested
+        raise ValueError(f"Requested {role} column {requested!r} was not found")
     for name in alternatives:
         if name in df.columns:
             return name
@@ -73,10 +75,10 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
     if not path.is_file():
         raise FileNotFoundError(path)
     errors = []
-    df = None
+    frame = None
     # Prefer the documented legacy export, then accept ordinary comma/tab CSVs
     # with either decimal style and a conventional header row.
-    layouts = [(skiprows, delimiter, decimal), (0, delimiter, decimal),
+    layouts = [(skiprows, delimiter, decimal), (skiprows, delimiter, '.'), (0, delimiter, decimal),
                (0, ',', '.'), (0, '\t', '.'), (0, ';', '.')]
     seen = set()
     for rows, sep, decimal_mark in layouts:
@@ -85,56 +87,74 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
         seen.add((rows, sep, decimal_mark))
         try:
             candidate = pd.read_csv(path, skiprows=rows, sep=sep, decimal=decimal_mark)
-            if len(candidate.columns) > 1:
-                df = candidate
-                break
+            candidate.columns = [str(c).strip() for c in candidate.columns]
+            tcol = _numeric_column(candidate, time_column, ('ms', 'Time_ms', 'time_ms', 'Time (ms)', 'Time', 'time'), 'time (ms)')
+            scol = _numeric_column(candidate, signal_column, ('DHTA+', 'Signal', 'signal', 'Intensity', 'intensity', 'Signal (a.u.)'), 'signal')
+            tempcol = _numeric_column(candidate, temperature_column, ('Temperatura', 'Temperature', 'temperature', 'Temp', 'temp',
+                                                                      'Temperature (°C)', 'Temperature_C', 'Temp_C'), 'temperature')
+            parsed = pd.DataFrame({
+                'time_ms': pd.to_numeric(candidate[tcol], errors='coerce'),
+                'signal': pd.to_numeric(candidate[scol], errors='coerce'),
+                'temperature_c': pd.to_numeric(candidate[tempcol], errors='coerce'),
+            }).replace([np.inf, -np.inf], np.nan).dropna()
+            parsed = parsed.sort_values('time_ms', kind='stable').drop_duplicates('time_ms', keep='first')
+            if len(parsed) < 3:
+                raise ValueError('fewer than 3 valid rows after parsing required channels')
+            frame = parsed
+            break
         except Exception as exc:  # surfaced below as an actionable import error
             errors.append(str(exc))
-    if df is None:
+    if frame is None:
         raise ValueError(f"Could not parse {path.name} as a delimited instrument export. {errors}")
-    df.columns = [str(c).strip() for c in df.columns]
-    tcol = _numeric_column(df, time_column, ('ms', 'Time_ms', 'time_ms', 'Time (ms)', 'Time', 'time'), 'time (ms)')
-    scol = _numeric_column(df, signal_column, ('DHTA+', 'Signal', 'signal', 'Intensity', 'intensity', 'Signal (a.u.)'), 'signal')
-    tempcol = _numeric_column(df, temperature_column, ('Temperatura', 'Temperature', 'temperature', 'Temp', 'temp',
-                                                       'Temperature (°C)', 'Temperature_C', 'Temp_C'), 'temperature')
-    frame = pd.DataFrame({
-        'time_ms': pd.to_numeric(df[tcol], errors='coerce'),
-        'signal': pd.to_numeric(df[scol], errors='coerce'),
-        'temperature_c': pd.to_numeric(df[tempcol], errors='coerce'),
-    }).dropna()
-    frame = frame.replace([np.inf, -np.inf], np.nan).dropna()
-    frame = frame.sort_values('time_ms', kind='stable').drop_duplicates('time_ms', keep='first')
-    if len(frame) < 3:
-        raise ValueError(f"{path.name}: fewer than 3 valid rows after parsing required channels")
     time_min = (frame.time_ms.to_numpy(float) - float(frame.time_ms.iloc[0])) / 60_000.0
     signal = frame.signal.to_numpy(float)
     raw_temp = frame.temperature_c.to_numpy(float)
-    clean_temp = clean_temperature(raw_temp)
+    clean_temp = clean_temperature(raw_temp, time=time_min)
     return Spectrum(path.name, time_min, raw_temp, signal, clean_temp,
                     int(np.count_nonzero(~np.isclose(raw_temp, clean_temp, equal_nan=True))))
 
 
 def clean_temperature(temperature_c: Iterable[float], *, upward_jump_c: float = 1.5,
-                      downward_jump_c: float = 0.5, max_temperature_c: float = 800.0) -> np.ndarray:
-    """Conservatively flag abrupt jumps and implausible high values, then interpolate.
+                      downward_jump_c: float = 0.5, max_temperature_c: float = 800.0,
+                      time: Iterable[float] | None = None) -> np.ndarray:
+    """Interpolate isolated spikes and invalid temperatures on the time grid.
 
-    The thresholds preserve the original notebook's heuristic defaults, but
-    are explicit parameters. Both endpoints are treated consistently.
+    A large step alone is not evidence of a sensor error: a sparsely sampled
+    heating ramp can legitimately exceed the legacy per-sample thresholds.
+    Interior spikes must both depart from and return to the neighboring trend.
+    Endpoints are only rejected if nonfinite or outside the physical bounds;
+    there is insufficient evidence to classify an endpoint jump as a spike.
+    This screening heuristic is not a calibration or a nonlinear-ramp model.
     """
     temp = np.asarray(temperature_c, dtype=float).copy()
     if temp.ndim != 1 or temp.size < 2:
         raise ValueError('temperature must be a one-dimensional array with at least two values')
-    bad = ~np.isfinite(temp) | (temp > max_temperature_c)
-    delta = np.diff(temp)
-    # Flag the sample after an abrupt jump. This is a heuristic, not a physical model.
-    jump_idx = np.where((delta > upward_jump_c) | (delta < -downward_jump_c))[0] + 1
-    bad[jump_idx] = True
+    if not (np.isfinite(upward_jump_c) and upward_jump_c > 0
+            and np.isfinite(downward_jump_c) and downward_jump_c > 0
+            and np.isfinite(max_temperature_c) and max_temperature_c > -273.15):
+        raise ValueError('temperature thresholds must be finite and physically valid')
+    axis = np.arange(temp.size, dtype=float) if time is None else np.asarray(time, dtype=float)
+    if axis.shape != temp.shape or not np.all(np.isfinite(axis)) or np.any(np.diff(axis) <= 0):
+        raise ValueError('time must match temperature and be finite and strictly increasing')
+    bad = ~np.isfinite(temp) | (temp <= -273.15) | (temp > max_temperature_c)
+    incoming, outgoing = np.diff(temp)[:-1], np.diff(temp)[1:]
+    neighbors_valid = ~(bad[:-2] | bad[1:-1] | bad[2:])
+    # Require a reversal, not merely a large positive ramp increment.
+    spikes = ((incoming > upward_jump_c) & (outgoing < -downward_jump_c)) | (
+        (incoming < -downward_jump_c) & (outgoing > upward_jump_c))
+    candidates = np.flatnonzero(spikes & neighbors_valid) + 1
+    strength = np.minimum(np.abs(incoming), np.abs(outgoing))
+    # A spike can make its valid recovery sample look like a weaker opposite
+    # extremum. Keep that recovery anchor instead of correcting both samples.
+    for i in sorted(candidates, key=lambda i: strength[i - 1], reverse=True):
+        if not (bad[i - 1] or bad[i + 1]):
+            bad[i] = True
     temp[bad] = np.nan
     valid = np.isfinite(temp)
     if valid.sum() < 2:
-        raise ValueError('Temperature cleaning left fewer than two valid points; review thresholds/data')
-    idx = np.arange(temp.size)
-    temp[~valid] = np.interp(idx[~valid], idx[valid], temp[valid])
+        raise ValueError('Temperature cleaning left fewer than two valid points; '
+                         'check temperature units (expected °C), finite values, and cleaning bounds')
+    temp[~valid] = np.interp(axis[~valid], axis[valid], temp[valid])
     return temp
 
 

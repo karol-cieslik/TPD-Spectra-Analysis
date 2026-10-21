@@ -1,3 +1,19 @@
+## Unreleased beta candidate — demo import and Quick Start
+
+- Validate required CSV headers and numeric channels before choosing a layout;
+  conventional semicolon files no longer lose their header to the legacy skip.
+- Preserve coarse heating ramps. Temperature cleaning now flags isolated
+  reversals rather than every step above 1.5 °C, retains the recovery sample,
+  and interpolates on elapsed time. Nonfinite/out-of-bounds values are still
+  screened. Finite endpoint jumps and sustained discontinuities are retained
+  for review, not automatically treated as spikes.
+- Replace the failing Gaussian example with a reproducible, documented
+  two-population first-order simulation and include it in desktop beta ZIPs.
+- Replace the escaped-newline message box with a resizable, scrollable Quick
+  Start dialog containing five distinct steps and tested demo settings.
+- Add tests of shipped data, scientific reference values, CLI exports, actual
+  Tk import/plot behavior, and dialog layout at a small window size.
+
 ## 0.10.2 — Display-aware startup
 
 - The desktop app now opens maximized to the available display area and adjusts its minimum size for smaller screens.

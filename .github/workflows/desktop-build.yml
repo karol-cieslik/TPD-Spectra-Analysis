@@ -7,6 +7,9 @@ on:
     paths:
       - 'tpd_spectra/**'
       - 'tests/**'
+      - 'examples/**'
+      - 'scripts/generate_demo.py'
+      - 'scripts/verify_windows_build.py'
       - 'run_tpd_spectra*.py'
       - 'pyproject.toml'
       - 'requirements*.txt'
@@ -46,12 +49,15 @@ jobs:
           pyinstaller --clean --noconfirm --onefile --windowed
           --name TPD-Spectra-Studio
           run_tpd_spectra_gui.py
+      - name: Verify frozen executable with shipped demo
+        run: python scripts/verify_windows_build.py dist/TPD-Spectra-Studio.exe
       - name: Assemble portable package
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force release-package | Out-Null
           Copy-Item dist/TPD-Spectra-Studio.exe release-package/
           Copy-Item README.md,CHANGELOG.md,CITATION.cff,LICENSE,ASSET-RIGHTS.md release-package/
+          Copy-Item examples release-package/examples -Recurse
           @'
           TPD Spectra Studio — Windows x64
 
@@ -59,8 +65,10 @@ jobs:
           Import CSV files (or a folder), choose spectra, explore the plot, and use
           Export plot PNG or Run full analysis. Batch analysis is built into this app.
 
-          Experimental data are not included. Bring your own CSV spectra. See README.md
-          for input formats, analysis assumptions, outputs, and citation information.
+          First test: import examples/synthetic_two_peak_demo.csv (601 points).
+          See examples/README.md for exact analysis settings and expected results.
+          This is a physical-model simulation, not experimental data.
+          See README.md for input formats, assumptions, outputs, and citation information.
           '@ | Set-Content -Encoding utf8 release-package/QUICKSTART.txt
           @'
           The project-authored software code is offered under the MIT License; see LICENSE.

@@ -5,7 +5,6 @@ import queue
 import shutil
 import sys
 import threading
-import tkinter as tk
 
 import numpy as np
 import pandas as pd
@@ -37,18 +36,6 @@ def drain(messages):
     while not messages.empty():
         result.append(messages.get_nowait())
     return result
-
-
-@pytest.fixture
-def root():
-    try:
-        value = tk.Tk()
-    except tk.TclError:
-        if sys.platform == "win32":
-            raise
-        pytest.skip("Tk display unavailable")
-    yield value
-    value.destroy()
 
 
 def test_plan_is_immutable_and_rejects_duplicate_names_and_existing_output(tmp_path):

@@ -116,7 +116,25 @@ class KineticsExplorerWindow:
         for variable in [self.selected, self.beta, self.low, self.high, self.baseline, *self.orders.values()]:
             variable.trace_add("write", self._mark_stale)
         self.win.protocol("WM_DELETE_WINDOW", self.close)
-        self.win.after(100, self._poll)
+        self.poll_id = self.win.after(100, self._poll)
+        self.win.bind("<Destroy>", self._on_destroy, add="+")
+
+    def _on_destroy(self, event):
+        if event.widget is not self.win:
+            return
+        if self.poll_id is not None:
+            self.win.after_cancel(self.poll_id)
+            self.poll_id = None
+
+    def _destroy(self):
+        # Embedded canvases have no FigureManager to cancel their pending redraw.
+        widget = self.canvas.get_tk_widget()
+        for name in ("_idle_draw_id", "_event_loop_id"):
+            callback = getattr(self.canvas, name, None)
+            if callback:
+                widget.after_cancel(callback)
+                setattr(self.canvas, name, None)
+        self.win.destroy()
 
     def _mark_stale(self, *_):
         if self.last_fit is not None or self.busy:
@@ -124,6 +142,7 @@ class KineticsExplorerWindow:
             self.status.set("Settings changed. Displayed results and exports retain their original settings; compare again before Monte Carlo.")
 
     def _poll(self):
+        self.poll_id = None
         try:
             while True:
                 kind, value = self.messages.get_nowait()
@@ -143,10 +162,10 @@ class KineticsExplorerWindow:
         except queue.Empty:
             pass
         if self.closing and not self.busy:
-            self.win.destroy()
+            self._destroy()
             return
         if self.win.winfo_exists():
-            self.win.after(100, self._poll)
+            self.poll_id = self.win.after(100, self._poll)
 
     def _idle(self):
         self.busy = False
@@ -162,7 +181,7 @@ class KineticsExplorerWindow:
             self.cancel_event.set()
             self.status.set("Cancelling… waiting for the current numerical evaluation to return.")
         else:
-            self.win.destroy()
+            self._destroy()
 
     def draw_input(self):
         if self.busy:

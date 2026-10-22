@@ -3,7 +3,6 @@ from pathlib import Path
 from types import SimpleNamespace
 import json
 import tkinter as tk
-import sys
 
 import numpy as np
 import pytest
@@ -89,27 +88,35 @@ def test_export_never_overwrites_and_invalid_input_creates_no_folder(tmp_path):
     assert list(tmp_path.iterdir()) == []
 
 
-def test_explorer_export_uses_fitted_snapshot_when_controls_change(tmp_path, monkeypatch):
+def test_explorer_export_uses_fitted_snapshot_when_controls_change(root, tmp_path, monkeypatch):
     from tpd_spectra import explorer_gui as module
-    try:
-        root = tk.Tk()
-    except tk.TclError:
-        if sys.platform == "win32":
-            raise
-        pytest.skip("Tk display unavailable")
-    try:
-        path = ROOT / "examples/synthetic_two_peak_demo.csv"
-        window = module.KineticsExplorerWindow(root, {"demo": {"path": path, "spec": load_spectrum(path)}})
-        t, y = np.arange(20.) + 100, np.arange(20.)
-        window.snapshot = dict(beta_k_s=1., fit_baseline=True, orders=("first",), source="original.csv")
-        window.last_fit = (t, y, [ModelCandidate("first", None, y.copy(), None)])
-        window.beta.set("99")
-        assert window.stale
-        monkeypatch.setattr(module.filedialog, "askdirectory", lambda **kw: str(tmp_path))
-        window.export_results()
-        manifest = json.loads(next(tmp_path.rglob("explorer_analysis.json")).read_text())
-        assert manifest["heating_rate_k_s"] == 1.
-        assert manifest["source"] == "original.csv"
+    path = ROOT / "examples/synthetic_two_peak_demo.csv"
+    window = module.KineticsExplorerWindow(root, {"demo": {"path": path, "spec": load_spectrum(path)}})
+    t, y = np.arange(20.) + 100, np.arange(20.)
+    window.snapshot = dict(beta_k_s=1., fit_baseline=True, orders=("first",), source="original.csv")
+    window.last_fit = (t, y, [ModelCandidate("first", None, y.copy(), None)])
+    window.beta.set("99")
+    assert window.stale
+    monkeypatch.setattr(module.filedialog, "askdirectory", lambda **kw: str(tmp_path))
+    window.export_results()
+    manifest = json.loads(next(tmp_path.rglob("explorer_analysis.json")).read_text())
+    assert manifest["heating_rate_k_s"] == 1.
+    assert manifest["source"] == "original.csv"
+    window.close()
+
+
+def test_explorer_can_close_and_reopen_without_orphan_callbacks(root):
+    from tpd_spectra.explorer_gui import KineticsExplorerWindow
+    root.tk.eval('set callback_errors {}; proc bgerror {message} {lappend ::callback_errors $message}')
+    path = ROOT / "examples/synthetic_two_peak_demo.csv"
+    spectra = {"demo": {"path": path, "spec": load_spectrum(path)}}
+    for _ in range(2):
+        window = KineticsExplorerWindow(root, spectra)
+        root.update()
+        window.canvas.draw_idle()
         window.close()
-    finally:
-        root.destroy()
+        done = tk.BooleanVar(root, value=False)
+        root.after(150, lambda: done.set(True))
+        root.wait_variable(done)
+        assert not window.win.winfo_exists()
+    assert not root.tk.call("set", "callback_errors")

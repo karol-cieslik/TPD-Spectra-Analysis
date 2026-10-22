@@ -1,6 +1,24 @@
 """Synthetic CSV inputs for public tests; no experimental measurements required."""
 import numpy as np
 import pytest
+import sys
+import tkinter as tk
+
+
+@pytest.fixture
+def root():
+    """Fresh real interpreter; drain/cancel callbacks before destroying it."""
+    try:
+        value = tk.Tk()
+    except tk.TclError:
+        if sys.platform == "win32":
+            raise
+        pytest.skip("Tk display unavailable")
+    yield value
+    value.update_idletasks()
+    for callback in value.tk.call("after", "info"):
+        value.after_cancel(callback)
+    value.destroy()
 
 
 @pytest.fixture

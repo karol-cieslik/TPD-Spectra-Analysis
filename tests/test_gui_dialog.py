@@ -1,23 +1,9 @@
 """Real Tk widget regressions; Windows CI must execute these, not skip them."""
 from pathlib import Path
-import sys
-import tkinter as tk
 
 import pytest
 
 from tpd_spectra.gui import QuickStartDialog, TpdSpectraApp, QUICK_START_STEPS
-
-
-@pytest.fixture
-def root():
-    try:
-        root = tk.Tk()
-    except tk.TclError:
-        if sys.platform == "win32":
-            raise
-        pytest.skip("Tk display unavailable")
-    yield root
-    root.destroy()
 
 
 def test_quick_start_has_real_paragraphs_and_scrolls_at_small_size(root):

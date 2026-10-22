@@ -36,9 +36,16 @@ def main():
         assert len(manifest["inputs_processed"]) == 1
         print("Frozen Windows executable: shipped demo analysis and exports passed")
         gui_output = output / "gui-explorer-smoke"
-        subprocess.run([str(executable), "--tpd-smoke-gui",
-                        str(root / "examples/synthetic_two_peak_demo.csv"), str(gui_output)],
-                       env=env, timeout=240, check=True)
+        command = [str(executable), "--tpd-smoke-gui",
+                   str(root / "examples/synthetic_two_peak_demo.csv"), str(gui_output)]
+        try:
+            gui_run = subprocess.run(command, env=env, timeout=240, stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
+        except subprocess.TimeoutExpired as exc:
+            print(exc.stdout, flush=True)
+            raise
+        print(gui_run.stdout, flush=True)
+        gui_run.check_returncode()
         assert (gui_output / "desktop_smoke.json").is_file()
         assert (gui_output / "monte_carlo_replicates.csv").is_file()
         print("Frozen Windows executable: real Tk dialogs, Explorer and short Monte Carlo export passed")

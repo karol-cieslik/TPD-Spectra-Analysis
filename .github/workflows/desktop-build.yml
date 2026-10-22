@@ -54,6 +54,7 @@ jobs:
           pyinstaller --clean --noconfirm --onefile --windowed
           --name TPD-Spectra-Studio
           --copy-metadata numpy --copy-metadata scipy --copy-metadata pandas --copy-metadata matplotlib
+          --hidden-import matplotlib.backends.backend_svg
           run_tpd_spectra_gui.py
       - name: Verify frozen executable with shipped demo
         run: python scripts/verify_windows_build.py dist/TPD-Spectra-Studio.exe

@@ -13,12 +13,14 @@ from .identity import build_identity
 
 
 def main(source, output):
+    print("GUI smoke: creating Tk workspace", flush=True)
     root = tk.Tk()
     try:
         app = TpdSpectraApp(root)
         app._load_paths([Path(source)])
         root.update()
         assert len(app.spectra) == 1
+        print("GUI smoke: imported demo; opening dialogs", flush=True)
         quick = QuickStartDialog(root)
         root.update()
         assert r"\n" not in quick.text.get("1.0", "end")
@@ -35,6 +37,7 @@ def main(source, output):
         explorer = KineticsExplorerWindow(root, app.spectra)
         root.update()
         assert explorer.run_button.winfo_ismapped()
+        print("GUI smoke: dialogs opened; fitting first-order model", flush=True)
         spec = next(iter(app.spectra.values()))["spec"]
         mask = (spec.temperature_clean_c < 210)
         t, y = spec.temperature_clean_c[mask][::3], spec.signal[mask][::3]
@@ -42,13 +45,16 @@ def main(source, output):
                                           initial_energy_ev=1.25, initial_prefactor_s_inv=1e13,
                                           max_nfev=80, multistart=False)
         assert models[0].error is None
+        print("GUI smoke: fit complete; short Monte Carlo", flush=True)
         mc = run_kinetics_monte_carlo(t, y, 1., orders=("first",), replicates=2,
                                       seed=42, max_nfev=40, reference_comparison=models)
         assert mc.replicates_completed == 2
+        print("GUI smoke: Monte Carlo complete; exporting PNG/SVG and records", flush=True)
         destination = export_explorer_bundle(Path(output), t, y, models, beta_k_s=1., monte_carlo=mc,
                                              source=source, settings={"purpose": "packaging smoke; not uncertainty validation"})
         (destination / "desktop_smoke.json").write_text(json.dumps(build_identity()), encoding="utf-8")
         explorer.close()
+        print("GUI smoke: all checks passed", flush=True)
         return 0
     finally:
         root.destroy()

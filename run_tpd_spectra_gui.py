@@ -26,8 +26,15 @@ def restore_redirected_output():
 
 if __name__ == "__main__":
     if sys.argv[1:2] == ["--tpd-smoke-gui"]:
-        from tpd_spectra.desktop_smoke import main as smoke_main
-        raise SystemExit(smoke_main(*sys.argv[2:]))
+        restore_redirected_output()
+        try:
+            from tpd_spectra.desktop_smoke import main as smoke_main
+            code = smoke_main(*sys.argv[2:])
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            code = 1
+        raise SystemExit(code)
     if sys.argv[1:2] == ["--tpd-cli"]:
         restore_redirected_output()
         from tpd_spectra.cli import main as cli_main

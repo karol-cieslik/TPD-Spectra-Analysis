@@ -2,6 +2,14 @@ name: Windows desktop build
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tpd_spectra/**'
+      - 'tests/**'
+      - 'run_tpd_spectra*.py'
+      - 'requirements*.txt'
+      - 'pyproject.toml'
+      - '.github/workflows/desktop-build.yml'
   push:
     branches: [main]
     paths:
@@ -31,6 +39,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-build.txt
           python -m pip install -e .
+      - name: Run tests before packaging
+        run: python -m pytest -q
       - name: Build single-file desktop app
         run: >-
           pyinstaller --clean --noconfirm --onefile --windowed

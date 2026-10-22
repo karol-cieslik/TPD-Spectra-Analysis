@@ -36,3 +36,40 @@ def test_rejects_invalid_ramp():
     temp = np.linspace(70, 260, 30)[::-1]
     with pytest.raises(ValueError, match="strictly increasing"):
         compare_desorption_orders(temp, np.ones_like(temp), 1.0)
+
+
+def test_multistart_accounting_and_model_selection():
+    temp = np.linspace(70, 320, 110)
+    _, rate = simulate_tpd(temp, 1.0, 1.0, 1e12, 1.0)
+    result = compare_desorption_orders(
+        temp, 3.0 + 2e4 * rate, 1.0, orders=("first",),
+        max_nfev=100, multistart=True,
+    )
+    assert len(result) == 1
+    assert result[0].starts_attempted == 3
+    assert 0 <= result[0].starts_converged <= 3
+    if result[0].error is None:
+        assert result[0].akaike_weight == pytest.approx(1.0)
+
+
+def test_multistart_can_be_disabled():
+    temp = np.linspace(70, 320, 75)
+    _, rate = simulate_tpd(temp, 1.0, 1.0, 1e12, 1.0)
+    result = compare_desorption_orders(
+        temp, rate, 1.0, orders=("first",),
+        max_nfev=50, multistart=False,
+    )
+    assert result[0].starts_attempted == 1
+
+
+@pytest.mark.parametrize("bad_energy,bad_prefactor", [
+    (0, 1e13), (1.0, 0), (float("nan"), 1e13),
+])
+def test_invalid_initial_guess_is_rejected(bad_energy, bad_prefactor):
+    temp = np.linspace(100, 300, 30)
+    with pytest.raises(ValueError):
+        compare_desorption_orders(
+            temp, np.ones_like(temp), 1.0,
+            initial_energy_ev=bad_energy,
+            initial_prefactor_s_inv=bad_prefactor,
+        )

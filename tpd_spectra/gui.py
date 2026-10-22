@@ -163,7 +163,7 @@ def workflow_guidance(imported: int, visible: int, *, running: bool = False) -> 
     if imported == 0:
         return "Step 1 of 4 · Import CSV spectra or add a folder to begin."
     if visible == 0:
-        return "Step 2 of 4 · All imported traces are hidden. Select Show all to continue."
+        return "Step 2 of 4 · All plot traces are hidden. Select Show all to inspect; Include controls analysis."
     return (
         f"Step 2–3 of 4 · {visible} visible of {imported} imported. "
         "Inspect traces and analysis windows, then select Run full analysis."
@@ -315,6 +315,10 @@ class TpdSpectraApp:
         ttk.Button(footer, text="Kinetics Explorer · experimental", command=self._open_explorer).pack(side="right", padx=6)
 
     def _open_explorer(self):
+        for explorer in self.explorers:
+            if explorer.win.winfo_exists():
+                explorer.win.lift()
+                return
         if not self.spectra:
             messagebox.showinfo("Import a spectrum", "Import a spectrum before opening Kinetics Explorer.", parent=self.root)
             return

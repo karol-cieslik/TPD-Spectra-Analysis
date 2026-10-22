@@ -32,6 +32,7 @@
     "examples/synthetic_two_peak_demo.csv": "68c8b603ae3b7d9a832a14b7908f4b533c890c77aee796aeb336f710f4f49267"
   },
   "reviewer": "Codex automated implementation/test review; no independent human scientific sign-off",
+  "local_rerun_limit": "After the initial 167-pass run, local Tk initialization failed intermittently with borrowed third-party Tcl scripts (166 passed/1 error, then focused 53 passed/1 initialization failure). Fresh Windows CI is the packaged-runtime evidence; local Tcl installation is not accepted.",
   "limits": [
     "Synthetic numerical checks are not experimental validation.",
     "No frequentist MC coverage study completed.",

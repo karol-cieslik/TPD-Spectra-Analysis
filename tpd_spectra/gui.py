@@ -242,6 +242,7 @@ class TpdSpectraApp:
         self.import_button.pack(side="left")
         ttk.Button(toolbar, text="＋  Add folder", command=self._import_folder).pack(side="left", padx=(8, 0))
         ttk.Button(toolbar, text="Export plot PNG", command=self._export_png).pack(side="left", padx=(8, 0))
+        ttk.Button(toolbar, text="Kinetics Explorer", command=self._open_explorer).pack(side="left", padx=(8, 0))
         self.run_button = ttk.Button(toolbar, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
         self.run_button.pack(side="right")
         ttk.Button(toolbar, text="Quick start  ?", command=self._show_quick_start).pack(side="right", padx=(0, 10))
@@ -540,6 +541,13 @@ class TpdSpectraApp:
         for edge in self.axis.spines.values(): edge.set_visible(False)
         self.figure.tight_layout()
         self.canvas.draw_idle()
+
+    def _open_explorer(self) -> None:
+        if not self.spectra:
+            messagebox.showinfo("Kinetics Explorer", "Import a spectrum first.", parent=self.root)
+            return
+        from .explorer_gui import KineticsExplorerWindow
+        KineticsExplorerWindow(self.root, self.spectra)
 
     def _import_files(self) -> None:
         paths = filedialog.askopenfilenames(parent=self.root, title="Choose spectra to compare",

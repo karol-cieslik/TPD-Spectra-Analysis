@@ -2,6 +2,10 @@
 from __future__ import annotations
 
 import queue
+import math
+import json
+import tempfile
+import webbrowser
 import subprocess
 import sys
 import threading
@@ -16,6 +20,9 @@ from matplotlib.widgets import SpanSelector
 from . import __version__
 from .analysis import load_spectrum, smooth_signal
 from .gui_ranges import validate_temperature_window, window_from_drag
+from .identity import about_text, REPOSITORY
+from .gui_review import ReviewDialog, ResultsDialog, text_panel
+from .run_session import RunPlan, execute, sha256
 
 
 PALETTE = ["#2563eb", "#e76f51", "#059669", "#9333ea", "#d97706", "#0891b2",
@@ -36,7 +43,9 @@ QUICK_START_STEPS = (
      "peak-search limits or select them on the plot. Shaded areas show the selected data. "
      "For the demo: leading edge 110–140 °C, peak search 150–210 °C, "
      "Redhead prefactor 1e13 s⁻¹, and smoothing none."),
-    ("4  Run the analysis", "Choose a results folder and select Run full analysis. "
+    ("4  Run the analysis", "Use Include independently from Show in the spectra table. Select Run full analysis "
+     "to review the included files, assumptions and a new results folder. Inspect Setup preview or "
+     "compute one selected spectrum before Run and save. "
      "Leave optional kinetic fitting off for the first demo run. A single-state model "
      "does not describe both demo peaks."),
     ("5  Review the results", "Open results folder and inspect diagnostic plots, "
@@ -105,9 +114,12 @@ def build_cli_arguments(settings: dict[str, object]) -> list[str]:
 
     def number(key: str, label: str) -> float:
         try:
-            return float(settings[key])
+            value = float(settings[key])
+            if not math.isfinite(value):
+                raise ValueError("nonfinite")
+            return value
         except (KeyError, TypeError, ValueError) as exc:
-            raise ValueError(f"{label} must be a number.") from exc
+            raise ValueError(f"{label} must be a finite number.") from exc
 
     edge_low, edge_high = number("leading_low", "Leading-edge lower limit"), number("leading_high", "Leading-edge upper limit")
     red_low, red_high = number("redhead_low", "Peak-search lower limit"), number("redhead_high", "Peak-search upper limit")
@@ -179,6 +191,14 @@ class TpdSpectraApp:
         self.spectra: dict[str, dict] = {}
         self.worker_messages: queue.Queue[tuple[str, str]] = queue.Queue()
         self.running = False
+        self.active_plan = None
+        self.last_output = None
+        self.cancel_event = threading.Event()
+        self.preview_workspaces = []
+        self.close_after_run = False
+        self.run_log = []
+        self.worker = None
+        self.explorers = []
         self.view_mode = tk.StringVar(value="Overlay")
         self.x_mode = tk.StringVar(value="Temperature")
         self.filter_method = tk.StringVar(value="median")
@@ -187,7 +207,7 @@ class TpdSpectraApp:
         self.kinetic_fit = tk.BooleanVar(value=False)
         self.kinetic_model = tk.StringVar(value="single")
         self.kinetic_order = tk.StringVar(value="1")
-        self.output_path = tk.StringVar(value=str(Path.home() / "TPD-Spectra-Results"))
+        self.output_path = tk.StringVar(value=str(Path.home()))
         self.leading_low = tk.DoubleVar(value=130)
         self.leading_high = tk.DoubleVar(value=170)
         self.peak_low = tk.DoubleVar(value=230)
@@ -244,9 +264,12 @@ class TpdSpectraApp:
         ttk.Button(toolbar, text="Export plot PNG", command=self._export_png).pack(side="left", padx=(8, 0))
         self.run_button = ttk.Button(toolbar, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
         self.run_button.pack(side="right")
+        self.cancel_button = ttk.Button(toolbar, text="Cancel run", command=self._cancel_run, state="disabled")
+        self.cancel_button.pack(side="right", padx=5)
         ttk.Button(toolbar, text="Quick start  ?", command=self._show_quick_start).pack(side="right", padx=(0, 10))
         self.status = tk.StringVar(value=workflow_guidance(0, 0))
-        ttk.Label(toolbar, textvariable=self.status, foreground=MUTED).pack(side="right", padx=12)
+        ttk.Label(self.root, textvariable=self.status, foreground=MUTED, wraplength=1000,
+                  padding=(20, 3)).pack(fill="x")
 
         body = ttk.Frame(self.root, padding=(18, 0, 18, 10))
         body.pack(fill="both", expand=True)
@@ -285,8 +308,52 @@ class TpdSpectraApp:
 
         footer = ttk.Frame(self.root, padding=(20, 5))
         footer.pack(fill="x")
-        ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(side="left")
+        ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(anchor="w", pady=(0, 4))
         ttk.Button(footer, text="Open results folder", command=self._open_output).pack(side="right")
+        ttk.Button(footer, text="About", command=self._show_about).pack(side="right", padx=6)
+        ttk.Button(footer, text="Run log", command=self._show_run_log).pack(side="right", padx=6)
+        ttk.Button(footer, text="Kinetics Explorer · experimental", command=self._open_explorer).pack(side="right", padx=6)
+
+    def _open_explorer(self):
+        if not self.spectra:
+            messagebox.showinfo("Import a spectrum", "Import a spectrum before opening Kinetics Explorer.", parent=self.root)
+            return
+        from .explorer_gui import KineticsExplorerWindow
+        self.explorers.append(KineticsExplorerWindow(self.root, self.spectra))
+
+    def _show_about(self) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title("About · TPD Spectra Studio")
+        dialog.geometry("660x470")
+        panel, _ = text_panel(dialog, about_text())
+        panel.pack(fill="both", expand=True)
+        buttons = ttk.Frame(dialog, padding=10)
+        buttons.pack(fill="x")
+        def copy():
+            self.root.clipboard_clear()
+            self.root.clipboard_append(about_text())
+        ttk.Button(buttons, text="Copy build information", command=copy).pack(side="left")
+        ttk.Button(buttons, text="GitHub", command=lambda: webbrowser.open(REPOSITORY)).pack(side="left", padx=4)
+        ttk.Button(buttons, text="Documentation", command=lambda: webbrowser.open(REPOSITORY + "/blob/release/beta-v0.11-candidate/docs/USER_AND_SCIENTIFIC_MANUAL.md")).pack(side="left", padx=4)
+        ttk.Button(buttons, text="Report issue", command=lambda: webbrowser.open(REPOSITORY + "/issues/new/choose")).pack(side="left", padx=4)
+        ttk.Button(buttons, text="Close", command=dialog.destroy).pack(side="right")
+
+    def _show_run_log(self) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Run log · TPD Spectra Studio")
+        dialog.geometry("760x420")
+        panel, widget = text_panel(dialog)
+        panel.pack(fill="both", expand=True)
+        def refresh():
+            if not dialog.winfo_exists():
+                return
+            widget.configure(state="normal")
+            widget.delete("1.0", "end")
+            widget.insert("end", "\n".join(self.run_log[-2000:]))
+            widget.configure(state="disabled")
+            if self.running:
+                dialog.after(500, refresh)
+        refresh()
 
     def _show_quick_start(self) -> None:
         """Explain the normal workflow without changing analysis settings."""
@@ -311,9 +378,11 @@ class TpdSpectraApp:
     def _files_panel(self) -> None:
         ttk.Label(self.sidebar, text="1  ·  IMPORTED SPECTRA", style="Section.TLabel").pack(anchor="w")
         ttk.Label(self.sidebar, text="Imported traces appear together in the plot.", style="Muted.TLabel").pack(anchor="w", pady=(2, 8))
-        columns = ("visible", "name", "points")
+        columns = ("visible", "included", "name", "points")
         self.file_table = ttk.Treeview(self.sidebar, columns=columns, show="headings", height=7, selectmode="extended")
-        self.file_table.heading("visible", text="On")
+        self.file_table.heading("visible", text="Show")
+        self.file_table.heading("included", text="Include")
+        self.file_table.column("included", width=55, anchor="center", stretch=False)
         self.file_table.heading("name", text="File")
         self.file_table.heading("points", text="Points")
         self.file_table.column("visible", width=34, anchor="center", stretch=False)
@@ -321,7 +390,7 @@ class TpdSpectraApp:
         self.file_table.column("points", width=55, anchor="e", stretch=False)
         self.file_table.pack(fill="x")
         self.file_table.bind("<Button-1>", self._toggle_row)
-        self.file_table.bind("<Double-1>", self._toggle_row)
+        self.file_table.bind("<space>", self._toggle_included_selection)
         row = ttk.Frame(self.sidebar, style="Card.TFrame")
         row.pack(fill="x", pady=(6, 12))
         ttk.Button(row, text="Show all", command=lambda: self._set_visible(True)).pack(side="left")
@@ -566,8 +635,8 @@ class TpdSpectraApp:
                 continue
             try:
                 spec = load_spectrum(path)
-                self.spectra[key] = {"path": path, "spec": spec, "visible": True}
-                self.file_table.insert("", "end", iid=key, values=("✓", path.name, f"{spec.signal.size:,}"))
+                self.spectra[key] = {"path": path.resolve(), "spec": spec, "visible": True, "included": True, "sha256": sha256(path)}
+                self.file_table.insert("", "end", iid=key, values=("✓", "✓", path.name, f"{spec.signal.size:,}"))
                 added += 1
             except Exception as exc:
                 errors.append(f"{path.name}: {exc}")
@@ -579,13 +648,22 @@ class TpdSpectraApp:
     def _toggle_row(self, event) -> str | None:
         row = self.file_table.identify_row(event.y)
         column = self.file_table.identify_column(event.x)
-        if row and column == "#1" and row in self.spectra:
+        if row and column in {"#1", "#2"} and row in self.spectra:
             item = self.spectra[row]
-            item["visible"] = not item["visible"]
-            self.file_table.set(row, "visible", "✓" if item["visible"] else "—")
+            field = "visible" if column == "#1" else "included"
+            item[field] = not item[field]
+            self.file_table.set(row, field, "✓" if item[field] else "—")
             self._draw_plot()
             return "break"
         return None
+
+    def _toggle_included_selection(self, _event=None):
+        for key in self.file_table.selection():
+            row = self.spectra[key]
+            row["included"] = not row["included"]
+            self.file_table.set(key, "included", "✓" if row["included"] else "—")
+        self._draw_plot()
+        return "break"
 
     def _set_visible(self, visible: bool) -> None:
         for key, item in self.spectra.items():
@@ -613,7 +691,8 @@ class TpdSpectraApp:
         visible = [(key, row) for key, row in self.spectra.items() if row["visible"]]
         self.count_label.configure(text=f"{len(visible)} of {len(self.spectra)} traces shown")
         if not self.running:
-            self.status.set(workflow_guidance(len(self.spectra), len(visible)))
+            included = sum(row["included"] for row in self.spectra.values())
+            self.status.set(workflow_guidance(len(self.spectra), len(visible)) + f" {included} included in analysis.")
         if not visible:
             self._empty_plot()
             if self.spectra:
@@ -694,64 +773,90 @@ class TpdSpectraApp:
     def _run_analysis(self) -> None:
         if self.running:
             return
-        selected = [(key, row["path"]) for key, row in self.spectra.items() if row["visible"]]
+        selected = [row for row in self.spectra.values() if row["included"]]
         if not selected:
-            messagebox.showinfo("No spectra selected", "Import spectra and turn on at least one trace to analyze.", parent=self.root)
+            messagebox.showinfo("No spectra selected", "Import spectra and enable Include for at least one file.", parent=self.root)
             return
         outdir = Path(self.output_path.get()).expanduser()
         try:
-            outdir.mkdir(parents=True, exist_ok=True)
-            settings = self._settings([path for _, path in selected], outdir)
-            args = build_cli_arguments(settings)
+            settings = self._settings([row["path"] for row in selected], outdir)
+            build_cli_arguments(settings)
+            ReviewDialog(self.root, settings, selected, self._start_reviewed_run)
         except Exception as exc:
             messagebox.showerror("Could not prepare analysis", str(exc), parent=self.root)
             return
+    def _start_reviewed_run(self, settings, preview=False):
+        if self.running:
+            return False
+        settings = json.loads(json.dumps(settings))
+        if preview:
+            workspace = tempfile.TemporaryDirectory(prefix="tpd-preview-")
+            self.preview_workspaces.append(workspace)
+            settings["output_path"] = str(Path(workspace.name) / "preview")
+        args = build_cli_arguments(settings)
+        plan = RunPlan.create(settings, args, preview=preview)
+        self.active_plan = plan
+        if not preview:
+            self.output_path.set(str(plan.output.parent))
         self.running = True
+        self.cancel_event = threading.Event()
+        self.run_log = []
         self.run_button.configure(state="disabled")
-        self.status.set(f"Analyzing {len(selected)} spectrum{'s' if len(selected) != 1 else ''}…")
-        threading.Thread(target=self._analysis_worker, args=(args,), daemon=True).start()
+        self.cancel_button.configure(state="normal")
+        self.status.set(f"Analyzing {len(plan.inputs)} spectra · {'unsaved preview' if preview else plan.output}")
+        self.worker = threading.Thread(target=execute, args=(plan, self.worker_messages, self.cancel_event), daemon=False)
+        self.worker.start()
+        return True
 
-    def _analysis_worker(self, args: list[str]) -> None:
-        try:
-            if getattr(sys, "frozen", False):
-                # The GUI executable doubles as a hidden CLI entry point.
-                command = [sys.executable, "--tpd-cli", *args]
-            else:
-                command = [sys.executable, "-m", "tpd_spectra", *args]
-            completed = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                       errors="replace", check=False)
-            for line in completed.stdout.splitlines():
-                self.worker_messages.put(("log", line))
-            self.worker_messages.put(("done", str(completed.returncode)))
-        except Exception as exc:
-            self.worker_messages.put(("error", str(exc)))
+    def _cancel_run(self):
+        if self.running:
+            self.cancel_event.set()
+            self.cancel_button.configure(state="disabled")
+            self.status.set("Cancelling analysis… waiting for the calculation process to exit.")
 
     def _poll_worker(self) -> None:
         try:
             while True:
                 kind, value = self.worker_messages.get_nowait()
-                if kind == "done":
+                if kind == "finished":
                     self.running = False
                     self.run_button.configure(state="normal")
-                    if value == "0":
-                        self.status.set(f"Analysis complete · results saved to {self.output_path.get()}")
-                        messagebox.showinfo("Analysis complete", f"Your tables, comparison plot, and diagnostics are in:\n{self.output_path.get()}", parent=self.root)
-                    else:
-                        self.status.set("Analysis finished with errors; review the run log.")
+                    self.cancel_button.configure(state="disabled")
+                    plan = self.active_plan
+                    if not plan.preview:
+                        self.last_output = plan.output
+                    self.status.set(f"Analysis {value} · {'unsaved preview' if plan.preview else plan.output}")
+                    if self.close_after_run:
+                        self._finish_close()
+                        return
+                    submitted = json.loads(plan.settings_json)
+                    try:
+                        current = self._settings([Path(p) for p, _ in plan.inputs], plan.output)
+                    except (ValueError, tk.TclError):
+                        current = {}
+                    ResultsDialog(self.root, plan.output, value, preview=plan.preview, stale=current != submitted)
                 elif kind == "error":
                     self.running = False
                     self.run_button.configure(state="normal")
-                    self.status.set("Could not start the analysis.")
-                    messagebox.showerror("Analysis could not start", value, parent=self.root)
+                    self.cancel_button.configure(state="disabled")
+                    self.run_log.append(value)
+                    self.status.set("Analysis failed. Review the run log.")
+                    if self.close_after_run:
+                        self._finish_close()
+                        return
+                    messagebox.showerror("Analysis failed", value, parent=self.root)
                 else:
+                    self.run_log.append(value)
                     self.status.set(value[:100])
         except queue.Empty:
             pass
         self.root.after(120, self._poll_worker)
 
     def _open_output(self) -> None:
-        path = Path(self.output_path.get()).expanduser()
-        path.mkdir(parents=True, exist_ok=True)
+        path = self.last_output or Path(self.output_path.get()).expanduser()
+        if not path.is_dir():
+            messagebox.showinfo("No saved results", "Complete a saved analysis first, or choose an existing results folder.", parent=self.root)
+            return
         try:
             if sys.platform == "win32":
                 import os
@@ -764,8 +869,24 @@ class TpdSpectraApp:
             messagebox.showerror("Cannot open folder", str(exc), parent=self.root)
 
     def _close(self) -> None:
-        if self.running and not messagebox.askyesno("Analysis is running", "Close the app while analysis is in progress?", parent=self.root):
+        if self.running:
+            if messagebox.askyesno("Analysis is running", "Cancel the running calculation and close when it has stopped? Partial output will be marked cancelled.", parent=self.root):
+                self.close_after_run = True
+                self._cancel_run()
             return
+        self._finish_close()
+
+    def _finish_close(self):
+        active = [explorer for explorer in self.explorers if explorer.busy]
+        if active:
+            for explorer in active:
+                explorer.closing = True
+                explorer.cancel_event.set()
+            self.status.set("Stopping Explorer calculations before closing…")
+            self.root.after(100, self._finish_close)
+            return
+        for workspace in self.preview_workspaces:
+            workspace.cleanup()
         self.root.destroy()
 
 

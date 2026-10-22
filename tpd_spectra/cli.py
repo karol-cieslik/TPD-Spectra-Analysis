@@ -14,6 +14,8 @@ from .analysis import analyze_file, load_spectrum, smooth_signal
 from .kinetics import fit_polanyi_wigner, fit_two_state_polanyi_wigner
 import numpy as np
 from . import __version__
+from .identity import build_identity
+import importlib.metadata
 
 
 def _sha256(path: Path) -> str:
@@ -89,6 +91,9 @@ def main(argv=None) -> int:
     parser.set_defaults(**config_defaults)
     args = parser.parse_args(argv)
     # Validate key numeric settings early, before touching the input files.
+    if not all(np.isfinite(value) for value in [*args.leading_edge, *args.redhead_region,
+            args.prefactor, args.kinetic_initial_energy, args.kinetic_initial_prefactor, args.max_time_min]):
+        parser.error('numeric settings must be finite')
     if args.window < 1:
         parser.error('--window must be >= 1')
     if args.prefactor <= 0:
@@ -125,14 +130,17 @@ def main(argv=None) -> int:
         parser.error(f'Input path does not exist: {", ".join(missing_sources)}')
     if not files:
         parser.error(f'No CSV files found at {", ".join(str(path) for path in sources)}')
+    if len({file.name.casefold() for file in files}) != len(files):
+        parser.error('Input filenames must be distinct within a batch; run duplicate names separately to avoid output collisions.')
     outdir = Path(args.output); outdir.mkdir(parents=True, exist_ok=True)
     results, failures, warning_rows, kinetic_rows = [], [], [], []
     input_manifest = []
     diagnostic_dir = outdir / 'diagnostics'
     diagnostic_dir.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(9, 5))
-    for file in files:
+    for file_index, file in enumerate(files, 1):
         try:
+            print(f'[{file_index}/{len(files)}] Loading and analyzing {file.name}', flush=True)
             input_manifest.append({'path': str(file.resolve()), 'name': file.name, 'size_bytes': file.stat().st_size, 'sha256': _sha256(file)})
             result = analyze_file(file, leading_edge_c=tuple(args.leading_edge),
                 redhead_region_c=tuple(args.redhead_region), prefactor_s_inv=args.prefactor,
@@ -140,8 +148,15 @@ def main(argv=None) -> int:
                 max_time_min=None if args.max_time_min < 0 else args.max_time_min)
             results.append(result)
             spec = load_spectrum(file)
+            report = dict(spec.import_report, source_sha256=_sha256(file))
+            (diagnostic_dir / f'{file.stem}_import.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+            if report['rejected_records'] or report['sorted_by_time'] or spec.points_temperature_corrected:
+                warning_rows.append({'file_name': file.name, 'warnings':
+                    f"Import changed row order or data: rejected={len(report['rejected_records'])}; "
+                    f"sorted={report['sorted_by_time']}; corrected temperatures={spec.points_temperature_corrected}. Inspect import report."})
             sig = smooth_signal(spec.signal, args.window, args.filter)
             if args.kinetic_fit:
+                print(f'[{file_index}/{len(files)}] Exploratory kinetic fitting: {file.name}', flush=True)
                 try:
                     order_fit = args.kinetic_order == 'fit'
                     order = 1.0 if order_fit else float(args.kinetic_order)
@@ -207,6 +222,7 @@ def main(argv=None) -> int:
                     kinetic_rows.append({'file_name': file.name, 'fit_error': str(exc),
                                          'reaction_order_setting': args.kinetic_order})
                     print(f'WARN {file.name}: kinetic fit unavailable: {exc}', file=sys.stderr)
+                    warning_rows.append({'file_name': file.name, 'warnings': f'Kinetic fit unavailable: {exc}'})
             ax.plot(spec.temperature_clean_c, sig, label=result['short_name'])
             # Per-file diagnostic plot: raw/smoothed signal and the leading-edge
             # regression residuals. No automatic baseline correction is applied.
@@ -272,6 +288,8 @@ def main(argv=None) -> int:
     manifest = {
         'project_format_version': 1,
         'software': 'tpd-spectra', 'software_version': __version__,
+        'build': build_identity(),
+        'dependencies': {name: importlib.metadata.version(name) for name in ('numpy', 'pandas', 'scipy', 'matplotlib')},
         'created_utc': datetime.now(timezone.utc).isoformat(),
         'input_source': str(sources[0].resolve()) if len(sources) == 1 else [str(p.resolve()) for p in sources],
         'parameters': effective_config,

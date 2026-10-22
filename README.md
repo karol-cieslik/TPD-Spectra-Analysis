@@ -12,6 +12,8 @@ Built for surface-science researchers who need transparent fitting methods, repr
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
 [![Development status](https://img.shields.io/badge/status-beta%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/5)
 
+*Interface illustration (not a screenshot of the current candidate):*
+
 ![TPD Spectra Studio interface illustration](assets/studio-preview.svg)
 
 [**Download beta**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) · [**Quick start**](#-quick-start) · [**User manual**](docs/USER_AND_SCIENTIFIC_MANUAL.md) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contributing**](CONTRIBUTING.md)
@@ -28,6 +30,10 @@ The software aims to make routine analysis easier to reproduce and inspect witho
 
 > **Maturity:** The current beta candidate is under hands-on Windows acceptance testing. Automated tests and a Windows build are available, but real-instrument validation and wider user testing are still underway. Kinetic parameters are model-dependent estimates, not automatically confirmed physical mechanisms.
 
+Created and maintained by **Karol Cieślik**. The product is TPD Spectra Studio; the Python package is `tpd-spectra` and this repository is `TPD-Spectra-Analysis`.
+
+[Scientific scope/status](docs/METHOD_STATUS.md) · [Active roadmap](docs/PUBLICATION_ROADMAP.md) · [Checkpoint evidence](docs/CHECKPOINT_LEDGER.md) · [Explorer and Monte Carlo](docs/EXPLORER_MONTE_CARLO.md)
+
 ## ✨ Features
 
 - 📂 **Flexible CSV import** — individual files or folders; legacy instrument exports and common delimited formats.
@@ -37,6 +43,8 @@ The software aims to make routine analysis easier to reproduce and inspect witho
 - ⚗️ **Kinetic modeling** — optional single-state and exploratory two-state Polanyi–Wigner fits.
 - 🔎 **Fit diagnostics** — quality metrics, residual plots, numerical identifiability warnings and file-level errors.
 - 🖼️ **Export and provenance** — high-resolution PNGs, CSV tables and JSON records of analysis settings and input hashes.
+- **Reviewed runs** — separate plot visibility and analysis inclusion, setup/computed preview, destination confirmation, unique output folders, live logs/cancel and results review.
+- **Experimental Kinetics Explorer** — four-order comparison, multistart diagnostics and seeded conditional Monte Carlo refitting; no claim of validated confidence limits or mechanism probabilities.
 - 🧩 **Developer-accessible core** — Python API, command-line workflow, tests and contribution guidelines.
 
 ## 🚀 Quick start
@@ -163,3 +171,10 @@ Use [GitHub Issues](https://github.com/karol-cieslik/TPD-Spectra-Analysis/issues
 ## 📖 Citation and license
 
 The project-authored source code is provided under the [MIT License](LICENSE), subject to the scope explained in [ASSET-RIGHTS.md](ASSET-RIGHTS.md). Citation metadata is maintained in [CITATION.cff](CITATION.cff). A citable tagged release and peer-reviewed software description are future milestones; neither is claimed for this beta candidate.
+
+
+### Candidate workflow
+
+After importing, select **Include** for the files to analyze (independent of **Show**). Set and inspect the analysis windows, then choose **Run full analysis**. Review assumptions, import changes and Setup preview; explicitly confirm the new results location. You may compute one selected spectrum first as an unsaved preview. **Run and save** retains the submitted settings and creates a new folder. Review results, residuals and failures inside the app. About identifies the author, candidate version and build.
+
+Explorer is explicitly experimental. Select an isolated peak, justify its heating rate, compare models, inspect residuals, then review Monte Carlo assumptions and set a seed/count. Use its guide before interpreting conditional ranges.

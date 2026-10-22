@@ -20,7 +20,7 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 - Batch output with settings/provenance and warnings.
 - Numerical Jacobian rank, bounds, and conditioning warnings for the single-state fit.
 
-**Not in this beta's default outputs:** nonlinear bootstrap intervals, coverage-calibration studies, independent digitized literature benchmarks, nonlinear heating-ramp fitting, automated mechanistic assignment. These belong to separate research/development work.
+**Not in this beta's default outputs:** validated nonlinear confidence intervals, coverage-calibration studies, independent digitized literature benchmarks, nonlinear heating-ramp fitting, automated mechanistic assignment. These belong to separate research/development work.
 
 ## 2. Installation and launching
 
@@ -253,3 +253,12 @@ The user manual is intentionally more detailed than a JOSS article. A paper shou
 ## 13. Contributors and maintenance
 
 Project repository: [TPD-Spectra-Analysis](https://github.com/karol-cieslik/TPD-Spectra-Analysis). Citation details: `CITATION.cff`. Scope of code license: `LICENSE` and `ASSET-RIGHTS.md`. Please submit reproducible issues and suggested improvements through GitHub. The manuscript author list and affiliations are separate from code contribution history and must be confirmed with the relevant researchers.
+
+
+## Reviewed runs and experimental Explorer (0.11.0b1 candidate)
+
+Show and Include are independent. Run full analysis opens review with import reports and raw/processed setup previews. Confirm the included inputs, assumed prefactor and a new output folder; Compute selected preview runs one spectrum without final saved output. Run and save starts the reviewed snapshot with live log/cancel and opens results/warnings afterward. Reruns use different folders. Closing during execution cancels and waits for the child.
+
+The leading-edge intercept is exported separately; a physical prefactor is unavailable for arbitrary-unit detector signal. The legacy prefactor field is empty/NaN to prevent interpretation as a calibrated rate constant. Kinetic information criteria now count estimated noise variance. Prior rankings can therefore change.
+
+The [Explorer guide](EXPLORER_MONTE_CARLO.md) covers four-order comparison and explicitly experimental seeded Monte Carlo. Conditional refit percentile ranges are not coverage-validated confidence limits. See [method status](METHOD_STATUS.md) and [checkpoint evidence](CHECKPOINT_LEDGER.md).

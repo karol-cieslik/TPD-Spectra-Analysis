@@ -105,7 +105,8 @@ def simulate_tpd(temperature_c, beta_k_s: float, activation_energy_ev: float,
 def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
                        reaction_order: float = 1.0, fit_reaction_order: bool = False,
                        initial_energy_ev: float = 1.0, initial_prefactor_s_inv: float = 1e13,
-                       fit_baseline: bool = True, max_nfev: int = 300) -> tuple[KineticFitResult, np.ndarray]:
+                       fit_baseline: bool = True, max_nfev: int = 300,
+                       cancelled=None) -> tuple[KineticFitResult, np.ndarray]:
     """Fit a full TPD trace by bounded nonlinear least squares.
 
     The scale factor and (optionally) constant baseline are nuisance parameters.
@@ -184,6 +185,8 @@ def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
 
     # Scale residuals to signal range for stable optimisation across detector units.
     def residual(p):
+        if cancelled is not None and cancelled():
+            raise InterruptedError("Kinetic fit cancelled")
         energy, prefactor, scale, baseline, order = unpack(p)
         try:
             _, rate = simulate_tpd(temp, beta_k_s, energy, prefactor, order)
@@ -249,8 +252,13 @@ class MultiStateFitResult:
 
 
 def _fit_information_criteria(residual_sum_squares: float, n: int, k: int):
-    """Gaussian least-squares information criteria, for same-data comparisons."""
-    n = int(n); k = int(k)
+    """Gaussian unknown-variance criteria, with common likelihood constants omitted.
+
+    k counts fitted mean-model parameters; estimating residual variance adds
+    one parameter. Compare only fits to the same observations and error model.
+    The usual AICc correction is approximate for nonlinear constrained fits.
+    """
+    n = int(n); k = int(k) + 1
     rss = max(float(residual_sum_squares), np.finfo(float).tiny)
     aic = n * np.log(rss / n) + 2 * k
     aicc = aic + (2 * k * (k + 1) / (n - k - 1)) if n > k + 1 else float('inf')

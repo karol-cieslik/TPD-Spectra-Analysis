@@ -1,3 +1,5 @@
+> Historical planning context. The maintained priority/status sources are [PUBLICATION_ROADMAP.md](PUBLICATION_ROADMAP.md), [CHECKPOINT_LEDGER.md](CHECKPOINT_LEDGER.md) and [METHOD_STATUS.md](METHOD_STATUS.md). The user has authorized beta improvements and experimental Explorer integration; main and public-release gates remain protected.
+
 # Release and publication gates
 
 This document records the project priority: **a reliable working program, usable by other scientists and maintainable by external developers, with evidence sufficient to support a software paper**.

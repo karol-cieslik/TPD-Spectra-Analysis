@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-22",
+  "candidate_version": "0.11.0b1",
+  "baseline_commit": "ad2667ad486f2f9404159feeb528dad992de608c",
+  "explorer_source_commit": "a1a07377f6d577dc8337e89bbf3678df653aaa31",
+  "main_preserved_at": "0f870a783effa18fd4f7880b6cb754e324b8a0d5",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "dependencies": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pandas": "3.0.6",
+    "matplotlib": "3.11.2",
+    "pytest": "9.1.1",
+    "pyinstaller": "6.22.3"
+  },
+  "tests": {
+    "tests": "167",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "137.159"
+  },
+  "datasets": {
+    "examples/kinetics_orders/01_zero_order_clean.csv": "7571760b2981f95afa4603e4a914c7bd85fa97beca3d0093bf96753494539c70",
+    "examples/kinetics_orders/02_first_order_clean.csv": "4a3e86359a6aaed5efd31ed264c8d00cdc91a1a3a740ccc879f66a832f7153c5",
+    "examples/kinetics_orders/03_second_order_clean.csv": "cecce568561749a4cbff8e3116ed4860848a11f8b40a5f7be3154b2dd39a7ca9",
+    "examples/kinetics_orders/04_fractional_order_0p5_clean.csv": "6d6d012ac9c750267c9667eb5fef9c040f67a3b79c3f8bcd0785096a7ddb3664",
+    "examples/kinetics_orders/05_fractional_order_1p5_clean.csv": "06e22d346aa57153d9a568327830647aa15f3c7aa09c982c60d05790d2595a56",
+    "examples/kinetics_orders/06_first_order_with_noise_baseline.csv": "b1a8a9241569e78b1b75283cc28b857899da105b76a9f72264bb12e739882dce",
+    "examples/kinetics_orders/07_two_overlapping_first_order_peaks.csv": "ae5c599568b5b2eeb8acdf683323eec262c143b44d0b9165946020db94f32188",
+    "examples/synthetic_two_peak_demo.csv": "68c8b603ae3b7d9a832a14b7908f4b533c890c77aee796aeb336f710f4f49267"
+  },
+  "reviewer": "Codex automated implementation/test review; no independent human scientific sign-off",
+  "limits": [
+    "Synthetic numerical checks are not experimental validation.",
+    "No frequentist MC coverage study completed.",
+    "No independent usability, clean-Windows-machine or visual/scaling acceptance completed.",
+    "Frozen Windows CI evidence is recorded in PR #5 after build completion."
+  ]
+}

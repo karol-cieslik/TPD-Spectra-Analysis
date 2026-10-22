@@ -1,3 +1,5 @@
+> Historical planning context. The maintained priority/status sources are [PUBLICATION_ROADMAP.md](PUBLICATION_ROADMAP.md), [CHECKPOINT_LEDGER.md](CHECKPOINT_LEDGER.md) and [METHOD_STATUS.md](METHOD_STATUS.md). The user has authorized beta improvements and experimental Explorer integration; main and public-release gates remain protected.
+
 # GUI/UX roadmap for TPD Spectra Studio
 
 Agreed 2026-10-19. Target: a beginner-friendly yet scientifically transparent desktop tool with a polished and reliable Windows distribution. Implementation is incremental on a GUI-focused branch, separate from kinetic-model and uncertainty research.

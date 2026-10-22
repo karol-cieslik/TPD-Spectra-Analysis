@@ -20,8 +20,11 @@ def main():
             str(executable), "--tpd-cli", str(root / "examples/synthetic_two_peak_demo.csv"),
             "--output", str(output), "--leading-edge", "110", "140",
             "--redhead-region", "150", "210", "--prefactor", "1e13", "--filter", "none",
-        ], env=env, timeout=180, check=True)
+        ], env=env, timeout=180, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+           text=True, encoding="utf-8", errors="replace")
         assert completed.returncode == 0
+        assert "[1/1] Loading and analyzing" in completed.stdout, completed.stdout
+        assert "Completed:" in completed.stdout, completed.stdout
         with (output / "all_desorption_parameters.csv").open(encoding="utf-8", newline="") as handle:
             rows = list(csv.DictReader(handle))
         assert len(rows) == 1
@@ -32,6 +35,13 @@ def main():
         manifest = json.loads((output / "analysis_project.json").read_text(encoding="utf-8"))
         assert len(manifest["inputs_processed"]) == 1
         print("Frozen Windows executable: shipped demo analysis and exports passed")
+        gui_output = output / "gui-explorer-smoke"
+        subprocess.run([str(executable), "--tpd-smoke-gui",
+                        str(root / "examples/synthetic_two_peak_demo.csv"), str(gui_output)],
+                       env=env, timeout=240, check=True)
+        assert (gui_output / "desktop_smoke.json").is_file()
+        assert (gui_output / "monte_carlo_replicates.csv").is_file()
+        print("Frozen Windows executable: real Tk dialogs, Explorer and short Monte Carlo export passed")
 
 
 if __name__ == "__main__":

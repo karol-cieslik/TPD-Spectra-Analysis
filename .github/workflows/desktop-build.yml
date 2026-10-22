@@ -37,6 +37,11 @@ jobs:
           python -m pip install -e .
       - name: Verify scientific and GUI regression tests
         run: python -m pytest -q
+      - name: Record candidate build identity
+        shell: pwsh
+        run: |
+          "COMMIT = '$env:GITHUB_SHA'" | Set-Content -Encoding utf8 tpd_spectra/_build_info.py
+          python -m pip freeze | Set-Content -Encoding utf8 build-dependencies.txt
       - name: Validate desktop entrypoint without a display
         run: |
           python -c "import tpd_spectra.gui; import tpd_spectra.gui_ranges; import tpd_spectra.identifiability; print('Desktop modules import successfully')"
@@ -48,6 +53,7 @@ jobs:
         run: >-
           pyinstaller --clean --noconfirm --onefile --windowed
           --name TPD-Spectra-Studio
+          --copy-metadata numpy --copy-metadata scipy --copy-metadata pandas --copy-metadata matplotlib
           run_tpd_spectra_gui.py
       - name: Verify frozen executable with shipped demo
         run: python scripts/verify_windows_build.py dist/TPD-Spectra-Studio.exe
@@ -57,6 +63,7 @@ jobs:
           New-Item -ItemType Directory -Force release-package | Out-Null
           Copy-Item dist/TPD-Spectra-Studio.exe release-package/
           Copy-Item README.md,CHANGELOG.md,CITATION.cff,LICENSE,ASSET-RIGHTS.md release-package/
+          Copy-Item build-dependencies.txt release-package/
           Copy-Item examples release-package/examples -Recurse
           @'
           TPD Spectra Studio — Windows x64

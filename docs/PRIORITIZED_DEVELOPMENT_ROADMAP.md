@@ -1,3 +1,5 @@
+> Historical planning context. The maintained priority/status sources are [PUBLICATION_ROADMAP.md](PUBLICATION_ROADMAP.md), [CHECKPOINT_LEDGER.md](CHECKPOINT_LEDGER.md) and [METHOD_STATUS.md](METHOD_STATUS.md). The user has authorized beta improvements and experimental Explorer integration; main and public-release gates remain protected.
+
 # Development roadmap — reliable, reusable TPD research software
 
 **Status:** active single-source development plan · 2026-10-19  

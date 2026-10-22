@@ -1,3 +1,14 @@
+## 0.11.0b1 — unreleased roadmap / Explorer candidate
+
+- Use maintainer’s preferred name Karol Cieślik and shared package/citation/About identity.
+- Add reviewed save destinations, separate Show/Include, immutable run snapshots, exclusive folders, setup/computed preview, streamed logs, cancellation and results review.
+- Record import row decisions and corrected temperatures.
+- Correct misleading physical leading-edge prefactor reporting: unavailable for arbitrary-unit signal; retain log-signal intercept. Old prefactor interpretations must be re-evaluated.
+- Include estimated residual variance in Gaussian information-criterion parameter counts; prior model rankings can change.
+- Integrate PR #8 Explorer/Monte Carlo with snapshot-safe exports, queue-based GUI updates, cancellation, explicit incomplete rankings, conditional-range withholding, all completed refit records and SVG export.
+- Add independent all-order coverage references and packaged Tk/Explorer/short-MC smoke.
+- Track 84 original plus 10 Explorer checkpoints without claiming experimental/human acceptance.
+
 ## Unreleased beta candidate — demo import and Quick Start
 
 - Validate required CSV headers and numeric channels before choosing a layout;

@@ -6,7 +6,7 @@ desorption rate only where the user selects a physically appropriate region.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from pathlib import Path
 from typing import Iterable
 import math
@@ -28,6 +28,7 @@ class Spectrum:
     signal: np.ndarray
     temperature_clean_c: np.ndarray
     points_temperature_corrected: int = 0
+    import_report: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -96,11 +97,28 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
                 'time_ms': pd.to_numeric(candidate[tcol], errors='coerce'),
                 'signal': pd.to_numeric(candidate[scol], errors='coerce'),
                 'temperature_c': pd.to_numeric(candidate[tempcol], errors='coerce'),
-            }).replace([np.inf, -np.inf], np.nan).dropna()
-            parsed = parsed.sort_values('time_ms', kind='stable').drop_duplicates('time_ms', keep='first')
+            }).replace([np.inf, -np.inf], np.nan)
+            invalid = parsed.isna().any(axis=1)
+            rejected = [{"data_record": int(i) + 1, "reason": "missing, nonnumeric or nonfinite required channel"}
+                        for i in parsed.index[invalid]]
+            parsed = parsed.loc[~invalid]
+            sorted_rows = not parsed.time_ms.is_monotonic_increasing
+            parsed = parsed.sort_values('time_ms', kind='stable')
+            duplicates = parsed.duplicated('time_ms', keep='first')
+            rejected.extend({"data_record": int(i) + 1, "reason": "duplicate time; retained first original record"}
+                            for i in parsed.index[duplicates])
+            parsed = parsed.loc[~duplicates]
             if len(parsed) < 3:
                 raise ValueError('fewer than 3 valid rows after parsing required channels')
             frame = parsed
+            report = {"schema_version": 1, "metadata_rows_skipped": rows, "delimiter": sep,
+                      "decimal_mark": decimal_mark, "columns": {"time": tcol, "temperature": tempcol, "signal": scol},
+                      "unit_contract": {"time": "ms", "temperature": "degC", "signal": "arbitrary units"},
+                      "unit_note": "Legacy import contract; generic headers do not prove units. Confirm source units before analysis.",
+                      "original_data_records": len(candidate), "accepted_records": len(parsed),
+                      "rejected_records": rejected, "sorted_by_time": sorted_rows,
+                      "accepted_original_records": [int(i) + 1 for i in parsed.index],
+                      "duplicate_policy": "keep first original record", "source_sha256": None}
             break
         except Exception as exc:  # surfaced below as an actionable import error
             errors.append(str(exc))
@@ -110,8 +128,10 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
     signal = frame.signal.to_numpy(float)
     raw_temp = frame.temperature_c.to_numpy(float)
     clean_temp = clean_temperature(raw_temp, time=time_min)
+    report["temperature_corrected_original_records"] = [int(frame.index[i]) + 1 for i in
+        np.flatnonzero(~np.isclose(raw_temp, clean_temp, equal_nan=True))]
     return Spectrum(path.name, time_min, raw_temp, signal, clean_temp,
-                    int(np.count_nonzero(~np.isclose(raw_temp, clean_temp, equal_nan=True))))
+                    int(np.count_nonzero(~np.isclose(raw_temp, clean_temp, equal_nan=True))), report)
 
 
 def clean_temperature(temperature_c: Iterable[float], *, upward_jump_c: float = 1.5,
@@ -260,8 +280,11 @@ def leading_edge_fit(temperature_c: Iterable[float], signal: Iterable[float], be
                      lower_c: float, upper_c: float, *, min_points: int = 5) -> FitResult:
     """Fit ln(signal) vs 1/T for the selected leading-edge interval.
 
-    Implements ln(r) = ln(nu/beta) - E/(k_B T), assuming signal is proportional
-    to rate and the selected region follows the stated zero-order-style model.
+    Fits ln(S) = intercept - E/(k_B T), where S is the supplied signal.
+    The slope gives an apparent energy if coverage and response factors are
+    effectively constant in the chosen interval. The intercept includes the
+    detector scale and coverage; it cannot identify a physical prefactor from
+    arbitrary units. The legacy prefactor_s_inv field is therefore unavailable.
     """
     temp = np.asarray(temperature_c, dtype=float)
     sig = np.asarray(signal, dtype=float)
@@ -280,7 +303,7 @@ def leading_edge_fit(temperature_c: Iterable[float], signal: Iterable[float], be
     reg = _linear_regression_diagnostics(x, y)
     slope, intercept = reg["slope"], reg["intercept"]
     energy = -float(slope) * K_B_EV
-    prefactor = float(beta_k_s * np.exp(np.clip(intercept, -700, 700)))
+    prefactor = float('nan')
     # Transform the slope's OLS confidence interval into energy. This captures
     # regression scatter only; it excludes systematic/model uncertainty.
     ci_low = -reg["slope_ci95_upper"] * K_B_EV
@@ -368,7 +391,9 @@ def analyze_file(path: str | Path, *, leading_edge_c: tuple[float, float] = (130
         'heating_rate_K_s': beta, 'heating_rate_fit_R2': beta_r2, 'heating_rate_slope_C_min': beta_slope,
         'leading_edge_lower_C': leading_edge_c[0], 'leading_edge_upper_C': leading_edge_c[1],
         'leading_edge_energy_eV': fit0.energy_ev if fit0 else float('nan'),
-        'leading_edge_prefactor_s_inv': fit0.prefactor_s_inv if fit0 else float('nan'),
+        'leading_edge_prefactor_s_inv': float('nan'),
+        'leading_edge_log_signal_intercept': fit0.intercept if fit0 else float('nan'),
+        'leading_edge_prefactor_note': 'Unavailable from uncalibrated arbitrary-unit signal; intercept includes detector scale and coverage.',
         'leading_edge_fit_R2': fit0.r_squared if fit0 else float('nan'),
         'leading_edge_fit_points': fit0.n_points if fit0 else 0, 'leading_edge_error': leading_error,
         'leading_edge_residual_RMSE_ln_signal': fit0.residual_rmse if fit0 else float('nan'),

@@ -4,7 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tpd-spectra"
-version = "0.10.2"
+dynamic = ["version"]
+authors = [{name = "Karol Cieślik"}]
 description = "Interactive desktop workspace and reproducible analysis tools for TPD/TDS spectra"
 license = "MIT"
 readme = "README.md"
@@ -21,3 +22,6 @@ testpaths = ["tests"]
 [tool.setuptools.packages.find]
 include = ["tpd_spectra*"]
 exclude = ["tests*", "scripts*", "input*", "output*", "images*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "tpd_spectra.__version__"}

@@ -25,3 +25,11 @@ An isolated trace often does not uniquely identify kinetic order or energy and p
 `digitization_status=not_started` is intentionally assigned to every record. **No source figure has yet been digitized or experimentally benchmarked.** In a manuscript, distinguish *identified literature candidates* from *completed external validation*.
 
 This catalog is meant to be extended and audited. The primary references are linked directly in the CSV; avoid claiming exact figure identifiers where not confirmed.
+
+## Author outreach after validation
+
+The main CSV includes `contact_author`, `contact_email`, `contact_role`, `contact_source_url`, `contact_verification_status`, and `outreach_status`. Email addresses are **publicly listed professional contact details** only; empty cells mean unverified, not that no contact exists. Some are coauthors, not designated corresponding authors, and older papers may have changed affiliations. Recheck each institutional page just before writing.
+
+Suggested sequence: complete the digitization and independent validation first; then send one personalized professional message to the identified author, explain specifically which published spectrum and figure were used, identify the article citation, provide a link to the software and validation protocol, invite bug reports/usability comments, and avoid implying endorsement or collaboration without the author's agreement. If you want the original numerical data, request them explicitly and ask about permission for public redistribution.
+
+Use `outreach_status` to track `not_contacted`, `sent`, `replied`, `declined`, or `bounced`. Do not publish private email responses or third-party confidential datasets in this public GitHub repository.

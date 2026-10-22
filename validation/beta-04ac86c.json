@@ -1,0 +1,45 @@
+{
+  "verified_date": "2026-10-22",
+  "version": "0.11.0b1",
+  "source_commit": "04ac86c7255515b906c3adeca0d40254b0e0db6d",
+  "branch": "release/beta-v0.11-candidate",
+  "windows": {
+    "run_id": 39805432951,
+    "job_id": 119917284914,
+    "passed": 168,
+    "skipped": 0,
+    "source_seconds": 60.55,
+    "packaged_checks": [
+      "synthetic demo import and CLI analysis",
+      "Redhead demo energy within 2 percent of 1.25 eV",
+      "real Tk Quick Start and Review dialogs",
+      "Explorer first-order fit",
+      "two-replicate Monte Carlo execution",
+      "PNG/SVG and replicate export"
+    ],
+    "artifact_id": 12437818019,
+    "artifact_url": "https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/39805432951/artifacts/12437818019",
+    "artifact_zip_sha256": "1265fbef84e0da373d63ca3886365bbe3da4029f7882ad7a53470e6a894194ad",
+    "artifact_bytes": 83678813,
+    "expires_at": "2027-01-20T15:30:13Z"
+  },
+  "linux": {
+    "run_id": 39805440518,
+    "python_versions": [
+      "3.10",
+      "3.11",
+      "3.12"
+    ],
+    "per_version": {
+      "passed": 160,
+      "skipped": 8
+    },
+    "skip_reason": "GUI tests require a display; all eight ran on Windows"
+  },
+  "limits": [
+    "Packaged Monte Carlo check uses two replicates and does not validate uncertainty coverage",
+    "No manual visual, scaling, clean-user-machine or uncoached usability acceptance claimed",
+    "No experimental validation or independent scientific sign-off claimed"
+  ],
+  "main_sha_observed": "0f870a783effa18fd4f7880b6cb754e324b8a0d5"
+}

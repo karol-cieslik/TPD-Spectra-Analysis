@@ -1,5 +1,12 @@
 # Windows verification notes
 
+Verified candidate `04ac86c7255515b906c3adeca0d40254b0e0db6d` passed
+168 source tests with zero skips and all frozen checks in
+[run 39805432951](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/39805432951).
+See [the machine-readable record](beta-04ac86c.json) for counts, artifact hash
+and scope. These notes may be updated after that application commit; the ZIP
+and build identity remain tied to the recorded source SHA.
+
 The source suite includes real Tk widget assertions; these must not be skipped
 on Windows. The frozen executable is checked separately by
 `scripts/verify_windows_build.py`, including demo analysis, dialogs, an Explorer

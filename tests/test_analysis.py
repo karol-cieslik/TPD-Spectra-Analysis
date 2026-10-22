@@ -132,7 +132,10 @@ def test_cli_saves_reproducible_project_manifest_and_config(tmp_path):
     import json
     from pathlib import Path
     from tpd_spectra.cli import main
-    source = sorted(Path('input').glob('*.csv'))[1]
+    historical_files = sorted(Path('input').glob('*.csv'))
+    if len(historical_files) < 2:
+        pytest.skip('Historical instrument CSVs are not distributed with the public repository')
+    source = historical_files[1]
     out = tmp_path / 'project-output'
     config = tmp_path / 'saved-config.json'
     assert main([str(source), '--output', str(out), '--window', '7',
@@ -153,7 +156,10 @@ def test_cli_config_and_explicit_cli_override(tmp_path):
     import json
     from pathlib import Path
     from tpd_spectra.cli import main
-    source = sorted(Path('input').glob('*.csv'))[1]
+    historical_files = sorted(Path('input').glob('*.csv'))
+    if len(historical_files) < 2:
+        pytest.skip('Historical instrument CSVs are not distributed with the public repository')
+    source = historical_files[1]
     config = tmp_path / 'config.json'
     config.write_text(json.dumps({'window': 4, 'filter': 'mean'}), encoding='utf-8')
     out = tmp_path / 'configured-output'

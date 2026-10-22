@@ -2,6 +2,12 @@
 
 This is a **research checklist**, not a repository of downloaded or validated data. The catalog lists 26 bibliographically verified candidates for evaluating TPD Spectra Studio on literature spectra and reported parameters. A DOI and article record do **not** imply that the full text, figure, underlying data or reproduction rights have been checked.
 
+## Extraction resources
+
+- [`literature_tpd_candidates.csv`](literature_tpd_candidates.csv): bibliography, prioritization and validation status.
+- [`literature_extraction_notes.csv`](literature_extraction_notes.csv): paper-by-paper instructions for all 26 candidates, keyed by `id`.
+- [`DIGITIZATION_GUIDE.md`](DIGITIZATION_GUIDE.md): step-by-step source retrieval, calibration, quality controls and manuscript reporting.
+
 ## Suggested workflow
 
 1. Prioritize LIT002 (experiment + stated kinetic orders and parameters), LIT003 (second-order and multiple heating rates), LIT001 (zero-order), LIT010 (energy distributions) and LIT009 (tabular peak-temperature cross-check).

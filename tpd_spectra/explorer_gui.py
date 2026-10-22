@@ -10,6 +10,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from .kinetics_explorer import compare_desorption_orders
+from .kinetics_uncertainty import run_kinetics_monte_carlo
 
 
 def select_peak_window(temperature, signal, start, end):
@@ -40,6 +41,7 @@ class KineticsExplorerWindow:
         self.win.geometry("1110x760")
         self.spectra = spectra
         self.busy = False
+        self.cancel_event = threading.Event()
         self.names = {str(k): v for k, v in spectra.items()}
         self.selected = tk.StringVar(value=next(iter(self.names)))
         self.beta = tk.StringVar(value="1.0")
@@ -67,6 +69,10 @@ class KineticsExplorerWindow:
         ttk.Entry(controls, textvariable=self.high, width=9).pack(side="left")
         self.run_button = ttk.Button(controls, text="Compare models", command=self.run)
         self.run_button.pack(side="right")
+        self.mc_button = ttk.Button(controls, text="Monte Carlo (500)", command=self.run_mc)
+        self.mc_button.pack(side="right", padx=6)
+        self.cancel_button = ttk.Button(controls, text="Cancel MC", command=self.cancel_event.set, state="disabled")
+        self.cancel_button.pack(side="right")
         self.fig = Figure(figsize=(10, 6), dpi=95)
         self.raw_ax = self.fig.add_subplot(211)
         self.res_ax = self.fig.add_subplot(212)
@@ -140,9 +146,69 @@ class KineticsExplorerWindow:
                 self.win.after(0, lambda: self.failure(message))
         threading.Thread(target=worker, daemon=True).start()
 
+    def run_mc(self):
+        if self.busy:
+            return
+        try:
+            spec = self.names[self.selected.get()]["spec"]
+            t, y = select_peak_window(spec.temperature_clean_c, spec.signal,
+                                      float(self.low.get()), float(self.high.get()))
+            beta = float(self.beta.get())
+            if not np.isfinite(beta) or beta <= 0:
+                raise ValueError("Heating rate must be positive.")
+            orders = tuple(k for k, v in self.orders.items() if v.get())
+            if not orders:
+                raise ValueError("Select at least one model.")
+        except (ValueError, KeyError) as exc:
+            messagebox.showerror("Invalid Monte Carlo input", str(exc), parent=self.win)
+            return
+        self.cancel_event.clear()
+        self.busy = True
+        self.run_button.configure(state="disabled")
+        self.mc_button.configure(state="disabled")
+        self.cancel_button.configure(state="normal")
+        self.status.set("Monte Carlo — starting 500 replicates")
+        fit_baseline = self.baseline.get()
+
+        def worker():
+            try:
+                def progress(done, total):
+                    if done % 10 == 0 or done == total:
+                        self.win.after(0, lambda d=done, n=total:
+                                       self.status.set(f"Monte Carlo — {d}/{n}"))
+                result = run_kinetics_monte_carlo(
+                    t, y, beta, orders=orders, replicates=500, seed=42,
+                    fit_baseline=fit_baseline, progress=progress,
+                    cancelled=self.cancel_event.is_set)
+                self.win.after(0, lambda: self.show_mc(result))
+            except Exception as exc:
+                message = str(exc)
+                self.win.after(0, lambda: self.failure(message))
+        threading.Thread(target=worker, daemon=True).start()
+
+    def show_mc(self, result):
+        self.busy = False
+        self.run_button.configure(state="normal")
+        self.mc_button.configure(state="normal")
+        self.cancel_button.configure(state="disabled")
+        rows = [f"{name}: {wins}/{result.replicates_completed} wins"
+                for name, wins in result.winning_counts.items()]
+        messagebox.showinfo(
+            "Monte Carlo results",
+            f"Reference: {result.reference_model}; seed {result.seed}; "
+            f"Gaussian sigma {result.noise_sigma:.3g}; "
+            f"completed {result.replicates_completed}/{result.replicates_requested}; "
+            f"no successful ranking {result.failed_rankings}.\\n"
+            + "\\n".join(rows)
+            + "\\nRanking frequency is not the probability of a physical mechanism.",
+            parent=self.win)
+        self.status.set("Monte Carlo cancelled." if result.cancelled else "Monte Carlo complete.")
+
     def failure(self, message):
         self.busy = False
         self.run_button.configure(state="normal")
+        self.mc_button.configure(state="normal")
+        self.cancel_button.configure(state="disabled")
         self.status.set("Model fitting failed.")
         messagebox.showerror("Model comparison failed", message, parent=self.win)
 

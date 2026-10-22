@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import threading
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 
 import numpy as np
 from matplotlib.figure import Figure
@@ -11,6 +11,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from .kinetics_explorer import compare_desorption_orders
 from .kinetics_uncertainty import run_kinetics_monte_carlo
+from .explorer_export import export_explorer_bundle
 
 
 def select_peak_window(temperature, signal, start, end):
@@ -41,6 +42,8 @@ class KineticsExplorerWindow:
         self.win.geometry("1110x760")
         self.spectra = spectra
         self.busy = False
+        self.last_fit = None
+        self.last_mc = None
         self.cancel_event = threading.Event()
         self.names = {str(k): v for k, v in spectra.items()}
         self.selected = tk.StringVar(value=next(iter(self.names)))
@@ -73,6 +76,8 @@ class KineticsExplorerWindow:
         self.mc_button.pack(side="right", padx=6)
         self.cancel_button = ttk.Button(controls, text="Cancel MC", command=self.cancel_event.set, state="disabled")
         self.cancel_button.pack(side="right")
+        self.export_button = ttk.Button(controls, text="Export results", command=self.export_results)
+        self.export_button.pack(side="right", padx=6)
         self.fig = Figure(figsize=(10, 6), dpi=95)
         self.raw_ax = self.fig.add_subplot(211)
         self.res_ax = self.fig.add_subplot(212)
@@ -90,6 +95,8 @@ class KineticsExplorerWindow:
         self.draw_input()
 
     def draw_input(self):
+        self.last_fit = None
+        self.last_mc = None
         spec = self.names[self.selected.get()]["spec"]
         t = np.asarray(spec.temperature_clean_c, dtype=float)
         y = np.asarray(spec.signal, dtype=float)
@@ -187,6 +194,7 @@ class KineticsExplorerWindow:
         threading.Thread(target=worker, daemon=True).start()
 
     def show_mc(self, result):
+        self.last_mc = result
         self.busy = False
         self.run_button.configure(state="normal")
         self.mc_button.configure(state="normal")
@@ -204,6 +212,27 @@ class KineticsExplorerWindow:
             parent=self.win)
         self.status.set("Monte Carlo cancelled." if result.cancelled else "Monte Carlo complete.")
 
+    def export_results(self):
+        if self.busy:
+            messagebox.showinfo("Export unavailable", "Finish the active analysis first.", parent=self.win)
+            return
+        if self.last_fit is None:
+            messagebox.showinfo("Nothing to export", "Compare models first.", parent=self.win)
+            return
+        folder = filedialog.askdirectory(parent=self.win, title="Choose Explorer export folder")
+        if not folder:
+            return
+        try:
+            t, y, models = self.last_fit
+            result = export_explorer_bundle(
+                folder, t, y, models, beta_k_s=float(self.beta.get()),
+                monte_carlo=self.last_mc, source=self.selected.get(),
+                settings={"fit_baseline": self.baseline.get(),
+                          "selected_models": [m.name for m in models]})
+            self.status.set(f"Explorer bundle exported: {result}")
+        except (OSError, ValueError, TypeError) as exc:
+            messagebox.showerror("Export failed", str(exc), parent=self.win)
+
     def failure(self, message):
         self.busy = False
         self.run_button.configure(state="normal")
@@ -213,6 +242,8 @@ class KineticsExplorerWindow:
         messagebox.showerror("Model comparison failed", message, parent=self.win)
 
     def show_result(self, t, y, models):
+        self.last_fit = (np.array(t, copy=True), np.array(y, copy=True), models)
+        self.last_mc = None
         self.busy = False
         self.run_button.configure(state="normal")
         for child in self.table.get_children():

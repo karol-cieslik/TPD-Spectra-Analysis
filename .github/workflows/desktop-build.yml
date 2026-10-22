@@ -66,6 +66,10 @@ jobs:
           Copy-Item README.md,CHANGELOG.md,CITATION.cff,LICENSE,ASSET-RIGHTS.md release-package/
           Copy-Item build-dependencies.txt release-package/
           Copy-Item examples release-package/examples -Recurse
+          Copy-Item docs release-package/docs -Recurse
+          Copy-Item validation release-package/validation -Recurse
+          $exeHash = (Get-FileHash release-package/TPD-Spectra-Studio.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$exeHash  TPD-Spectra-Studio.exe" | Set-Content -Encoding ascii release-package/SHA256SUMS.txt
           @'
           TPD Spectra Studio — Windows x64
 
@@ -84,6 +88,8 @@ jobs:
           notebook files, images, or other third-party material. Validate all scientific
           outputs and assumptions before interpretation.
           '@ | Set-Content -Encoding utf8 release-package/DISTRIBUTION-NOTE.txt
+          if (!(Test-Path release-package/docs/EXPLORER_MONTE_CARLO.md)) { throw 'Explorer guide missing from package' }
+          if (!(Test-Path release-package/docs/CHECKPOINT_LEDGER.md)) { throw 'Checkpoint ledger missing from package' }
           New-Item -ItemType Directory -Force release-package/THIRD-PARTY-LICENSES | Out-Null
           $sitePackages = python -c "import site; print(site.getsitepackages()[0])"
           Get-ChildItem $sitePackages -Recurse -File -Include 'LICENSE*','COPYING*' |

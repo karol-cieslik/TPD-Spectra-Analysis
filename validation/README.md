@@ -1,6 +1,6 @@
 # Published TPD/TDS spectra: literature-validation candidates
 
-This is a **research checklist**, not a repository of downloaded or validated data. The catalog lists 11 verified bibliographic candidates for evaluating TPD Spectra Studio on literature spectra and reported parameters. A DOI and article record do **not** imply that the full text, figure, underlying data or reproduction rights have been checked.
+This is a **research checklist**, not a repository of downloaded or validated data. The catalog lists 26 bibliographically verified candidates for evaluating TPD Spectra Studio on literature spectra and reported parameters. A DOI and article record do **not** imply that the full text, figure, underlying data or reproduction rights have been checked.
 
 ## Suggested workflow
 

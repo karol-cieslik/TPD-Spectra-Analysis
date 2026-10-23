@@ -6,7 +6,7 @@ desorption rate only where the user selects a physically appropriate region.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from pathlib import Path
 from typing import Iterable
 import math
@@ -28,6 +28,7 @@ class Spectrum:
     signal: np.ndarray
     temperature_clean_c: np.ndarray
     points_temperature_corrected: int = 0
+    import_report: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -51,8 +52,10 @@ class FitResult:
 
 
 def _numeric_column(df: pd.DataFrame, requested: str | None, alternatives: Iterable[str], role: str) -> str:
-    if requested and requested in df.columns:
-        return requested
+    if requested:
+        if requested in df.columns:
+            return requested
+        raise ValueError(f"Requested {role} column {requested!r} was not found")
     for name in alternatives:
         if name in df.columns:
             return name
@@ -73,10 +76,10 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
     if not path.is_file():
         raise FileNotFoundError(path)
     errors = []
-    df = None
+    frame = None
     # Prefer the documented legacy export, then accept ordinary comma/tab CSVs
     # with either decimal style and a conventional header row.
-    layouts = [(skiprows, delimiter, decimal), (0, delimiter, decimal),
+    layouts = [(skiprows, delimiter, decimal), (skiprows, delimiter, '.'), (0, delimiter, decimal),
                (0, ',', '.'), (0, '\t', '.'), (0, ';', '.')]
     seen = set()
     for rows, sep, decimal_mark in layouts:
@@ -85,56 +88,93 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
         seen.add((rows, sep, decimal_mark))
         try:
             candidate = pd.read_csv(path, skiprows=rows, sep=sep, decimal=decimal_mark)
-            if len(candidate.columns) > 1:
-                df = candidate
-                break
+            candidate.columns = [str(c).strip() for c in candidate.columns]
+            tcol = _numeric_column(candidate, time_column, ('ms', 'Time_ms', 'time_ms', 'Time (ms)', 'Time', 'time'), 'time (ms)')
+            scol = _numeric_column(candidate, signal_column, ('DHTA+', 'Signal', 'signal', 'Intensity', 'intensity', 'Signal (a.u.)'), 'signal')
+            tempcol = _numeric_column(candidate, temperature_column, ('Temperatura', 'Temperature', 'temperature', 'Temp', 'temp',
+                                                                      'Temperature (°C)', 'Temperature_C', 'Temp_C'), 'temperature')
+            parsed = pd.DataFrame({
+                'time_ms': pd.to_numeric(candidate[tcol], errors='coerce'),
+                'signal': pd.to_numeric(candidate[scol], errors='coerce'),
+                'temperature_c': pd.to_numeric(candidate[tempcol], errors='coerce'),
+            }).replace([np.inf, -np.inf], np.nan)
+            invalid = parsed.isna().any(axis=1)
+            rejected = [{"data_record": int(i) + 1, "reason": "missing, nonnumeric or nonfinite required channel"}
+                        for i in parsed.index[invalid]]
+            parsed = parsed.loc[~invalid]
+            sorted_rows = not parsed.time_ms.is_monotonic_increasing
+            parsed = parsed.sort_values('time_ms', kind='stable')
+            duplicates = parsed.duplicated('time_ms', keep='first')
+            rejected.extend({"data_record": int(i) + 1, "reason": "duplicate time; retained first original record"}
+                            for i in parsed.index[duplicates])
+            parsed = parsed.loc[~duplicates]
+            if len(parsed) < 3:
+                raise ValueError('fewer than 3 valid rows after parsing required channels')
+            frame = parsed
+            report = {"schema_version": 1, "metadata_rows_skipped": rows, "delimiter": sep,
+                      "decimal_mark": decimal_mark, "columns": {"time": tcol, "temperature": tempcol, "signal": scol},
+                      "unit_contract": {"time": "ms", "temperature": "degC", "signal": "arbitrary units"},
+                      "unit_note": "Legacy import contract; generic headers do not prove units. Confirm source units before analysis.",
+                      "original_data_records": len(candidate), "accepted_records": len(parsed),
+                      "rejected_records": rejected, "sorted_by_time": sorted_rows,
+                      "accepted_original_records": [int(i) + 1 for i in parsed.index],
+                      "duplicate_policy": "keep first original record", "source_sha256": None}
+            break
         except Exception as exc:  # surfaced below as an actionable import error
             errors.append(str(exc))
-    if df is None:
+    if frame is None:
         raise ValueError(f"Could not parse {path.name} as a delimited instrument export. {errors}")
-    df.columns = [str(c).strip() for c in df.columns]
-    tcol = _numeric_column(df, time_column, ('ms', 'Time_ms', 'time_ms', 'Time (ms)', 'Time', 'time'), 'time (ms)')
-    scol = _numeric_column(df, signal_column, ('DHTA+', 'Signal', 'signal', 'Intensity', 'intensity', 'Signal (a.u.)'), 'signal')
-    tempcol = _numeric_column(df, temperature_column, ('Temperatura', 'Temperature', 'temperature', 'Temp', 'temp',
-                                                       'Temperature (°C)', 'Temperature_C', 'Temp_C'), 'temperature')
-    frame = pd.DataFrame({
-        'time_ms': pd.to_numeric(df[tcol], errors='coerce'),
-        'signal': pd.to_numeric(df[scol], errors='coerce'),
-        'temperature_c': pd.to_numeric(df[tempcol], errors='coerce'),
-    }).dropna()
-    frame = frame.replace([np.inf, -np.inf], np.nan).dropna()
-    frame = frame.sort_values('time_ms', kind='stable').drop_duplicates('time_ms', keep='first')
-    if len(frame) < 3:
-        raise ValueError(f"{path.name}: fewer than 3 valid rows after parsing required channels")
     time_min = (frame.time_ms.to_numpy(float) - float(frame.time_ms.iloc[0])) / 60_000.0
     signal = frame.signal.to_numpy(float)
     raw_temp = frame.temperature_c.to_numpy(float)
-    clean_temp = clean_temperature(raw_temp)
+    clean_temp = clean_temperature(raw_temp, time=time_min)
+    report["temperature_corrected_original_records"] = [int(frame.index[i]) + 1 for i in
+        np.flatnonzero(~np.isclose(raw_temp, clean_temp, equal_nan=True))]
     return Spectrum(path.name, time_min, raw_temp, signal, clean_temp,
-                    int(np.count_nonzero(~np.isclose(raw_temp, clean_temp, equal_nan=True))))
+                    int(np.count_nonzero(~np.isclose(raw_temp, clean_temp, equal_nan=True))), report)
 
 
 def clean_temperature(temperature_c: Iterable[float], *, upward_jump_c: float = 1.5,
-                      downward_jump_c: float = 0.5, max_temperature_c: float = 800.0) -> np.ndarray:
-    """Conservatively flag abrupt jumps and implausible high values, then interpolate.
+                      downward_jump_c: float = 0.5, max_temperature_c: float = 800.0,
+                      time: Iterable[float] | None = None) -> np.ndarray:
+    """Interpolate isolated spikes and invalid temperatures on the time grid.
 
-    The thresholds preserve the original notebook's heuristic defaults, but
-    are explicit parameters. Both endpoints are treated consistently.
+    A large step alone is not evidence of a sensor error: a sparsely sampled
+    heating ramp can legitimately exceed the legacy per-sample thresholds.
+    Interior spikes must both depart from and return to the neighboring trend.
+    Endpoints are only rejected if nonfinite or outside the physical bounds;
+    there is insufficient evidence to classify an endpoint jump as a spike.
+    This screening heuristic is not a calibration or a nonlinear-ramp model.
     """
     temp = np.asarray(temperature_c, dtype=float).copy()
     if temp.ndim != 1 or temp.size < 2:
         raise ValueError('temperature must be a one-dimensional array with at least two values')
-    bad = ~np.isfinite(temp) | (temp > max_temperature_c)
-    delta = np.diff(temp)
-    # Flag the sample after an abrupt jump. This is a heuristic, not a physical model.
-    jump_idx = np.where((delta > upward_jump_c) | (delta < -downward_jump_c))[0] + 1
-    bad[jump_idx] = True
+    if not (np.isfinite(upward_jump_c) and upward_jump_c > 0
+            and np.isfinite(downward_jump_c) and downward_jump_c > 0
+            and np.isfinite(max_temperature_c) and max_temperature_c > -273.15):
+        raise ValueError('temperature thresholds must be finite and physically valid')
+    axis = np.arange(temp.size, dtype=float) if time is None else np.asarray(time, dtype=float)
+    if axis.shape != temp.shape or not np.all(np.isfinite(axis)) or np.any(np.diff(axis) <= 0):
+        raise ValueError('time must match temperature and be finite and strictly increasing')
+    bad = ~np.isfinite(temp) | (temp <= -273.15) | (temp > max_temperature_c)
+    incoming, outgoing = np.diff(temp)[:-1], np.diff(temp)[1:]
+    neighbors_valid = ~(bad[:-2] | bad[1:-1] | bad[2:])
+    # Require a reversal, not merely a large positive ramp increment.
+    spikes = ((incoming > upward_jump_c) & (outgoing < -downward_jump_c)) | (
+        (incoming < -downward_jump_c) & (outgoing > upward_jump_c))
+    candidates = np.flatnonzero(spikes & neighbors_valid) + 1
+    strength = np.minimum(np.abs(incoming), np.abs(outgoing))
+    # A spike can make its valid recovery sample look like a weaker opposite
+    # extremum. Keep that recovery anchor instead of correcting both samples.
+    for i in sorted(candidates, key=lambda i: strength[i - 1], reverse=True):
+        if not (bad[i - 1] or bad[i + 1]):
+            bad[i] = True
     temp[bad] = np.nan
     valid = np.isfinite(temp)
     if valid.sum() < 2:
-        raise ValueError('Temperature cleaning left fewer than two valid points; review thresholds/data')
-    idx = np.arange(temp.size)
-    temp[~valid] = np.interp(idx[~valid], idx[valid], temp[valid])
+        raise ValueError('Temperature cleaning left fewer than two valid points; '
+                         'check temperature units (expected °C), finite values, and cleaning bounds')
+    temp[~valid] = np.interp(axis[~valid], axis[valid], temp[valid])
     return temp
 
 
@@ -240,8 +280,11 @@ def leading_edge_fit(temperature_c: Iterable[float], signal: Iterable[float], be
                      lower_c: float, upper_c: float, *, min_points: int = 5) -> FitResult:
     """Fit ln(signal) vs 1/T for the selected leading-edge interval.
 
-    Implements ln(r) = ln(nu/beta) - E/(k_B T), assuming signal is proportional
-    to rate and the selected region follows the stated zero-order-style model.
+    Fits ln(S) = intercept - E/(k_B T), where S is the supplied signal.
+    The slope gives an apparent energy if coverage and response factors are
+    effectively constant in the chosen interval. The intercept includes the
+    detector scale and coverage; it cannot identify a physical prefactor from
+    arbitrary units. The legacy prefactor_s_inv field is therefore unavailable.
     """
     temp = np.asarray(temperature_c, dtype=float)
     sig = np.asarray(signal, dtype=float)
@@ -260,7 +303,7 @@ def leading_edge_fit(temperature_c: Iterable[float], signal: Iterable[float], be
     reg = _linear_regression_diagnostics(x, y)
     slope, intercept = reg["slope"], reg["intercept"]
     energy = -float(slope) * K_B_EV
-    prefactor = float(beta_k_s * np.exp(np.clip(intercept, -700, 700)))
+    prefactor = float('nan')
     # Transform the slope's OLS confidence interval into energy. This captures
     # regression scatter only; it excludes systematic/model uncertainty.
     ci_low = -reg["slope_ci95_upper"] * K_B_EV
@@ -348,7 +391,9 @@ def analyze_file(path: str | Path, *, leading_edge_c: tuple[float, float] = (130
         'heating_rate_K_s': beta, 'heating_rate_fit_R2': beta_r2, 'heating_rate_slope_C_min': beta_slope,
         'leading_edge_lower_C': leading_edge_c[0], 'leading_edge_upper_C': leading_edge_c[1],
         'leading_edge_energy_eV': fit0.energy_ev if fit0 else float('nan'),
-        'leading_edge_prefactor_s_inv': fit0.prefactor_s_inv if fit0 else float('nan'),
+        'leading_edge_prefactor_s_inv': float('nan'),
+        'leading_edge_log_signal_intercept': fit0.intercept if fit0 else float('nan'),
+        'leading_edge_prefactor_note': 'Unavailable from uncalibrated arbitrary-unit signal; intercept includes detector scale and coverage.',
         'leading_edge_fit_R2': fit0.r_squared if fit0 else float('nan'),
         'leading_edge_fit_points': fit0.n_points if fit0 else 0, 'leading_edge_error': leading_error,
         'leading_edge_residual_RMSE_ln_signal': fit0.residual_rmse if fit0 else float('nan'),

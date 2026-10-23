@@ -1,3 +1,31 @@
+## 0.11.0b1 — unreleased roadmap / Explorer candidate
+
+- Add an original multi-size spectrum icon to the executable and desktop windows, a navy/teal identity, clearer tabs and selection states, a wrapping toolbar, plot-adjacent export and branded About. Keep scientific figures free of branding.
+- Use maintainer’s preferred name Karol Cieślik and shared package/citation/About identity.
+- Add reviewed save destinations, separate Show/Include, immutable run snapshots, exclusive folders, setup/computed preview, streamed logs, cancellation and results review.
+- Record import row decisions and corrected temperatures.
+- Correct misleading physical leading-edge prefactor reporting: unavailable for arbitrary-unit signal; retain log-signal intercept. Old prefactor interpretations must be re-evaluated.
+- Include estimated residual variance in Gaussian information-criterion parameter counts; prior model rankings can change.
+- Integrate PR #8 Explorer/Monte Carlo with snapshot-safe exports, queue-based GUI updates, cancellation, explicit incomplete rankings, conditional-range withholding, all completed refit records and SVG export.
+- Add independent all-order coverage references and packaged Tk/Explorer/short-MC smoke.
+- Track 84 original plus 10 Explorer checkpoints without claiming experimental/human acceptance.
+
+## Unreleased beta candidate — demo import and Quick Start
+
+- Validate required CSV headers and numeric channels before choosing a layout;
+  conventional semicolon files no longer lose their header to the legacy skip.
+- Preserve coarse heating ramps. Temperature cleaning now flags isolated
+  reversals rather than every step above 1.5 °C, retains the recovery sample,
+  and interpolates on elapsed time. Nonfinite/out-of-bounds values are still
+  screened. Finite endpoint jumps and sustained discontinuities are retained
+  for review, not automatically treated as spikes.
+- Replace the failing Gaussian example with a reproducible, documented
+  two-population first-order simulation and include it in desktop beta ZIPs.
+- Replace the escaped-newline message box with a resizable, scrollable Quick
+  Start dialog containing five distinct steps and tested demo settings.
+- Add tests of shipped data, scientific reference values, CLI exports, actual
+  Tk import/plot behavior, and dialog layout at a small window size.
+
 ## 0.10.2 — Display-aware startup
 
 - The desktop app now opens maximized to the available display area and adjusts its minimum size for smaller screens.

@@ -11,3 +11,6 @@ output/
 input/
 images/
 *.ipynb
+tpd_spectra/_build_info.py
+build-dependencies.txt
+release-package/

@@ -7,12 +7,13 @@ that the selected physical model is unique.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.optimize import least_squares
 
 from .analysis import K_B_EV
+from .identifiability import jacobian_diagnostics
 
 
 @dataclass
@@ -35,6 +36,7 @@ class KineticFitResult:
     aicc: float
     bic: float
     jacobian_condition_number: float
+    identifiability_diagnostics: dict = field(default_factory=dict)
 
     def as_dict(self):
         return asdict(self)
@@ -103,7 +105,8 @@ def simulate_tpd(temperature_c, beta_k_s: float, activation_energy_ev: float,
 def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
                        reaction_order: float = 1.0, fit_reaction_order: bool = False,
                        initial_energy_ev: float = 1.0, initial_prefactor_s_inv: float = 1e13,
-                       fit_baseline: bool = True, max_nfev: int = 300) -> tuple[KineticFitResult, np.ndarray]:
+                       fit_baseline: bool = True, max_nfev: int = 300,
+                       cancelled=None) -> tuple[KineticFitResult, np.ndarray]:
     """Fit a full TPD trace by bounded nonlinear least squares.
 
     The scale factor and (optionally) constant baseline are nuisance parameters.
@@ -182,6 +185,8 @@ def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
 
     # Scale residuals to signal range for stable optimisation across detector units.
     def residual(p):
+        if cancelled is not None and cancelled():
+            raise InterruptedError("Kinetic fit cancelled")
         energy, prefactor, scale, baseline, order = unpack(p)
         try:
             _, rate = simulate_tpd(temp, beta_k_s, energy, prefactor, order)
@@ -208,10 +213,11 @@ def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
         condition = float(singular_values[0] / singular_values[-1]) if singular_values[-1] > 0 else float('inf')
     except (np.linalg.LinAlgError, IndexError):
         condition = float('inf')
+    diagnostics = jacobian_diagnostics(opt.jac, opt.x, lower, upper)
     result = KineticFitResult(float(order), bool(fit_reaction_order), float(energy),
         float(prefactor), float(scale), float(baseline), rmse, rmse / span, float(r2),
         int(temp.size), bool(opt.success), str(opt.message), float(temp.min()), float(temp.max()),
-        aic, aicc, bic, condition)
+        aic, aicc, bic, condition, diagnostics)
     if original_temp.size != temp.size:
         prediction = np.interp(original_temp, temp, prediction)
     return result, prediction
@@ -246,8 +252,13 @@ class MultiStateFitResult:
 
 
 def _fit_information_criteria(residual_sum_squares: float, n: int, k: int):
-    """Gaussian least-squares information criteria, for same-data comparisons."""
-    n = int(n); k = int(k)
+    """Gaussian unknown-variance criteria, with common likelihood constants omitted.
+
+    k counts fitted mean-model parameters; estimating residual variance adds
+    one parameter. Compare only fits to the same observations and error model.
+    The usual AICc correction is approximate for nonlinear constrained fits.
+    """
+    n = int(n); k = int(k) + 1
     rss = max(float(residual_sum_squares), np.finfo(float).tiny)
     aic = n * np.log(rss / n) + 2 * k
     aicc = aic + (2 * k * (k + 1) / (n - k - 1)) if n > k + 1 else float('inf')

@@ -4,7 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tpd-spectra"
-version = "0.10.2"
+dynamic = ["version"]
+authors = [{name = "Karol Cieślik"}]
 description = "Interactive desktop workspace and reproducible analysis tools for TPD/TDS spectra"
 license = "MIT"
 readme = "README.md"
@@ -17,7 +18,17 @@ tpd-spectra-gui = "tpd_spectra.gui:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Keep Windows Tcl file channels intact while capturing Python output. Pytest's
+# default OS-descriptor capture can intermittently break init.tcl reads.
+# All real Tk assertions remain required on Windows.
+addopts = "--capture=sys"
 
 [tool.setuptools.packages.find]
 include = ["tpd_spectra*"]
 exclude = ["tests*", "scripts*", "input*", "output*", "images*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "tpd_spectra.__version__"}
+
+[tool.setuptools.package-data]
+tpd_spectra = ["assets/*.png", "assets/*.ico", "assets/*.svg"]

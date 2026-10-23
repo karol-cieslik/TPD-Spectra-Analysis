@@ -1,5 +1,6 @@
 ## 0.11.0b1 — unreleased roadmap / Explorer candidate
 
+- Add an original multi-size spectrum icon to the executable and desktop windows, a navy/teal identity, clearer tabs and selection states, a wrapping toolbar, plot-adjacent export and branded About. Keep scientific figures free of branding.
 - Use maintainer’s preferred name Karol Cieślik and shared package/citation/About identity.
 - Add reviewed save destinations, separate Show/Include, immutable run snapshots, exclusive folders, setup/computed preview, streamed logs, cancellation and results review.
 - Record import row decisions and corrected temperatures.

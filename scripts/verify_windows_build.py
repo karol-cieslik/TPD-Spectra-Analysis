@@ -6,11 +6,36 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import hashlib
+import struct
+
+
+def verify_embedded_icon(executable, icon_path):
+    """Check the PE really contains our icon payloads, not a default Python icon."""
+    import pefile  # Installed by the Windows PyInstaller build dependencies.
+    icon = icon_path.read_bytes()
+    count = struct.unpack_from("<H", icon, 4)[0]
+    expected = set()
+    for index in range(count):
+        size, offset = struct.unpack_from("<II", icon, 6 + index * 16 + 8)
+        expected.add(hashlib.sha256(icon[offset:offset + size]).hexdigest())
+    with pefile.PE(str(executable), fast_load=True) as pe:
+        pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_RESOURCE']])
+        types = {entry.id: entry for entry in pe.DIRECTORY_ENTRY_RESOURCE.entries}
+        assert 14 in types and 3 in types, "Executable icon resources are missing"
+        actual = set()
+        for item in types[3].directory.entries:
+            for language in item.directory.entries:
+                data = language.data.struct
+                actual.add(hashlib.sha256(pe.get_data(data.OffsetToData, data.Size)).hexdigest())
+        assert expected <= actual, "Executable does not contain the complete Studio icon"
+    print(f"Frozen Windows executable: original Studio icon embedded ({count} sizes)")
 
 
 def main():
     root = Path(__file__).resolve().parents[1]
     executable = Path(sys.argv[1]).resolve()
+    verify_embedded_icon(executable, root / "tpd_spectra/assets/studio.ico")
     env = os.environ.copy()
     for key in ("PYTHONPATH", "PYTHONHOME", "TCL_LIBRARY", "TK_LIBRARY"):
         env.pop(key, None)

@@ -137,7 +137,7 @@ class ReviewDialog(tk.Toplevel):
         buttons.grid(row=3, column=0, sticky="ew")
         ttk.Button(buttons, text="Back / Cancel", command=self.destroy).pack(side="left")
         ttk.Button(buttons, text="Compute selected preview", command=lambda: self.start(True)).pack(side="left", padx=8)
-        self.run_button = ttk.Button(buttons, text="Run and save", command=lambda: self.start(False))
+        self.run_button = ttk.Button(buttons, text="Run and save", style="Primary.TButton", command=lambda: self.start(False))
         self.run_button.pack(side="right")
         self.grab_set()
         self.run_button.focus_set()

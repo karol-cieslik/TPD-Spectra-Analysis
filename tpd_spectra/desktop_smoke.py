@@ -10,13 +10,17 @@ from .kinetics_explorer import compare_desorption_orders
 from .kinetics_uncertainty import run_kinetics_monte_carlo
 from .explorer_export import export_explorer_bundle
 from .identity import build_identity
+from .branding import set_windows_app_identity
 
 
 def main(source, output):
     print("GUI smoke: creating Tk workspace", flush=True)
+    set_windows_app_identity()
     root = tk.Tk()
     try:
         app = TpdSpectraApp(root)
+        assert len(root._studio_icons) == 6
+        assert app.brand_mark.width() == 64
         app._load_paths([Path(source)])
         root.update()
         assert len(app.spectra) == 1

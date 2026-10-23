@@ -9,6 +9,7 @@ on:
       - 'tests/**'
       - 'examples/**'
       - 'scripts/generate_demo.py'
+      - 'scripts/generate_brand_assets.py'
       - 'scripts/verify_windows_build.py'
       - 'run_tpd_spectra*.py'
       - 'pyproject.toml'
@@ -53,6 +54,7 @@ jobs:
         run: >-
           pyinstaller --clean --noconfirm --onefile --windowed
           --name TPD-Spectra-Studio
+          --icon tpd_spectra/assets/studio.ico --collect-data tpd_spectra
           --copy-metadata numpy --copy-metadata scipy --copy-metadata pandas --copy-metadata matplotlib
           --hidden-import matplotlib.backends.backend_svg
           run_tpd_spectra_gui.py

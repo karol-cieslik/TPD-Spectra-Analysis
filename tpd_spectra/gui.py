@@ -23,14 +23,14 @@ from .gui_ranges import validate_temperature_window, window_from_drag
 from .identity import about_text, REPOSITORY
 from .gui_review import ReviewDialog, ResultsDialog, text_panel
 from .run_session import RunPlan, execute, sha256
+from .branding import (NAVY, TEAL, TEAL_ACTIVE, BACKGROUND, INK, MUTED,
+                       install_window_icons, brand_image, set_windows_app_identity)
 
 
 PALETTE = ["#2563eb", "#e76f51", "#059669", "#9333ea", "#d97706", "#0891b2",
            "#db2777", "#4f46e5", "#65a30d", "#475569"]
-BG = "#f3f6fb"
-INK = "#172b4d"
-MUTED = "#64748b"
-BLUE = "#2563eb"
+BG = BACKGROUND
+BLUE = TEAL
 
 
 QUICK_START_STEPS = (
@@ -174,6 +174,7 @@ class TpdSpectraApp:
     """Compact three-panel app: import, tune, compare, then export or analyze."""
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
+        install_window_icons(root)
         root.title(f"TPD Spectra Studio  ·  {__version__}")
         screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
         min_width = min(1040, max(480, screen_width - 48))
@@ -233,43 +234,68 @@ class TpdSpectraApp:
             pass
         style.configure("TFrame", background=BG)
         style.configure("Card.TFrame", background="#ffffff")
-        style.configure("TLabel", background=BG, foreground=INK, font=("Segoe UI", 9))
-        style.configure("Card.TLabel", background="#ffffff", foreground=INK, font=("Segoe UI", 9))
-        style.configure("Title.TLabel", background="#102a43", foreground="white", font=("Segoe UI", 19, "bold"))
-        style.configure("Subtitle.TLabel", background="#102a43", foreground="#d7e5f5", font=("Segoe UI", 9))
+        style.configure("TLabel", background=BG, foreground=INK, font=("Segoe UI", 10))
+        style.configure("Card.TLabel", background="#ffffff", foreground=INK, font=("Segoe UI", 10))
+        style.configure("Title.TLabel", background=NAVY, foreground="white", font=("Segoe UI", 19, "bold"))
+        style.configure("Subtitle.TLabel", background=NAVY, foreground="#CEE3E8", font=("Segoe UI", 10))
         style.configure("Section.TLabel", background="#ffffff", foreground=INK, font=("Segoe UI", 10, "bold"))
-        style.configure("Muted.TLabel", background="#ffffff", foreground=MUTED, font=("Segoe UI", 8))
-        style.configure("Primary.TButton", font=("Segoe UI", 9, "bold"), padding=(13, 8),
-                        foreground="white", background=BLUE)
-        style.map("Primary.TButton", background=[("active", "#1d4ed8"), ("disabled", "#94a3b8")])
-        style.configure("TButton", font=("Segoe UI", 9), padding=(9, 6))
-        style.configure("Treeview", rowheight=28, font=("Segoe UI", 9), background="white", fieldbackground="white")
-        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
+        style.configure("Muted.TLabel", background="#ffffff", foreground=MUTED, font=("Segoe UI", 9))
+        style.configure("TButton", font=("Segoe UI", 10), padding=(12, 7),
+                        foreground=INK, background="white", bordercolor="#CBD5DF", focusthickness=2)
+        style.map("TButton", background=[("active", "#E4EFF1")],
+                  foreground=[("disabled", "#627383")])
+        style.configure("Primary.TButton", font=("Segoe UI", 10, "bold"), padding=(14, 8),
+                        foreground="white", background=BLUE, bordercolor=BLUE, focuscolor="white")
+        style.map("Primary.TButton", background=[("disabled", "#DCE4E9"), ("active", TEAL_ACTIVE)],
+                  foreground=[("disabled", "#526575"), ("!disabled", "white")])
+        style.configure("Treeview", rowheight=32, font=("Segoe UI", 10), foreground=INK,
+                        background="white", fieldbackground="white", borderwidth=0)
+        style.map("Treeview", background=[("selected", "#D8EFEC")], foreground=[("selected", INK)])
+        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"),
+                        background="#EAF0F3", foreground=MUTED, padding=(6, 8))
+        style.configure("TNotebook", background=BG, borderwidth=0, tabmargins=(0, 0, 0, 2))
+        style.configure("TNotebook.Tab", padding=(14, 10), font=("Segoe UI", 10), background="#E4EAEE")
+        style.map("TNotebook.Tab", background=[("selected", "white")],
+                  foreground=[("selected", TEAL_ACTIVE)])
         style.configure("TCheckbutton", background="#ffffff", foreground=INK)
         style.configure("TCombobox", padding=4)
 
     def _build(self) -> None:
-        header = tk.Frame(self.root, bg="#102a43", padx=22, pady=16)
+        header = tk.Frame(self.root, bg=NAVY, padx=20, pady=14)
         header.pack(fill="x")
-        title = ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel")
+        self.brand_mark = brand_image(header, 64)
+        tk.Label(header, image=self.brand_mark, bg=NAVY).pack(side="left", padx=(0, 14))
+        identity = tk.Frame(header, bg=NAVY)
+        identity.pack(side="left", fill="x", expand=True)
+        title = ttk.Label(identity, text="TPD Spectra Studio", style="Title.TLabel")
         title.pack(anchor="w")
-        ttk.Label(header, text="Explore, compare, and analyze temperature-programmed desorption data",
+        ttk.Label(identity, text="Temperature-programmed desorption · inspect, compare, understand",
                   style="Subtitle.TLabel").pack(anchor="w", pady=(3, 0))
+        tk.Label(header, text=f"BETA  {__version__}", bg="#274652", fg="#C6F2E7",
+                 font=("Segoe UI", 9, "bold"), padx=10, pady=6).pack(side="right", padx=(12, 0))
 
         toolbar = ttk.Frame(self.root, padding=(18, 10))
         toolbar.pack(fill="x")
-        self.import_button = ttk.Button(toolbar, text="＋  Import CSV files", style="Primary.TButton", command=self._import_files)
+        self.toolbar = toolbar
+        toolbar.columnconfigure(0, weight=1)
+        self.import_actions = ttk.Frame(toolbar)
+        self.analysis_actions = ttk.Frame(toolbar)
+        self.import_actions.grid(row=0, column=0, sticky="w")
+        self.analysis_actions.grid(row=0, column=1, sticky="e")
+        self.import_button = ttk.Button(self.import_actions, text="Import CSV files…", command=self._import_files)
         self.import_button.pack(side="left")
-        ttk.Button(toolbar, text="＋  Add folder", command=self._import_folder).pack(side="left", padx=(8, 0))
-        ttk.Button(toolbar, text="Export plot PNG", command=self._export_png).pack(side="left", padx=(8, 0))
-        self.run_button = ttk.Button(toolbar, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
+        ttk.Button(self.import_actions, text="Add folder…", command=self._import_folder).pack(side="left", padx=(8, 0))
+        ttk.Button(self.import_actions, text="Quick start", command=self._show_quick_start).pack(side="left", padx=(8, 0))
+        self.run_button = ttk.Button(self.analysis_actions, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
         self.run_button.pack(side="right")
-        self.cancel_button = ttk.Button(toolbar, text="Cancel run", command=self._cancel_run, state="disabled")
+        self.cancel_button = ttk.Button(self.analysis_actions, text="Cancel run", command=self._cancel_run, state="disabled")
         self.cancel_button.pack(side="right", padx=5)
-        ttk.Button(toolbar, text="Quick start  ?", command=self._show_quick_start).pack(side="right", padx=(0, 10))
+        toolbar.bind("<Configure>", self._layout_toolbar)
         self.status = tk.StringVar(value=workflow_guidance(0, 0))
-        ttk.Label(self.root, textvariable=self.status, foreground=MUTED, wraplength=1000,
-                  padding=(20, 3)).pack(fill="x")
+        status_label = ttk.Label(self.root, textvariable=self.status, foreground=MUTED, wraplength=1000,
+                                 padding=(20, 5))
+        status_label.pack(fill="x")
+        status_label.bind("<Configure>", lambda event: status_label.configure(wraplength=max(300, event.width - 40)))
 
         body = ttk.Frame(self.root, padding=(18, 0, 18, 10))
         body.pack(fill="both", expand=True)
@@ -308,11 +334,18 @@ class TpdSpectraApp:
 
         footer = ttk.Frame(self.root, padding=(20, 5))
         footer.pack(fill="x")
-        ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(anchor="w", pady=(0, 4))
+        ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(anchor="w", pady=(0, 7))
         ttk.Button(footer, text="Open results folder", command=self._open_output).pack(side="right")
         ttk.Button(footer, text="About", command=self._show_about).pack(side="right", padx=6)
         ttk.Button(footer, text="Run log", command=self._show_run_log).pack(side="right", padx=6)
-        ttk.Button(footer, text="Kinetics Explorer · experimental", command=self._open_explorer).pack(side="right", padx=6)
+        ttk.Button(footer, text="Kinetics Explorer · experimental", command=self._open_explorer).pack(side="left")
+
+    def _layout_toolbar(self, event):
+        needed = self.import_actions.winfo_reqwidth() + self.analysis_actions.winfo_reqwidth() + 56
+        if event.width < needed:
+            self.analysis_actions.grid_configure(row=1, column=0, sticky="w", pady=(8, 0))
+        else:
+            self.analysis_actions.grid_configure(row=0, column=1, sticky="e", pady=0)
 
     def _open_explorer(self):
         for explorer in self.explorers:
@@ -328,7 +361,13 @@ class TpdSpectraApp:
     def _show_about(self) -> None:
         dialog = tk.Toplevel(self.root)
         dialog.title("About · TPD Spectra Studio")
-        dialog.geometry("660x470")
+        dialog.geometry("740x580")
+        dialog.minsize(640, 500)
+        header = tk.Frame(dialog, bg=NAVY, padx=20, pady=14)
+        header.pack(fill="x")
+        dialog.brand_mark = brand_image(header, 64)
+        tk.Label(header, image=dialog.brand_mark, bg=NAVY).pack(side="left", padx=(0, 12))
+        ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel", font=("Segoe UI", 15, "bold")).pack(side="left")
         panel, _ = text_panel(dialog, about_text())
         panel.pack(fill="both", expand=True)
         buttons = ttk.Frame(dialog, padding=10)
@@ -337,10 +376,13 @@ class TpdSpectraApp:
             self.root.clipboard_clear()
             self.root.clipboard_append(about_text())
         ttk.Button(buttons, text="Copy build information", command=copy).pack(side="left")
-        ttk.Button(buttons, text="GitHub", command=lambda: webbrowser.open(REPOSITORY)).pack(side="left", padx=4)
-        ttk.Button(buttons, text="Documentation", command=lambda: webbrowser.open(REPOSITORY + "/blob/release/beta-v0.11-candidate/docs/USER_AND_SCIENTIFIC_MANUAL.md")).pack(side="left", padx=4)
-        ttk.Button(buttons, text="Report issue", command=lambda: webbrowser.open(REPOSITORY + "/issues/new/choose")).pack(side="left", padx=4)
         ttk.Button(buttons, text="Close", command=dialog.destroy).pack(side="right")
+        links = ttk.Frame(dialog, padding=(10, 0, 10, 10))
+        links.pack(fill="x")
+        ttk.Button(links, text="GitHub", command=lambda: webbrowser.open(REPOSITORY)).pack(side="left")
+        ttk.Button(links, text="Documentation", command=lambda: webbrowser.open(REPOSITORY + "/blob/release/beta-v0.11-candidate/docs/USER_AND_SCIENTIFIC_MANUAL.md")).pack(side="left", padx=6)
+        ttk.Button(links, text="Report issue", command=lambda: webbrowser.open(REPOSITORY + "/issues/new/choose")).pack(side="left")
+        dialog.bind("<Escape>", lambda _event: dialog.destroy())
 
     def _show_run_log(self) -> None:
         dialog = tk.Toplevel(self.root)
@@ -505,6 +547,7 @@ class TpdSpectraApp:
         ttk.Label(top, text="Spectrum comparison", style="Section.TLabel").pack(side="left")
         self.count_label = ttk.Label(top, text="0 traces", style="Muted.TLabel")
         self.count_label.pack(side="right")
+        ttk.Button(top, text="Export plot PNG…", command=self._export_png).pack(side="right", padx=(8, 16))
         plot_wrap = ttk.Frame(parent, style="Card.TFrame")
         plot_wrap.grid(row=1, column=0, sticky="nsew")
         plot_wrap.rowconfigure(0, weight=1)
@@ -605,10 +648,10 @@ class TpdSpectraApp:
     def _empty_plot(self) -> None:
         self.axis.clear()
         self.axis.set_facecolor("#ffffff")
-        self.axis.text(.5, .54, "1 · Import CSV spectra to begin", transform=self.axis.transAxes,
-                       ha="center", va="center", fontsize=16, color="#64748b", weight="bold")
-        self.axis.text(.5, .47, "Use Import CSV files or Add folder above; then explore and analyze", transform=self.axis.transAxes,
-                       ha="center", va="center", fontsize=10, color="#94a3b8")
+        self.axis.text(.5, .56, "Your spectra, ready to explore", transform=self.axis.transAxes,
+                       ha="center", va="center", fontsize=17, color=INK, weight="bold")
+        self.axis.text(.5, .46, "Import CSV files or add a folder to begin.\nNew here? Quick start includes a synthetic-data walkthrough.",
+                       transform=self.axis.transAxes, ha="center", va="center", fontsize=10, color=MUTED, linespacing=1.8)
         self.axis.set_xticks([]); self.axis.set_yticks([])
         for edge in self.axis.spines.values(): edge.set_visible(False)
         self.figure.tight_layout()
@@ -895,6 +938,7 @@ class TpdSpectraApp:
 
 
 def main() -> int:
+    set_windows_app_identity()
     root = tk.Tk()
     TpdSpectraApp(root)
     root.mainloop()

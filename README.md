@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="tpd_spectra/assets/studio-mark.svg" width="88" height="88" alt="TPD Spectra Studio spectrum mark">
+
 # TPD Spectra Studio
 
 **An open-source desktop application for exploring and analyzing temperature-programmed desorption spectra.**
@@ -11,10 +13,6 @@ Built for surface-science researchers who need transparent fitting methods, repr
 [![License: MIT](https://img.shields.io/badge/License-MIT-2f855a.svg)](LICENSE)
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
 [![Development status](https://img.shields.io/badge/status-beta%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/5)
-
-*Interface illustration (not a screenshot of the current candidate):*
-
-![TPD Spectra Studio interface illustration](assets/studio-preview.svg)
 
 [**Download beta**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) · [**Quick start**](#-quick-start) · [**User manual**](docs/USER_AND_SCIENTIFIC_MANUAL.md) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contributing**](CONTRIBUTING.md)
 
@@ -31,6 +29,8 @@ The software aims to make routine analysis easier to reproduce and inspect witho
 > **Maturity:** The current beta candidate is under hands-on Windows acceptance testing. Automated tests and a Windows build are available, but real-instrument validation and wider user testing are still underway. Kinetic parameters are model-dependent estimates, not automatically confirmed physical mechanisms.
 
 Created and maintained by **Karol Cieślik**. The product is TPD Spectra Studio; the Python package is `tpd-spectra` and this repository is `TPD-Spectra-Analysis`.
+
+The desktop uses an original spectrum icon and a shared navy/teal identity. See the [identity and visual acceptance notes](docs/BRAND_IDENTITY.md).
 
 [Scientific scope/status](docs/METHOD_STATUS.md) · [Active roadmap](docs/PUBLICATION_ROADMAP.md) · [Checkpoint evidence](docs/CHECKPOINT_LEDGER.md) · [Explorer and Monte Carlo](docs/EXPLORER_MONTE_CARLO.md)
 

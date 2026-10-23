@@ -29,3 +29,6 @@ exclude = ["tests*", "scripts*", "input*", "output*", "images*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "tpd_spectra.__version__"}
+
+[tool.setuptools.package-data]
+tpd_spectra = ["assets/*.png", "assets/*.ico", "assets/*.svg"]

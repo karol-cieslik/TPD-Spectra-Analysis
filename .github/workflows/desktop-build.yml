@@ -3,7 +3,7 @@ name: Windows desktop build
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate']
+    branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate', 'feature/workflow-redesign']
     paths:
       - 'tpd_spectra/**'
       - 'tests/**'
@@ -57,6 +57,7 @@ jobs:
           --icon tpd_spectra/assets/studio.ico --collect-data tpd_spectra
           --copy-metadata numpy --copy-metadata scipy --copy-metadata pandas --copy-metadata matplotlib
           --hidden-import matplotlib.backends.backend_svg
+          --hidden-import matplotlib.backends.backend_pdf
           run_tpd_spectra_gui.py
       - name: Verify frozen executable with shipped demo
         run: python scripts/verify_windows_build.py dist/TPD-Spectra-Studio.exe
@@ -76,8 +77,10 @@ jobs:
           TPD Spectra Studio — Windows x64
 
           START HERE: double-click TPD-Spectra-Studio.exe. This is the only application file.
-          Import CSV files (or a folder), choose spectra, explore the plot, and use
-          Export plot PNG or Run full analysis. Batch analysis is built into this app.
+          Workflow preview: import spectra, define a named peak, explore candidate models,
+          then choose one kinetic method. Save labeled runs and use Report / Export.
+          Read docs/redesign/WORKFLOW_USER_GUIDE.md. Classic / batch workspace retains
+          the existing reviewed batch-analysis workflow.
 
           First test: import examples/synthetic_two_peak_demo.csv (601 points).
           See examples/README.md for exact analysis settings and expected results.
@@ -104,7 +107,7 @@ jobs:
       - name: Publish downloadable build
         uses: actions/upload-artifact@v4
         with:
-          name: tpd-spectra-windows-x64-${{ github.ref_name == 'main' && 'stable' || 'beta-candidate' }}
+          name: tpd-spectra-windows-x64-${{ github.ref_name == 'feature/workflow-redesign' && 'workflow-preview' || github.ref_name == 'main' && 'stable' || 'beta-candidate' }}
           path: release-package/*
           if-no-files-found: error
           retention-days: 90

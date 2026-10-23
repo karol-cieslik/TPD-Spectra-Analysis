@@ -48,7 +48,9 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         ttk.Button(actions, text="Add folder…", command=self._import_folder).pack(side="left", padx=5)
         ttk.Button(actions, text="Classic / batch workspace", command=self.open_classic).pack(side="right")
         ttk.Button(actions, text="About", command=self._show_about).pack(side="right", padx=5)
-        self.project_actions = actions
+        self.project_actions = ttk.Frame(self.root,padding=(10,0,10,8))
+        self.project_actions.pack(fill='x')
+        ttk.Button(self.project_actions,text='Workflow quick start',command=self.workflow_help).pack(side='right')
         context = ttk.Frame(self.root, padding=(12, 0, 12, 8))
         context.pack(fill="x")
         context.columnconfigure(1, weight=1)
@@ -128,7 +130,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         selector.pack(fill="x", pady=8)
         selector.bind("<<ComboboxSelected>>", lambda _e: self.refresh_method())
         self.method_panels = {}
-        fields = {METHODS[0]: [("lower", "Leading edge from °C"), ("upper", "Leading edge to °C")],
+        fields = {METHODS[0]: [("lower", "Leading edge from °C"), ("upper", "Leading edge to °C"), ("beta", "Heating rate (K/s; verify)")],
                   METHODS[1]: [("beta", "Heating rate (K/s)"), ("prefactor", "Assumed prefactor (s⁻¹)")],
                   METHODS[2]: [("beta", "Heating rate (K/s)"), ("energy", "Initial energy (eV)"),
                                ("prefactor", "Initial prefactor (s⁻¹)"), ("order", "Fixed / initial order"),
@@ -245,7 +247,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             self.region_low.set(f"{min(a, b):.3f}")
             self.region_high.set(f"{max(a, b):.3f}")
             self.status.set("Interval selected. Choose Add peak or Update peak to retain it.")
-        self._span_selector = SpanSelector(self.axis, selected, "horizontal", interactive=True,
+        self._span_selector = SpanSelector(getattr(self,'_selected_plot_axis',self.axis), selected, "horizontal", interactive=True,
                                            props={"facecolor": "teal", "alpha": .18})
 
     def refresh_method(self):
@@ -293,23 +295,34 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             self.refresh_context()
 
     def _draw_plot(self):
+        previous_status = self.status.get() if hasattr(self,'status') else ''
         super()._draw_plot()
+        if hasattr(self,'status'):
+            if getattr(self,'job_busy',False):
+                self.status.set(previous_status)
+            else:
+                self.status.set('Select a dataset and named peak, then explore models or choose one kinetic method. Save labeled results to build a report.')
         if not hasattr(self, "figure"):
             return
         for axis in self.figure.axes:
             for patch in list(axis.patches):
                 patch.remove()
-        if self.x_mode.get() == "Temperature" and self.project.active_region in self.project.regions:
+        selected_axis = self.axis
+        visible = [key for key,row in self.spectra.items() if row['visible']]
+        dataset = self.project.datasets.get(self.project.active_dataset)
+        if dataset and self.view_mode.get() == 'Small multiples' and dataset.path in visible:
+            selected_axis = self.figure.axes[visible.index(dataset.path)]
+        self._selected_plot_axis = selected_axis
+        if self.x_mode.get() == "Temperature" and self.project.active_region in self.project.regions and dataset and dataset.path in visible:
             region = self.project.regions[self.project.active_region]
-            self.axis.axvspan(region.lower, region.upper, color="teal", alpha=.12, label=region.label)
-        if self.project.active_dataset in self.project.datasets and self.x_mode.get() == 'Temperature':
-            dataset = self.project.datasets[self.project.active_dataset]
+            selected_axis.axvspan(region.lower, region.upper, color="teal", alpha=.12, label=region.label)
+        if dataset and dataset.path in visible and self.x_mode.get() == 'Temperature':
             if dataset.processing != {'smoothing': 'none', 'window': 1, 'baseline': 0.0}:
                 y = processed_signal(dataset)
                 if self.normalize.get():
                     y = (y-y.min()) / max(float(y.max()-y.min()), 1e-15)
-                self.axis.plot(dataset.spectrum.temperature_clean_c, y, label='Selected analysis recipe', color='teal', linestyle='--')
-                self.axis.legend(fontsize=8)
+                selected_axis.plot(dataset.spectrum.temperature_clean_c, y, label='Selected analysis recipe', color='teal', linestyle='--')
+                selected_axis.legend(fontsize=8)
         self.canvas.draw_idle()
 
     def open_classic(self):
@@ -351,6 +364,23 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             if self.project.datasets:
                 self.project.select_dataset(next(iter(self.project.datasets)))
         self.refresh_context()
+
+    def workflow_help(self):
+        dialog=tk.Toplevel(self.root)
+        dialog.title('Workflow quick start')
+        dialog.geometry('720x560')
+        text=tk.Text(dialog,wrap='word',padx=20,pady=16,font=('Segoe UI',11))
+        text.pack(fill='both',expand=True)
+        text.insert('end','TPD Spectra Studio — workflow preview\n\n'
+            '1. Import and inspect\nImport CSV spectra. Raw signal stays unchanged. Confirm temperature/time units and the heating ramp.\n\n'
+            '2. Define a peak\nIn Spectra & Preparation, enter a name and temperature bounds, then Add peak. Drag interval can also set bounds.\n\n'
+            '3. Explore hypotheses\nIn Modeling, simulate parameters or compare candidate orders. Seeded Monte Carlo refits simulated noisy traces; rankings do not prove mechanisms.\n\n'
+            '4. Analyze one peak\nIn Kinetic Analysis, choose Leading edge, Redhead or Polanyi–Wigner. Lightweight estimates update after edits; numerical fitting runs explicitly and can be cancelled.\n\n'
+            '5. Retain and export\nSave labeled results, then Report / Export. Select runs, review their labels and choose a destination. Save project retains your workspace.\n\n'
+            'Synthetic first test\nUse examples/synthetic_two_peak_demo.csv; Peak 1: 100–210 °C; Redhead: 1 K/s and 1e13 s⁻¹ gives about 1.244 eV. Leading edge: 110–140 °C. This example is simulated, not experimental.\n\n'
+            'Classic / batch workspace retains advanced and batch functions.\nCreated by Karol Cieślik. Scientific applicability still requires independent validation.')
+        text.configure(state='disabled')
+        ttk.Button(dialog,text='Close',command=dialog.destroy).pack(anchor='e',padx=12,pady=8)
 
 
 def main():

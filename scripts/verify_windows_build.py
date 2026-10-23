@@ -74,6 +74,15 @@ def main():
         assert (gui_output / "desktop_smoke.json").is_file()
         assert (gui_output / "monte_carlo_replicates.csv").is_file()
         print("Frozen Windows executable: real Tk dialogs, Explorer and short Monte Carlo export passed")
+        workflow_output = output / 'workflow-smoke'
+        workflow = subprocess.run([str(executable), '--tpd-smoke-workflow',
+            str(root / 'examples/synthetic_two_peak_demo.csv'), str(workflow_output)],
+            env=env, timeout=300, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, encoding='utf-8', errors='replace')
+        print(workflow.stdout, flush=True)
+        workflow.check_returncode()
+        assert (workflow_output / 'workflow_smoke.json').exists()
+        assert (workflow_output / 'report' / 'COMPLETE.txt').exists()
 
 
 if __name__ == "__main__":

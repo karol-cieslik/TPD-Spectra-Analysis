@@ -168,3 +168,70 @@ def test_modeling_comparison_transfer_and_monte_carlo_route(root, monkeypatch):
     assert not panel.current(result)
     panel.transfer()
     assert 'Compare current settings' in app.status.get()
+
+
+def test_live_preview_and_saved_runs_restore_their_own_settings(root):
+    app=WorkflowApp(root)
+    app._load_paths([DEMO])
+    first=app.project.add_region('First',100,210)
+    app.method.set('Redhead')
+    app.refresh_context()
+    app.preview_selected()
+    first_energy=app.displayed_result['values']['energy_ev']
+    saved=app.project.save_result(app.displayed_result,'First original')
+    app.method_values['prefactor'].set('1e12')
+    app.preview_selected()
+    assert app.displayed_result['values']['energy_ev']<first_energy
+    app.project.add_region('Second',230,350)
+    app.refresh_context()
+    app.preview_selected()
+    assert app.displayed_result['snapshot']['region_id']!=first.id
+    method=app.project.reopen_run(saved['id'])
+    app.method.set(method)
+    app.refresh_context()
+    assert app.displayed_result['values']['energy_ev']==first_energy
+    assert app.project.result_is_current(app.displayed_result)
+
+
+def test_async_worker_failure_preserves_previous_success(root,monkeypatch):
+    import time
+    app=WorkflowApp(root)
+    app._load_paths([DEMO])
+    app.project.add_region('First',100,210)
+    app.method.set('Redhead')
+    app.refresh_context()
+    app.preview_selected()
+    existing=app.displayed_result.copy()
+    app.method.set('Polanyi–Wigner')
+    app.refresh_method()
+    def fail():
+        raise ValueError('deliberate optimizer failure')
+    app.start_job(fail,lambda _:pytest.fail('Failure invoked success callback'))
+    deadline=time.monotonic()+5
+    while app.job_busy and time.monotonic()<deadline:
+        root.update()
+        time.sleep(.01)
+    assert not app.job_busy
+    assert 'deliberate optimizer failure' in app.status.get()
+    app.method.set('Redhead')
+    app.refresh_method()
+    assert app.displayed_result==existing
+
+
+def test_project_install_and_small_window_controls(root,tmp_path):
+    from tpd_spectra.workflow_io import save_project,load_project
+    app=WorkflowApp(root)
+    app._load_paths([DEMO])
+    app.project.add_region('First',100,210)
+    path=save_project(app.project,tmp_path/'roundtrip.tpd.json')
+    app.install_project(load_project(path))
+    root.state('normal')
+    root.geometry('1100x720')
+    for stage in range(3):
+        app.stages.select(stage)
+        root.update()
+        assert app.stages.winfo_width()>1000
+        assert app.stage_frames[stage].winfo_height()>300
+        assert app.dataset_combo.winfo_ismapped()
+        assert app.region_combo.winfo_ismapped()
+    assert app.result_canvas.get_tk_widget().winfo_height()>150

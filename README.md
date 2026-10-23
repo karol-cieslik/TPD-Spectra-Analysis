@@ -20,6 +20,19 @@ Built for surface-science researchers who need transparent fitting methods, repr
 
 ---
 
+## Workflow redesign preview
+
+This branch adds three connected stages: **Spectra & Preparation**, **Modeling
+& Order Identification**, and **Kinetic Analysis**. Named peaks share context;
+method-specific results, model comparison and seeded parametric Monte Carlo are
+visible in the workspace. Save labeled runs and portable projects, then select
+runs and a destination for PDF/CSV/JSON/PNG/SVG reporting.
+
+Start with the [workflow preview guide](docs/redesign/WORKFLOW_USER_GUIDE.md).
+The **Classic / batch workspace** retains the previous workflow. This is an
+isolated development preview; the existing beta download above remains intact.
+See the [implementation evidence and remaining gates](docs/redesign/IMPLEMENTATION_CHECKLIST.md).
+
 ## 🔬 What is TPD Spectra Studio?
 
 TPD Spectra Studio is a Python desktop application and reusable analysis toolkit for temperature-programmed desorption (TPD) and thermal desorption spectroscopy (TDS). It imports experimental spectra, provides interactive plots and fit-window selection, and supports classical apparent-energy estimates and numerical kinetic fitting.

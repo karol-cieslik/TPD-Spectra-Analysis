@@ -49,7 +49,8 @@ def calculate(dataset, snapshot, cancelled=lambda: False):
     if not np.isfinite(beta) or beta <= 0:
         raise ValueError('Heating rate must be positive and finite (K/s).')
     warnings = ['Signal must be proportional to desorption rate; calibration and acquisition metadata are not available.',
-                'Temperature uses the existing heuristic cleaning recorded in the import report.']
+                'Temperature uses the existing heuristic cleaning recorded in the import report.',
+                'Heating rate is supplied by the user (default 1 K/s), not inferred from acquisition metadata. Verify the ramp and units.']
     plots = {'temperature_c': t, 'signal': y}
     if method == 'Leading edge':
         low, high = float(settings['lower']), float(settings['upper'])
@@ -63,6 +64,8 @@ def calculate(dataset, snapshot, cancelled=lambda: False):
                      x_label='1 / T (K⁻¹)', y_label='ln(signal)')
         warnings += ['Apparent energy assumes negligible coverage change over the chosen leading edge; this is not an order assignment.',
                      'Energy interval is regression-only. Absolute prefactor is unavailable for uncalibrated signal.']
+        if fit.energy_ev <= 0:
+            warnings.append('Non-positive apparent activation energy: inspect the selected interval, baseline and applicability.')
     elif method == 'Redhead':
         if len(t) < 3 or np.ptp(y) <= 0:
             raise ValueError('Select a varying peak with at least three points.')

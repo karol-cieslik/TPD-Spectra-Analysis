@@ -12,9 +12,10 @@ from .workflow_state import WorkflowProject, METHODS, STAGES
 from .workflow_results_gui import ResultsMixin
 from .workflow_analysis import processed_signal
 from .workflow_modeling import ModelingPanel
+from .workflow_project_gui import ProjectMixin
 
 
-class WorkflowApp(ResultsMixin, TpdSpectraApp):
+class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
     def __init__(self, root):
         self.project = WorkflowProject()
         self.restoring = False
@@ -32,6 +33,7 @@ class WorkflowApp(ResultsMixin, TpdSpectraApp):
         self.filter_method.set("none")
         self.window.set(1)
         self.setup_results()
+        self.setup_project_actions()
 
     def _build(self):
         header = tk.Frame(self.root, bg=NAVY, padx=16, pady=10)
@@ -319,6 +321,36 @@ class WorkflowApp(ResultsMixin, TpdSpectraApp):
             return
         self.classic = TpdSpectraApp(tk.Toplevel(self.root))
         self.classic._load_paths([Path(d.path) for d in self.project.datasets.values()])
+        for key,row in self.classic.spectra.items():
+            row['included'] = self.spectra[key]['included']
+            self.classic.file_table.set(key,'included','✓' if row['included'] else '—')
+
+    def _remove_selected(self):
+        if getattr(self,'job_busy',False):
+            self.status.set('Finish or cancel the active calculation before removing datasets.')
+            return
+        for path in self.file_table.selection():
+            dataset = next((d for d in self.project.datasets.values() if d.path == path),None)
+            if dataset is None:
+                continue
+            if any(r['snapshot']['dataset_id']==dataset.id for r in self.project.runs.values()):
+                self.status.set('This dataset has saved runs. Delete those runs before removing it, or hide the trace.')
+                continue
+            self.project.regions = {k:r for k,r in self.project.regions.items() if r.dataset_id != dataset.id}
+            for field in ('settings','current_results','modeling'):
+                values=getattr(self.project,field)
+                setattr(self.project,field,{k:v for k,v in values.items() if not k.startswith(dataset.id+'/')})
+            self.project.processing_history.pop(dataset.id,None)
+            del self.project.datasets[dataset.id]
+            self.spectra.pop(path,None)
+            self.file_table.delete(path)
+        if self.project.active_dataset not in self.project.datasets:
+            self.project.active_dataset=None
+            self.project.active_region=None
+            self.dataset_choice.set('')
+            if self.project.datasets:
+                self.project.select_dataset(next(iter(self.project.datasets)))
+        self.refresh_context()
 
 
 def main():

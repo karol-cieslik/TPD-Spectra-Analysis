@@ -3,6 +3,7 @@ from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
 from uuid import uuid4
 import math
+from importlib.metadata import version
 import numpy as np
 from . import __version__
 from .analysis import leading_edge_fit, redhead_energy, smooth_signal
@@ -90,6 +91,7 @@ def calculate(dataset, snapshot, cancelled=lambda: False):
         raise InterruptedError('Cancelled')
     return serial({'id': uuid4().hex, 'snapshot': snapshot, 'status': 'fitted' if method == 'Polanyi–Wigner' else 'preview',
                    'values': values, 'plots': plots, 'warnings': warnings, 'version': __version__,
+                   'dependencies': {n: version(n) for n in ('numpy','scipy','pandas','matplotlib')},
                    'created_utc': datetime.now(timezone.utc).isoformat(), 'import_report': dataset.spectrum.import_report})
 
 

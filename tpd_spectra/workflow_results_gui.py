@@ -187,6 +187,11 @@ class ResultsMixin:
             self.root.after(100, self._finish_close)
             return
         if self.classic and self.classic.root.winfo_exists():
+            if self.classic.running:
+                self.classic.close_after_run = True
+                self.classic._cancel_run()
+                self.root.after(100, self._finish_close)
+                return
             self.classic._finish_close()
             if self.classic.root.winfo_exists():
                 self.root.after(100, self._finish_close)

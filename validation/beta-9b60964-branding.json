@@ -1,0 +1,53 @@
+{
+  "verified_date": "2026-10-23",
+  "version": "0.11.0b1",
+  "source_commit": "9b60964d066f1fb0525ce94ad6e53adc7ad9d4b8",
+  "branch": "release/beta-v0.11-candidate",
+  "scope": "Original icon, desktop branding and layout; numerical engines and scientific figure styling unchanged",
+  "windows": {
+    "run_id": 39993231453,
+    "job_id": 120550050787,
+    "passed": 171,
+    "skipped": 0,
+    "source_seconds": 39.6,
+    "embedded_icon_sizes": 9,
+    "icon_verification": "All ICO payload hashes matched RT_ICON resources inside the built PE",
+    "packaged_checks": [
+      "demo analysis and exports",
+      "runtime brand images",
+      "real Tk Quick Start and Review dialogs",
+      "Explorer fit",
+      "two-replicate Monte Carlo",
+      "PNG/SVG/replicate exports"
+    ],
+    "artifact_id": 12518357980,
+    "artifact_url": "https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/39993231453/artifacts/12518357980",
+    "artifact_zip_sha256": "0b6e6d3b8e51c4c2c32a2e9f732d272596e1026b6bcf776b0831e014b48431ea",
+    "artifact_bytes": 83739872,
+    "expires_at": "2027-01-21T17:12:58Z"
+  },
+  "linux": {
+    "run_id": 39993241907,
+    "python_versions": [
+      "3.10",
+      "3.11",
+      "3.12"
+    ],
+    "per_version": {
+      "passed": 161,
+      "skipped": 10
+    },
+    "skip_reason": "Real Tk tests need a display; all ten ran on Windows"
+  },
+  "local": {
+    "passed": 171,
+    "seconds": 90.81,
+    "wheel_assets": 8,
+    "wheel_sha256": "50cc7078114405f6e19c1db7a7740b0cd9e94b2730c1dd65ab01803707fb1645"
+  },
+  "limits": [
+    "Tk scaling/geometry assertions are not comprehensive Windows DPI acceptance",
+    "Desktop screenshot capture failed: FrameArrived timed out; no manual visual acceptance claimed",
+    "Monte Carlo packaging smoke does not validate scientific interval coverage"
+  ]
+}

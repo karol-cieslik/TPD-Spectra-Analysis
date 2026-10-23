@@ -27,7 +27,7 @@ Neither main nor the existing beta checkout is changed by this work.
 - [x] 1: real Tk verification: 2 passed (10.49 s). Three stages, shared dataset/region IDs, named reusable regions,
   exclusive method controls, existing batch/Explorer access retained. Verify
   real-widget navigation and two regions before starting Phase 2.
-- [ ] 2: method adapters, debounced light previews, explicit cancellable fit,
+- [x] 2: seven workflow tests passed (12.48 s). Method adapters, debounced light previews, explicit cancellable fit,
   immutable result snapshots and per-context saved runs. Verify context switches,
   stale completion, failure/cancel preservation and engine equivalence.
 - [ ] 3: embedded modeling with simulation/comparison/Monte Carlo, seed/progress,
@@ -47,4 +47,5 @@ cross-stage context, async-result isolation, project/report selection and
 visible Monte Carlo access. Run small deterministic numerical references and
 frozen executable smoke; do not equate these with uncertainty coverage or
 experimental validation. Screenshots must be actual app captures, not mockups.
+
 

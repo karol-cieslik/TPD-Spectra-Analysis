@@ -9,9 +9,11 @@ from matplotlib.widgets import SpanSelector
 from .gui import TpdSpectraApp
 from .branding import NAVY, brand_image, set_windows_app_identity
 from .workflow_state import WorkflowProject, METHODS, STAGES
+from .workflow_results_gui import ResultsMixin
+from .workflow_analysis import processed_signal
 
 
-class WorkflowApp(TpdSpectraApp):
+class WorkflowApp(ResultsMixin, TpdSpectraApp):
     def __init__(self, root):
         self.project = WorkflowProject()
         self.restoring = False
@@ -28,6 +30,7 @@ class WorkflowApp(TpdSpectraApp):
         super().__init__(root)
         self.filter_method.set("none")
         self.window.set(1)
+        self.setup_results()
 
     def _build(self):
         header = tk.Frame(self.root, bg=NAVY, padx=16, pady=10)
@@ -83,6 +86,14 @@ class WorkflowApp(TpdSpectraApp):
         self._files_panel()
         ttk.Label(self.sidebar, text="Normalization is display-only. Smoothing is a view preview here.\n"
                   "Analysis uses the recorded processing recipe for the selected dataset.", wraplength=320).pack(fill="x", pady=8)
+        self.processing_baseline = tk.StringVar(self.root, value='0')
+        ttk.Label(self.sidebar, text='Subtract constant baseline (signal units)').pack(anchor='w')
+        ttk.Entry(self.sidebar, textvariable=self.processing_baseline).pack(fill='x')
+        ttk.Button(self.sidebar, text='Apply smoothing / baseline to analysis', command=self.apply_processing).pack(fill='x', pady=4)
+        ttk.Button(self.sidebar, text='Undo processing', command=self.undo_processing).pack(fill='x')
+        ttk.Button(self.sidebar, text='Reset processing to raw signal', command=self.reset_processing).pack(fill='x', pady=4)
+        self.processing_label = ttk.Label(self.sidebar, text='Analysis recipe: raw signal', wraplength=320)
+        self.processing_label.pack(fill='x')
         self.file_table.bind("<<TreeviewSelect>>", self.select_table_dataset)
         self._workspace(workspace)
         region_bar = ttk.Frame(frame, padding=8)
@@ -177,6 +188,8 @@ class WorkflowApp(TpdSpectraApp):
             self.context_label.configure(text="Define a named peak using numeric bounds or drag an interval.")
         self.refresh_method()
         self._draw_plot()
+        if self.project.active_dataset:
+            self.processing_label.configure(text='Analysis recipe: ' + str(self.project.datasets[self.project.active_dataset].processing))
 
     def select_dataset(self, _event=None):
         index = self.dataset_combo.current()
@@ -257,6 +270,26 @@ class WorkflowApp(TpdSpectraApp):
         self.result_text.delete("1.0", "end")
         self.result_text.insert("end", "Not calculated for this selection.")
         self.result_text.configure(state="disabled")
+        if hasattr(self, 'jobs'):
+            self.restore_result()
+            self.schedule_preview()
+
+    def apply_processing(self):
+        try:
+            self.project.set_processing({'smoothing': self.filter_method.get(), 'window': int(self.window.get()),
+                                         'baseline': float(self.processing_baseline.get())})
+            self.refresh_context()
+        except (ValueError, KeyError, tk.TclError) as exc:
+            self.status.set('Processing unavailable: ' + str(exc))
+
+    def undo_processing(self):
+        self.project.undo_processing()
+        self.refresh_context()
+
+    def reset_processing(self):
+        if self.project.active_dataset:
+            self.project.set_processing({'smoothing': 'none', 'window': 1, 'baseline': 0.0})
+            self.refresh_context()
 
     def _draw_plot(self):
         super()._draw_plot()
@@ -268,9 +301,20 @@ class WorkflowApp(TpdSpectraApp):
         if self.x_mode.get() == "Temperature" and self.project.active_region in self.project.regions:
             region = self.project.regions[self.project.active_region]
             self.axis.axvspan(region.lower, region.upper, color="teal", alpha=.12, label=region.label)
+        if self.project.active_dataset in self.project.datasets and self.x_mode.get() == 'Temperature':
+            dataset = self.project.datasets[self.project.active_dataset]
+            if dataset.processing != {'smoothing': 'none', 'window': 1, 'baseline': 0.0}:
+                y = processed_signal(dataset)
+                if self.normalize.get() and max(abs(y)) > 0:
+                    y = y / max(abs(y))
+                self.axis.plot(dataset.spectrum.temperature_clean_c, y, label='Selected analysis recipe', color='teal', linestyle='--')
+                self.axis.legend(fontsize=8)
         self.canvas.draw_idle()
 
     def open_classic(self):
+        if getattr(self, 'job_busy', False):
+            self.status.set('Finish or cancel the workflow calculation before opening the classic workspace.')
+            return
         if self.classic and self.classic.root.winfo_exists():
             self.classic.root.lift()
             return

@@ -38,6 +38,8 @@ class WorkflowProject:
         self.regions = {}
         self.settings = {}
         self.runs = {}
+        self.current_results = {}
+        self.processing_history = {}
         self.modeling = {}
         self.active_dataset = None
         self.active_region = None
@@ -86,6 +88,49 @@ class WorkflowProject:
         region = self.regions[region_id]
         self.validate_bounds(region.dataset_id, lower, upper)
         region.label, region.lower, region.upper = label.strip() or region.label, float(lower), float(upper)
+
+    def set_processing(self, recipe):
+        dataset = self.datasets[self.active_dataset]
+        if recipe['smoothing'] not in ('none', 'mean', 'median'):
+            raise ValueError('Choose none, mean or median smoothing')
+        if int(recipe['window']) != recipe['window'] or not 1 <= recipe['window'] <= len(dataset.spectrum.signal):
+            raise ValueError('Smoothing window must be a positive integer no larger than the trace')
+        if not np.isfinite(recipe['baseline']):
+            raise ValueError('Baseline must be finite')
+        self.processing_history.setdefault(dataset.id, []).append(deepcopy(dataset.processing))
+        dataset.processing = deepcopy(recipe)
+
+    def undo_processing(self):
+        history = self.processing_history.get(self.active_dataset, [])
+        if history:
+            self.datasets[self.active_dataset].processing = history.pop()
+
+    def accept_result(self, result):
+        snapshot = result['snapshot']
+        key = f"{snapshot['dataset_id']}/{snapshot['region_id']}/{snapshot['method']}"
+        self.current_results[key] = deepcopy(result)
+
+    def result_is_current(self, result):
+        try:
+            return self.fingerprint(result['snapshot']) == self.fingerprint(self.snapshot(result['snapshot']['method']))
+        except (ValueError, KeyError):
+            return False
+
+    def save_result(self, result, label):
+        saved = deepcopy(result)
+        saved['id'] = uuid4().hex
+        saved['label'] = label.strip() or f"{saved['snapshot']['peak']} · {saved['snapshot']['method']}"
+        self.runs[saved['id']] = saved
+        return saved
+
+    def reopen_run(self, run_id):
+        saved = self.runs[run_id]
+        snap = saved['snapshot']
+        self.select_dataset(snap['dataset_id'])
+        self.active_region = snap['region_id']
+        self.settings[self.key(snap['method'])] = deepcopy(snap['settings'])
+        self.accept_result(saved)
+        return snap['method']
 
     def context(self):
         if self.active_region not in self.regions:

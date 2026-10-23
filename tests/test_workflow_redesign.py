@@ -123,3 +123,48 @@ def test_leading_edge_cannot_escape_selected_peak():
     project.method_settings('Leading edge')['lower'] = 90
     with pytest.raises(ValueError, match='inside'):
         calculate(dataset, project.snapshot('Leading edge'))
+
+
+def test_modeling_comparison_transfer_and_monte_carlo_route(root, monkeypatch):
+    from tpd_spectra.workflow_modeling import comparison
+    app = WorkflowApp(root)
+    app._load_paths([DEMO])
+    first = app.project.add_region('First', 100, 210)
+    app.refresh_context()
+    panel = app.modeling_panel
+    for key in ('zero','second','fractional','multistart'):
+        panel.variables[key].set(False)
+    snap = panel.snapshot()
+    result = comparison(app.project.context()[0],snap,lambda:False)
+    assert result['candidates'][0]['error'] is None
+    panel.complete('comparison',result)
+    # MC count/seed edits must not invalidate the underlying fit comparison.
+    panel.variables['replicates'].set('2')
+    panel.variables['seed'].set('17')
+    assert panel.current(result)
+    old = app.project.method_settings('Polanyi–Wigner').copy()
+    assert old['energy'] == 1
+    panel.table.selection_set('0')
+    panel.transfer()
+    assert app.project.method_settings('Polanyi–Wigner')['energy'] == result['candidates'][0]['fit']['activation_energy_eV']
+    assert app.project.current_results == {}
+    # Exercise the real MC engine through the UI's submitted worker function.
+    def inline(work,done):
+        done(work())
+        return True
+    monkeypatch.setattr(app,'start_job',inline)
+    panel.monte_carlo()
+    mc = panel.session()['monte_carlo']['result']
+    assert mc['seed'] == 17 and mc['replicates_completed'] == 2
+    assert mc['parameter_intervals'] == {'first': {}}
+    app.project.add_region('Second',230,350)
+    app.refresh_context()
+    assert panel.table.get_children() == ()
+    app.project.active_region = first.id
+    app.refresh_context()
+    assert len(panel.table.get_children()) == 1
+    assert panel.variables['seed'].get() == '17'
+    panel.variables['beta'].set('2')
+    assert not panel.current(result)
+    panel.transfer()
+    assert 'Compare current settings' in app.status.get()

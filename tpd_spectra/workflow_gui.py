@@ -11,6 +11,7 @@ from .branding import NAVY, brand_image, set_windows_app_identity
 from .workflow_state import WorkflowProject, METHODS, STAGES
 from .workflow_results_gui import ResultsMixin
 from .workflow_analysis import processed_signal
+from .workflow_modeling import ModelingPanel
 
 
 class WorkflowApp(ResultsMixin, TpdSpectraApp):
@@ -111,10 +112,7 @@ class WorkflowApp(ResultsMixin, TpdSpectraApp):
         self.region_table.bind("<<TreeviewSelect>>", self.select_table_region)
 
     def _build_modeling(self, frame):
-        ttk.Label(frame, text="Explore candidate models and conditional Monte Carlo", font=("Segoe UI", 14, "bold"), padding=16).pack(anchor="w")
-        ttk.Label(frame, text="Zero, first, second and fitted fractional order. Rankings do not prove a unique mechanism.", padding=16).pack(anchor="w")
-        self.explorer_button = ttk.Button(frame, text="Open model comparison / Monte Carlo…", command=self._open_explorer)
-        self.explorer_button.pack(anchor="w", padx=16)
+        self.modeling_panel = ModelingPanel(self, frame)
 
     def _build_kinetic(self, frame):
         panes = ttk.Panedwindow(frame, orient="horizontal")
@@ -187,6 +185,7 @@ class WorkflowApp(ResultsMixin, TpdSpectraApp):
             self.region_choice.set("")
             self.context_label.configure(text="Define a named peak using numeric bounds or drag an interval.")
         self.refresh_method()
+        self.modeling_panel.restore()
         self._draw_plot()
         if self.project.active_dataset:
             self.processing_label.configure(text='Analysis recipe: ' + str(self.project.datasets[self.project.active_dataset].processing))
@@ -305,8 +304,8 @@ class WorkflowApp(ResultsMixin, TpdSpectraApp):
             dataset = self.project.datasets[self.project.active_dataset]
             if dataset.processing != {'smoothing': 'none', 'window': 1, 'baseline': 0.0}:
                 y = processed_signal(dataset)
-                if self.normalize.get() and max(abs(y)) > 0:
-                    y = y / max(abs(y))
+                if self.normalize.get():
+                    y = (y-y.min()) / max(float(y.max()-y.min()), 1e-15)
                 self.axis.plot(dataset.spectrum.temperature_clean_c, y, label='Selected analysis recipe', color='teal', linestyle='--')
                 self.axis.legend(fontsize=8)
         self.canvas.draw_idle()

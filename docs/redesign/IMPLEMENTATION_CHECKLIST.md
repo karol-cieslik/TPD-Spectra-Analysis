@@ -30,7 +30,7 @@ Neither main nor the existing beta checkout is changed by this work.
 - [x] 2: seven workflow tests passed (12.48 s). Method adapters, debounced light previews, explicit cancellable fit,
   immutable result snapshots and per-context saved runs. Verify context switches,
   stale completion, failure/cancel preservation and engine equivalence.
-- [ ] 3: embedded modeling with simulation/comparison/Monte Carlo, seed/progress,
+- [x] 3: eight workflow tests passed (15.40 s), including seeded MC through embedded controls. Embedded modeling with simulation/comparison/Monte Carlo, seed/progress,
   candidate transfer and recorded context. Verify restored session state,
   cancellation and deliberate transfer without automatic setting changes.
 - [ ] 4: versioned project save/load and selected-run PDF/CSV/JSON/PNG/SVG export.
@@ -47,5 +47,6 @@ cross-stage context, async-result isolation, project/report selection and
 visible Monte Carlo access. Run small deterministic numerical references and
 frozen executable smoke; do not equate these with uncertainty coverage or
 experimental validation. Screenshots must be actual app captures, not mockups.
+
 
 

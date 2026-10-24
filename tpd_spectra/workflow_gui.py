@@ -13,6 +13,10 @@ from .workflow_results_gui import ResultsMixin
 from .workflow_analysis import processed_signal
 from .workflow_modeling import ModelingPanel
 from .workflow_project_gui import ProjectMixin
+from .beta_onboarding import ExampleDialog, Tooltip
+from .beta_resources import resource
+from . import __version__
+from .equation_help import EquationCard
 
 
 class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
@@ -41,11 +45,12 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.brand_mark = brand_image(header, 48)
         tk.Label(header, image=self.brand_mark, bg=NAVY).pack(side="left", padx=(0, 12))
         ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel").pack(side="left")
-        ttk.Label(header, text="WORKFLOW PREVIEW", style="Subtitle.TLabel").pack(side="right")
+        ttk.Label(header, text=f"EXTERNAL BETA  {__version__}", style="Subtitle.TLabel").pack(side="right")
         actions = ttk.Frame(self.root, padding=10)
         actions.pack(fill="x")
-        ttk.Button(actions, text="Import spectra…", command=self._import_files).pack(side="left")
+        ttk.Button(actions, text="Open Spectrum…", command=self._import_files).pack(side="left")
         ttk.Button(actions, text="Add folder…", command=self._import_folder).pack(side="left", padx=5)
+        ttk.Button(actions,text='Open Example Dataset',command=self.open_example).pack(side='left',padx=4)
         ttk.Button(actions, text="Classic / batch workspace", command=self.open_classic).pack(side="right")
         ttk.Button(actions, text="About", command=self._show_about).pack(side="right", padx=5)
         self.project_actions = ttk.Frame(self.root,padding=(10,0,10,8))
@@ -75,6 +80,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self._build_kinetic(self.stage_frames[2])
         self.status = tk.StringVar(self.root, value="Import spectra to begin.")
         ttk.Label(self.root, textvariable=self.status, padding=10, wraplength=1100).pack(fill="x")
+        ttk.Button(self.root,text='Report a Bug / Send Feedback',command=self._show_feedback).pack(anchor='e',padx=12,pady=(0,6))
         self.stages.bind("<<NotebookTabChanged>>", lambda _e: self.refresh_context())
 
     def _build_preparation(self, frame):
@@ -130,6 +136,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         selector.pack(fill="x", pady=8)
         selector.bind("<<ComboboxSelected>>", lambda _e: self.refresh_method())
         self.method_panels = {}
+        self.method_equations = {}
         fields = {METHODS[0]: [("lower", "Leading edge from °C"), ("upper", "Leading edge to °C"), ("beta", "Heating rate (K/s; verify)")],
                   METHODS[1]: [("beta", "Heating rate (K/s)"), ("prefactor", "Assumed prefactor (s⁻¹)")],
                   METHODS[2]: [("beta", "Heating rate (K/s)"), ("energy", "Initial energy (eV)"),
@@ -137,13 +144,24 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
                                ("max_nfev", "Maximum evaluations")]}
         help_text = {METHODS[0]: "Apparent slope energy requires a suitable rate signal and approximately unchanged coverage. It is not a zero-order assignment.",
                      METHODS[1]: "Classical first-order Redhead estimate with an assumed prefactor and linear ramp. No measured confidence interval is inferred.",
-                     METHODS[2]: "Single-state linear-ramp fit; normalized initial coverage is one. Energy/prefactor may be non-identifiable. Bounds and solver follow the existing engine."}
+                     METHODS[2]: "Single-state linear-ramp fit; normalized initial coverage is one. Energy/prefactor may be non-identifiable. Known beta limitation: zero-order fits can converge with biased amplitude; inspect residuals. Bounds and solver follow the existing engine."}
         for method in METHODS:
             panel = ttk.Frame(sidebar)
             self.method_panels[method] = panel
+            equation = EquationCard(panel, method)
+            equation.pack(fill='x', pady=(0, 8))
+            self.method_equations[method] = equation
             for key, label in fields[method]:
                 ttk.Label(panel, text=label).pack(anchor="w", pady=(6, 0))
-                ttk.Entry(panel, textvariable=self.method_values[key]).pack(fill="x")
+                entry=ttk.Entry(panel, textvariable=self.method_values[key])
+                entry.pack(fill="x")
+                Tooltip(entry,{'beta':'Linear heating rate in kelvin per second. Confirm acquisition conditions; it is not inferred automatically.',
+                    'prefactor':'Arrhenius prefactor in s⁻¹ under normalized coverage. Redhead assumes it; full fitting optimizes it.',
+                    'energy':'Initial optimizer guess in electronvolts; the result is shown separately.',
+                    'order':'Fixed order unless Fit order is selected. A fitted order does not prove a mechanism.',
+                    'max_nfev':'Maximum optimizer evaluations, not Monte Carlo replicates.',
+                    'lower':'Leading-edge subinterval in degrees Celsius, inside the selected peak.',
+                    'upper':'Use only the rising edge where coverage change is small, not the whole peak.'}[key])
             if method == METHODS[2]:
                 ttk.Checkbutton(panel, text="Fit order (0.2–3)", variable=self.method_flags["free_order"]).pack(anchor="w", pady=5)
                 ttk.Checkbutton(panel, text="Fit constant baseline", variable=self.method_flags["fit_baseline"]).pack(anchor="w")
@@ -377,10 +395,24 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             '3. Explore hypotheses\nIn Modeling, simulate parameters or compare candidate orders. Seeded Monte Carlo refits simulated noisy traces; rankings do not prove mechanisms.\n\n'
             '4. Analyze one peak\nIn Kinetic Analysis, choose Leading edge, Redhead or Polanyi–Wigner. Lightweight estimates update after edits; numerical fitting runs explicitly and can be cancelled.\n\n'
             '5. Retain and export\nSave labeled results, then Report / Export. Select runs, review their labels and choose a destination. Save project retains your workspace.\n\n'
-            'Synthetic first test\nUse examples/synthetic_two_peak_demo.csv; Peak 1: 100–210 °C; Redhead: 1 K/s and 1e13 s⁻¹ gives about 1.244 eV. Leading edge: 110–140 °C. This example is simulated, not experimental.\n\n'
+            'Synthetic first test\nClick Open Example Dataset and keep first order single peak. Redhead: 1 K/s and 1e13 s⁻¹ gives about 1.2 eV. Leading edge: 90–110 °C. This example is simulated, not experimental. Zero-order quantitative fitting currently fails its residual benchmark.\n\n'
             'Classic / batch workspace retains advanced and batch functions.\nCreated by Karol Cieślik. Scientific applicability still requires independent validation.')
         text.configure(state='disabled')
         ttk.Button(dialog,text='Close',command=dialog.destroy).pack(anchor='e',padx=12,pady=8)
+        ttk.Button(dialog,text='Open beta Quick Start PDF',command=self.open_beta_guide).pack(anchor='w',padx=12,pady=8)
+
+    def open_example(self):
+        try:
+            return ExampleDialog(self)
+        except Exception as exc:
+            self.status.set(str(exc))
+
+    def open_beta_guide(self):
+        try:
+            import webbrowser
+            webbrowser.open(resource('docs/beta/QUICK_START.pdf').as_uri())
+        except (OSError,ValueError) as exc:
+            self.status.set(str(exc))
 
 
 def main():

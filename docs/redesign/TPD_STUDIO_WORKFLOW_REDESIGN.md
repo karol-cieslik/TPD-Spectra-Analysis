@@ -142,10 +142,26 @@ Separate UI state from numerical computation. Provide adapters to the existing e
 - Implement selectable PDF reporting with export tests and complete provenance.
 - Save/load workspaces and saved analysis runs.
 
-**Phase 5 — UX polish and scientific validation**
+**Phase 5 — Beta feedback, UX polish and scientific validation**
+- Implement and test the in-app Report a Bug / Send Feedback workflow described in Section 8A before distributing the beta.
 - Validate each analysis method against synthetic analytical reference cases and documented experimental/literature benchmarks where data rights allow.
 - Test zero/first/second order, overlaps, baselines, noise, multiple heating rates, invalid inputs and optimizer failures.
 - Update user documentation and screenshots; collect usability feedback.
+
+## 8A. Beta feedback and “Report a Bug” (required before colleague beta)
+
+Add a clearly discoverable **Report a Bug / Send Feedback** action in the GUI (e.g., Help menu and visible footer/action button), suitable for non-programmer colleagues. No GitHub account should be required for the basic workflow.
+
+**Public beta contact:** [karol.j.cieslik@gmail.com](mailto:karol.j.cieslik@gmail.com). **Source repository:** https://github.com/karol-cieslik/TPD-Spectra-Analysis. **Fork URL:** https://github.com/karol-cieslik/TPD-Spectra-Analysis/fork. Display these links in the application **Help → About / Contact** panel and, where appropriate, in the beta feedback dialog. Make the repository link clickable and provide a **View on GitHub / Fork Project** action.
+
+- Offer a concise form: **Problem / Unexpected result / Suggestion**, short description, optional reproduction steps, and optional reply contact.
+- Auto-collect **non-sensitive diagnostics**: application/version and build, OS/Python/runtime where applicable, time, current workflow tab, selected analysis method, relevant parameters/settings, sanitized exception stack trace, and bounded recent application log.
+- Provide **Copy diagnostic report** and **Save diagnostic ZIP** actions that work fully offline. Also offer **Open GitHub issue** with a prepared issue template, but do not require a GitHub account or assume the user will submit it.
+- Allow optional attachments (screenshot, CSV spectrum, project file). **Never attach or upload raw experimental data, paths identifying private users, contact details, or full project files automatically.** Make the included files and redacted diagnostic preview visible before submission; use explicit opt-in for each potentially sensitive attachment.
+- Implement **Email Report** as an explicit button that opens the user's default mail app addressed to **karol.j.cieslik@gmail.com**, with a prefilled subject such as `[TPD Spectra Studio Beta] Bug report — vX.Y.Z` and a concise, reviewable body. Also prepare a diagnostic ZIP that can be attached manually; a standard `mailto:` link cannot reliably attach files automatically, so display clear instructions to attach the ZIP only after reviewing it. First implementation may use the user's default email client with a prefilled, reviewable message or an offline ZIP. Do **not** silently email reports to the developer, create a telemetry service, or embed personal email addresses/API tokens. Any later automated upload requires a separate, explicit opt-in and security/privacy review.
+- Handle the reporting action even after a nonfatal error; catch/report serialization failures gracefully and never let bug-report generation crash the main application.
+- Include an issue template in `.github/ISSUE_TEMPLATE/` for reproducible bug reports, expected/actual behavior, steps and software version.
+- In a beta build, mark this feature as a **release blocker**. Test the button, copying, ZIP content, redaction, offline operation and opt-in attachment behavior.
 
 ## 9. Acceptance criteria
 
@@ -162,6 +178,9 @@ Separate UI state from numerical computation. Provide adapters to the existing e
 - [ ] PDF report contains selected results, plots, assumptions and reproducibility metadata.
 - [ ] Existing CLI, CSV exports, core analyses and tests remain functional.
 - [ ] GUI integration tests verify switching methods/peaks never displays another run's stale result.
+- [ ] A tester can report a bug or suggestion in-app, copy diagnostics, and save an offline diagnostic ZIP without GitHub login.
+- [ ] The app displays the maintainer contact `karol.j.cieslik@gmail.com`, a clickable repository URL and a Fork Project link; Email Report opens a draft to that address and explains manual ZIP attachment.
+- [ ] Diagnostic preview/redaction works, and experimental data is never attached or transmitted without explicit consent.
 - [ ] Scientific limitations are stated clearly and no result is described as proving a unique desorption order.
 
 ## 10. Prompt for the future Codex session

@@ -25,10 +25,12 @@ def restore_redirected_output():
         setattr(sys, name, stream or open(os.devnull, "w", encoding="utf-8"))
 
 if __name__ == "__main__":
-    if sys.argv[1:2] in (["--tpd-smoke-gui"], ["--tpd-smoke-workflow"]):
+    if sys.argv[1:2] in (["--tpd-smoke-gui"], ["--tpd-smoke-workflow"], ["--tpd-smoke-beta"]):
         restore_redirected_output()
         try:
-            if sys.argv[1] == '--tpd-smoke-workflow':
+            if sys.argv[1] == '--tpd-smoke-beta':
+                from tpd_spectra.beta_smoke import main as smoke_main
+            elif sys.argv[1] == '--tpd-smoke-workflow':
                 from tpd_spectra.workflow_smoke import main as smoke_main
             else:
                 from tpd_spectra.desktop_smoke import main as smoke_main

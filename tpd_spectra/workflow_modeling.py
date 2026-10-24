@@ -11,6 +11,7 @@ from .workflow_analysis import selected_arrays, serial
 from .kinetics import simulate_tpd, KineticFitResult
 from .kinetics_explorer import compare_desorption_orders, ModelCandidate
 from .kinetics_uncertainty import run_kinetics_monte_carlo
+from .equation_help import EquationCard
 
 DEFAULTS = dict(beta='1', energy='1.25', prefactor='1e13', order='1', coverage='1',
                 amplitude='1', baseline='0', max_nfev='300', replicates='500', seed='42',
@@ -48,11 +49,16 @@ class ModelingPanel:
         panes.add(workspace, weight=1)
         sidebar = app._scroll_panel(controls)
         ttk.Label(sidebar, text='Model hypotheses', style='Section.TLabel').pack(anchor='w')
+        self.model_equation = EquationCard(sidebar, 'Polanyi–Wigner')
+        self.model_equation.pack(fill='x', pady=8)
         for key, label in (('beta','Heating rate (K/s)'), ('energy','Initial / simulated energy (eV)'),
             ('prefactor','Initial / simulated prefactor (s⁻¹)'), ('order','Simulation order (≥0)'),
             ('coverage','Simulation initial coverage (0–1)'), ('amplitude','Simulation signal scale'),
             ('baseline','Simulation constant baseline'), ('max_nfev','Maximum fit evaluations'),
             ('replicates','Monte Carlo replicates (1–10000)'), ('seed','Monte Carlo seed')):
+            if key == 'replicates':
+                self.mc_equation = EquationCard(sidebar, 'Monte Carlo')
+                self.mc_equation.pack(fill='x', pady=(12, 8))
             ttk.Label(sidebar, text=label).pack(anchor='w', pady=(4,0))
             ttk.Entry(sidebar, textvariable=self.variables[key]).pack(fill='x')
         for key in ('zero','first','second','fractional','fit_baseline','multistart'):
@@ -157,7 +163,7 @@ class ModelingPanel:
         ax = self.fig.add_subplot(211)
         residual = self.fig.add_subplot(212)
         ax.plot(t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal')
-        notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\n'
+        notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\nKnown beta limitation: zero-order optimization can converge with biased amplitude; inspect residuals and do not treat its ranking as validated.\n'
         if result:
             notes += ('Current comparison.\n' if self.current(result) else 'STALE comparison — original interval/settings plotted. Compare again before transfer or Monte Carlo.\n')
             notes += 'Compared interval: ' + str(result['snapshot']['region']) + ' °C; β = ' + str(result['snapshot']['settings']['beta']) + ' K/s\n'

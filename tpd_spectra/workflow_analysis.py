@@ -88,6 +88,8 @@ def calculate(dataset, snapshot, cancelled=lambda: False):
         plots.update(x=t, observed=y, predicted=prediction, x_label='Temperature (°C)', y_label='Signal (instrument units)')
         warnings += ['Single initially populated state, normalized initial coverage one at the selected interval start, linear ramp.',
                      'Energy and prefactor may be non-identifiable; numerical order does not establish mechanism. No parameter confidence interval is inferred.']
+        if fit.reaction_order == 0:
+            warnings.append('Known beta limitation: the zero-order optimizer can converge with biased amplitude near the depletion edge. Convergence is not an accuracy check; inspect residuals. This path failed the external-beta clean-reference residual tolerance.')
     else:
         raise ValueError('Unsupported analysis method')
     if cancelled():

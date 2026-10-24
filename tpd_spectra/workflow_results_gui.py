@@ -68,6 +68,7 @@ class ResultsMixin:
             self.project.accept_result(result)
             self.restore_result()
         except (ValueError, KeyError, TypeError, OverflowError) as exc:
+            self.diagnostic_log.record('Preview unavailable',str(exc),exc)
             self.restore_result()
             self.result_message(f'Preview unavailable: {exc}\nPrevious successful result, if shown, is retained with its original settings.')
 
@@ -89,6 +90,7 @@ class ResultsMixin:
                     raise InterruptedError('Cancelled; previous successful results retained.')
                 self.jobs.put(('done', (on_success, value)))
             except Exception as exc:
+                self.diagnostic_log.record('Calculation stopped',str(exc),exc)
                 self.jobs.put(('error', str(exc)))
         self.workflow_worker = threading.Thread(target=work, daemon=True)
         self.workflow_worker.start()
@@ -105,6 +107,7 @@ class ResultsMixin:
                 self.fit_button.configure(state='normal')
                 self.cancel_fit.configure(state='disabled')
                 if kind == 'done':
+                    self.diagnostic_log.record('Calculation finished','Background calculation returned successfully.')
                     callback, value = payload
                     callback(value)
                 else:

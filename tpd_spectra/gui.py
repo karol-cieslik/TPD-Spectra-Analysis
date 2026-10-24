@@ -20,7 +20,9 @@ from matplotlib.widgets import SpanSelector
 from . import __version__
 from .analysis import load_spectrum, smooth_signal
 from .gui_ranges import validate_temperature_window, window_from_drag
-from .identity import about_text, REPOSITORY
+from .identity import about_text, REPOSITORY, CONTACT_EMAIL
+from .feedback import DiagnosticLog
+from .feedback_gui import open_feedback
 from .gui_review import ReviewDialog, ResultsDialog, text_panel
 from .run_session import RunPlan, execute, sha256
 from .branding import (NAVY, TEAL, TEAL_ACTIVE, BACKGROUND, INK, MUTED,
@@ -174,6 +176,8 @@ class TpdSpectraApp:
     """Compact three-panel app: import, tune, compare, then export or analyze."""
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
+        self.diagnostic_log = DiagnosticLog()
+        root.report_callback_exception = self._report_callback_exception
         install_window_icons(root)
         root.title(f"TPD Spectra Studio  ·  {__version__}")
         screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -225,6 +229,16 @@ class TpdSpectraApp:
         self._build()
         self.root.after(100, self._poll_worker)
         self.root.protocol("WM_DELETE_WINDOW", self._close)
+
+    def _report_callback_exception(self,kind,error,tb):
+        try:
+            self.diagnostic_log.record('UI callback failed',str(error),error.with_traceback(tb))
+            self.status.set('An unexpected error occurred. Use Report a Bug / Send Feedback; your existing data and saved files are retained.')
+        except Exception:
+            pass
+
+    def _show_feedback(self):
+        return open_feedback(self)
 
     def _style(self) -> None:
         style = ttk.Style(self.root)
@@ -380,8 +394,11 @@ class TpdSpectraApp:
         links = ttk.Frame(dialog, padding=(10, 0, 10, 10))
         links.pack(fill="x")
         ttk.Button(links, text="GitHub", command=lambda: webbrowser.open(REPOSITORY)).pack(side="left")
+        ttk.Button(links, text="Email developer", command=lambda: webbrowser.open('mailto:'+CONTACT_EMAIL)).pack(side='left',padx=4)
+        ttk.Button(links, text="Fork project", command=lambda: webbrowser.open(REPOSITORY+'/fork')).pack(side='left',padx=4)
         ttk.Button(links, text="Documentation", command=lambda: webbrowser.open(REPOSITORY + "/blob/release/beta-v0.11-candidate/docs/USER_AND_SCIENTIFIC_MANUAL.md")).pack(side="left", padx=6)
         ttk.Button(links, text="Report issue", command=lambda: webbrowser.open(REPOSITORY + "/issues/new/choose")).pack(side="left")
+        ttk.Button(dialog,text='Report a Bug / Send Feedback',command=self._show_feedback).pack(anchor='w',padx=10,pady=8)
         dialog.bind("<Escape>", lambda _event: dialog.destroy())
 
     def _show_run_log(self) -> None:
@@ -686,6 +703,7 @@ class TpdSpectraApp:
                 self.file_table.insert("", "end", iid=key, values=("✓", "✓", path.name, f"{spec.signal.size:,}"))
                 added += 1
             except Exception as exc:
+                self.diagnostic_log.record('Import failed',str(exc),exc)
                 errors.append(f"{path.name}: {exc}")
         self.status.set(f"Added {added} trace{'s' if added != 1 else ''}." if added else "No new spectra were added.")
         self._draw_plot()

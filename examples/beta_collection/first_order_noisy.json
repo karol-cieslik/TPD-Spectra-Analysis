@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "experimental": false,
+  "name": "first_order_noisy",
+  "states": [
+    {
+      "order": 1,
+      "energy_eV": 1.2,
+      "prefactor_s_inv": 10000000000000.0,
+      "initial_normalized_coverage": 1.0,
+      "detector_scale": 10000.0
+    }
+  ],
+  "beta_K_s": 1.0,
+  "expected_behavior": "Independent Gaussian detector noise; compare residuals and try seeded Monte Carlo.",
+  "number_of_states": 1,
+  "temperature_range_c": [
+    50.0,
+    450.0
+  ],
+  "temperature_unit": "degC",
+  "time_unit": "ms",
+  "signal_unit": "arbitrary detector units proportional to normalized coverage/s",
+  "points": 801,
+  "sampling_step_K": 0.5,
+  "integration_step_K": 0.005,
+  "noise": {
+    "model": "iid Gaussian",
+    "sigma_signal_units": 2.954365472390607,
+    "ar1_coefficient": 0.0
+  },
+  "baseline": {
+    "offset_signal_units": 0.0,
+    "slope_signal_units_per_K": 0.0,
+    "reference_temperature_c": 50.0
+  },
+  "random_seed": 20261030,
+  "generation_method": "Separable constant-order Polanyi-Wigner solution; cumulative trapezoidal quadrature of Arrhenius rate on 0.005 K grid. Independent of production ODE solver.",
+  "limitations": [
+    "Synthetic data, not experimental measurements.",
+    "No readsorption, lateral interactions, transport limitation or instrument response.",
+    "Normalized coverage is dimensionless; prefactors are expressed in s^-1 under this convention.",
+    "Good parameter recovery is numerical verification, not proof of a unique physical mechanism."
+  ],
+  "recommended_peak_c": [
+    50.0,
+    450.0
+  ],
+  "csv_sha256": "3dcee90b038f49b4b8d80882996da4ee4945942a23c22342d2ad3c87cc12dc1c"
+}

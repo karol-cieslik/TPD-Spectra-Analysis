@@ -96,8 +96,9 @@ class FeedbackDialog:
 
     def copy(self):
         def action():
+            report=self.report()
             self.win.clipboard_clear()
-            self.win.clipboard_append(self.report())
+            self.win.clipboard_append(report)
             self.status.set('Report copied. Paste it into an email or message after reviewing it.')
         return self.guard(action)
 

@@ -26,6 +26,7 @@ def sanitize(text, private_terms=()):
     text = re.sub(r'\\\\[^\r\n\"\x27<>|]*', '[network path removed]', text)
     text = re.sub(r'(?<!\w)/(?:[^\s\"\x27<>]+/?)+', '[path removed]', text)
     text = re.sub(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}', '[email removed]', text)
+    text = re.sub(r'(?i)\b[^\s<>"\x27/\\]+\.(?:csv|tsv|xlsx?|json|txt|dat|zip)\b', '[filename removed]', text)
     text = re.sub(r'(?i)\b(token|password|secret|api[_-]?key|authorization)\s*[:=]\s*[^\s,;]+', r'\1=[removed]', text)
     return text
 

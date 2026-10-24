@@ -11,7 +11,7 @@ from tpd_spectra.workflow_gui import WorkflowApp
 DEMO=Path(__file__).resolve().parents[1]/'examples/synthetic_two_peak_demo.csv'
 
 
-@pytest.mark.parametrize('private',[r'C:\Users\Alice\Private Lab\sample.csv','/home/alice/private/sample.csv',r'\\lab-server\secret\sample.csv','file:///home/alice/secret.csv','alice@example.org','token=abcdef12345'])
+@pytest.mark.parametrize('private',[r'C:\Users\Alice\Private Lab\sample.csv','/home/alice/private/sample.csv',r'\\lab-server\secret\sample.csv','file:///home/alice/secret.csv','alice@example.org','token=abcdef12345','sample.csv'])
 def test_redaction_removes_private_values(private):
     clean=sanitize('Failure: '+private)
     assert 'Alice' not in clean and 'alice' not in clean and 'sample.csv' not in clean and 'abcdef12345' not in clean

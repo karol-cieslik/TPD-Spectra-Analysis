@@ -3,7 +3,7 @@ name: Windows desktop build
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate', 'feature/workflow-redesign']
+    branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate', 'feature/workflow-redesign', 'release/external-beta-v0.11.0b2']
     paths:
       - 'tpd_spectra/**'
       - 'tests/**'
@@ -11,6 +11,9 @@ on:
       - 'scripts/generate_demo.py'
       - 'scripts/generate_brand_assets.py'
       - 'scripts/verify_windows_build.py'
+      - 'scripts/verify_beta_package.py'
+      - 'docs/beta/**'
+      - 'START_HERE.md'
       - 'run_tpd_spectra*.py'
       - 'pyproject.toml'
       - 'requirements*.txt'
@@ -37,7 +40,7 @@ jobs:
           python -m pip install -r requirements-build.txt
           python -m pip install -e .
       - name: Verify scientific and GUI regression tests
-        run: python -m pytest -q
+        run: python -m pytest -q -rx --junitxml=validation/beta-tests.xml
       - name: Record candidate build identity
         shell: pwsh
         run: |
@@ -68,24 +71,21 @@ jobs:
           Copy-Item dist/TPD-Spectra-Studio.exe release-package/
           Copy-Item README.md,CHANGELOG.md,CITATION.cff,LICENSE,ASSET-RIGHTS.md release-package/
           Copy-Item build-dependencies.txt release-package/
+          Copy-Item START_HERE.md release-package/
+          python -c "import json; from tpd_spectra.identity import build_identity; print(json.dumps(build_identity(),indent=2))" | Set-Content -Encoding utf8 release-package/VERSION.json
           Copy-Item examples release-package/examples -Recurse
           Copy-Item docs release-package/docs -Recurse
           Copy-Item validation release-package/validation -Recurse
           $exeHash = (Get-FileHash release-package/TPD-Spectra-Studio.exe -Algorithm SHA256).Hash.ToLowerInvariant()
           "$exeHash  TPD-Spectra-Studio.exe" | Set-Content -Encoding ascii release-package/SHA256SUMS.txt
           @'
-          TPD Spectra Studio — Windows x64
+          TPD Spectra Studio 0.11.0b2 — external beta review candidate
 
-          START HERE: double-click TPD-Spectra-Studio.exe. This is the only application file.
-          Workflow preview: import spectra, define a named peak, explore candidate models,
-          then choose one kinetic method. Save labeled runs and use Report / Export.
-          Read docs/redesign/WORKFLOW_USER_GUIDE.md. Classic / batch workspace retains
-          the existing reviewed batch-analysis workflow.
-
-          First test: import examples/synthetic_two_peak_demo.csv (601 points).
-          See examples/README.md for exact analysis settings and expected results.
-          This is a physical-model simulation, not experimental data.
-          See README.md for input formats, assumptions, outputs, and citation information.
+          Read START_HERE.md and docs/beta/QUICK_START.pdf.
+          Extract this entire folder. Double-click TPD-Spectra-Studio.exe.
+          Use Open Example Dataset, then the clean first-order example.
+          Known issue: zero-order quantitative fitting fails its residual benchmark.
+          See docs/beta/RELEASE_NOTES.md before interpreting results.
           '@ | Set-Content -Encoding utf8 release-package/QUICKSTART.txt
           @'
           The project-authored software code is offered under the MIT License; see LICENSE.
@@ -104,10 +104,12 @@ jobs:
               $packageName = (Split-Path $distInfo -Leaf) -replace '\.dist-info$',''
               Copy-Item $_.FullName (Join-Path 'release-package/THIRD-PARTY-LICENSES' ($packageName + '-' + $_.Name))
             }
+      - name: Verify assembled beta resources and offline feedback
+        run: python scripts/verify_beta_package.py release-package
       - name: Publish downloadable build
         uses: actions/upload-artifact@v4
         with:
-          name: tpd-spectra-windows-x64-${{ github.ref_name == 'feature/workflow-redesign' && 'workflow-preview' || github.ref_name == 'main' && 'stable' || 'beta-candidate' }}
+          name: tpd-spectra-windows-x64-${{ github.ref_name == 'release/external-beta-v0.11.0b2' && 'external-beta-0.11.0b2' || github.ref_name == 'feature/workflow-redesign' && 'workflow-preview' || github.ref_name == 'main' && 'stable' || 'beta-candidate' }}
           path: release-package/*
           if-no-files-found: error
           retention-days: 90

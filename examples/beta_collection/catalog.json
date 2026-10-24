@@ -1,0 +1,114 @@
+[
+  {
+    "file": "zero_order_single_peak.csv",
+    "metadata": "zero_order_single_peak.json",
+    "title": "zero order single peak",
+    "description": "Zero-order depletion edge; peak position depends on initial coverage.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "first_order_single_peak.csv",
+    "metadata": "first_order_single_peak.json",
+    "title": "first order single peak",
+    "description": "Clean first-order reference: start here; isolated peak and no baseline.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "second_order_single_peak.csv",
+    "metadata": "second_order_single_peak.json",
+    "title": "second order single peak",
+    "description": "Second-order tail; a wider fitting interval matters.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "fractional_order_1p5.csv",
+    "metadata": "fractional_order_1p5.json",
+    "title": "fractional order 1p5",
+    "description": "Phenomenological fixed non-integer order; not a coverage-dependent microscopic mechanism.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "two_overlapping_peaks.csv",
+    "metadata": "two_overlapping_peaks.json",
+    "title": "two overlapping peaks",
+    "description": "Two independent additive states; single-state fitting can be misleading.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "three_overlapping_peaks.csv",
+    "metadata": "three_overlapping_peaks.json",
+    "title": "three overlapping peaks",
+    "description": "Three independent additive states; the current GUI does not provide a three-state inverse model.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "first_order_noisy.csv",
+    "metadata": "first_order_noisy.json",
+    "title": "first order noisy",
+    "description": "Independent Gaussian detector noise; compare residuals and try seeded Monte Carlo.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "first_order_noisy_baseline.csv",
+    "metadata": "first_order_noisy_baseline.json",
+    "title": "first order noisy baseline",
+    "description": "Gaussian noise plus constant offset and linear drift; a constant-baseline fitter cannot model the drift.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "challenging_overlap_drift.csv",
+    "metadata": "challenging_overlap_drift.json",
+    "title": "challenging overlap drift",
+    "description": "Overlapping different-order states, correlated noise and drift deliberately violate single-state/MC assumptions.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "heating_rate_0p5_K_s.csv",
+    "metadata": "heating_rate_0p5_K_s.json",
+    "title": "heating rate 0p5 K s",
+    "description": "First-order heating-rate series; compare with first_order_single_peak.csv (1 K/s). Increasing beta shifts the maximum upward.",
+    "beta_K_s": 0.5
+  },
+  {
+    "file": "heating_rate_2p0_K_s.csv",
+    "metadata": "heating_rate_2p0_K_s.json",
+    "title": "heating rate 2p0 K s",
+    "description": "First-order heating-rate series; compare with first_order_single_peak.csv (1 K/s). Increasing beta shifts the maximum upward.",
+    "beta_K_s": 2.0
+  },
+  {
+    "file": "heating_rate_5p0_K_s.csv",
+    "metadata": "heating_rate_5p0_K_s.json",
+    "title": "heating rate 5p0 K s",
+    "description": "First-order heating-rate series; compare with first_order_single_peak.csv (1 K/s). Increasing beta shifts the maximum upward.",
+    "beta_K_s": 5.0
+  },
+  {
+    "file": "zero_order_coverage_0p25.csv",
+    "metadata": "zero_order_coverage_0p25.json",
+    "title": "zero order coverage 0p25",
+    "description": "Coverage series; compare with the corresponding single_peak file (coverage 1). First-order peak position is coverage-independent in this model; zero-order peaks shift.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "first_order_coverage_0p25.csv",
+    "metadata": "first_order_coverage_0p25.json",
+    "title": "first order coverage 0p25",
+    "description": "Coverage series; compare with the corresponding single_peak file (coverage 1). First-order peak position is coverage-independent in this model; zero-order peaks shift.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "zero_order_coverage_0p5.csv",
+    "metadata": "zero_order_coverage_0p5.json",
+    "title": "zero order coverage 0p5",
+    "description": "Coverage series; compare with the corresponding single_peak file (coverage 1). First-order peak position is coverage-independent in this model; zero-order peaks shift.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "first_order_coverage_0p5.csv",
+    "metadata": "first_order_coverage_0p5.json",
+    "title": "first order coverage 0p5",
+    "description": "Coverage series; compare with the corresponding single_peak file (coverage 1). First-order peak position is coverage-independent in this model; zero-order peaks shift.",
+    "beta_K_s": 1.0
+  }
+]

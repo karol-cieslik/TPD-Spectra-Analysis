@@ -235,3 +235,28 @@ def test_project_install_and_small_window_controls(root,tmp_path):
         assert app.dataset_combo.winfo_ismapped()
         assert app.region_combo.winfo_ismapped()
     assert app.result_canvas.get_tk_widget().winfo_height()>150
+
+
+def test_model_parameter_edits_debounce_and_context_switch_cancels_preview(root,monkeypatch):
+    import time
+    app=WorkflowApp(root)
+    app._load_paths([DEMO])
+    first=app.project.add_region('First',100,210)
+    app.refresh_context()
+    # Drain initial notebook/map events before simulating user edits.
+    root.update()
+    panel=app.modeling_panel
+    calls=[]
+    monkeypatch.setattr(panel,'simulate',lambda:calls.append(panel.variables['energy'].get()))
+    panel.variables['energy'].set('1.1')
+    panel.variables['energy'].set('1.2')
+    deadline=time.monotonic()+2
+    while not calls and time.monotonic()<deadline:
+        root.update()
+        time.sleep(.01)
+    assert calls==['1.2']
+    panel.variables['energy'].set('1.3')
+    app.project.add_region('Second',230,350)
+    app.refresh_context()
+    assert panel.preview_after is None
+    assert panel.variables['energy'].get()=='1.25'

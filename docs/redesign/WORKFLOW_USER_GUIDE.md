@@ -50,6 +50,9 @@ It is a development preview, not a validated experimental-analysis release.
 Simulate parameters to overlay a manual hypothesis. Simulation order, initial
 coverage, amplitude and baseline are distinct from optimized values. Coverage
 must be in (0, 1]; amplitude is a positive detector scale.
+Parameter edits trigger a debounced simulation preview when no calculation is
+running. **Simulate parameters** also runs it explicitly; edits made during
+another calculation can be previewed with this button after that work finishes.
 
 **Compare models** fits the checked zero, first, second and fractional-order
 candidates. Fractional order is fitted in the engine's 0.2–3 interval; this is

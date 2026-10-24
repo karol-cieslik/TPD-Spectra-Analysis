@@ -39,6 +39,7 @@ class ModelingPanel:
     def __init__(self, app, frame):
         self.app = app
         self.restoring = False
+        self.preview_after = None
         self.variables = {k: (tk.BooleanVar(app.root, value=v) if isinstance(v, bool) else tk.StringVar(app.root, value=v)) for k,v in DEFAULTS.items()}
         panes = ttk.Panedwindow(frame, orient='horizontal')
         panes.pack(fill='both', expand=True)
@@ -76,8 +77,8 @@ class ModelingPanel:
         scroll.pack(fill='x')
         self.notes = tk.Text(workspace, height=6, wrap='word', font=('Segoe UI',10))
         self.notes.pack(fill='x')
-        for var in self.variables.values():
-            var.trace_add('write', self.changed)
+        for key,var in self.variables.items():
+            var.trace_add('write',lambda *_args,k=key:self.changed(k))
 
     def key(self):
         dataset, region = self.app.project.context()
@@ -103,16 +104,28 @@ class ModelingPanel:
             snapshot['settings'] = {k:v for k,v in snapshot['settings'].items() if k in keys}
         return self.app.project.fingerprint(old) == self.app.project.fingerprint(new)
 
-    def changed(self, *_):
+    def changed(self, key):
         if self.restoring:
             return
         try:
             self.session()['settings'] = {k:v.get() for k,v in self.variables.items()}
             self.render()
+            if key in {'beta','energy','prefactor','order','coverage','amplitude','baseline'}:
+                if self.preview_after is not None:
+                    self.app.root.after_cancel(self.preview_after)
+                self.preview_after = self.app.root.after(650,self.preview)
         except ValueError:
             pass
 
+    def preview(self):
+        self.preview_after = None
+        if not self.app.job_busy:
+            self.simulate()
+
     def restore(self):
+        if self.preview_after is not None:
+            self.app.root.after_cancel(self.preview_after)
+            self.preview_after = None
         self.restoring = True
         try:
             for key,value in self.session()['settings'].items():
@@ -143,7 +156,7 @@ class ModelingPanel:
             return
         ax = self.fig.add_subplot(211)
         residual = self.fig.add_subplot(212)
-        ax.plot(t,y,label='Selected processed signal')
+        ax.plot(t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal')
         notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\n'
         if result:
             notes += ('Current comparison.\n' if self.current(result) else 'STALE comparison — original interval/settings plotted. Compare again before transfer or Monte Carlo.\n')
@@ -163,6 +176,7 @@ class ModelingPanel:
             r = mc['result']
             notes += f"Monte Carlo seed {r['seed']}; {r['replicates_completed']}/{r['replicates_requested']} replicates; failed rankings {r['failed_rankings']}. "
             notes += json.dumps(r['winning_counts']) + '\n' + r['interval_note'] + '\n'
+            notes += 'Conditional parameter ranges: ' + json.dumps(r['parameter_intervals']) + '\n'
             notes += ('MC settings are current. ' if self.current(mc) else 'MC settings are stale. ')
         notes += 'Monte Carlo uses iid Gaussian residual noise around the lowest-AICc converged reference; ranges withheld below 100 successful refits. Frequencies are not mechanism probabilities.'
         ax.set(ylabel='Signal (instrument units)')

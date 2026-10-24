@@ -20,6 +20,8 @@ class ResultsMixin:
         self.fit_button.pack(fill='x', pady=4)
         self.cancel_fit = ttk.Button(actions, text='Cancel calculation', command=self.job_cancel.set, state='disabled')
         self.cancel_fit.pack(fill='x')
+        self.show_annotation = tk.BooleanVar(self.root,value=True)
+        ttk.Checkbutton(actions,text='Show estimate on plot',variable=self.show_annotation,command=self.restore_result).pack(anchor='w',pady=4)
         ttk.Button(actions, text='Save labeled result…', command=self.save_current_result).pack(fill='x', pady=4)
         self.saved_choice = tk.StringVar(self.root)
         self.saved_combo = ttk.Combobox(actions, textvariable=self.saved_choice, state='readonly')
@@ -145,7 +147,24 @@ class ResultsMixin:
             status = result['status'].upper() if current else 'STALE — original settings shown; recalculate for current inputs'
             draw_result(self.result_figure, result)
             self.result_figure.suptitle(status, fontsize=9)
-            self.result_message(status + '\n' + json.dumps(result['values'], indent=2, ensure_ascii=False)
+            values=result['values']
+            energy=values.get('energy_ev',values.get('activation_energy_eV'))
+            if self.show_annotation.get() and energy is not None:
+                self.result_figure.axes[0].text(.02,.97,f'E = {energy:.6g} eV\n'+result['snapshot']['method'],
+                    transform=self.result_figure.axes[0].transAxes,va='top',fontsize=9,
+                    bbox=dict(boxstyle='round,pad=0.5',facecolor='white',edgecolor='#087E8B',alpha=.9))
+            labels={'energy_ev':'Apparent energy (eV)','activation_energy_eV':'Fitted energy (eV)',
+                'peak_temperature_c':'Peak maximum (°C)','beta_k_s':'Heating rate (K/s)',
+                'prefactor_s_inv':'Prefactor (s⁻¹)','assumed_prefactor_s_inv':'Assumed prefactor (s⁻¹)',
+                'energy_ci95_lower_ev':'Regression-only energy interval, lower (eV)',
+                'energy_ci95_upper_ev':'Regression-only energy interval, upper (eV)',
+                'r_squared':'R²','rmse_signal':'Signal RMSE','reaction_order':'Reaction order',
+                'reaction_order_fitted':'Order optimized','n_points':'Points used','energy_interval':'Energy uncertainty interval'}
+            lines=[]
+            for key,value in values.items():
+                formatted='Not available' if value is None else (f'{value:.6g}' if isinstance(value,float) else str(value))
+                lines.append(labels.get(key,key.replace('_',' ').capitalize())+': '+formatted)
+            self.result_message(status + '\n' + '\n'.join(lines)
                                 + '\n' + '\n'.join(result['warnings'])
                                 + '\nEffective settings: ' + json.dumps(result['snapshot']['settings']))
         else:
@@ -181,6 +200,9 @@ class ResultsMixin:
             self.refresh_saved_runs()
 
     def _finish_close(self):
+        if getattr(self.modeling_panel,'preview_after',None) is not None:
+            self.root.after_cancel(self.modeling_panel.preview_after)
+            self.modeling_panel.preview_after=None
         if getattr(self, 'job_busy', False):
             self.job_cancel.set()
             self.status.set('Cancelling calculation before closing…')

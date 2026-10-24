@@ -25,10 +25,13 @@ def restore_redirected_output():
         setattr(sys, name, stream or open(os.devnull, "w", encoding="utf-8"))
 
 if __name__ == "__main__":
-    if sys.argv[1:2] == ["--tpd-smoke-gui"]:
+    if sys.argv[1:2] in (["--tpd-smoke-gui"], ["--tpd-smoke-workflow"]):
         restore_redirected_output()
         try:
-            from tpd_spectra.desktop_smoke import main as smoke_main
+            if sys.argv[1] == '--tpd-smoke-workflow':
+                from tpd_spectra.workflow_smoke import main as smoke_main
+            else:
+                from tpd_spectra.desktop_smoke import main as smoke_main
             code = smoke_main(*sys.argv[2:])
         except Exception:
             import traceback
@@ -39,5 +42,8 @@ if __name__ == "__main__":
         restore_redirected_output()
         from tpd_spectra.cli import main as cli_main
         raise SystemExit(cli_main(sys.argv[2:]))
-    from tpd_spectra.gui import main as gui_main
+    if sys.argv[1:2] == ['--classic']:
+        from tpd_spectra.gui import main as gui_main
+    else:
+        from tpd_spectra.workflow_gui import main as gui_main
     raise SystemExit(gui_main())

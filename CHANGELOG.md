@@ -1,3 +1,18 @@
+## Unreleased — workflow redesign preview
+
+- Add three workflow stages with shared dataset/peak identity and exclusive
+  method controls; retain the classic GUI, advanced methods and CLI.
+- Add debounced lightweight results, explicit cancellable fits, per-context
+  settings, stale-result labels and multiple named saved runs.
+- Embed existing model simulation, comparison and seeded parametric Monte
+  Carlo; transfer selected hypotheses explicitly into kinetic fitting.
+- Add immutable imported data, reversible processing recipes, checksummed
+  portable projects and selected PDF/CSV/JSON/PNG/SVG report bundles.
+- Extend workflow, persistence, export and frozen Windows verification. No
+  numerical solver equations or optimizer algorithms are changed.
+- Experimental-data validation and broader human/scaling acceptance remain
+  release gates; this preview is not a publication-readiness claim.
+
 ## 0.11.0b1 — unreleased roadmap / Explorer candidate
 
 - Add an original multi-size spectrum icon to the executable and desktop windows, a navy/teal identity, clearer tabs and selection states, a wrapping toolbar, plot-adjacent export and branded About. Keep scientific figures free of branding.

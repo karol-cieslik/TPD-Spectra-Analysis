@@ -1,0 +1,32 @@
+{
+  "code_commit": "d97b8f3f8604a003b6faa3475873e89f475f53e7",
+  "branch": "feature/workflow-redesign",
+  "pull_request": "https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/10",
+  "validated_date": "2026-10-24",
+  "windows": {
+    "run_id": 40080837020,
+    "job_id": 120833877720,
+    "tests_passed": 186,
+    "warnings": 3,
+    "warning_scope": "Matplotlib tight-layout warnings in GUI tests; visual/scaling acceptance remains open",
+    "frozen_checks": ["nine embedded icon sizes", "shipped synthetic demo CLI analysis and exports", "classic real-Tk dialogs and Explorer Monte Carlo", "three workflow stages", "peak/method context isolation", "model comparison", "two seeded Monte Carlo replicates", "explicit kinetic fit", "portable project roundtrip", "selected PDF/CSV/JSON/PNG/SVG exports"]
+  },
+  "linux": {
+    "run_id": 40080840002,
+    "python_versions": ["3.10", "3.11", "3.12"],
+    "tests_passed_each": 169,
+    "tests_skipped_each": 17,
+    "skip_reason": "headless Tk; those tests are required on Windows"
+  },
+  "artifact": {
+    "id": 12555167380,
+    "name": "tpd-spectra-windows-x64-workflow-preview",
+    "url": "https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40080837020/artifacts/12555167380",
+    "zip_sha256": "2d39fdedc7f913c5995a98c366528e6d5337793cf1d4a9b3d78dfbc880351210",
+    "expires_at": "2027-01-22T09:09:28Z"
+  },
+  "unchanged_numerical_modules": ["analysis.py", "kinetics.py", "kinetics_explorer.py", "kinetics_uncertainty.py", "cli.py"],
+  "pdf_layout": "Six-page synthetic Redhead report rendered with Poppler; all six pages visually inspected after correcting long headings and compacting record lists.",
+  "not_validated": ["independent experimental benchmarks", "Monte Carlo uncertainty coverage", "broader human usability and Windows scaling", "actual GUI screenshots; Windows capture helper timed out"],
+  "release_status": "development preview; main and working beta preserved; not merged or released"
+}

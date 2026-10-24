@@ -93,3 +93,23 @@ def test_feedback_preview_copy_zip_draft_and_failure_are_safe(root,tmp_path,monk
     dialog.refresh()
     assert 'Unavailable' in dialog.report()
     dialog.win.destroy()
+
+
+def test_feedback_actions_stay_visible_at_minimum_size(root):
+    app=WorkflowApp(root)
+    dialog=FeedbackDialog(app)
+    dialog.win.geometry('620x520')
+    root.update()
+    actions=[w for frame in dialog.footer.winfo_children() for w in frame.winfo_children()
+             if w.winfo_class()=='TButton']
+    assert len(actions)==4
+    for button in actions:
+        assert button.winfo_ismapped()
+        bottom=button.winfo_rooty()+button.winfo_height()-dialog.win.winfo_rooty()
+        assert 0<bottom<=dialog.win.winfo_height()
+    canvas=dialog.content.master
+    assert canvas.yview()[1]<1  # Form scrolls instead of hiding the footer.
+    canvas.yview_moveto(1)
+    root.update()
+    assert dialog.preview.winfo_rooty()<canvas.winfo_rooty()+canvas.winfo_height()
+    dialog.win.destroy()

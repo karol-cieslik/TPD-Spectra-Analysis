@@ -8,11 +8,11 @@
 
 Built for surface-science researchers who need transparent fitting methods, reproducible results, and a practical workflow from measurement to figure.
 
-[![Windows beta build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml/badge.svg?branch=release%2Fbeta-v0.11-candidate)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml)
+[![Windows beta build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml/badge.svg?branch=release%2Fexternal-beta-v0.11.0b2)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2f855a.svg)](LICENSE)
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
-[![Development status](https://img.shields.io/badge/status-beta%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/5)
+[![Development status](https://img.shields.io/badge/status-beta%20review%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/11)
 
 [**Download beta**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) · [**Quick start**](#-quick-start) · [**User manual**](docs/USER_AND_SCIENTIFIC_MANUAL.md) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contributing**](CONTRIBUTING.md)
 

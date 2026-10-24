@@ -12,10 +12,15 @@ class FeedbackDialog:
         self.win.title('Report a Bug / Send Feedback')
         self.win.geometry('860x740')
         self.win.minsize(620,520)
+        self.footer=ttk.Frame(self.win)
+        self.footer.pack(side='bottom',fill='x')
+        viewport=ttk.Frame(self.win)
+        viewport.pack(fill='both',expand=True)
+        self.content=app._scroll_panel(viewport)
         self.category=tk.StringVar(self.win,value=CATEGORIES[0])
         self.contact=tk.StringVar(self.win)
         self.reviewed=tk.BooleanVar(self.win,value=False)
-        top=ttk.Frame(self.win,padding=12)
+        top=ttk.Frame(self.content,padding=12)
         top.pack(fill='x')
         ttk.Label(top,text='Feedback category').grid(row=0,column=0,sticky='w')
         ttk.Combobox(top,textvariable=self.category,values=CATEGORIES,state='readonly',width=32).grid(row=0,column=1,sticky='ew')
@@ -25,17 +30,20 @@ class FeedbackDialog:
         ttk.Label(top,text='No account is needed. Nothing is sent automatically. Your typed feedback and optional email will be included; review them before sharing.',wraplength=780).grid(row=2,column=0,columnspan=2,sticky='w',pady=6)
         self.description=self.text_field('Description',3)
         self.steps=self.text_field('Reproduction steps (optional)',2)
-        ttk.Button(self.win,text='Update report preview',command=self.refresh).pack(anchor='w',padx=12,pady=5)
+        ttk.Button(self.content,text='Update report preview',command=self.refresh).pack(anchor='w',padx=12,pady=5)
         self.preview=self.text_field('Report preview — editable; this exact text is copied, saved or placed in a draft',10,expand=True)
-        ttk.Checkbutton(self.win,text='I have inspected this report and intend to share its contents.',variable=self.reviewed).pack(anchor='w',padx=12,pady=5)
-        actions=ttk.Frame(self.win,padding=12)
+        ttk.Checkbutton(self.footer,text='I have inspected this report and intend to share its contents.',variable=self.reviewed).pack(anchor='w',padx=12,pady=5)
+        actions=ttk.Frame(self.footer,padding=12)
         actions.pack(fill='x')
         for col,(name,command) in enumerate((('Copy Diagnostic Report',self.copy),('Save Diagnostic ZIP',self.save),
             ('Send Feedback by Email',self.email),('Report on GitHub',self.github))):
             ttk.Button(actions,text=name,command=command).grid(row=col//2,column=col%2,sticky='ew',padx=3,pady=3)
         actions.columnconfigure((0,1),weight=1)
         self.status=tk.StringVar(self.win,value='Attach a saved diagnostic ZIP manually in your mail app. No experimental files are included.')
-        ttk.Label(self.win,textvariable=self.status,wraplength=780,padding=12).pack(fill='x')
+        status_label=ttk.Label(self.footer,textvariable=self.status,wraplength=780,padding=12)
+        status_label.pack(fill='x')
+        self.footer.bind('<Configure>',lambda e:status_label.configure(wraplength=max(200,e.width-30)))
+        self.content.bind('<Configure>',self.reflow,add='+')
         for variable in (self.category,self.contact):
             variable.trace_add('write',lambda *_:self.invalidate())
         for widget in (self.description,self.steps):
@@ -43,8 +51,8 @@ class FeedbackDialog:
         self.refresh()
 
     def text_field(self,label,height,expand=False):
-        ttk.Label(self.win,text=label,padding=(12,2)).pack(anchor='w')
-        frame=ttk.Frame(self.win)
+        ttk.Label(self.content,text=label,padding=(12,2)).pack(anchor='w')
+        frame=ttk.Frame(self.content)
         frame.pack(fill='both' if expand else 'x',expand=expand,padx=12)
         text=tk.Text(frame,height=height,wrap='word',font=('Segoe UI',10))
         scroll=ttk.Scrollbar(frame,command=text.yview)
@@ -52,6 +60,14 @@ class FeedbackDialog:
         text.pack(side='left',fill='both',expand=True)
         scroll.pack(side='right',fill='y')
         return text
+
+    def reflow(self,event):
+        def labels(parent):
+            for child in parent.winfo_children():
+                if isinstance(child,ttk.Label):
+                    child.configure(wraplength=max(180,event.width-50))
+                labels(child)
+        labels(self.content)
 
     def invalidate(self):
         self.fields_dirty=True

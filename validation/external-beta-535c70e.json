@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "version": "0.11.0b2",
+  "review_status": "review candidate; not approved for general distribution",
+  "branch": "release/external-beta-v0.11.0b2",
+  "application_commit": "535c70e8701ad575c3ceaa37bc74998908f14011",
+  "review_pull_request": "https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/11",
+  "windows": {
+    "run_id": 40111547731,
+    "job_id": 120924147715,
+    "conclusion": "success",
+    "tests": {
+      "passed": 220,
+      "expected_failures": 1,
+      "warnings": 3,
+      "seconds": 76.07
+    },
+    "checks": [
+      "9 embedded icon sizes",
+      "frozen CLI demo analysis and exports",
+      "classic Tk/Explorer/short Monte Carlo",
+      "three-stage context isolation/model comparison/Monte Carlo/explicit fit",
+      "portable project roundtrip/PDF/CSV/JSON/PNG/SVG",
+      "assembled package launched from unrelated working directory without Python/Tcl overrides",
+      "16 example imports/guide resources/chooser/Redhead preview/offline feedback copy/ZIP/contact"
+    ]
+  },
+  "linux": {
+    "run_id": 40111551974,
+    "versions": [
+      "3.10",
+      "3.11",
+      "3.12"
+    ],
+    "per_version": {
+      "passed": 199,
+      "skipped": 21,
+      "expected_failures": 1
+    },
+    "skip_reason": "Tk tests require a display; exercised separately on Windows"
+  },
+  "artifact": {
+    "id": 12566303319,
+    "name": "tpd-spectra-windows-x64-external-beta-0.11.0b2",
+    "size_in_bytes": 86130069,
+    "url": "https://api.github.com/repos/karol-cieslik/TPD-Spectra-Analysis/actions/artifacts/12566303319",
+    "archive_download_url": "https://api.github.com/repos/karol-cieslik/TPD-Spectra-Analysis/actions/artifacts/12566303319/zip",
+    "expired": false,
+    "created_at": "2026-10-24T16:30:41Z",
+    "expires_at": "2027-01-22T16:26:13Z",
+    "updated_at": "2026-10-24T16:30:41Z",
+    "digest": "sha256:2ca090636f5609b46fd8b1fa9f65c1555404cad8fdbb83b9d55b3018af43f37c",
+    "workflow_run": {
+      "id": 40111547731,
+      "repository_id": 1423094675,
+      "head_repository_id": 1423094675,
+      "head_branch": "release/external-beta-v0.11.0b2",
+      "head_sha": "535c70e8701ad575c3ceaa37bc74998908f14011"
+    },
+    "download_page": "https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40111547731/artifacts/12566303319"
+  },
+  "guide": {
+    "path": "docs/beta/QUICK_START.pdf",
+    "pages": 4,
+    "sha256": "142b07f8d187ac1de544133d33c3c0430e95529a5808525e528701784ce3a4ab",
+    "all_pages_rendered_and_visually_reviewed": true,
+    "actual_gui_screenshots": false
+  },
+  "known_limits": [
+    "Zero-order clean reference residual about 0.0561 exceeds unchanged 0.02 tolerance; strict expected failure only for that residual, not other assertions.",
+    "Three pre-existing small-window Matplotlib tight-layout warnings.",
+    "No manual GUI/scaling acceptance. Native screenshot capture repeatedly timed out.",
+    "No experimental validation or Monte Carlo interval-coverage validation. Short frozen MC checks verify execution only.",
+    "Unsigned Windows executable."
+  ],
+  "preserved": {
+    "original_beta_commit": "450c5c25597a0d567b8ca35076eca5eddb07c83f",
+    "redesign_commit": "11b749652e25f35486d09d36beacb43478dd413b",
+    "numerical_modules_unchanged": [
+      "analysis.py",
+      "kinetics.py",
+      "kinetics_explorer.py",
+      "kinetics_uncertainty.py",
+      "cli.py"
+    ],
+    "release_published": false,
+    "invitations_sent": false
+  }
+}

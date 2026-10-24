@@ -15,12 +15,13 @@ Branch: `release/external-beta-v0.11.0b2`. Version advances from 0.11.0b1 to
 - [x] Extend About/contact/contribution actions without duplicate dialogs.
 - [x] Physical synthetic collection with per-file truth, seeds, assumptions,
   importability, predefined recovery tolerances and overview figures.
-- [x] Open Example Dataset and resource lookup implemented; frozen check added.
+- [x] Open Example Dataset and source/frozen resource lookup verified.
 - [x] Short START_HERE, informal checklist and four-page tester Quick Start.
 - [ ] Actual GUI inspection/screenshots if capture works; no fabricated images.
-- [ ] Full regression, all example import tests, recovery checks, projects,
-  reports, diagnostics and real frozen Windows launch/dependency/resource checks.
-- [ ] Downloadable artifact and release notes prepared for maintainer review.
+- [x] Full regression, all example imports, projects, reports, diagnostics and
+  frozen Windows launch/dependency/resource checks completed; recovery includes
+  the explicitly unresolved zero-order residual failure described below.
+- [x] Downloadable artifact and release notes prepared for maintainer review.
 
 Distribution status: review candidate only. Do not publish a release or send
 invitations to colleagues on the maintainer's behalf. Record exact verification
@@ -57,3 +58,31 @@ validation, Monte Carlo interval coverage and human Windows display/scaling revi
 remain open. A successful package build does not close these scientific gates.
 
 Draft review: https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/11
+
+## Final automated Windows package evidence
+
+Application commit: `535c70e8701ad575c3ceaa37bc74998908f14011`.
+Later evidence-only commits do not change this executable.
+
+- [Windows run 40111547731](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40111547731):
+  **220 passed, 1 expected failure, 3 warnings**, 76.07 seconds. No GUI skips.
+- Frozen checks passed: icon resources (9 sizes), CLI/demo exports, classic Tk,
+  Explorer and short Monte Carlo, three-stage context isolation, model comparison,
+  explicit fitting, portable project roundtrip and PDF/CSV/JSON/PNG/SVG reporting.
+- Final assembled package launches from an unrelated directory with Python/Tcl
+  overrides removed. All 16 examples import; chooser, guide, Redhead preview,
+  offline diagnostic copy/ZIP and developer contact checks pass.
+- [Linux run 40111551974](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40111551974):
+  Python 3.10, 3.11 and 3.12 each report **199 passed, 21 headless Tk skips,
+  1 expected failure**. These skips are not counted as GUI verification.
+- [Download Windows review artifact](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40111547731/artifacts/12566303319)
+  (86,130,069 bytes; GitHub login may be required; expires 22 January 2027).
+- Artifact ZIP SHA256:
+  `2ca090636f5609b46fd8b1fa9f65c1555404cad8fdbb83b9d55b3018af43f37c`.
+  The package contains VERSION.json, executable SHA256SUMS.txt, dependencies,
+  test XML and `validation/beta-package-smoke.json`.
+
+Machine-readable evidence: [external-beta-535c70e.json](../../validation/external-beta-535c70e.json).
+No prerelease/tag was created, no working branch was replaced and no invitations
+were sent. This is ready for maintainer review of the limited beta scope; the
+scientific and manual acceptance gates above remain open.

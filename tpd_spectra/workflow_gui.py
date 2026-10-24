@@ -16,6 +16,7 @@ from .workflow_project_gui import ProjectMixin
 from .beta_onboarding import ExampleDialog, Tooltip
 from .beta_resources import resource
 from . import __version__
+from .equation_help import EquationCard
 
 
 class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
@@ -135,6 +136,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         selector.pack(fill="x", pady=8)
         selector.bind("<<ComboboxSelected>>", lambda _e: self.refresh_method())
         self.method_panels = {}
+        self.method_equations = {}
         fields = {METHODS[0]: [("lower", "Leading edge from °C"), ("upper", "Leading edge to °C"), ("beta", "Heating rate (K/s; verify)")],
                   METHODS[1]: [("beta", "Heating rate (K/s)"), ("prefactor", "Assumed prefactor (s⁻¹)")],
                   METHODS[2]: [("beta", "Heating rate (K/s)"), ("energy", "Initial energy (eV)"),
@@ -146,6 +148,9 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         for method in METHODS:
             panel = ttk.Frame(sidebar)
             self.method_panels[method] = panel
+            equation = EquationCard(panel, method)
+            equation.pack(fill='x', pady=(0, 8))
+            self.method_equations[method] = equation
             for key, label in fields[method]:
                 ttk.Label(panel, text=label).pack(anchor="w", pady=(6, 0))
                 entry=ttk.Entry(panel, textvariable=self.method_values[key])

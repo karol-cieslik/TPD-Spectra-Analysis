@@ -42,9 +42,32 @@ def test_three_stages_share_peak_and_show_only_one_method_panel(root):
         app.refresh_method()
         root.update()
         assert [name for name, panel in app.method_panels.items() if panel.winfo_ismapped()] == [method]
+        assert app.method_equations[method].winfo_ismapped()
+        assert app.method_panels[method].pack_slaves()[0] is app.method_equations[method]
     app.project.active_region = first.id
     app.refresh_context()
     assert "Peak 1" in app.result_title.cget("text")
+
+
+def test_equation_legends_do_not_change_analysis_settings(root):
+    from copy import deepcopy
+    app = WorkflowApp(root)
+    app._load_paths([DEMO])
+    app.project.add_region('First peak',100,210)
+    app.refresh_context()
+    app.stages.select(1)
+    root.update()
+    panel=app.modeling_panel
+    before=deepcopy(panel.snapshot())
+    for card in (panel.model_equation,panel.mc_equation):
+        card.toggle_button.invoke()
+        root.update()
+        assert card.details.winfo_ismapped()
+        assert card.details.cget('wraplength') <= card.winfo_width()
+        card.toggle_button.invoke()
+        assert not card.details.winfo_ismapped()
+    assert panel.snapshot()==before
+    assert not app.job_busy
 
 
 def prepared():

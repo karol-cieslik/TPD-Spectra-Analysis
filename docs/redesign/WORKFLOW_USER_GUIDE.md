@@ -83,6 +83,12 @@ a final fit. In Stage C press **Calculate / Fit selected peak** to optimize.
 
 ## Kinetic interpretation
 
+The parameter panels show the equation for the selected method above its inputs.
+Modeling shows the Polanyi–Wigner rate, coverage depletion and detector-signal
+relationship; Monte Carlo shows the Gaussian perturbation used to generate each
+refit dataset. **Symbols and assumptions** expands the definitions and units.
+These explanations are read-only and do not change parameters or run a fit.
+
 - Leading edge estimates an apparent slope energy under rate-proportional
   signal and approximately unchanged coverage. It does not assign zero order.
 - Classical Redhead assumes first order, a supplied prefactor and a linear ramp.

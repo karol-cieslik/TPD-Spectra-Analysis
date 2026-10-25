@@ -8,11 +8,11 @@
 
 Built for surface-science researchers who need transparent fitting methods, reproducible results, and a practical workflow from measurement to figure.
 
-[![Windows beta build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml/badge.svg?branch=release%2Fexternal-beta-v0.11.0b3)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml)
+[![Windows beta build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml/badge.svg?branch=main)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2f855a.svg)](LICENSE)
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
-[![Development status](https://img.shields.io/badge/status-beta%20review%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/tree/release/external-beta-v0.11.0b3)
+[![Development status](https://img.shields.io/badge/status-beta%20review%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/tree/main)
 
 [**Download beta**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) · [**Quick start**](#-quick-start) · [**User manual**](docs/USER_AND_SCIENTIFIC_MANUAL.md) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contributing**](CONTRIBUTING.md)
 
@@ -24,9 +24,9 @@ Built for surface-science researchers who need transparent fitting methods, repr
 
 Start with [START_HERE](START_HERE.md), the [four-page Quick Start](docs/beta/QUICK_START.pdf)
 and the [16 documented synthetic examples](examples/beta_collection/README.md).
-Use the successful build for branch **release/external-beta-v0.11.0b3**, artifact
-**tpd-spectra-windows-x64-external-beta-0.11.0b3**. This is a separate review
-candidate; prior beta downloads remain available. No prerelease is published.
+Use the successful build for branch **main**, artifact
+**tpd-spectra-windows-x64-beta-0.11.0b3**. This is the consolidated beta
+development version; prior beta downloads remain available. No prerelease is published.
 
 **Zero-order update:** a dedicated depletion-edge fitter replaces the local
 zero-order optimization. It passes the original clean-reference residual limit
@@ -42,16 +42,21 @@ Try the [informal colleague checklist](docs/beta/TESTER_CHECKLIST.md).
 
 ## Three-stage workflow
 
-This branch adds three connected stages: **Spectra & Preparation**, **Modeling
+The application provides three connected stages: **Spectra & Preparation**, **Modeling
 & Order Identification**, and **Kinetic Analysis**. Named peaks share context;
 method-specific results, model comparison and seeded parametric Monte Carlo are
 visible in the workspace. Save labeled runs and portable projects, then select
 runs and a destination for PDF/CSV/JSON/PNG/SVG reporting.
 
 Start with the [workflow preview guide](docs/redesign/WORKFLOW_USER_GUIDE.md).
-The **Classic / batch workspace** retains the previous workflow. This is an
-isolated review candidate; the existing beta remains intact.
+The **Classic / batch workspace** retains the previous workflow. The main branch remains a beta;
+previous working beta branches remain available.
 See the [implementation evidence and remaining gates](docs/redesign/IMPLEMENTATION_CHECKLIST.md).
+
+The [consolidation record](docs/CONSOLIDATION.md) tracks the incorporated PRs.
+[Research benchmarks](docs/RESEARCH_TOOLS.md) and the
+[literature validation catalog](validation/README.md) remain clearly separated
+from completed experimental validation.
 
 ## 🔬 What is TPD Spectra Studio?
 
@@ -85,8 +90,8 @@ The desktop uses an original spectrum icon and a shared navy/teal identity. See 
 ### Option A — Windows desktop beta (no Python required)
 
 1. Open [Windows desktop builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
-2. Choose the latest **successful** run for branch `release/external-beta-v0.11.0b3`.
-3. Under **Artifacts**, download `tpd-spectra-windows-x64-external-beta-0.11.0b3`. A GitHub login may be needed.
+2. Choose the latest **successful** run for branch `main`.
+3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b3`. A GitHub login may be needed.
 4. Extract the ZIP and double-click `TPD-Spectra-Studio.exe`.
 5. Click **Open Example Dataset**, start with the clean first-order reference, and follow [START_HERE](START_HERE.md).
 
@@ -97,7 +102,7 @@ New beta packages include `examples/synthetic_two_peak_demo.csv`: a clearly labe
 ```bash
 git clone https://github.com/karol-cieslik/TPD-Spectra-Analysis.git
 cd TPD-Spectra-Analysis
-git checkout release/external-beta-v0.11.0b3
+git checkout main
 python -m pip install -e .
 python run_tpd_spectra_gui.py
 ```

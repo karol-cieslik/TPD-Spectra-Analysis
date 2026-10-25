@@ -2,6 +2,11 @@ name: Windows desktop build
 
 on:
   workflow_dispatch:
+  workflow_call:
+    outputs:
+      artifact_name:
+        description: Verified portable package artifact
+        value: ${{ jobs.package.outputs.artifact_name }}
   push:
     branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate', 'feature/workflow-redesign', 'release/external-beta-v0.11.0b2', 'release/external-beta-v0.11.0b3']
     paths:
@@ -11,7 +16,7 @@ on:
       - 'scripts/generate_demo.py'
       - 'scripts/generate_brand_assets.py'
       - 'scripts/verify_windows_build.py'
-      - 'scripts/verify_beta_package.py'
+      - 'scripts/**'
       - 'docs/beta/QUICK_START.pdf'
       - 'docs/beta/RELEASE_NOTES.md'
       - 'START_HERE.md'
@@ -19,13 +24,29 @@ on:
       - 'pyproject.toml'
       - 'requirements*.txt'
       - 'README.md'
-      - '.github/workflows/desktop-build.yml'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tpd_spectra/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'examples/**'
+      - 'docs/**'
+      - 'START_HERE.md'
+      - 'README.md'
+      - 'run_tpd_spectra*.py'
+      - 'pyproject.toml'
+      - 'requirements*.txt'
+      - '.github/workflows/**'
 
 permissions:
   contents: read
 
 jobs:
   package:
+    outputs:
+      artifact_name: ${{ steps.identity.outputs.artifact_name }}
     runs-on: windows-latest
     steps:
       - name: Check out source
@@ -40,6 +61,15 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-build.txt
           python -m pip install -e .
+      - name: Identify beta package and validate release tag
+        id: identity
+        shell: pwsh
+        run: |
+          $version = python -c "from tpd_spectra import __version__; print(__version__)"
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v$version") {
+            throw "Tag must match application version v$version"
+          }
+          "artifact_name=tpd-spectra-windows-x64-beta-$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
       - name: Verify scientific and GUI regression tests
         run: python -m pytest -q -rx --junitxml=validation/beta-tests.xml
       - name: Record candidate build identity
@@ -110,7 +140,7 @@ jobs:
       - name: Publish downloadable build
         uses: actions/upload-artifact@v4
         with:
-          name: tpd-spectra-windows-x64-${{ github.ref_name == 'release/external-beta-v0.11.0b3' && 'external-beta-0.11.0b3' || github.ref_name == 'release/external-beta-v0.11.0b2' && 'external-beta-0.11.0b2' || github.ref_name == 'feature/workflow-redesign' && 'workflow-preview' || github.ref_name == 'main' && 'stable' || 'beta-candidate' }}
+          name: ${{ steps.identity.outputs.artifact_name }}
           path: release-package/*
           if-no-files-found: error
           retention-days: 90

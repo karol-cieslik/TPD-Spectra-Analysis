@@ -1,4 +1,4 @@
-name: Windows standalone release
+name: Windows release preparation
 
 on:
   workflow_dispatch:
@@ -7,79 +7,30 @@ on:
       - 'v*'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  test-and-build:
+  build:
+    uses: ./.github/workflows/desktop-build.yml
+  prepare-draft:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
-      - name: Check out source
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Download verified portable package
+        uses: actions/download-artifact@v4
         with:
-          python-version: '3.11'
-          cache: pip
-      - name: Install package and build tools
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements-build.txt
-          python -m pip install -e .
-      - name: Run tests
-        run: python -m pytest -q
-      - name: Build single-file desktop application
-        run: >-
-          pyinstaller --clean --noconfirm --onefile --windowed
-          --name TPD-Spectra-Studio
-          run_tpd_spectra_gui.py
-      - name: Assemble portable beta package
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: release-package
+      - name: Archive verified package
         shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force release-package | Out-Null
-          Copy-Item dist/TPD-Spectra-Studio.exe release-package/
-          Copy-Item README.md release-package/
-          Copy-Item CHANGELOG.md release-package/
-          Copy-Item CITATION.cff release-package/
-          Copy-Item LICENSE release-package/
-          Copy-Item RELEASE-CHECKLIST.md release-package/
-          Copy-Item ASSET-RIGHTS.md release-package/
-          New-Item -ItemType Directory -Force release-package/THIRD-PARTY-LICENSES | Out-Null
-          $sitePackages = python -c "import site; print(site.getsitepackages()[0])"
-          Get-ChildItem $sitePackages -Recurse -File -Include 'LICENSE*','COPYING*' |
-            Where-Object { $_.FullName -match '\.dist-info\\' } |
-            ForEach-Object {
-              $distInfo = Split-Path $_.FullName -Parent
-              $packageName = (Split-Path $distInfo -Leaf) -replace '\.dist-info$',''
-              Copy-Item $_.FullName (Join-Path 'release-package/THIRD-PARTY-LICENSES' ($packageName + '-' + $_.Name))
-            }
-          @'
-          TPD Spectra Analysis — Windows beta
-
-          Desktop interface: double-click TPD-Spectra-Studio.exe.
-          This single application includes the complete batch-analysis engine.
-          Import CSV files, compare traces, export PNG plots, and run analysis from the GUI.
-
-          Experimental files are not bundled in this beta because their redistribution
-          rights must be confirmed separately. Outputs are written to the selected
-          output directory. Review warnings and fit diagnostics before interpreting
-          energies physically. See README.md for assumptions and citation guidance.
-          '@ | Set-Content release-package/QUICKSTART.txt
-          @'
-          The project-authored software code is provided under the MIT License; see LICENSE.
-          No experimental data are bundled in this executable beta. The MIT License does not
-          automatically cover example spectra, the historical notebook, schematic images,
-          thesis-derived material, or other third-party assets. Verify the rights for each asset
-          before redistributing it. This beta is provided without warranty; validate results and
-          review warnings before scientific interpretation.
-          '@ | Set-Content release-package/DISTRIBUTION-NOTE.txt
-          Compress-Archive -Path release-package/* -DestinationPath tpd-spectra-windows-x64.zip -Force
-      - name: Upload portable package
-        uses: actions/upload-artifact@v4
-        with:
-          name: tpd-spectra-windows-x64
-          path: tpd-spectra-windows-x64.zip
-      - name: Attach package to tagged release
-        if: startsWith(github.ref, 'refs/tags/')
+        run: Compress-Archive -Path release-package/* -DestinationPath tpd-spectra-windows-x64.zip
+      - name: Prepare unpublished beta release draft
         uses: softprops/action-gh-release@v2
         with:
           files: tpd-spectra-windows-x64.zip
+          draft: true
+          prerelease: true
+          make_latest: false

@@ -1,10 +1,13 @@
 name: Kinetics Explorer scientific tests
 
 on:
+  push:
+    branches: [main]
   pull_request:
     paths:
       - 'tpd_spectra/**'
       - 'tests/**'
+      - 'scripts/**'
       - 'requirements*.txt'
       - 'pyproject.toml'
       - '.github/workflows/explorer-tests.yml'

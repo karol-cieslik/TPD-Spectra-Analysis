@@ -42,4 +42,9 @@ Wrong or ambiguous units; silent source/output loss; results paired with incorre
 
 ## Independent review still required
 
+Optional research benchmark and bootstrap tools from earlier development branches
+are preserved in [RESEARCH_TOOLS.md](RESEARCH_TOOLS.md). They are not connected to
+ordinary desktop analysis and do not supply validated experimental confidence
+limits. The separate research bootstrap rejects fixed zero order.
+
 No independent human scientific sign-off, real-instrument validation, interval-coverage report, representative usability study or clean-machine acceptance is claimed. See the checkpoint ledger for explicit remaining work.

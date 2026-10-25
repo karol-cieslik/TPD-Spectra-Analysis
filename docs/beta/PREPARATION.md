@@ -1,5 +1,30 @@
 # External beta preparation record
 
+## Latest build: equation-panel follow-up
+
+Application commit `88378fed6e72baa74eb6e3c54ed80e0845e293ff` adds read-only
+equations above the modeling, method-specific fitting and Monte Carlo inputs.
+Expandable legends explain symbols, units and assumptions without changing
+parameters or starting calculations. The numerical engines are unchanged.
+
+- [Updated Windows download](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40112805670/artifacts/12566939531)
+  includes the equation panels; the earlier artifact below remains available.
+- Windows: **221 passed, 1 expected failure, 3 existing layout warnings** in
+  78.69 seconds. All frozen CLI/GUI, Monte Carlo, context, project/report,
+  examples/resources and offline feedback checks passed.
+- Linux Python 3.10, 3.11 and 3.12: **199 passed, 22 headless GUI skips,
+  1 expected failure** each. Local workflow UI checks: 13 passed.
+- ZIP SHA256: `8445744ba754f62ac13404217f52205c7d15cfc863d61b2c9db506d4db955659`.
+  Size: 86,138,660 bytes; expires 22 January 2027.
+- [Machine-readable build evidence](../../validation/equations-88378fe.json).
+
+The known zero-order residual failure, human Windows layout/scaling acceptance,
+actual GUI screenshots and independent scientific validation remain open.
+This update does not change the beta's readiness classification. No release
+was published. The records below document the earlier package.
+
+## Original external-beta preparation
+
 Scope: informal review by one or two TPD colleagues. Maintainer: Dr. Karol
 Cieślik, karol.j.cieslik@gmail.com. No experimental data is bundled or collected.
 

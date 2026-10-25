@@ -10,7 +10,27 @@ test now passes without an expected-failure marker or a relaxed tolerance.
 
 The historical failures and builds below refer to 0.11.0b2. Current method scope
 and limitations are documented in [ZERO_ORDER_FITTING.md](../ZERO_ORDER_FITTING.md).
-Fresh full-suite and frozen-build evidence will be recorded here after CI.
+Verified application commit: `e655f8d621b4d13a341588f2e4d3fae5f21f1736`.
+Draft review: https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/12
+
+- Windows run [40180695189](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40180695189):
+  **237 passed, zero expected failures, 3 existing plot-layout warnings**, 46.06 s.
+- Frozen executable and assembled-package checks passed: icon, CLI/demo,
+  classic GUI/Explorer/short MC, workflow comparison/context/fit/project/report,
+  16 bundled examples, guide and offline feedback. The new explicit zero-order
+  GUI fit, conditional ranges, project/report and two seeded MC refits also passed.
+- Linux run [40180718560](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40180718560):
+  Python 3.10, 3.11 and 3.12 each **214 passed, 23 headless GUI skips**, no expected failures.
+- [Download Windows 0.11.0b3](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40180695189/artifacts/12593773676)
+  (86,152,773 bytes; artifact expires 2027-01-23).
+- ZIP SHA256: `ec4cb3a7117ef0e2257b2bb1d4f6704652d30db74542e5ad3b228185692acea7`.
+- Evidence: `validation/zero-order-e655f8d.json`. The unchanged original example
+  recovers 1.2000000002 eV (input 1.2 eV), normalized RMSE about 1.05e-11
+  against its unchanged 0.02 threshold.
+
+These automated checks do not establish manual clean-machine layout/scaling
+acceptance, real-instrument validity or uncertainty coverage. Multi-state/global
+zero-order optimizers remain outside this correction. No release was published.
 
 ## Latest build: equation-panel follow-up
 

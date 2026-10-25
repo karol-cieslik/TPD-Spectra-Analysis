@@ -1,0 +1,63 @@
+{
+  "application_commit": "e655f8d621b4d13a341588f2e4d3fae5f21f1736",
+  "branch": "release/external-beta-v0.11.0b3",
+  "version": "0.11.0b3",
+  "pull_request": 12,
+  "scope": "Fixed single-state zero-order depletion profiling, conditional prefactor/scale brackets, Explorer/Monte Carlo integration and workflow provenance. Positive-order numerical algorithms retained.",
+  "windows": {
+    "run_id": 40180695189,
+    "job_id": 121130944099,
+    "passed": 237,
+    "expected_failures": 0,
+    "warnings": 3,
+    "seconds": 46.06,
+    "frozen_checks": "Passed: icon, CLI/demo, classic GUI/Explorer/short MC, workflow comparison/context/fit/project/report, all 16 bundled examples, guide and offline feedback; explicit zero-order GUI fit, conditional ranges, project/report and two seeded MC refits."
+  },
+  "linux": {
+    "run_id": 40180718560,
+    "python_versions": [
+      "3.10",
+      "3.11",
+      "3.12"
+    ],
+    "per_version": {
+      "passed": 214,
+      "headless_gui_skips": 23,
+      "expected_failures": 0
+    }
+  },
+  "local_reference": {
+    "source": "examples/beta_collection/zero_order_single_peak.csv",
+    "source_sha256": "ca5fe92429cc78edf09e198324cea8bfa8f0693afb4877eaa8405cb52300ef90",
+    "energy_input_eV": 1.2,
+    "energy_fit_eV": 1.2000000002005247,
+    "normalized_rmse": 1.0458114147663694e-11,
+    "unchanged_normalized_rmse_tolerance": 0.02
+  },
+  "artifact": {
+    "id": 12593773676,
+    "name": "tpd-spectra-windows-x64-external-beta-0.11.0b3",
+    "size_in_bytes": 86152773,
+    "url": "https://api.github.com/repos/karol-cieslik/TPD-Spectra-Analysis/actions/artifacts/12593773676",
+    "archive_download_url": "https://api.github.com/repos/karol-cieslik/TPD-Spectra-Analysis/actions/artifacts/12593773676/zip",
+    "expired": false,
+    "created_at": "2026-10-25T09:30:26Z",
+    "expires_at": "2027-01-23T09:27:09Z",
+    "updated_at": "2026-10-25T09:30:26Z",
+    "digest": "sha256:ec4cb3a7117ef0e2257b2bb1d4f6704652d30db74542e5ad3b228185692acea7",
+    "workflow_run": {
+      "id": 40180695189,
+      "repository_id": 1423094675,
+      "head_repository_id": 1423094675,
+      "head_branch": "release/external-beta-v0.11.0b3",
+      "head_sha": "e655f8d621b4d13a341588f2e4d3fae5f21f1736"
+    }
+  },
+  "download": "https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40180695189/artifacts/12593773676",
+  "remaining_gates": [
+    "Manual clean-machine Windows layout/scaling acceptance remains pending.",
+    "Independent scientific/experimental validation and Monte Carlo interval coverage remain unestablished.",
+    "Legacy multi-state/global zero-order local optimizers are outside this correction and remain experimental."
+  ],
+  "published_release": false
+}

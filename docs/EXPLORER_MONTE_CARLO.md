@@ -14,19 +14,15 @@ Clean synthetic traces can leave almost no meaningful detector noise to estimate
 
 **Export results** asks for a parent folder and creates a separate run folder. It writes the original fit snapshot, comparisons, fitted curves/residuals, PNG and SVG figures, seed/noise settings, conditional-range status, all completed replicate records and software identity. Export never reads edited controls as if they were the original fitting settings. Both the full source file hash (when available) and selected array hash support provenance. Reproducibility still depends on retaining the source and software environment.
 
-Integration source: [PR #8](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/8), commit `a1a07377f6d577dc8337e89bbf3678df653aaa31`. This beta integration adds lifecycle, snapshot, export, accounting and independent-reference checks. PR #7/#8 remain independent historical development proposals; their drafts have not been merged into main.
+## Scientific status
 
-## Additional checkpoints
+The Explorer originated in earlier development branches and was incorporated
+into the 0.11.0b3 beta on `main`. Its automated tests cover lifecycle,
+settings snapshots, cancellation, exports and accounting for failed fits.
+These checks are not a validation of kinetic-order identification or interval
+coverage.
 
-- [x] M01 — Inventory the imported models, Monte Carlo assumptions, provenance and GUI entry point.
-- [x] M02 — Keep model comparison and Monte Carlo tied to the same data/settings snapshot; reject stale input and preserve exported settings.
-- [x] M03 — Keep worker threads away from Tk operations; support cancellation and close-after-stop.
-- [x] M04 — Export seed, reference, sigma, requested/completed counts, failed rankings and all completed refit records.
-- [x] M05 — Withhold rankings with failed competitors; label conditional percentile ranges and minimum sample threshold.
-- [ ] M06 — Complete independent parameter-recovery, bias, failure-rate and ranking-stability studies across the claimed domain.
-- [ ] M07 — Measure conditional interval issuance and frequentist coverage over repeated independently generated experiments; include correlated noise, drift and misspecified models.
-- [ ] M08 — Quantify multistart, seed, replicate-count, baseline and truncation sensitivity before recommending defaults for scientific inference.
-- [ ] M09 — Obtain independent human review of the model, optimizer, parameter count, noise model and interpretation.
-- [ ] M10 — Observe users selecting peaks, interpreting failed fits/rankings and exporting/reopening a Monte Carlo study on the packaged application.
-
-Checked implementation items require the accompanying automated evidence; they are not scientific sign-off for M06–M10.
+Independent experimental comparisons, broader noise/model-misspecification
+studies, parameter-recovery and coverage evaluation, and hands-on review of the
+packaged application remain necessary before quantitative uncertainty claims.
+See [Scientific scope and method status](METHOD_STATUS.md) for current limits.

@@ -1,30 +1,29 @@
-# Workflow preview guide
+# Three-stage workflow guide — 0.11.0b3 beta
 
-TPD Spectra Studio by **Karol Cieślik**. This preview implements the workflow
-redesign on `feature/workflow-redesign`; the existing beta remains available.
-It is a development preview, not a validated experimental-analysis release.
+TPD Spectra Studio by **Karol Cieślik**. This guide describes the three-stage
+workflow in the `main` branch's 0.11.0b3 beta. It is intended for practical
+testing, not as a claim of validated experimental analysis.
 
 ## First run with the synthetic example
 
-1. Import `examples/synthetic_two_peak_demo.csv`. This is a physical-model
-   simulation of two populations, not experimental data. Import should show 601
-   points. The source time unit is milliseconds and temperature is Celsius.
-2. In **Spectra & Preparation**, name the first peak and enter 100–210 °C.
-   Click **Add peak**. Add a second peak at 230–350 °C. These are illustrative
-   windows; inspect tails and neighboring contributions before interpretation.
-3. Select the first peak in the persistent selector. In **Kinetic Analysis**,
-   select **Redhead**, use the example's 1 K/s ramp and assumed 1e13 s⁻¹
-   prefactor. The displayed estimate is approximately 1.244 eV (the simulated
-   population uses 1.25 eV). This approximation is not a confidence interval.
-4. Select **Leading edge**, use 110–140 °C, and inspect the transformed plot
+1. Click **Open Example Dataset** and select **first order single peak**. The
+   chooser loads a synthetic 801-point spectrum with a 1 K/s ramp and a named
+   full-trace interval. The source time unit is milliseconds; temperature is Celsius.
+2. In **Spectra & Preparation**, inspect the plot, selected dataset and named
+   peak. To define another interval, enter a name and From/To temperatures,
+   then click **Add peak**. Inspect both tails before interpreting a peak.
+3. In **Kinetic Analysis**, select **Redhead**, confirm the 1 K/s ramp and
+   assumed 1e13 s⁻¹ prefactor. The displayed estimate should be approximately
+   1.2 eV (within 2.5% of the synthetic input). This is not a confidence interval.
+4. Select **Leading edge**, use 90–110 °C, and inspect the transformed plot
    and residuals. Do not fit the full peak as a leading edge. Values update
    after a short pause in typing. The reported energy interval describes
    regression scatter only; the signal does not identify an absolute prefactor.
-5. Save results with **Save labeled result**. Switch to another peak or method
+5. Save results with **Save labeled result…**. Switch to another peak or method
    to create independent runs. Reopen a saved run to restore its method settings.
    An old run is marked stale if peak boundaries or processing have changed;
    reopening does not silently change shared processing or peak definitions.
-6. Use **Report / Export** to review and select saved runs, then choose a
+6. Use **Report / Export…** to review and select saved runs, then choose a
    destination. A new folder receives PDF, parameter CSV, curve CSV, JSON,
    PNG and SVG files. Existing report folders are never overwritten.
 

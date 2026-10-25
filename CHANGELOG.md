@@ -1,4 +1,25 @@
-## Unreleased — workflow redesign preview
+## 0.11.0b3 — external research beta (25 October 2026, unreleased)
+
+- Consolidated the verified beta into `main`; the current Windows artifact is
+  built and tested from that branch. No public release tag has been issued.
+- Corrected fixed single-state zero-order fitting using depletion-edge profiling.
+  Conditional prefactor/scale ranges replace misleading unique-pair claims;
+  earlier zero-order results should be recalculated before interpretation.
+- Provided 16 independently generated, documented synthetic examples and an
+  in-app example chooser with a reproducible first-order walkthrough.
+- Added inspectable, offline bug reports and diagnostic ZIPs with no automatic
+  upload or raw spectrum attachment.
+- Added a four-page Quick Start, project save/load and selected-run PDF/CSV/JSON/
+  PNG/SVG reporting. The three-stage workflow retains the Classic/batch option.
+- Independent experimental validation, human GUI/display-scaling acceptance
+  and validated uncertainty coverage remain open.
+
+## 0.11.0b2 — beta feedback and onboarding (unreleased)
+
+- Introduced beta feedback, synthetic example collection and portable package
+  resource checks. Superseded by the corrections in 0.11.0b3.
+
+## Development preview — workflow redesign (historical)
 
 - Add three workflow stages with shared dataset/peak identity and exclusive
   method controls; retain the classic GUI, advanced methods and CLI.

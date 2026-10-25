@@ -1,4 +1,4 @@
-> Historical planning context. The maintained priority/status sources are [PUBLICATION_ROADMAP.md](PUBLICATION_ROADMAP.md), [CHECKPOINT_LEDGER.md](CHECKPOINT_LEDGER.md) and [METHOD_STATUS.md](METHOD_STATUS.md). The user has authorized beta improvements and experimental Explorer integration; main and public-release gates remain protected.
+> **Archived release-gate plan.** This captures the development state before the 0.11.0b3 consolidation into `main`. For the current beta, consult [METHOD_STATUS.md](METHOD_STATUS.md) and [the release notes](beta/RELEASE_NOTES.md). Unchecked items here are not necessarily outstanding in the current version.
 
 # Release and publication gates
 

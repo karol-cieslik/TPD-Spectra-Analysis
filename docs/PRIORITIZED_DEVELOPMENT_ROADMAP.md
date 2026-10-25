@@ -1,8 +1,8 @@
-> Historical planning context. The maintained priority/status sources are [PUBLICATION_ROADMAP.md](PUBLICATION_ROADMAP.md), [CHECKPOINT_LEDGER.md](CHECKPOINT_LEDGER.md) and [METHOD_STATUS.md](METHOD_STATUS.md). The user has authorized beta improvements and experimental Explorer integration; main and public-release gates remain protected.
+> **Archived planning document (19 October 2026).** For current beta status, see [METHOD_STATUS.md](METHOD_STATUS.md) and [docs/beta/RELEASE_NOTES.md](beta/RELEASE_NOTES.md). Branch and pull-request instructions below reflect their original date, before the 0.11.0b3 consolidation into `main`.
 
 # Development roadmap — reliable, reusable TPD research software
 
-**Status:** active single-source development plan · 2026-10-19  
+**Status:** historical planning baseline · 2026-10-19
 **Guiding objective:** Build reliable, scientifically defensible TPD/TDS software that experimental researchers can install, understand, reproduce, and extend. A peer-reviewed software article should document a real contribution supported by evidence. The public product exists to solve researchers' problems, not to obtain a paper.
 
 This roadmap supersedes the *priority order* of the exploratory GUI and scientific planning documents. It does not erase their technical backlogs. Plans indicate intent, not completed validation.

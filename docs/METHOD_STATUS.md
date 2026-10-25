@@ -43,7 +43,7 @@ Wrong or ambiguous units; silent source/output loss; results paired with incorre
 ## Independent review still required
 
 Optional research benchmark and bootstrap tools from earlier development branches
-are preserved in [RESEARCH_TOOLS.md](RESEARCH_TOOLS.md). They are not connected to
+are preserved in the [repository's research notes](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/docs/RESEARCH_TOOLS.md). They are not connected to
 ordinary desktop analysis and do not supply validated experimental confidence
 limits. The separate research bootstrap rejects fixed zero order.
 

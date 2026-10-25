@@ -183,6 +183,11 @@ Add a clearly discoverable **Report a Bug / Send Feedback** action in the GUI (e
 - [ ] Diagnostic preview/redaction works, and experimental data is never attached or transmitted without explicit consent.
 - [ ] Scientific limitations are stated clearly and no result is described as proving a unique desorption order.
 
-## 10. Prompt for the future Codex session
+## 10. Historical design status
 
-> Read `docs/redesign/TPD_STUDIO_WORKFLOW_REDESIGN.md` from the latest `main` branch of `karol-cieslik/TPD-Spectra-Analysis`. Treat it as the target UX/product specification. First inspect the latest application architecture and existing tests, then implement the phases sequentially on a new branch with tests and screenshots. Preserve current capabilities and avoid changing validated numerical methods merely to satisfy the new layout. Start with Phase 0 and Phase 1, report what is complete, and proceed to the next phase only when the current one is verified.
+This document records the original workflow proposal. Its acceptance checklist
+is not the status of the current beta. The implemented three-stage workflow,
+remaining limitations and release evidence are described in the
+[workflow guide](WORKFLOW_USER_GUIDE.md),
+[scientific status](../METHOD_STATUS.md) and
+[beta release notes](../beta/RELEASE_NOTES.md).

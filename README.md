@@ -14,31 +14,39 @@ Built for surface-science researchers who need transparent fitting methods, repr
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
 [![Development status](https://img.shields.io/badge/status-beta%20review%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/tree/main)
 
-[**Download beta**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) · [**Quick start**](#-quick-start) · [**User manual**](docs/USER_AND_SCIENTIFIC_MANUAL.md) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contributing**](CONTRIBUTING.md)
+[**Download Windows beta**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) · [**Get started**](START_HERE.md) · [**User manual**](docs/USER_AND_SCIENTIFIC_MANUAL.md) · [**Methods and limitations**](#-scientific-methods-and-limitations) · [**Contribute**](CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## External beta 0.11.0b3 - review candidate
+## Try the beta — 0.11.0b3
 
-Start with [START_HERE](START_HERE.md), the [four-page Quick Start](docs/beta/QUICK_START.pdf)
-and the [16 documented synthetic examples](examples/beta_collection/README.md).
-Use the successful build for branch **main**, artifact
-**tpd-spectra-windows-x64-beta-0.11.0b3**. This is the consolidated beta
-development version; prior beta downloads remain available. No prerelease is published.
+The Windows beta is available for **informal testing by researchers**. You can
+try it without Python or experimental data. Open the
+[Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml),
+choose the latest **successful `main`** run, and download its ZIP under
+**Artifacts** (GitHub sign-in may be required). Extract the entire archive and run
+`TPD-Spectra-Studio.exe`. The executable is unsigned; follow your institution's
+software policy. This is a time-limited GitHub Actions download, not a tagged release.
 
-**Zero-order update:** a dedicated depletion-edge fitter replaces the local
-zero-order optimization. It passes the original clean-reference residual limit
-and reports conditional prefactor/scale ranges rather than a unique pair. Actual GUI screenshots and human display-scaling review
-are still pending after native capture failed. See [release notes](docs/beta/RELEASE_NOTES.md)
-and [verification record](docs/beta/PREPARATION.md) for the exact scope.
+Start with [the five-minute walkthrough](START_HERE.md) and the
+[four-page Quick Start guide](docs/beta/QUICK_START.pdf), then explore the
+[16 documented synthetic spectra](examples/beta_collection/README.md).
+The beta includes the three-stage workflow, model comparison, conditional
+Monte Carlo refitting, save/load projects, and PDF/CSV/JSON/figure exports.
 
-Feedback requires no GitHub account: use **Report a Bug / Send Feedback**, inspect
-the report, then copy it or save the diagnostic ZIP. Email **Dr. Karol Cieślik** at
-**karol.j.cieslik@gmail.com**. Nothing is sent automatically; no spectra are
-attached. Contributions and forks are welcome under the code's MIT license.
-Try the [informal colleague checklist](docs/beta/TESTER_CHECKLIST.md).
+**Feedback is welcome:** use **Report a Bug / Send Feedback** in the application
+to inspect and copy a diagnostic report or save a ZIP. No account, automatic
+upload, or experimental spectrum is required. You can email
+**Dr. Karol Cieślik** at **karol.j.cieslik@gmail.com**. See the
+[short tester checklist](docs/beta/TESTER_CHECKLIST.md) and
+[release notes](docs/beta/RELEASE_NOTES.md).
+
+**Scientific status:** numerical and synthetic tests have passed, but independent
+experimental validation and hands-on acceptance on different Windows displays
+are ongoing. The beta does not automatically identify a physical mechanism or
+provide validated confidence intervals.
 
 ## Three-stage workflow
 
@@ -48,15 +56,10 @@ method-specific results, model comparison and seeded parametric Monte Carlo are
 visible in the workspace. Save labeled runs and portable projects, then select
 runs and a destination for PDF/CSV/JSON/PNG/SVG reporting.
 
-Start with the [workflow preview guide](docs/redesign/WORKFLOW_USER_GUIDE.md).
-The **Classic / batch workspace** retains the previous workflow. The main branch remains a beta;
-previous working beta branches remain available.
-See the [implementation evidence and remaining gates](docs/redesign/IMPLEMENTATION_CHECKLIST.md).
-
-The [consolidation record](docs/CONSOLIDATION.md) tracks the incorporated PRs.
-[Research benchmarks](docs/RESEARCH_TOOLS.md) and the
-[literature validation catalog](validation/README.md) remain clearly separated
-from completed experimental validation.
+Start with the [workflow guide](docs/redesign/WORKFLOW_USER_GUIDE.md).
+The **Classic / batch workspace** retains the previous workflow. Development
+history and research benchmarks are available in the repository's `docs/` and
+`validation/` directories; they are not evidence of completed experimental validation.
 
 ## 🔬 What is TPD Spectra Studio?
 
@@ -64,13 +67,13 @@ TPD Spectra Studio is a Python desktop application and reusable analysis toolkit
 
 The software aims to make routine analysis easier to reproduce and inspect without hiding assumptions from the researcher. It offers a graphical application for everyday work, a command-line tool for batch processing, and Python modules that developers can extend.
 
-> **Maturity:** The current beta candidate is under hands-on Windows acceptance testing. Automated tests and a Windows build are available, but real-instrument validation and wider user testing are still underway. Kinetic parameters are model-dependent estimates, not automatically confirmed physical mechanisms.
+> **Maturity:** Windows automated tests and packaging have passed. Real-instrument validation and wider user testing are underway. Kinetic parameters are model-dependent estimates, not automatically confirmed physical mechanisms.
 
 Created and maintained by **Karol Cieślik**. The product is TPD Spectra Studio; the Python package is `tpd-spectra` and this repository is `TPD-Spectra-Analysis`.
 
-The desktop uses an original spectrum icon and a shared navy/teal identity. See the [identity and visual acceptance notes](docs/BRAND_IDENTITY.md).
+The desktop uses an original spectrum icon and a shared navy/teal identity.
 
-[Scientific scope/status](docs/METHOD_STATUS.md) · [Active roadmap](docs/PUBLICATION_ROADMAP.md) · [Checkpoint evidence](docs/CHECKPOINT_LEDGER.md) · [Explorer and Monte Carlo](docs/EXPLORER_MONTE_CARLO.md)
+[Scientific scope/status](docs/METHOD_STATUS.md) · [Explorer and Monte Carlo](docs/EXPLORER_MONTE_CARLO.md)
 
 ## ✨ Features
 
@@ -89,11 +92,10 @@ The desktop uses an original spectrum icon and a shared navy/teal identity. See 
 
 ### Option A — Windows desktop beta (no Python required)
 
-1. Open [Windows desktop builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
-2. Choose the latest **successful** run for branch `main`.
-3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b3`. A GitHub login may be needed.
-4. Extract the ZIP and double-click `TPD-Spectra-Studio.exe`.
-5. Click **Open Example Dataset**, start with the clean first-order reference, and follow [START_HERE](START_HERE.md).
+1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) and choose the latest **successful** run on `main`.
+2. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b3`. GitHub sign-in may be needed.
+3. Extract the entire ZIP, keeping its folders together, and double-click `TPD-Spectra-Studio.exe`.
+4. Click **Open Example Dataset**, choose **first order single peak**, and follow [START_HERE](START_HERE.md).
 
 New beta packages include `examples/synthetic_two_peak_demo.csv`: a clearly labeled, noiseless two-population Polanyi–Wigner simulation with known inputs. Follow the [demo walkthrough](examples/README.md) for settings and expected results. Synthetic tests do not replace experimental validation. The executable is currently unsigned; verify the GitHub source and follow institutional security policy.
 
@@ -152,11 +154,12 @@ Read the [User and Scientific Methods Manual](docs/USER_AND_SCIENTIFIC_MANUAL.md
 | Document | Purpose |
 | --- | --- |
 | [User and scientific manual](docs/USER_AND_SCIENTIFIC_MANUAL.md) | Installation, workflows, equations, interpretation and reproducibility |
-| [Beta acceptance checklist](docs/BETA_ACCEPTANCE_CHECKLIST.md) | Hands-on Windows and scientific smoke tests |
+| [Quick Start (PDF)](docs/beta/QUICK_START.pdf) | Four-page first-use workflow and expected result |
+| [Colleague tester checklist](docs/beta/TESTER_CHECKLIST.md) | Short, informal tasks and feedback guidance |
 | [Example dataset](examples/README.md) | Synthetic CSV origin, units and appropriate use |
 | [Contributing](CONTRIBUTING.md) | Setup, architecture, testing and contribution standards |
-| [Prioritized roadmap](docs/PRIORITIZED_DEVELOPMENT_ROADMAP.md) | Reliable release, validation and developer-readiness priorities |
-| [Release gates](docs/RELEASE_AND_PUBLICATION_GATES.md) | Acceptance, validation, maintenance and release evidence |
+| [Scientific method status](docs/METHOD_STATUS.md) | Which methods are supported, experimental or not yet validated |
+| [Release notes](docs/beta/RELEASE_NOTES.md) | What's new and what still needs testing |
 | [Asset rights](ASSET-RIGHTS.md) | Limits on redistributing experimental and third-party materials |
 
 ## 🛠️ Building and testing from source
@@ -185,10 +188,10 @@ pyinstaller --clean --noconfirm --onefile --windowed --name TPD-Spectra-Studio r
 
 | Workflow / check | Trigger | Purpose |
 | --- | --- | --- |
-| [Windows desktop build](.github/workflows/desktop-build.yml) | Selected branch pushes and manual dispatch | Installs dependencies, runs tests, performs startup checks, packages an EXE and uploads a ZIP |
+| [Windows desktop build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) | Selected branch pushes and manual dispatch | Installs dependencies, runs tests, performs startup checks, packages an EXE and uploads a ZIP |
 | [Scientific tests (research branch)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/feature/kinetic-identifiability-diagnostics/.github/workflows/scientific-tests.yml) | Scientific research branch changes | Scientific regression and benchmark smoke tests |
 
-The [beta candidate PR](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/5) is not merged into the stable main branch. A passing build is **not** the same as final release approval.
+The beta was consolidated into `main` in [PR #13](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/13). `main` is a development branch, **not** a stable public release. Passing automated tests does not replace hands-on or independent scientific review.
 
 ```text
 Source changes → Automated checks → Windows artifact
@@ -209,10 +212,3 @@ Use [GitHub Issues](https://github.com/karol-cieslik/TPD-Spectra-Analysis/issues
 ## 📖 Citation and license
 
 The project-authored source code is provided under the [MIT License](LICENSE), subject to the scope explained in [ASSET-RIGHTS.md](ASSET-RIGHTS.md). Citation metadata is maintained in [CITATION.cff](CITATION.cff). A citable tagged release and peer-reviewed software description are future milestones; neither is claimed for this beta candidate.
-
-
-### Candidate workflow
-
-After importing, select **Include** for the files to analyze (independent of **Show**). Set and inspect the analysis windows, then choose **Run full analysis**. Review assumptions, import changes and Setup preview; explicitly confirm the new results location. You may compute one selected spectrum first as an unsaved preview. **Run and save** retains the submitted settings and creates a new folder. Review results, residuals and failures inside the app. About identifies the author, candidate version and build.
-
-Explorer is explicitly experimental. Select an isolated peak, justify its heating rate, compare models, inspect residuals, then review Monte Carlo assumptions and set a seed/count. Use its guide before interpreting conditional ranges.

@@ -13,7 +13,7 @@ EQUATIONS = {
         'baseline. The rate is zero after coverage is exhausted. Fits start '
         'with θ = 1 at the selected interval start; manual simulation can use '
         'another initial coverage. Fitting optimizes A and optionally b. '
-        'Entered energy and prefactor are initial guesses, not fixed truths.'),
+        'For positive-order fitting, entered energy and prefactor are initial guesses. Fixed zero order searches depletion boundaries independently of these guesses and reports conditional prefactor/scale ranges. These are not confidence intervals.'),
     'Leading edge': (
         'Leading-edge apparent energy',
         'ln(S) = a + m/T\nE_app = −k_B m',

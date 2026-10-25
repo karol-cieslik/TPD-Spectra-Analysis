@@ -8,11 +8,11 @@
 
 Built for surface-science researchers who need transparent fitting methods, reproducible results, and a practical workflow from measurement to figure.
 
-[![Windows beta build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml/badge.svg?branch=release%2Fexternal-beta-v0.11.0b2)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml)
+[![Windows beta build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml/badge.svg?branch=release%2Fexternal-beta-v0.11.0b3)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2f855a.svg)](LICENSE)
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
-[![Development status](https://img.shields.io/badge/status-beta%20review%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/11)
+[![Development status](https://img.shields.io/badge/status-beta%20review%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/tree/release/external-beta-v0.11.0b3)
 
 [**Download beta**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) · [**Quick start**](#-quick-start) · [**User manual**](docs/USER_AND_SCIENTIFIC_MANUAL.md) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contributing**](CONTRIBUTING.md)
 
@@ -20,17 +20,17 @@ Built for surface-science researchers who need transparent fitting methods, repr
 
 ---
 
-## External beta 0.11.0b2 - review candidate
+## External beta 0.11.0b3 - review candidate
 
 Start with [START_HERE](START_HERE.md), the [four-page Quick Start](docs/beta/QUICK_START.pdf)
 and the [16 documented synthetic examples](examples/beta_collection/README.md).
-Use the successful build for branch **release/external-beta-v0.11.0b2**, artifact
-**tpd-spectra-windows-x64-external-beta-0.11.0b2**. This is a separate review
+Use the successful build for branch **release/external-beta-v0.11.0b3**, artifact
+**tpd-spectra-windows-x64-external-beta-0.11.0b3**. This is a separate review
 candidate; prior beta downloads remain available. No prerelease is published.
 
-**Known limitation:** zero-order quantitative fitting fails the original clean
-reference residual tolerance. The GUI warns and the strict expected-failure test
-retains that threshold. Actual GUI screenshots and human display-scaling review
+**Zero-order update:** a dedicated depletion-edge fitter replaces the local
+zero-order optimization. It passes the original clean-reference residual limit
+and reports conditional prefactor/scale ranges rather than a unique pair. Actual GUI screenshots and human display-scaling review
 are still pending after native capture failed. See [release notes](docs/beta/RELEASE_NOTES.md)
 and [verification record](docs/beta/PREPARATION.md) for the exact scope.
 
@@ -85,8 +85,8 @@ The desktop uses an original spectrum icon and a shared navy/teal identity. See 
 ### Option A — Windows desktop beta (no Python required)
 
 1. Open [Windows desktop builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
-2. Choose the latest **successful** run for branch `release/external-beta-v0.11.0b2`.
-3. Under **Artifacts**, download `tpd-spectra-windows-x64-external-beta-0.11.0b2`. A GitHub login may be needed.
+2. Choose the latest **successful** run for branch `release/external-beta-v0.11.0b3`.
+3. Under **Artifacts**, download `tpd-spectra-windows-x64-external-beta-0.11.0b3`. A GitHub login may be needed.
 4. Extract the ZIP and double-click `TPD-Spectra-Studio.exe`.
 5. Click **Open Example Dataset**, start with the clean first-order reference, and follow [START_HERE](START_HERE.md).
 
@@ -97,7 +97,7 @@ New beta packages include `examples/synthetic_two_peak_demo.csv`: a clearly labe
 ```bash
 git clone https://github.com/karol-cieslik/TPD-Spectra-Analysis.git
 cd TPD-Spectra-Analysis
-git checkout release/external-beta-v0.11.0b2
+git checkout release/external-beta-v0.11.0b3
 python -m pip install -e .
 python run_tpd_spectra_gui.py
 ```

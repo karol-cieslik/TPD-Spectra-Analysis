@@ -164,6 +164,9 @@ class ResultsMixin:
                 'r_squared':'R²','rmse_signal':'Signal RMSE','reaction_order':'Reaction order',
                 'reaction_order_fitted':'Order optimized','n_points':'Points used','energy_interval':'Energy uncertainty interval'}
             lines=[]
+            if values.get('reaction_order') == 0 and 'conditional_prefactor_range_s_inv' in values:
+                labels['prefactor_s_inv']='Representative prefactor (s⁻¹; not unique)'
+                labels['signal_scale']='Representative signal scale (not unique)'
             for key,value in values.items():
                 formatted='Not available' if value is None else (f'{value:.6g}' if isinstance(value,float) else str(value))
                 lines.append(labels.get(key,key.replace('_',' ').capitalize())+': '+formatted)

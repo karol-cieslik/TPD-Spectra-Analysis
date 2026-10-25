@@ -10,10 +10,6 @@ FOLDER=Path(__file__).resolve().parents[1]/'examples/beta_collection'
 CATALOG=json.loads((FOLDER/'catalog.json').read_text(encoding='utf-8'))
 
 
-class KnownZeroOrderResidual(AssertionError):
-    """Only the diagnosed residual failure is expected; other failures must fail."""
-
-
 @pytest.mark.parametrize('entry',CATALOG,ids=lambda e:e['file'])
 def test_each_beta_example_imports_directly_and_has_ground_truth(entry):
     path=FOLDER/entry['file']
@@ -34,7 +30,7 @@ def test_each_beta_example_imports_directly_and_has_ground_truth(entry):
 
 
 @pytest.mark.parametrize('name',[
-    pytest.param('zero_order_single_peak',marks=pytest.mark.xfail(strict=True,raises=KnownZeroOrderResidual,reason='Known beta limitation: zero-order optimizer can converge with biased amplitude; keep the original residual tolerance.')),
+    'zero_order_single_peak',
     'first_order_single_peak','second_order_single_peak','fractional_order_1p5'])
 def test_documented_recovery_tolerances(name):
     metadata=json.loads((FOLDER/(name+'.json')).read_text(encoding='utf-8'))
@@ -48,8 +44,6 @@ def test_documented_recovery_tolerances(name):
     assert abs(fit.activation_energy_eV/truth['energy_eV']-1)<check['energy_relative_tolerance']
     assert abs(np.log10(fit.prefactor_s_inv/truth['prefactor_s_inv']))<check['log10_prefactor_absolute_tolerance']
     assert prediction.shape==s.signal.shape
-    if name=='zero_order_single_peak' and fit.normalized_rmse>=check['normalized_rmse_tolerance']:
-        raise KnownZeroOrderResidual(f'{fit.normalized_rmse} exceeds retained {check["normalized_rmse_tolerance"]}')
     assert fit.normalized_rmse<check['normalized_rmse_tolerance']
 
 

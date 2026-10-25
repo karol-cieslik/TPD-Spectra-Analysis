@@ -19,8 +19,9 @@ no need to complete every item or produce a formal review.
 - [ ] Optional: try one spectrum you are permitted to use and check against an
   independent calculation. Report units, assumptions and discrepancies.
 
-Known issue: zero-order fits can return a biased amplitude despite convergence.
-Please do not interpret them quantitatively. Model selection and Monte Carlo
+For zero order, inspect the depletion edge and conditional prefactor/scale
+ranges. The displayed representative pair is not unique; brackets are not
+confidence intervals. Model selection and Monte Carlo
 outputs remain conditional on the implemented model/noise assumptions.
 
 Email **Dr. Karol Cieślik**, **karol.j.cieslik@gmail.com**, with the version from
@@ -43,5 +44,5 @@ Hi, I've prepared an early beta of TPD Spectra Studio and would appreciate a
 quick informal try if you have time. It includes synthetic examples and a short
 guide, so you don't need to share any data. I'm especially interested in whether
 the workflow is clear and whether results and assumptions are presented usefully.
-There are known limitations, including zero-order fitting, listed in START_HERE.
+Scientific assumptions and limitations are listed in START_HERE.
 Even a few comments by email would help. No pressure to do a full review!

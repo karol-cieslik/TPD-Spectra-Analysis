@@ -144,7 +144,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
                                ("max_nfev", "Maximum evaluations")]}
         help_text = {METHODS[0]: "Apparent slope energy requires a suitable rate signal and approximately unchanged coverage. It is not a zero-order assignment.",
                      METHODS[1]: "Classical first-order Redhead estimate with an assumed prefactor and linear ramp. No measured confidence interval is inferred.",
-                     METHODS[2]: "Single-state linear-ramp fit; normalized initial coverage is one. Energy/prefactor may be non-identifiable. Known beta limitation: zero-order fits can converge with biased amplitude; inspect residuals. Bounds and solver follow the existing engine."}
+                     METHODS[2]: "Single-state linear-ramp fit; normalized initial coverage is one. Energy/prefactor may be non-identifiable. Fixed zero order uses a depletion-edge search. Its prefactor/scale are representative values with conditional ranges, not unique estimates. Inspect residuals and assumptions."}
         for method in METHODS:
             panel = ttk.Frame(sidebar)
             self.method_panels[method] = panel
@@ -395,7 +395,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             '3. Explore hypotheses\nIn Modeling, simulate parameters or compare candidate orders. Seeded Monte Carlo refits simulated noisy traces; rankings do not prove mechanisms.\n\n'
             '4. Analyze one peak\nIn Kinetic Analysis, choose Leading edge, Redhead or Polanyi–Wigner. Lightweight estimates update after edits; numerical fitting runs explicitly and can be cancelled.\n\n'
             '5. Retain and export\nSave labeled results, then Report / Export. Select runs, review their labels and choose a destination. Save project retains your workspace.\n\n'
-            'Synthetic first test\nClick Open Example Dataset and keep first order single peak. Redhead: 1 K/s and 1e13 s⁻¹ gives about 1.2 eV. Leading edge: 90–110 °C. This example is simulated, not experimental. Zero-order quantitative fitting currently fails its residual benchmark.\n\n'
+            'Synthetic first test\nClick Open Example Dataset and keep first order single peak. Redhead: 1 K/s and 1e13 s⁻¹ gives about 1.2 eV. Leading edge: 90–110 °C. This example is simulated, not experimental. Zero-order fits need a resolved depletion edge; reported parameter brackets are not confidence intervals.\n\n'
             'Classic / batch workspace retains advanced and batch functions.\nCreated by Karol Cieślik. Scientific applicability still requires independent validation.')
         text.configure(state='disabled')
         ttk.Button(dialog,text='Close',command=dialog.destroy).pack(anchor='e',padx=12,pady=8)

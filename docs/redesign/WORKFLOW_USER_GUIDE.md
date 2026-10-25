@@ -93,7 +93,9 @@ These explanations are read-only and do not change parameters or run a fit.
   signal and approximately unchanged coverage. It does not assign zero order.
 - Classical Redhead assumes first order, a supplied prefactor and a linear ramp.
   A boundary maximum produces a warning. No confidence interval is fabricated.
-- Polanyi–Wigner fitting uses the unchanged single-state numerical engine.
+- Polanyi–Wigner fitting retains the positive-order numerical engine. Fixed
+  zero order uses the [depletion-profile fitter](../ZERO_ORDER_FITTING.md) and
+  reports conditional prefactor/scale brackets rather than a unique pair.
   Inspect residuals, convergence and identifiability diagnostics. One spectrum
   can admit competing parameter combinations; a good fit does not prove order.
 - The default heating rate of 1 K/s is an editable assumption. Confirm it from

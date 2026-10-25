@@ -3,7 +3,7 @@ name: Windows desktop build
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate', 'feature/workflow-redesign', 'release/external-beta-v0.11.0b2']
+    branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate', 'feature/workflow-redesign', 'release/external-beta-v0.11.0b2', 'release/external-beta-v0.11.0b3']
     paths:
       - 'tpd_spectra/**'
       - 'tests/**'
@@ -80,12 +80,12 @@ jobs:
           $exeHash = (Get-FileHash release-package/TPD-Spectra-Studio.exe -Algorithm SHA256).Hash.ToLowerInvariant()
           "$exeHash  TPD-Spectra-Studio.exe" | Set-Content -Encoding ascii release-package/SHA256SUMS.txt
           @'
-          TPD Spectra Studio 0.11.0b2 — external beta review candidate
+          TPD Spectra Studio 0.11.0b3 — external beta review candidate
 
           Read START_HERE.md and docs/beta/QUICK_START.pdf.
           Extract this entire folder. Double-click TPD-Spectra-Studio.exe.
           Use Open Example Dataset, then the clean first-order example.
-          Known issue: zero-order quantitative fitting fails its residual benchmark.
+          Zero-order fits report conditional prefactor/scale brackets, not unique values.
           See docs/beta/RELEASE_NOTES.md before interpreting results.
           '@ | Set-Content -Encoding utf8 release-package/QUICKSTART.txt
           @'
@@ -110,7 +110,7 @@ jobs:
       - name: Publish downloadable build
         uses: actions/upload-artifact@v4
         with:
-          name: tpd-spectra-windows-x64-${{ github.ref_name == 'release/external-beta-v0.11.0b2' && 'external-beta-0.11.0b2' || github.ref_name == 'feature/workflow-redesign' && 'workflow-preview' || github.ref_name == 'main' && 'stable' || 'beta-candidate' }}
+          name: tpd-spectra-windows-x64-${{ github.ref_name == 'release/external-beta-v0.11.0b3' && 'external-beta-0.11.0b3' || github.ref_name == 'release/external-beta-v0.11.0b2' && 'external-beta-0.11.0b2' || github.ref_name == 'feature/workflow-redesign' && 'workflow-preview' || github.ref_name == 'main' && 'stable' || 'beta-candidate' }}
           path: release-package/*
           if-no-files-found: error
           retention-days: 90

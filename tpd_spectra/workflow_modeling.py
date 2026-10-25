@@ -95,8 +95,10 @@ class ModelingPanel:
 
     def snapshot(self):
         snap = self.app.project.snapshot('Polanyi–Wigner')
+        snap.pop('kinetic_engine_revision',None)
         snap['method'] = 'Model exploration'
         snap['settings'] = deepcopy(self.session()['settings'])
+        snap['modeling_engine_revision'] = 'zero-order-profile-v1'
         return snap
 
     def current(self, result):
@@ -163,7 +165,7 @@ class ModelingPanel:
         ax = self.fig.add_subplot(211)
         residual = self.fig.add_subplot(212)
         ax.plot(t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal')
-        notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\nKnown beta limitation: zero-order optimization can converge with biased amplitude; inspect residuals and do not treat its ranking as validated.\n'
+        notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\nZero-order fits search the depletion edge; displayed prefactors are representative, with conditional ranges rather than unique values. Edge-model AICc rankings are heuristic.\n'
         if result:
             notes += ('Current comparison.\n' if self.current(result) else 'STALE comparison — original interval/settings plotted. Compare again before transfer or Monte Carlo.\n')
             notes += 'Compared interval: ' + str(result['snapshot']['region']) + ' °C; β = ' + str(result['snapshot']['settings']['beta']) + ' K/s\n'

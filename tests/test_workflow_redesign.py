@@ -70,6 +70,22 @@ def test_equation_legends_do_not_change_analysis_settings(root):
     assert not app.job_busy
 
 
+def test_old_model_comparisons_are_stale_after_zero_order_engine_update(root):
+    from copy import deepcopy
+    app=WorkflowApp(root)
+    app._load_paths([DEMO])
+    app.project.add_region('First peak',100,210)
+    app.refresh_context()
+    panel=app.modeling_panel
+    current={'snapshot':panel.snapshot()}
+    assert panel.current(current)
+    legacy=deepcopy(current)
+    legacy['snapshot'].pop('modeling_engine_revision')
+    assert not panel.current(legacy)
+    app.project.method_settings('Polanyi–Wigner')['order']=0.
+    assert panel.current(current)
+
+
 def prepared():
     project = WorkflowProject()
     dataset = project.add_dataset(DEMO)

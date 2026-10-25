@@ -157,10 +157,16 @@ class WorkflowProject:
 
     def snapshot(self, method, settings=None):
         dataset, region = self.context()
-        return deepcopy({"dataset_id": dataset.id, "region_id": region.id, "dataset": dataset.path,
+        snapshot = deepcopy({"dataset_id": dataset.id, "region_id": region.id, "dataset": dataset.path,
                          "source_sha256": dataset.digest, "peak": region.label,
                          "region": [region.lower, region.upper], "processing": dataset.processing,
                          "method": method, "settings": settings or self.method_settings(method)})
+        try:
+            if method == 'Polanyi–Wigner' and float(snapshot['settings']['order']) == 0 and not snapshot['settings']['free_order']:
+                snapshot['kinetic_engine_revision'] = 'zero-order-profile-v1'
+        except (KeyError,TypeError,ValueError):
+            pass
+        return snapshot
 
     @staticmethod
     def fingerprint(snapshot):

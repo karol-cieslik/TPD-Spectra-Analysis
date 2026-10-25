@@ -106,7 +106,7 @@ def generate(output=OUTPUT):
                 'normalized_rmse_tolerance':.02 if config['states'][0]['order']==0 else .01,
                 'note':'Predefined before verification; truth-informed initialization checks solver consistency, not robust blind identification.'}
         if any(s['order']==0 for s in config['states']):
-            meta['limitations'].append('Known beta issue: zero-order fitting can converge with biased amplitude. Clean coverage-one reference normalized RMSE about 0.0561 exceeds retained 0.02 threshold; quantitative zero-order fits are not validated.')
+            meta['limitations'].append('Fixed-zero-order fitting requires a resolved depletion edge. Prefactor and detector scale are representative values within conditional ranges at fitted energy and normalized coverage one; these ranges are not confidence intervals.')
         (output/(config['name']+'.json')).write_text(json.dumps(meta,indent=2)+'\n',encoding='utf-8')
         catalog.append(dict(file=csv.name,metadata=config['name']+'.json',title=config['name'].replace('_',' '),description=config['expected_behavior'],beta_K_s=config['beta_K_s']))
         ax=overview.add_subplot(4,4,index+1)

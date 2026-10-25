@@ -45,13 +45,48 @@ def main(output):
             assert archive.read('feedback-report.txt').decode()==report
         assert 'karol.j.cieslik@gmail.com' in about_text()
         feedback.win.destroy()
+        # Exercise zero order through the actual frozen workflow and report path.
+        import time
+        import numpy as np
+        from .workflow_io import save_project,load_project
+        from .workflow_report import export_report
+        from .kinetics_uncertainty import run_kinetics_monte_carlo
+        example=app.open_example()
+        example.list.selection_clear(0,'end')
+        example.list.selection_set(0)
+        example.open()
+        app.method.set('Polanyi–Wigner')
+        app.project.method_settings('Polanyi–Wigner').update(order=0.,fit_baseline=False)
+        app.refresh_context()
+        app.calculate_selected()
+        deadline=time.monotonic()+120
+        while app.job_busy and time.monotonic()<deadline:
+            root.update()
+            time.sleep(.02)
+        assert not app.job_busy
+        assert app.displayed_result['values']['normalized_rmse']<.02
+        assert app.displayed_result['values']['conditional_prefactor_range_s_inv']
+        saved=app.project.save_result(app.displayed_result,'Frozen zero-order profile')
+        loaded=load_project(save_project(app.project,output/'zero-order.tpd.json'))
+        export_report(loaded,[saved['id']],output/'zero-order-report')
+        assert (output/'zero-order-report/COMPLETE.txt').exists()
+        data,_=app.project.context()
+        t=data.spectrum.temperature_clean_c[::4]
+        y=data.spectrum.signal[::4]
+        noisy=y+np.random.default_rng(91).normal(0,.01*np.ptp(y),len(y))
+        mc=run_kinetics_monte_carlo(t,noisy,1.,orders=('zero',),replicates=2,
+            seed=42,fit_baseline=False,minimum_successful_refits=2)
+        assert mc.successful_parameter_fits['zero']==2
+        assert 'log10_prefactor' not in mc.parameter_intervals['zero']
         assert not errors,errors
         record={'identity':build_identity(),'examples_imported':len(catalog),
             'resource_lookup_from_unrelated_cwd':True,'redhead_reference_passed':True,
             'offline_feedback_copy_zip_passed':True,'external_drafts_opened':False,
+            'zero_order_gui_fit_project_report_and_short_mc_passed':True,
             'callback_errors':errors,'visual_acceptance':'not assessed by automation'}
         (output/'beta_smoke.json').write_text(json.dumps(record,indent=2),encoding='utf-8')
         print('Frozen external beta: 16 imports, bundled guide, example chooser, Redhead preview, offline feedback copy/ZIP and contact passed',flush=True)
+        print('Frozen zero order: explicit GUI fit, conditional ranges, project, report and two MC refits passed',flush=True)
     finally:
         for callback in root.tk.call('after','info'):
             root.after_cancel(callback)

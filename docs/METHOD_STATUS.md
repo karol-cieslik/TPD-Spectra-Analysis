@@ -1,7 +1,15 @@
-# Scientific scope and method status — 0.11.0b1 candidate
+# Scientific scope and method status — 0.11.0b3 candidate
 
 Maintainer: Karol Cieślik. This is a research beta, not a validated instrument system.
 Method status describes the available evidence, not regulatory certification.
+
+Fixed single-state zero order now uses an explicit depletion-edge profile search.
+Independent synthetic regressions cover recovery, noise and baseline, sampling,
+coverage and heating rate. Its prefactor/scale pair remains non-unique; exported
+ranges are conditional sampling brackets, not confidence intervals. Monte Carlo
+withholds percentiles of representative zero-order prefactors. Edge-model AICc
+rankings are heuristic. Legacy two-state/global zero-order optimizers remain
+experimental and are outside this correction. See [the method description](ZERO_ORDER_FITTING.md).
 
 | Method | Status and supported inputs | Evidence and limits |
 | --- | --- | --- |

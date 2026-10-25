@@ -1,4 +1,4 @@
-# Welcome to TPD Spectra Studio 0.11.0b2
+# Welcome to TPD Spectra Studio 0.11.0b3
 
 **External beta review candidate** by **Karol Cieślik**. Please try the synthetic
 example first. This package is for review; experimental validation and visual
@@ -22,9 +22,10 @@ Read [the four-page Quick Start](docs/beta/QUICK_START.pdf),
 [example truth and limitations](examples/beta_collection/README.md), and the
 [informal tester checklist](docs/beta/TESTER_CHECKLIST.md).
 
-**Known scientific issue:** zero-order fits may report convergence with biased
-amplitude and poor residuals. The clean reference currently fails its preset
-residual tolerance. Do not use this beta to report quantitative zero-order fits.
+**Zero-order interpretation:** select a complete depletion edge with rising
+signal and at least three samples after exhaustion. The new fitter reports
+conditional prefactor/scale ranges at fitted energy and normalized coverage one.
+These are not confidence intervals or proof of a unique physical mechanism.
 Monte Carlo is conditional parametric refitting, not microscopic kinetic MC or
 a validated confidence procedure. Overlap, drift and correlated noise require
 additional scrutiny. A good fit does not establish a physical mechanism.

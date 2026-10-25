@@ -1,10 +1,19 @@
-# 0.11.0b2 - external beta review candidate
+# 0.11.0b3 - zero-order fitting correction, review candidate
 
 Prepared for Karol Cieślik's review, not a published release or declaration of
 scientific validation. Existing main, beta and workflow-preview branches remain
 intact. Download/build evidence is recorded in PREPARATION.md after verification.
 
 ## Changes
+
+- Fixed-single-state zero-order fits now search the depletion edge explicitly,
+  profile energy and solve amplitude/baseline. The original clean-reference
+  residual limit is unchanged and its expected-failure marker is removed.
+- Prefactor/scale brackets, conditions and representative-value labels persist
+  through saved projects and reports. Monte Carlo retains per-refit brackets and
+  withholds misleading percentiles of representative zero-order prefactors.
+- Old zero-order results and prior modeling sessions remain inspectable but are
+  stale for new calculations. Recompare before Monte Carlo or model transfer.
 
 - Inspectable feedback reports with categories, optional contact/steps, sanitized
   diagnostics, offline copy and ZIP, and explicitly reviewed email/GitHub drafts.
@@ -15,15 +24,18 @@ intact. Download/build evidence is recorded in PREPARATION.md after verification
 - Open Example Dataset, parameter hints, accessible Quick Start and feedback.
 - Four-page Quick Start, short START_HERE and optional colleague test checklist.
 - Preserved classic/batch functionality, three-stage workflow, project/report
-  exports and seeded parametric Monte Carlo. Numerical engines are unchanged.
+  exports and seeded parametric Monte Carlo. Positive-order integration and
+  fitting algorithms are retained. Fixed-order initialization now respects the
+  requested order rather than clipping it to the free-order search bounds.
 
 ## Known limitations and review gates
 
-- **Zero-order quantitative fitting is not validated:** clean-reference amplitude
-  bias produces normalized RMSE≈0.0561 against the retained 0.02 threshold.
-  A strict expected-failure test keeps this issue visible. Convergence alone is
-  insufficient; UI warns before interpretation. Other clean fixed-order checks
-  use truth-informed starts and do not establish blind identification.
+- Zero-order brackets reflect point sampling at fitted energy and normalized
+  initial coverage, not statistical confidence. Numerical completion is not
+  physical validation. Edge-search information criteria are heuristic. At least
+  three samples after depletion are required; unresolved edges are rejected.
+  Multi-state/global zero-order local-optimizer paths are unchanged and remain
+  experimental, with explicit warnings. Independent real-data review remains open.
 - Parametric Monte Carlo assumes iid Gaussian noise around a fitted reference.
   It is not microscopic kinetic MC, MCMC, mechanism probability or a validated
   uncertainty-coverage procedure. Ranges are withheld below 100 successful refits.

@@ -113,6 +113,9 @@ def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
     Prefactor is optimised in log10 space. The reaction order is fixed by default;
     setting fit_reaction_order=True estimates it within [0.2, 3]. Fits can be
     non-identifiable, especially when both energy and prefactor are free.
+    Fixed zero order instead profiles every sampled depletion boundary. Its
+    max_nfev limits energy optimization per boundary (plus endpoint checks),
+    and the returned prefactor/scale represent conditional compatible ranges.
     """
     temp = np.asarray(temperature_c, dtype=float)
     sig = np.asarray(signal, dtype=float)
@@ -149,9 +152,16 @@ def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
     signal_scale_floor = max(float(np.max(np.abs(sig))), 1.0) * 1e-12
     if not np.isfinite(signal_range) or signal_range <= signal_scale_floor:
         raise ValueError("signal must have nonzero dynamic range for kinetic fitting")
+    if reaction_order == 0 and not fit_reaction_order:
+        from .zero_order import fit_zero_order
+        result, prediction = fit_zero_order(temp, sig, beta_k_s, fit_baseline=fit_baseline,
+                                             max_nfev=max_nfev, cancelled=cancelled)
+        if original_temp.size != temp.size:
+            prediction = prediction[inverse]
+        return result, prediction
     span = max(signal_range, np.finfo(float).eps)
     base0 = float(np.percentile(sig, 5)) if fit_baseline else 0.0
-    order0 = float(np.clip(reaction_order, 0.2, 3.0))
+    order0 = float(np.clip(reaction_order, 0.2, 3.0)) if fit_reaction_order else float(reaction_order)
     # Parameter vector: E, log10(nu), log10(scale), [baseline], [order].
     initial = [float(initial_energy_ev), float(np.log10(initial_prefactor_s_inv)), 0.0]
     lower, upper = [0.05, 3.0, -30.0], [8.0, 30.0, 30.0]
@@ -359,6 +369,8 @@ def fit_two_state_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
         condition = float('inf')
     es, nus, scales, baseline = unpack(opt.x)
     warnings = []
+    if reaction_order == 0:
+        warnings.append('Two-state zero-order fitting still uses the legacy local optimizer; the single-state depletion-profile correction does not validate this path.')
     if not opt.success:
         warnings.append('Optimizer did not converge.')
     if condition > 1e8 or not np.isfinite(condition):
@@ -542,6 +554,8 @@ def fit_global_polanyi_wigner(traces, *, reaction_order: float = 1.0,
     if max(nrmse_values) > 0.15:
         warnings.append('At least one trace has normalized RMSE > 0.15; the shared model does not adequately describe every trace.')
     scales, baselines = zip(*(unpack(opt.x, i) for i in range(len(prepared))))
+    if reaction_order == 0:
+        warnings.append('Global zero-order fitting still uses the legacy local optimizer; the single-state depletion-profile correction does not validate this path.')
     result = GlobalKineticFitResult(float(opt.x[0]), float(10.0 ** opt.x[1]), float(reaction_order),
         rmse_values, nrmse_values, r2_values, betas, list(map(float, scales)), list(map(float, baselines)),
         correlation, condition, aic, aicc, bic, n_points, n_parameters, bool(opt.success), str(opt.message), warnings)

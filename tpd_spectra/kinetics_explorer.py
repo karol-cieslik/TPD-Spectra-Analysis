@@ -86,7 +86,8 @@ def compare_desorption_orders(
         n, free_n = names[name]
         attempts = []
         errors = []
-        for energy, prefactor in starts:
+        model_starts = starts[:1] if name == 'zero' else starts
+        for energy, prefactor in model_starts:
             if cancelled is not None and cancelled():
                 raise InterruptedError("Model comparison cancelled")
             try:
@@ -107,10 +108,10 @@ def compare_desorption_orders(
         if not attempts:
             candidates.append(ModelCandidate(
                 name, None, None, "; ".join(dict.fromkeys(errors)) or "No valid fit",
-                starts_attempted=len(starts), starts_converged=0))
+                starts_attempted=len(model_starts), starts_converged=0))
             continue
         fit, predicted = min(attempts, key=lambda item: item[0].aicc)
-        warnings = []
+        warnings = list(fit.identifiability_diagnostics.get('warnings',[])) if name == 'zero' else []
         if not np.isfinite(fit.jacobian_condition_number) or fit.jacobian_condition_number > 1e8:
             warnings.append("Ill-conditioned Jacobian: kinetic parameters may not be identifiable.")
         if fit.normalized_rmse > 0.15:
@@ -121,11 +122,11 @@ def compare_desorption_orders(
             fit.reaction_order <= 0.21 or fit.reaction_order >= 2.99
         ):
             warnings.append("Estimated order is near the fitting boundary.")
-        if len(attempts) != len(starts):
+        if len(attempts) != len(model_starts):
             warnings.append("Some multistart optimization attempts failed.")
         candidates.append(ModelCandidate(
             name, fit, predicted, None, warnings=tuple(warnings),
-            starts_attempted=len(starts), starts_converged=len(attempts)))
+            starts_attempted=len(model_starts), starts_converged=len(attempts)))
 
     successful = [c for c in candidates if c.error is None]
     if successful:

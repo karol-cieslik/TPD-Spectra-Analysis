@@ -42,7 +42,7 @@
     "No readsorption, lateral interactions, transport limitation or instrument response.",
     "Normalized coverage is dimensionless; prefactors are expressed in s^-1 under this convention.",
     "Good parameter recovery is numerical verification, not proof of a unique physical mechanism.",
-    "Known beta issue: zero-order fitting can converge with biased amplitude. Clean coverage-one reference normalized RMSE about 0.0561 exceeds retained 0.02 threshold; quantitative zero-order fits are not validated."
+    "Fixed-zero-order fitting requires a resolved depletion edge. Prefactor and detector scale are representative values within conditional ranges at fitted energy and normalized coverage one; these ranges are not confidence intervals."
   ],
   "recommended_peak_c": [
     50.0,

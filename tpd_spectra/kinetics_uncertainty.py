@@ -65,6 +65,8 @@ def run_kinetics_monte_carlo(
     if {c.name for c in initial} != set(orders):
         raise ValueError("Reference comparison must contain exactly the selected models")
     usable = {c.name: c for c in initial if c.error is None}
+    if 'zero' in usable and not getattr(usable['zero'].fit,'identifiability_diagnostics',{}).get('zero_order_profile'):
+        raise ValueError('Recompare the zero-order model with the current depletion-profile fitter before Monte Carlo.')
     if not usable:
         raise ValueError("No converged model exists for Monte Carlo reference")
     if reference_model is None:
@@ -108,7 +110,8 @@ def run_kinetics_monte_carlo(
             records.append({"replicate": completed + 1, "model": candidate.name,
                             "error": candidate.error, "ranking_complete": len(successful) == len(orders),
                             "energy_eV": f.activation_energy_eV if f else None,
-                            "log10_prefactor": float(np.log10(f.prefactor_s_inv)) if f else None,
+                            "log10_prefactor": float(np.log10(f.prefactor_s_inv)) if f and candidate.name != 'zero' else None,
+                            "zero_order_profile": f.identifiability_diagnostics.get('zero_order_profile') if f and candidate.name == 'zero' else None,
                             "order": f.reaction_order if f else None,
                             "aicc": f.aicc if f else None,
                             "warnings": list(candidate.warnings)})
@@ -116,7 +119,8 @@ def run_kinetics_monte_carlo(
             f = candidate.fit
             record = values[candidate.name]
             record["energy_eV"].append(f.activation_energy_eV)
-            record["log10_prefactor"].append(float(np.log10(f.prefactor_s_inv)))
+            if candidate.name != 'zero':
+                record["log10_prefactor"].append(float(np.log10(f.prefactor_s_inv)))
             record["order"].append(f.reaction_order)
         completed += 1
         if progress is not None:
@@ -127,10 +131,13 @@ def run_kinetics_monte_carlo(
             parameter: tuple(map(float, np.percentile(samples, [2.5, 97.5])))
             for parameter, samples in series.items() if len(samples) >= minimum_successful_refits
         }
-    return MonteCarloResult(
+    result = MonteCarloResult(
         reference_model, seed, replicates, completed, sigma,
         {name: wins[name] for name in orders}, failed_rankings, intervals,
         {name: len(series["energy_eV"]) for name, series in values.items()},
         completed < replicates,
         replicate_records=records, minimum_successful_refits=minimum_successful_refits,
     )
+    if 'zero' in orders:
+        result.interval_note += (' Zero-order prefactor percentiles are withheld: each refit has a conditional depletion bracket and a non-unique prefactor/scale pair. Brackets are retained per replicate and are not confidence intervals; edge-search AICc rankings are heuristic.')
+    return result

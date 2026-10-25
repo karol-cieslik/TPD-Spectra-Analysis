@@ -1,5 +1,17 @@
 # External beta preparation record
 
+## 0.11.0b3: dedicated zero-order correction
+
+Current branch: `release/external-beta-v0.11.0b3`; the 0.11.0b2 branch and
+artifacts remain intact. The single-state fixed-zero-order fitter now searches
+the sampled depletion edge, records conditional prefactor/scale brackets and
+withholds misleading Monte Carlo prefactor percentiles. Its original residual
+test now passes without an expected-failure marker or a relaxed tolerance.
+
+The historical failures and builds below refer to 0.11.0b2. Current method scope
+and limitations are documented in [ZERO_ORDER_FITTING.md](../ZERO_ORDER_FITTING.md).
+Fresh full-suite and frozen-build evidence will be recorded here after CI.
+
 ## Latest build: equation-panel follow-up
 
 Application commit `88378fed6e72baa74eb6e3c54ed80e0845e293ff` adds read-only

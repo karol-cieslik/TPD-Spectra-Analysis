@@ -31,7 +31,7 @@ effective prefactor is ν·θ₀^(n−1), and amplitude scales with θ₀. Thus 
 prefactor is not automatically the generator's prefactor. Truncating a peak also
 changes effective initial coverage. No absolute coverage calibration is implied.
 
-## Checks and unresolved issue
+## Checks and interpretation
 
 All files must import without manual cleaning changes; tests check ramp, finite
 values, point count, monotonic temperature and CSV hashes. Clean n=1, 2 and 1.5
@@ -39,11 +39,15 @@ fits pass predefined energy (2%), log10(prefactor) (0.3) and normalized RMSE
 (0.01) tolerances with truth-informed initialization. These verify numerical
 consistency, not blind recovery or identifiability.
 
-**Zero-order recovery remains a known failure.** The existing solver can report
-convergence at E≈1.20028 eV and ν≈9.99e12 s⁻¹ while scale is ≈14477 instead of
-10000 and normalized RMSE≈0.0561, above the original 0.02 limit. The regression
-is a strict expected failure; the threshold was not relaxed. Zero-order examples
-remain useful for qualitative inspection, not validated quantitative fitting.
+**The 0.11.0b3 single-state zero-order fitter passes the original 0.02 residual
+limit.** It searches the sampled depletion edge independently of initial energy
+and prefactor guesses, profiles energy, and solves signal scale/baseline. The
+expected-failure marker is removed; the original thresholds are unchanged.
+Reported prefactor/scale values represent conditional ranges at fixed fitted
+energy and normalized initial coverage one. These are not unique parameter
+pairs or confidence intervals. Select rising signal and at least three samples
+after exhaustion. Multi-state/global zero-order fitting remains a separate
+experimental legacy path; this correction does not validate it.
 
 No readsorption, transport, instrument response or lateral interaction is modeled.
 Fractional order is not a microscopic mechanism. Constant-baseline fitting cannot

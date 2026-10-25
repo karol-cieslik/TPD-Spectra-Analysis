@@ -40,12 +40,17 @@ def export_explorer_bundle(folder, temperature_c, signal, comparison, *,
     curves = []
     for model in comparison:
         fit = model.fit
+        profile = getattr(fit,'identifiability_diagnostics',{}).get('zero_order_profile',{}) if fit else {}
         valid = model.error is None and model.prediction is not None
         fit_rows.append({
             "model": model.name, "success": valid, "error": model.error or "",
             "order": fit.reaction_order if fit else "",
             "energy_eV": fit.activation_energy_eV if fit else "",
             "prefactor_s_inv": fit.prefactor_s_inv if fit else "",
+            "prefactor_interpretation": 'Representative, not unique; conditional ranges are not confidence intervals' if profile else '',
+            "conditional_prefactor_range_s_inv": profile.get('conditional_prefactor_range_s_inv',''),
+            "conditional_signal_scale_range": profile.get('conditional_signal_scale_range',''),
+            "depletion_bracket_c": profile.get('depletion_bracket_c',''),
             "signal_scale": fit.signal_scale if fit else "",
             "baseline": fit.baseline if fit else "",
             "rmse": fit.rmse_signal if fit else "",

@@ -88,8 +88,12 @@ def calculate(dataset, snapshot, cancelled=lambda: False):
         plots.update(x=t, observed=y, predicted=prediction, x_label='Temperature (°C)', y_label='Signal (instrument units)')
         warnings += ['Single initially populated state, normalized initial coverage one at the selected interval start, linear ramp.',
                      'Energy and prefactor may be non-identifiable; numerical order does not establish mechanism. No parameter confidence interval is inferred.']
-        if fit.reaction_order == 0:
-            warnings.append('Known beta limitation: the zero-order optimizer can converge with biased amplitude near the depletion edge. Convergence is not an accuracy check; inspect residuals. This path failed the external-beta clean-reference residual tolerance.')
+        warnings += fit.identifiability_diagnostics.get('warnings',[])
+        profile = fit.identifiability_diagnostics.get('zero_order_profile')
+        if profile:
+            values.update({key:profile[key] for key in ('depletion_bracket_c',
+                'conditional_prefactor_range_s_inv','conditional_signal_scale_range')})
+            values['prefactor_interpretation']='Representative of a conditional range, not uniquely identified; not a confidence interval.'
     else:
         raise ValueError('Unsupported analysis method')
     if cancelled():

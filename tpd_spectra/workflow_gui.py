@@ -1,0 +1,423 @@
+"""Three-stage desktop workflow; the classic workspace remains available."""
+from pathlib import Path
+import tkinter as tk
+from tkinter import ttk, messagebox
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.widgets import SpanSelector
+
+from .gui import TpdSpectraApp
+from .branding import NAVY, brand_image, set_windows_app_identity
+from .workflow_state import WorkflowProject, METHODS, STAGES
+from .workflow_results_gui import ResultsMixin
+from .workflow_analysis import processed_signal
+from .workflow_modeling import ModelingPanel
+from .workflow_project_gui import ProjectMixin
+from .beta_onboarding import ExampleDialog, Tooltip
+from .beta_resources import resource
+from . import __version__
+from .equation_help import EquationCard
+
+
+class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
+    def __init__(self, root):
+        self.project = WorkflowProject()
+        self.restoring = False
+        self.classic = None
+        self.dataset_choice = tk.StringVar(root)
+        self.region_choice = tk.StringVar(root)
+        self.region_name = tk.StringVar(root, value="Peak 1")
+        self.region_low = tk.StringVar(root)
+        self.region_high = tk.StringVar(root)
+        self.method = tk.StringVar(root, value=METHODS[0])
+        self.method_values = {k: tk.StringVar(root) for k in
+                              ("lower", "upper", "beta", "prefactor", "energy", "order", "max_nfev")}
+        self.method_flags = {k: tk.BooleanVar(root) for k in ("free_order", "fit_baseline")}
+        super().__init__(root)
+        self.filter_method.set("none")
+        self.window.set(1)
+        self.setup_results()
+        self.setup_project_actions()
+
+    def _build(self):
+        header = tk.Frame(self.root, bg=NAVY, padx=16, pady=10)
+        header.pack(fill="x")
+        self.brand_mark = brand_image(header, 48)
+        tk.Label(header, image=self.brand_mark, bg=NAVY).pack(side="left", padx=(0, 12))
+        ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel").pack(side="left")
+        ttk.Label(header, text=f"EXTERNAL BETA  {__version__}", style="Subtitle.TLabel").pack(side="right")
+        actions = ttk.Frame(self.root, padding=10)
+        actions.pack(fill="x")
+        ttk.Button(actions, text="Open Spectrum…", command=self._import_files).pack(side="left")
+        ttk.Button(actions, text="Add folder…", command=self._import_folder).pack(side="left", padx=5)
+        ttk.Button(actions,text='Open Example Dataset',command=self.open_example).pack(side='left',padx=4)
+        ttk.Button(actions, text="Classic / batch workspace", command=self.open_classic).pack(side="right")
+        ttk.Button(actions, text="About", command=self._show_about).pack(side="right", padx=5)
+        self.project_actions = ttk.Frame(self.root,padding=(10,0,10,8))
+        self.project_actions.pack(fill='x')
+        ttk.Button(self.project_actions,text='Workflow quick start',command=self.workflow_help).pack(side='right')
+        context = ttk.Frame(self.root, padding=(12, 0, 12, 8))
+        context.pack(fill="x")
+        context.columnconfigure(1, weight=1)
+        context.columnconfigure(3, weight=1)
+        ttk.Label(context, text="Dataset").grid(row=0, column=0, padx=4)
+        self.dataset_combo = ttk.Combobox(context, textvariable=self.dataset_choice, state="readonly")
+        self.dataset_combo.grid(row=0, column=1, sticky="ew")
+        self.dataset_combo.bind("<<ComboboxSelected>>", self.select_dataset)
+        ttk.Label(context, text="Peak").grid(row=0, column=2, padx=8)
+        self.region_combo = ttk.Combobox(context, textvariable=self.region_choice, state="readonly")
+        self.region_combo.grid(row=0, column=3, sticky="ew")
+        self.region_combo.bind("<<ComboboxSelected>>", self.select_region)
+        self.context_label = ttk.Label(context, text="Import a spectrum and define a peak.")
+        self.context_label.grid(row=1, column=0, columnspan=4, sticky="w", pady=(5, 0))
+        self.stages = ttk.Notebook(self.root)
+        self.stages.pack(fill="both", expand=True, padx=12)
+        self.stage_frames = [ttk.Frame(self.stages) for _ in STAGES]
+        for frame, title in zip(self.stage_frames, STAGES):
+            self.stages.add(frame, text=title)
+        self._build_preparation(self.stage_frames[0])
+        self._build_modeling(self.stage_frames[1])
+        self._build_kinetic(self.stage_frames[2])
+        self.status = tk.StringVar(self.root, value="Import spectra to begin.")
+        ttk.Label(self.root, textvariable=self.status, padding=10, wraplength=1100).pack(fill="x")
+        ttk.Button(self.root,text='Report a Bug / Send Feedback',command=self._show_feedback).pack(anchor='e',padx=12,pady=(0,6))
+        self.stages.bind("<<NotebookTabChanged>>", lambda _e: self.refresh_context())
+
+    def _build_preparation(self, frame):
+        frame.rowconfigure(0, weight=1)
+        frame.columnconfigure(0, weight=1)
+        panes = ttk.Panedwindow(frame, orient="horizontal")
+        panes.grid(row=0, column=0, sticky="nsew")
+        controls, workspace = ttk.Frame(panes, width=375), ttk.Frame(panes)
+        panes.add(controls, weight=0)
+        panes.add(workspace, weight=1)
+        workspace.columnconfigure(0, weight=1)
+        workspace.rowconfigure(1, weight=1)
+        self.sidebar = self._scroll_panel(controls)
+        self._files_panel()
+        ttk.Label(self.sidebar, text="Normalization is display-only. Smoothing is a view preview here.\n"
+                  "Analysis uses the recorded processing recipe for the selected dataset.", wraplength=320).pack(fill="x", pady=8)
+        self.processing_baseline = tk.StringVar(self.root, value='0')
+        ttk.Label(self.sidebar, text='Subtract constant baseline (signal units)').pack(anchor='w')
+        ttk.Entry(self.sidebar, textvariable=self.processing_baseline).pack(fill='x')
+        ttk.Button(self.sidebar, text='Apply smoothing / baseline to analysis', command=self.apply_processing).pack(fill='x', pady=4)
+        ttk.Button(self.sidebar, text='Undo processing', command=self.undo_processing).pack(fill='x')
+        ttk.Button(self.sidebar, text='Reset processing to raw signal', command=self.reset_processing).pack(fill='x', pady=4)
+        self.processing_label = ttk.Label(self.sidebar, text='Analysis recipe: raw signal', wraplength=320)
+        self.processing_label.pack(fill='x')
+        self.file_table.bind("<<TreeviewSelect>>", self.select_table_dataset)
+        self._workspace(workspace)
+        region_bar = ttk.Frame(frame, padding=8)
+        region_bar.grid(row=1, column=0, sticky="ew")
+        for col, (label, var) in enumerate((("Peak name", self.region_name), ("From °C", self.region_low), ("To °C", self.region_high))):
+            ttk.Label(region_bar, text=label).grid(row=0, column=col * 2, padx=4)
+            ttk.Entry(region_bar, textvariable=var, width=14 if col == 0 else 9).grid(row=0, column=col * 2 + 1)
+        ttk.Button(region_bar, text="Add peak", command=self.add_region).grid(row=0, column=6, padx=5)
+        ttk.Button(region_bar, text="Update peak", command=self.update_region).grid(row=0, column=7, padx=5)
+        ttk.Button(region_bar, text="Drag interval", command=self.select_region_on_plot).grid(row=0, column=8, padx=5)
+        self.region_table = ttk.Treeview(frame, columns=("peak", "lower", "upper"), show="headings", height=3)
+        for name, label in (("peak", "Named peak"), ("lower", "From °C"), ("upper", "To °C")):
+            self.region_table.heading(name, text=label)
+        self.region_table.grid(row=2, column=0, sticky="ew", padx=8, pady=(0, 8))
+        self.region_table.bind("<<TreeviewSelect>>", self.select_table_region)
+
+    def _build_modeling(self, frame):
+        self.modeling_panel = ModelingPanel(self, frame)
+
+    def _build_kinetic(self, frame):
+        panes = ttk.Panedwindow(frame, orient="horizontal")
+        panes.pack(fill="both", expand=True)
+        controls, workspace = ttk.Frame(panes, width=330), ttk.Frame(panes)
+        panes.add(controls, weight=0)
+        panes.add(workspace, weight=1)
+        sidebar = self._scroll_panel(controls)
+        ttk.Label(sidebar, text="Analysis method", style="Section.TLabel").pack(anchor="w")
+        selector = ttk.Combobox(sidebar, textvariable=self.method, values=METHODS, state="readonly", width=24)
+        selector.pack(fill="x", pady=8)
+        selector.bind("<<ComboboxSelected>>", lambda _e: self.refresh_method())
+        self.method_panels = {}
+        self.method_equations = {}
+        fields = {METHODS[0]: [("lower", "Leading edge from °C"), ("upper", "Leading edge to °C"), ("beta", "Heating rate (K/s; verify)")],
+                  METHODS[1]: [("beta", "Heating rate (K/s)"), ("prefactor", "Assumed prefactor (s⁻¹)")],
+                  METHODS[2]: [("beta", "Heating rate (K/s)"), ("energy", "Initial energy (eV)"),
+                               ("prefactor", "Initial prefactor (s⁻¹)"), ("order", "Fixed / initial order"),
+                               ("max_nfev", "Maximum evaluations")]}
+        help_text = {METHODS[0]: "Apparent slope energy requires a suitable rate signal and approximately unchanged coverage. It is not a zero-order assignment.",
+                     METHODS[1]: "Classical first-order Redhead estimate with an assumed prefactor and linear ramp. No measured confidence interval is inferred.",
+                     METHODS[2]: "Single-state linear-ramp fit; normalized initial coverage is one. Energy/prefactor may be non-identifiable. Fixed zero order uses a depletion-edge search. Its prefactor/scale are representative values with conditional ranges, not unique estimates. Inspect residuals and assumptions."}
+        for method in METHODS:
+            panel = ttk.Frame(sidebar)
+            self.method_panels[method] = panel
+            equation = EquationCard(panel, method)
+            equation.pack(fill='x', pady=(0, 8))
+            self.method_equations[method] = equation
+            for key, label in fields[method]:
+                ttk.Label(panel, text=label).pack(anchor="w", pady=(6, 0))
+                entry=ttk.Entry(panel, textvariable=self.method_values[key])
+                entry.pack(fill="x")
+                Tooltip(entry,{'beta':'Linear heating rate in kelvin per second. Confirm acquisition conditions; it is not inferred automatically.',
+                    'prefactor':'Arrhenius prefactor in s⁻¹ under normalized coverage. Redhead assumes it; full fitting optimizes it.',
+                    'energy':'Initial optimizer guess in electronvolts; the result is shown separately.',
+                    'order':'Fixed order unless Fit order is selected. A fitted order does not prove a mechanism.',
+                    'max_nfev':'Maximum optimizer evaluations, not Monte Carlo replicates.',
+                    'lower':'Leading-edge subinterval in degrees Celsius, inside the selected peak.',
+                    'upper':'Use only the rising edge where coverage change is small, not the whole peak.'}[key])
+            if method == METHODS[2]:
+                ttk.Checkbutton(panel, text="Fit order (0.2–3)", variable=self.method_flags["free_order"]).pack(anchor="w", pady=5)
+                ttk.Checkbutton(panel, text="Fit constant baseline", variable=self.method_flags["fit_baseline"]).pack(anchor="w")
+            ttk.Label(panel, text=help_text[method], wraplength=280, padding=(0, 12)).pack(fill="x")
+        self.method_action_frame = ttk.Frame(sidebar)
+        self.method_action_frame.pack(fill="x", side="bottom")
+        self.result_title = ttk.Label(workspace, text="Results · select a dataset and peak", padding=8)
+        self.result_title.pack(fill="x")
+        self.result_figure = Figure(figsize=(8, 5), constrained_layout=True)
+        self.result_canvas = FigureCanvasTkAgg(self.result_figure, master=workspace)
+        self.result_canvas.get_tk_widget().pack(fill="both", expand=True)
+        self.result_text = tk.Text(workspace, height=7, wrap="word", font=("Segoe UI", 10), padx=12, pady=8)
+        self.result_text.pack(fill="x")
+        self.refresh_method()
+
+    def _load_paths(self, paths):
+        super()._load_paths(paths)
+        for row in self.spectra.values():
+            self.project.add_dataset(row["path"], row["spec"])
+        self.refresh_context()
+
+    def refresh_context(self):
+        if not hasattr(self, "region_table"):
+            return
+        self.dataset_ids = list(self.project.datasets)
+        self.dataset_combo.configure(values=[f"{Path(self.project.datasets[i].path).name} [{i[:6]}]" for i in self.dataset_ids])
+        if self.project.active_dataset in self.dataset_ids:
+            self.dataset_combo.current(self.dataset_ids.index(self.project.active_dataset))
+        self.region_ids = [r.id for r in self.project.regions.values() if r.dataset_id == self.project.active_dataset]
+        self.region_combo.configure(values=[self.project.regions[i].label for i in self.region_ids])
+        self.region_table.delete(*self.region_table.get_children())
+        for ident in self.region_ids:
+            region = self.project.regions[ident]
+            self.region_table.insert("", "end", iid=ident, values=(region.label, region.lower, region.upper))
+        if self.project.active_region in self.region_ids:
+            self.region_combo.current(self.region_ids.index(self.project.active_region))
+            dataset, region = self.project.context()
+            self.region_name.set(region.label)
+            self.region_low.set(f"{region.lower:g}")
+            self.region_high.set(f"{region.upper:g}")
+            self.context_label.configure(text=f"{Path(dataset.path).name} / {region.label} / {region.lower:g}–{region.upper:g} °C")
+        else:
+            self.region_choice.set("")
+            self.context_label.configure(text="Define a named peak using numeric bounds or drag an interval.")
+        self.refresh_method()
+        self.modeling_panel.restore()
+        self._draw_plot()
+        if self.project.active_dataset:
+            self.processing_label.configure(text='Analysis recipe: ' + str(self.project.datasets[self.project.active_dataset].processing))
+
+    def select_dataset(self, _event=None):
+        index = self.dataset_combo.current()
+        if index >= 0:
+            self.project.select_dataset(self.dataset_ids[index])
+            self.refresh_context()
+
+    def select_region(self, _event=None):
+        index = self.region_combo.current()
+        if index >= 0:
+            self.project.active_region = self.region_ids[index]
+            self.refresh_context()
+
+    def select_table_dataset(self, _event=None):
+        selected = self.file_table.selection()
+        if selected:
+            item = next((d for d in self.project.datasets.values() if d.path == selected[0]), None)
+            if item:
+                self.project.select_dataset(item.id)
+                self.refresh_context()
+
+    def select_table_region(self, _event=None):
+        selected = self.region_table.selection()
+        if selected and selected[0] != self.project.active_region:
+            self.project.active_region = selected[0]
+            self.refresh_context()
+
+    def add_region(self):
+        try:
+            self.project.add_region(self.region_name.get(), self.region_low.get(), self.region_high.get())
+            self.refresh_context()
+        except ValueError as exc:
+            messagebox.showerror("Invalid peak", str(exc), parent=self.root)
+
+    def update_region(self):
+        try:
+            self.project.context()
+            self.project.update_region(self.project.active_region, self.region_name.get(), self.region_low.get(), self.region_high.get())
+            self.refresh_context()
+        except ValueError as exc:
+            messagebox.showerror("Invalid peak", str(exc), parent=self.root)
+
+    def select_region_on_plot(self):
+        if self.x_mode.get() != "Temperature" or not self.project.active_dataset:
+            messagebox.showinfo("Select a spectrum", "Select an imported spectrum and the temperature axis first.", parent=self.root)
+            return
+        if self.nav_toolbar.mode:
+            messagebox.showinfo("Disable navigation", "Disable plot pan/zoom before selecting a peak.", parent=self.root)
+            return
+        self._stop_span()
+        def selected(a, b):
+            self.region_low.set(f"{min(a, b):.3f}")
+            self.region_high.set(f"{max(a, b):.3f}")
+            self.status.set("Interval selected. Choose Add peak or Update peak to retain it.")
+        self._span_selector = SpanSelector(getattr(self,'_selected_plot_axis',self.axis), selected, "horizontal", interactive=True,
+                                           props={"facecolor": "teal", "alpha": .18})
+
+    def refresh_method(self):
+        if not hasattr(self, "method_panels"):
+            return
+        for name, panel in self.method_panels.items():
+            panel.pack_forget()
+        self.method_panels[self.method.get()].pack(fill="x")
+        self.restoring = True
+        try:
+            dataset, region = self.project.context()
+            settings = self.project.method_settings(self.method.get())
+            for key, var in self.method_values.items():
+                var.set(str(settings[key]))
+            for key, var in self.method_flags.items():
+                var.set(settings[key])
+            self.result_title.configure(text=f"Results for {Path(dataset.path).name} / {region.label} / {self.method.get()}")
+        except ValueError:
+            self.result_title.configure(text="Results · select a dataset and peak")
+        finally:
+            self.restoring = False
+        self.result_text.configure(state="normal")
+        self.result_text.delete("1.0", "end")
+        self.result_text.insert("end", "Not calculated for this selection.")
+        self.result_text.configure(state="disabled")
+        if hasattr(self, 'jobs'):
+            self.restore_result()
+            self.schedule_preview()
+
+    def apply_processing(self):
+        try:
+            self.project.set_processing({'smoothing': self.filter_method.get(), 'window': int(self.window.get()),
+                                         'baseline': float(self.processing_baseline.get())})
+            self.refresh_context()
+        except (ValueError, KeyError, tk.TclError) as exc:
+            self.status.set('Processing unavailable: ' + str(exc))
+
+    def undo_processing(self):
+        self.project.undo_processing()
+        self.refresh_context()
+
+    def reset_processing(self):
+        if self.project.active_dataset:
+            self.project.set_processing({'smoothing': 'none', 'window': 1, 'baseline': 0.0})
+            self.refresh_context()
+
+    def _draw_plot(self):
+        previous_status = self.status.get() if hasattr(self,'status') else ''
+        super()._draw_plot()
+        if hasattr(self,'status'):
+            if getattr(self,'job_busy',False):
+                self.status.set(previous_status)
+            else:
+                self.status.set('Select a dataset and named peak, then explore models or choose one kinetic method. Save labeled results to build a report.')
+        if not hasattr(self, "figure"):
+            return
+        for axis in self.figure.axes:
+            for patch in list(axis.patches):
+                patch.remove()
+        selected_axis = self.axis
+        visible = [key for key,row in self.spectra.items() if row['visible']]
+        dataset = self.project.datasets.get(self.project.active_dataset)
+        if dataset and self.view_mode.get() == 'Small multiples' and dataset.path in visible:
+            selected_axis = self.figure.axes[visible.index(dataset.path)]
+        self._selected_plot_axis = selected_axis
+        if self.x_mode.get() == "Temperature" and self.project.active_region in self.project.regions and dataset and dataset.path in visible:
+            region = self.project.regions[self.project.active_region]
+            selected_axis.axvspan(region.lower, region.upper, color="teal", alpha=.12, label=region.label)
+        if dataset and dataset.path in visible and self.x_mode.get() == 'Temperature':
+            if dataset.processing != {'smoothing': 'none', 'window': 1, 'baseline': 0.0}:
+                y = processed_signal(dataset)
+                if self.normalize.get():
+                    y = (y-y.min()) / max(float(y.max()-y.min()), 1e-15)
+                selected_axis.plot(dataset.spectrum.temperature_clean_c, y, label='Selected analysis recipe', color='teal', linestyle='--')
+                selected_axis.legend(fontsize=8)
+        self.canvas.draw_idle()
+
+    def open_classic(self):
+        if getattr(self, 'job_busy', False):
+            self.status.set('Finish or cancel the workflow calculation before opening the classic workspace.')
+            return
+        if self.classic and self.classic.root.winfo_exists():
+            self.classic.root.lift()
+            return
+        self.classic = TpdSpectraApp(tk.Toplevel(self.root))
+        self.classic._load_paths([Path(d.path) for d in self.project.datasets.values()])
+        for key,row in self.classic.spectra.items():
+            row['included'] = self.spectra[key]['included']
+            self.classic.file_table.set(key,'included','✓' if row['included'] else '—')
+
+    def _remove_selected(self):
+        if getattr(self,'job_busy',False):
+            self.status.set('Finish or cancel the active calculation before removing datasets.')
+            return
+        for path in self.file_table.selection():
+            dataset = next((d for d in self.project.datasets.values() if d.path == path),None)
+            if dataset is None:
+                continue
+            if any(r['snapshot']['dataset_id']==dataset.id for r in self.project.runs.values()):
+                self.status.set('This dataset has saved runs. Delete those runs before removing it, or hide the trace.')
+                continue
+            self.project.regions = {k:r for k,r in self.project.regions.items() if r.dataset_id != dataset.id}
+            for field in ('settings','current_results','modeling'):
+                values=getattr(self.project,field)
+                setattr(self.project,field,{k:v for k,v in values.items() if not k.startswith(dataset.id+'/')})
+            self.project.processing_history.pop(dataset.id,None)
+            del self.project.datasets[dataset.id]
+            self.spectra.pop(path,None)
+            self.file_table.delete(path)
+        if self.project.active_dataset not in self.project.datasets:
+            self.project.active_dataset=None
+            self.project.active_region=None
+            self.dataset_choice.set('')
+            if self.project.datasets:
+                self.project.select_dataset(next(iter(self.project.datasets)))
+        self.refresh_context()
+
+    def workflow_help(self):
+        dialog=tk.Toplevel(self.root)
+        dialog.title('Workflow quick start')
+        dialog.geometry('720x560')
+        text=tk.Text(dialog,wrap='word',padx=20,pady=16,font=('Segoe UI',11))
+        text.pack(fill='both',expand=True)
+        text.insert('end','TPD Spectra Studio — workflow preview\n\n'
+            '1. Import and inspect\nImport CSV spectra. Raw signal stays unchanged. Confirm temperature/time units and the heating ramp.\n\n'
+            '2. Define a peak\nIn Spectra & Preparation, enter a name and temperature bounds, then Add peak. Drag interval can also set bounds.\n\n'
+            '3. Explore hypotheses\nIn Modeling, simulate parameters or compare candidate orders. Seeded Monte Carlo refits simulated noisy traces; rankings do not prove mechanisms.\n\n'
+            '4. Analyze one peak\nIn Kinetic Analysis, choose Leading edge, Redhead or Polanyi–Wigner. Lightweight estimates update after edits; numerical fitting runs explicitly and can be cancelled.\n\n'
+            '5. Retain and export\nSave labeled results, then Report / Export. Select runs, review their labels and choose a destination. Save project retains your workspace.\n\n'
+            'Synthetic first test\nClick Open Example Dataset and keep first order single peak. Redhead: 1 K/s and 1e13 s⁻¹ gives about 1.2 eV. Leading edge: 90–110 °C. This example is simulated, not experimental. Zero-order fits need a resolved depletion edge; reported parameter brackets are not confidence intervals.\n\n'
+            'Classic / batch workspace retains advanced and batch functions.\nCreated by Karol Cieślik. Scientific applicability still requires independent validation.')
+        text.configure(state='disabled')
+        ttk.Button(dialog,text='Close',command=dialog.destroy).pack(anchor='e',padx=12,pady=8)
+        ttk.Button(dialog,text='Open beta Quick Start PDF',command=self.open_beta_guide).pack(anchor='w',padx=12,pady=8)
+
+    def open_example(self):
+        try:
+            return ExampleDialog(self)
+        except Exception as exc:
+            self.status.set(str(exc))
+
+    def open_beta_guide(self):
+        try:
+            import webbrowser
+            webbrowser.open(resource('docs/beta/QUICK_START.pdf').as_uri())
+        except (OSError,ValueError) as exc:
+            self.status.set(str(exc))
+
+
+def main():
+    set_windows_app_identity()
+    root = tk.Tk()
+    WorkflowApp(root)
+    root.mainloop()
+    return 0

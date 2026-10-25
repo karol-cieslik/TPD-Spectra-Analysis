@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+<title id="title">TPD Spectra Studio — spectrum mark</title>
+<rect width="256" height="256" rx="52" fill="#142D3B"/>
+<path d="M40 183 C62 183 63 183 76 120 C83 80 90 65 101 65 C119 65 110 183 133 183 C149 183 147 122 167 122 C186 122 183 183 216 183" fill="none" stroke="#8DE2CF" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

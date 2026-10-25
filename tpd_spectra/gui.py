@@ -2,6 +2,10 @@
 from __future__ import annotations
 
 import queue
+import math
+import json
+import tempfile
+import webbrowser
 import subprocess
 import sys
 import threading
@@ -11,17 +15,85 @@ from tkinter import filedialog, messagebox, ttk
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
+from matplotlib.widgets import SpanSelector
 
 from . import __version__
 from .analysis import load_spectrum, smooth_signal
+from .gui_ranges import validate_temperature_window, window_from_drag
+from .identity import about_text, REPOSITORY, CONTACT_EMAIL
+from .feedback import DiagnosticLog
+from .feedback_gui import open_feedback
+from .gui_review import ReviewDialog, ResultsDialog, text_panel
+from .run_session import RunPlan, execute, sha256
+from .branding import (NAVY, TEAL, TEAL_ACTIVE, BACKGROUND, INK, MUTED,
+                       install_window_icons, brand_image, set_windows_app_identity)
 
 
 PALETTE = ["#2563eb", "#e76f51", "#059669", "#9333ea", "#d97706", "#0891b2",
            "#db2777", "#4f46e5", "#65a30d", "#475569"]
-BG = "#f3f6fb"
-INK = "#172b4d"
-MUTED = "#64748b"
-BLUE = "#2563eb"
+BG = BACKGROUND
+BLUE = TEAL
+
+
+QUICK_START_STEPS = (
+    ("1  Import spectra", "Select Import CSV files or Add folder. For a first test, open "
+     "examples/synthetic_two_peak_demo.csv from the extracted beta package. "
+     "Time is in milliseconds; temperature is in °C; signal is in arbitrary units."),
+    ("2  Explore the plot", "Show or hide traces, choose Overlay or Small multiples, "
+     "and adjust smoothing in Spectra & view. Export plot PNG saves this view."),
+    ("3  Select analysis windows", "Open Analysis settings. Enter the leading-edge and "
+     "peak-search limits or select them on the plot. Shaded areas show the selected data. "
+     "For the demo: leading edge 110–140 °C, peak search 150–210 °C, "
+     "Redhead prefactor 1e13 s⁻¹, and smoothing none."),
+    ("4  Run the analysis", "Use Include independently from Show in the spectra table. Select Run full analysis "
+     "to review the included files, assumptions and a new results folder. Inspect Setup preview or "
+     "compute one selected spectrum before Run and save. "
+     "Leave optional kinetic fitting off for the first demo run. A single-state model "
+     "does not describe both demo peaks."),
+    ("5  Review the results", "Open results folder and inspect diagnostic plots, "
+     "CSV tables, and warnings. The demo is synthetic, not an experimental measurement. "
+     "See examples/README.md for its model, known inputs, and limitations."),
+)
+
+
+class QuickStartDialog(tk.Toplevel):
+    """Readable, keyboard-accessible help that also fits small screens."""
+
+    def __init__(self, parent: tk.Tk):
+        super().__init__(parent)
+        self.title("Quick start · TPD Spectra Studio")
+        self.transient(parent)
+        self.configure(background=BG)
+        width = min(720, self.winfo_screenwidth() - 48)
+        height = min(680, self.winfo_screenheight() - 96)
+        self.geometry(f"{width}x{height}")
+        self.minsize(min(440, width), min(340, height))
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+        ttk.Label(self, text="From CSV to reviewed results", font=("Segoe UI", 15, "bold"),
+                  padding=(20, 16)).grid(row=0, column=0, columnspan=2, sticky="w")
+        self.text = tk.Text(self, wrap="word", font=("Segoe UI", 10), background="white",
+                            foreground=INK, relief="flat", padx=20, pady=12,
+                            cursor="arrow", height=12, width=50)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.text.yview)
+        self.text.configure(yscrollcommand=scrollbar.set)
+        self.text.grid(row=1, column=0, sticky="nsew", padx=(16, 0))
+        scrollbar.grid(row=1, column=1, sticky="ns", padx=(0, 16))
+        self.text.tag_configure("heading", font=("Segoe UI", 11, "bold"),
+                                foreground=BLUE, spacing1=12, spacing3=5)
+        self.text.tag_configure("body", spacing3=8)
+        for heading, body in QUICK_START_STEPS:
+            self.text.insert("end", heading + "\n", "heading")
+            self.text.insert("end", body + "\n", "body")
+        self.text.insert("end", "A good-looking fit does not establish a unique mechanism.\n", "body")
+        self.text.configure(state="disabled")
+        self.close_button = ttk.Button(self, text="Close", command=self.destroy)
+        self.close_button.grid(row=2, column=0, columnspan=2, sticky="e", padx=16, pady=12)
+        self.bind("<Escape>", lambda _event: self.destroy())
+        self.bind("<Return>", lambda _event: self.destroy())
+        self.protocol("WM_DELETE_WINDOW", self.destroy)
+        self.grab_set()
+        self.close_button.focus_set()
 
 
 def build_cli_arguments(settings: dict[str, object]) -> list[str]:
@@ -44,9 +116,12 @@ def build_cli_arguments(settings: dict[str, object]) -> list[str]:
 
     def number(key: str, label: str) -> float:
         try:
-            return float(settings[key])
+            value = float(settings[key])
+            if not math.isfinite(value):
+                raise ValueError("nonfinite")
+            return value
         except (KeyError, TypeError, ValueError) as exc:
-            raise ValueError(f"{label} must be a number.") from exc
+            raise ValueError(f"{label} must be a finite number.") from exc
 
     edge_low, edge_high = number("leading_low", "Leading-edge lower limit"), number("leading_high", "Leading-edge upper limit")
     red_low, red_high = number("redhead_low", "Peak-search lower limit"), number("redhead_high", "Peak-search upper limit")
@@ -82,10 +157,28 @@ def build_cli_arguments(settings: dict[str, object]) -> list[str]:
     return args
 
 
+
+def workflow_guidance(imported: int, visible: int, *, running: bool = False) -> str:
+    """Give a useful next step without conflating preview and completed analysis."""
+    if running:
+        return "Analyzing spectra… Review warnings and results when the run finishes."
+    if imported == 0:
+        return "Step 1 of 4 · Import CSV spectra or add a folder to begin."
+    if visible == 0:
+        return "Step 2 of 4 · All plot traces are hidden. Select Show all to inspect; Include controls analysis."
+    return (
+        f"Step 2–3 of 4 · {visible} visible of {imported} imported. "
+        "Inspect traces and analysis windows, then select Run full analysis."
+    )
+
+
 class TpdSpectraApp:
     """Compact three-panel app: import, tune, compare, then export or analyze."""
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
+        self.diagnostic_log = DiagnosticLog()
+        root.report_callback_exception = self._report_callback_exception
+        install_window_icons(root)
         root.title(f"TPD Spectra Studio  ·  {__version__}")
         screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
         min_width = min(1040, max(480, screen_width - 48))
@@ -103,6 +196,14 @@ class TpdSpectraApp:
         self.spectra: dict[str, dict] = {}
         self.worker_messages: queue.Queue[tuple[str, str]] = queue.Queue()
         self.running = False
+        self.active_plan = None
+        self.last_output = None
+        self.cancel_event = threading.Event()
+        self.preview_workspaces = []
+        self.close_after_run = False
+        self.run_log = []
+        self.worker = None
+        self.explorers = []
         self.view_mode = tk.StringVar(value="Overlay")
         self.x_mode = tk.StringVar(value="Temperature")
         self.filter_method = tk.StringVar(value="median")
@@ -111,7 +212,7 @@ class TpdSpectraApp:
         self.kinetic_fit = tk.BooleanVar(value=False)
         self.kinetic_model = tk.StringVar(value="single")
         self.kinetic_order = tk.StringVar(value="1")
-        self.output_path = tk.StringVar(value=str(Path.home() / "TPD-Spectra-Results"))
+        self.output_path = tk.StringVar(value=str(Path.home()))
         self.leading_low = tk.DoubleVar(value=130)
         self.leading_high = tk.DoubleVar(value=170)
         self.peak_low = tk.DoubleVar(value=230)
@@ -122,10 +223,22 @@ class TpdSpectraApp:
         self.kinetic_energy = tk.StringVar(value="1.0")
         self.kinetic_prefactor = tk.StringVar(value="1e13")
         self.no_baseline = tk.BooleanVar(value=False)
+        self._span_selector = None
+        self._selection_kind = None
         self._style()
         self._build()
         self.root.after(100, self._poll_worker)
         self.root.protocol("WM_DELETE_WINDOW", self._close)
+
+    def _report_callback_exception(self,kind,error,tb):
+        try:
+            self.diagnostic_log.record('UI callback failed',str(error),error.with_traceback(tb))
+            self.status.set('An unexpected error occurred. Use Report a Bug / Send Feedback; your existing data and saved files are retained.')
+        except Exception:
+            pass
+
+    def _show_feedback(self):
+        return open_feedback(self)
 
     def _style(self) -> None:
         style = ttk.Style(self.root)
@@ -135,79 +248,204 @@ class TpdSpectraApp:
             pass
         style.configure("TFrame", background=BG)
         style.configure("Card.TFrame", background="#ffffff")
-        style.configure("TLabel", background=BG, foreground=INK, font=("Segoe UI", 9))
-        style.configure("Card.TLabel", background="#ffffff", foreground=INK, font=("Segoe UI", 9))
-        style.configure("Title.TLabel", background="#102a43", foreground="white", font=("Segoe UI", 19, "bold"))
-        style.configure("Subtitle.TLabel", background="#102a43", foreground="#d7e5f5", font=("Segoe UI", 9))
+        style.configure("TLabel", background=BG, foreground=INK, font=("Segoe UI", 10))
+        style.configure("Card.TLabel", background="#ffffff", foreground=INK, font=("Segoe UI", 10))
+        style.configure("Title.TLabel", background=NAVY, foreground="white", font=("Segoe UI", 19, "bold"))
+        style.configure("Subtitle.TLabel", background=NAVY, foreground="#CEE3E8", font=("Segoe UI", 10))
         style.configure("Section.TLabel", background="#ffffff", foreground=INK, font=("Segoe UI", 10, "bold"))
-        style.configure("Muted.TLabel", background="#ffffff", foreground=MUTED, font=("Segoe UI", 8))
-        style.configure("Primary.TButton", font=("Segoe UI", 9, "bold"), padding=(13, 8),
-                        foreground="white", background=BLUE)
-        style.map("Primary.TButton", background=[("active", "#1d4ed8"), ("disabled", "#94a3b8")])
-        style.configure("TButton", font=("Segoe UI", 9), padding=(9, 6))
-        style.configure("Treeview", rowheight=28, font=("Segoe UI", 9), background="white", fieldbackground="white")
-        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
+        style.configure("Muted.TLabel", background="#ffffff", foreground=MUTED, font=("Segoe UI", 9))
+        style.configure("TButton", font=("Segoe UI", 10), padding=(12, 7),
+                        foreground=INK, background="white", bordercolor="#CBD5DF", focusthickness=2)
+        style.map("TButton", background=[("active", "#E4EFF1")],
+                  foreground=[("disabled", "#627383")])
+        style.configure("Primary.TButton", font=("Segoe UI", 10, "bold"), padding=(14, 8),
+                        foreground="white", background=BLUE, bordercolor=BLUE, focuscolor="white")
+        style.map("Primary.TButton", background=[("disabled", "#DCE4E9"), ("active", TEAL_ACTIVE)],
+                  foreground=[("disabled", "#526575"), ("!disabled", "white")])
+        style.configure("Treeview", rowheight=32, font=("Segoe UI", 10), foreground=INK,
+                        background="white", fieldbackground="white", borderwidth=0)
+        style.map("Treeview", background=[("selected", "#D8EFEC")], foreground=[("selected", INK)])
+        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"),
+                        background="#EAF0F3", foreground=MUTED, padding=(6, 8))
+        style.configure("TNotebook", background=BG, borderwidth=0, tabmargins=(0, 0, 0, 2))
+        style.configure("TNotebook.Tab", padding=(14, 10), font=("Segoe UI", 10), background="#E4EAEE")
+        style.map("TNotebook.Tab", background=[("selected", "white")],
+                  foreground=[("selected", TEAL_ACTIVE)])
         style.configure("TCheckbutton", background="#ffffff", foreground=INK)
         style.configure("TCombobox", padding=4)
 
     def _build(self) -> None:
-        header = tk.Frame(self.root, bg="#102a43", padx=22, pady=16)
+        header = tk.Frame(self.root, bg=NAVY, padx=20, pady=14)
         header.pack(fill="x")
-        title = ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel")
+        self.brand_mark = brand_image(header, 64)
+        tk.Label(header, image=self.brand_mark, bg=NAVY).pack(side="left", padx=(0, 14))
+        identity = tk.Frame(header, bg=NAVY)
+        identity.pack(side="left", fill="x", expand=True)
+        title = ttk.Label(identity, text="TPD Spectra Studio", style="Title.TLabel")
         title.pack(anchor="w")
-        ttk.Label(header, text="Explore, compare, and analyze temperature-programmed desorption data",
+        ttk.Label(identity, text="Temperature-programmed desorption · inspect, compare, understand",
                   style="Subtitle.TLabel").pack(anchor="w", pady=(3, 0))
+        tk.Label(header, text=f"BETA  {__version__}", bg="#274652", fg="#C6F2E7",
+                 font=("Segoe UI", 9, "bold"), padx=10, pady=6).pack(side="right", padx=(12, 0))
 
         toolbar = ttk.Frame(self.root, padding=(18, 10))
         toolbar.pack(fill="x")
-        self.import_button = ttk.Button(toolbar, text="＋  Import CSV files", style="Primary.TButton", command=self._import_files)
+        self.toolbar = toolbar
+        toolbar.columnconfigure(0, weight=1)
+        self.import_actions = ttk.Frame(toolbar)
+        self.analysis_actions = ttk.Frame(toolbar)
+        self.import_actions.grid(row=0, column=0, sticky="w")
+        self.analysis_actions.grid(row=0, column=1, sticky="e")
+        self.import_button = ttk.Button(self.import_actions, text="Import CSV files…", command=self._import_files)
         self.import_button.pack(side="left")
-        ttk.Button(toolbar, text="＋  Add folder", command=self._import_folder).pack(side="left", padx=(8, 0))
-        ttk.Button(toolbar, text="Export plot PNG", command=self._export_png).pack(side="left", padx=(8, 0))
-        self.run_button = ttk.Button(toolbar, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
+        ttk.Button(self.import_actions, text="Add folder…", command=self._import_folder).pack(side="left", padx=(8, 0))
+        ttk.Button(self.import_actions, text="Quick start", command=self._show_quick_start).pack(side="left", padx=(8, 0))
+        self.run_button = ttk.Button(self.analysis_actions, text="Run full analysis", style="Primary.TButton", command=self._run_analysis)
         self.run_button.pack(side="right")
-        self.status = tk.StringVar(value="Import CSV files or a folder to begin.")
-        ttk.Label(toolbar, textvariable=self.status, foreground=MUTED).pack(side="right", padx=12)
+        self.cancel_button = ttk.Button(self.analysis_actions, text="Cancel run", command=self._cancel_run, state="disabled")
+        self.cancel_button.pack(side="right", padx=5)
+        toolbar.bind("<Configure>", self._layout_toolbar)
+        self.status = tk.StringVar(value=workflow_guidance(0, 0))
+        status_label = ttk.Label(self.root, textvariable=self.status, foreground=MUTED, wraplength=1000,
+                                 padding=(20, 5))
+        status_label.pack(fill="x")
+        status_label.bind("<Configure>", lambda event: status_label.configure(wraplength=max(300, event.width - 40)))
 
         body = ttk.Frame(self.root, padding=(18, 0, 18, 10))
         body.pack(fill="both", expand=True)
-        body.columnconfigure(0, weight=0, minsize=322)
-        body.columnconfigure(1, weight=1)
         body.rowconfigure(0, weight=1)
-        sidebar_frame = ttk.Frame(body, style="Card.TFrame", width=322)
-        sidebar_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
-        sidebar_frame.grid_propagate(False)
-        sidebar_frame.rowconfigure(0, weight=1)
-        sidebar_frame.columnconfigure(0, weight=1)
-        sidebar_canvas = tk.Canvas(sidebar_frame, background="white", highlightthickness=0, width=306)
-        sidebar_scroll = ttk.Scrollbar(sidebar_frame, orient="vertical", command=sidebar_canvas.yview)
-        sidebar_canvas.configure(yscrollcommand=sidebar_scroll.set)
-        sidebar_canvas.grid(row=0, column=0, sticky="nsew")
-        sidebar_scroll.grid(row=0, column=1, sticky="ns")
-        self.sidebar = ttk.Frame(sidebar_canvas, style="Card.TFrame", padding=14)
-        sidebar_window = sidebar_canvas.create_window((0, 0), window=self.sidebar, anchor="nw")
-        self.sidebar.bind("<Configure>", lambda _event: sidebar_canvas.configure(scrollregion=sidebar_canvas.bbox("all")))
-        sidebar_canvas.bind("<Configure>", lambda event: sidebar_canvas.itemconfigure(sidebar_window, width=event.width))
-        sidebar_canvas.bind("<MouseWheel>", lambda event: sidebar_canvas.yview_scroll(-1 if event.delta > 0 else 1, "units"))
-        workspace = ttk.Frame(body, style="Card.TFrame", padding=(12, 10))
-        workspace.grid(row=0, column=1, sticky="nsew")
+        body.columnconfigure(0, weight=1)
+
+        # A draggable divider gives the plot room without hiding controls.
+        self.main_panes = ttk.Panedwindow(body, orient="horizontal")
+        self.main_panes.grid(row=0, column=0, sticky="nsew")
+        controls = ttk.Frame(self.main_panes, style="Card.TFrame", width=365)
+        workspace = ttk.Frame(self.main_panes, style="Card.TFrame", padding=(12, 10))
+        self.main_panes.add(controls, weight=0)
+        self.main_panes.add(workspace, weight=1)
+        controls.rowconfigure(0, weight=1)
+        controls.columnconfigure(0, weight=1)
         workspace.columnconfigure(0, weight=1)
         workspace.rowconfigure(1, weight=1)
 
+        # Separate everyday visualization from scientific settings.
+        self.control_tabs = ttk.Notebook(controls)
+        self.control_tabs.grid(row=0, column=0, sticky="nsew")
+        self.spectra_tab = ttk.Frame(self.control_tabs, style="Card.TFrame")
+        self.analysis_tab = ttk.Frame(self.control_tabs, style="Card.TFrame")
+        self.control_tabs.add(self.spectra_tab, text="Spectra & view")
+        self.control_tabs.add(self.analysis_tab, text="Analysis settings")
+        self.spectra_panel = self._scroll_panel(self.spectra_tab)
+        self.analysis_panel = self._scroll_panel(self.analysis_tab)
+        self.sidebar = self.spectra_panel
         self._files_panel()
+        self.sidebar = self.analysis_panel
+        self._analysis_panel()
         self._workspace(workspace)
+        # The notebook controls are now constructed; remove ambiguity for
+        # any future additions by keeping an explicit analysis container.
+        self.sidebar = self.analysis_panel
 
         footer = ttk.Frame(self.root, padding=(20, 5))
         footer.pack(fill="x")
-        ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(side="left")
+        ttk.Label(footer, text="Review model assumptions and warnings before scientific interpretation.", foreground=MUTED).pack(anchor="w", pady=(0, 7))
         ttk.Button(footer, text="Open results folder", command=self._open_output).pack(side="right")
+        ttk.Button(footer, text="About", command=self._show_about).pack(side="right", padx=6)
+        ttk.Button(footer, text="Run log", command=self._show_run_log).pack(side="right", padx=6)
+        ttk.Button(footer, text="Kinetics Explorer · experimental", command=self._open_explorer).pack(side="left")
+
+    def _layout_toolbar(self, event):
+        needed = self.import_actions.winfo_reqwidth() + self.analysis_actions.winfo_reqwidth() + 56
+        if event.width < needed:
+            self.analysis_actions.grid_configure(row=1, column=0, sticky="w", pady=(8, 0))
+        else:
+            self.analysis_actions.grid_configure(row=0, column=1, sticky="e", pady=0)
+
+    def _open_explorer(self):
+        for explorer in self.explorers:
+            if explorer.win.winfo_exists():
+                explorer.win.lift()
+                return
+        if not self.spectra:
+            messagebox.showinfo("Import a spectrum", "Import a spectrum before opening Kinetics Explorer.", parent=self.root)
+            return
+        from .explorer_gui import KineticsExplorerWindow
+        self.explorers.append(KineticsExplorerWindow(self.root, self.spectra))
+
+    def _show_about(self) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title("About · TPD Spectra Studio")
+        dialog.geometry("740x580")
+        dialog.minsize(640, 500)
+        header = tk.Frame(dialog, bg=NAVY, padx=20, pady=14)
+        header.pack(fill="x")
+        dialog.brand_mark = brand_image(header, 64)
+        tk.Label(header, image=dialog.brand_mark, bg=NAVY).pack(side="left", padx=(0, 12))
+        ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel", font=("Segoe UI", 15, "bold")).pack(side="left")
+        panel, _ = text_panel(dialog, about_text())
+        panel.pack(fill="both", expand=True)
+        buttons = ttk.Frame(dialog, padding=10)
+        buttons.pack(fill="x")
+        def copy():
+            self.root.clipboard_clear()
+            self.root.clipboard_append(about_text())
+        ttk.Button(buttons, text="Copy build information", command=copy).pack(side="left")
+        ttk.Button(buttons, text="Close", command=dialog.destroy).pack(side="right")
+        links = ttk.Frame(dialog, padding=(10, 0, 10, 10))
+        links.pack(fill="x")
+        ttk.Button(links, text="GitHub", command=lambda: webbrowser.open(REPOSITORY)).pack(side="left")
+        ttk.Button(links, text="Email developer", command=lambda: webbrowser.open('mailto:'+CONTACT_EMAIL)).pack(side='left',padx=4)
+        ttk.Button(links, text="Fork project", command=lambda: webbrowser.open(REPOSITORY+'/fork')).pack(side='left',padx=4)
+        ttk.Button(links, text="Documentation", command=lambda: webbrowser.open(REPOSITORY + "/blob/release/beta-v0.11-candidate/docs/USER_AND_SCIENTIFIC_MANUAL.md")).pack(side="left", padx=6)
+        ttk.Button(links, text="Report issue", command=lambda: webbrowser.open(REPOSITORY + "/issues/new/choose")).pack(side="left")
+        ttk.Button(dialog,text='Report a Bug / Send Feedback',command=self._show_feedback).pack(anchor='w',padx=10,pady=8)
+        dialog.bind("<Escape>", lambda _event: dialog.destroy())
+
+    def _show_run_log(self) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Run log · TPD Spectra Studio")
+        dialog.geometry("760x420")
+        panel, widget = text_panel(dialog)
+        panel.pack(fill="both", expand=True)
+        def refresh():
+            if not dialog.winfo_exists():
+                return
+            widget.configure(state="normal")
+            widget.delete("1.0", "end")
+            widget.insert("end", "\n".join(self.run_log[-2000:]))
+            widget.configure(state="disabled")
+            if self.running:
+                dialog.after(500, refresh)
+        refresh()
+
+    def _show_quick_start(self) -> None:
+        """Explain the normal workflow without changing analysis settings."""
+        QuickStartDialog(self.root)
+
+    def _scroll_panel(self, parent: ttk.Frame) -> ttk.Frame:
+        """Return a separately scrollable controls region for one notebook tab."""
+        parent.rowconfigure(0, weight=1)
+        parent.columnconfigure(0, weight=1)
+        canvas = tk.Canvas(parent, background="white", highlightthickness=0)
+        scrollbar = ttk.Scrollbar(parent, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        content = ttk.Frame(canvas, style="Card.TFrame", padding=14)
+        window = canvas.create_window((0, 0), window=content, anchor="nw")
+        content.bind("<Configure>", lambda _event: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.bind("<Configure>", lambda event: canvas.itemconfigure(window, width=event.width))
+        canvas.bind("<MouseWheel>", lambda event: canvas.yview_scroll(-1 if event.delta > 0 else 1, "units"))
+        return content
 
     def _files_panel(self) -> None:
-        ttk.Label(self.sidebar, text="SPECTRA", style="Section.TLabel").pack(anchor="w")
+        ttk.Label(self.sidebar, text="1  ·  IMPORTED SPECTRA", style="Section.TLabel").pack(anchor="w")
         ttk.Label(self.sidebar, text="Imported traces appear together in the plot.", style="Muted.TLabel").pack(anchor="w", pady=(2, 8))
-        columns = ("visible", "name", "points")
+        columns = ("visible", "included", "name", "points")
         self.file_table = ttk.Treeview(self.sidebar, columns=columns, show="headings", height=7, selectmode="extended")
-        self.file_table.heading("visible", text="On")
+        self.file_table.heading("visible", text="Show")
+        self.file_table.heading("included", text="Include")
+        self.file_table.column("included", width=55, anchor="center", stretch=False)
         self.file_table.heading("name", text="File")
         self.file_table.heading("points", text="Points")
         self.file_table.column("visible", width=34, anchor="center", stretch=False)
@@ -215,21 +453,14 @@ class TpdSpectraApp:
         self.file_table.column("points", width=55, anchor="e", stretch=False)
         self.file_table.pack(fill="x")
         self.file_table.bind("<Button-1>", self._toggle_row)
-        self.file_table.bind("<Double-1>", self._toggle_row)
+        self.file_table.bind("<space>", self._toggle_included_selection)
         row = ttk.Frame(self.sidebar, style="Card.TFrame")
         row.pack(fill="x", pady=(6, 12))
         ttk.Button(row, text="Show all", command=lambda: self._set_visible(True)).pack(side="left")
         ttk.Button(row, text="Hide all", command=lambda: self._set_visible(False)).pack(side="left", padx=5)
         ttk.Button(row, text="Remove", command=self._remove_selected).pack(side="right")
 
-        ttk.Label(self.sidebar, text="RESULTS FOLDER", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
-        output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
-        output_row.pack(fill="x", pady=(0, 8))
-        ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)
-        ttk.Button(output_row, text="Browse", command=self._choose_output).pack(side="left", padx=(5, 0))
-
-        ttk.Separator(self.sidebar).pack(fill="x", pady=5)
-        ttk.Label(self.sidebar, text="PLOT CONTROLS", style="Section.TLabel").pack(anchor="w", pady=(7, 6))
+        ttk.Label(self.sidebar, text="2  ·  EXPLORE SPECTRA", style="Section.TLabel").pack(anchor="w", pady=(7, 6))
         self._choice("Chart layout", self.view_mode, ("Overlay", "Small multiples"))
         self._choice("X axis", self.x_mode, ("Temperature", "Time"))
         self._choice("Smoothing", self.filter_method, ("median", "mean", "none"))
@@ -239,12 +470,22 @@ class TpdSpectraApp:
         ttk.Checkbutton(self.sidebar, text="Normalize each trace to 0–1", variable=self.normalize,
                         command=self._draw_plot).pack(anchor="w", pady=(3, 9))
 
+
+    def _analysis_panel(self) -> None:
+        ttk.Label(self.sidebar, text="FIT & EXPORT", style="Section.TLabel").pack(anchor="w", pady=(0, 6))
         ttk.Separator(self.sidebar).pack(fill="x", pady=5)
         ttk.Label(self.sidebar, text="ANALYSIS WINDOWS  ·  °C", style="Section.TLabel").pack(anchor="w", pady=(7, 4))
         self._slider("Leading edge · from", self.leading_low, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Leading edge · to", self.leading_high, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Peak search · from", self.peak_low, 0, 700, " °C", on_change=self._range_changed)
         self._slider("Peak search · to", self.peak_high, 0, 700, " °C", on_change=self._range_changed)
+        ttk.Button(self.sidebar, text="Select leading edge on plot",
+                   command=lambda: self._start_span("leading")).pack(fill="x", pady=(7, 2))
+        ttk.Button(self.sidebar, text="Select peak interval on plot",
+                   command=lambda: self._start_span("peak")).pack(fill="x", pady=2)
+        ttk.Label(self.sidebar, text="Use the temperature axis; disable pan/zoom first.",
+                  style="Muted.TLabel").pack(anchor="w")
+        self._precise_windows()
         ttk.Label(self.sidebar, text="Shaded bands mark the selected analysis regions.", style="Muted.TLabel").pack(anchor="w", pady=(3, 8))
         details = ttk.Frame(self.sidebar, style="Card.TFrame")
         details.pack(fill="x", pady=(0, 7))
@@ -253,6 +494,14 @@ class TpdSpectraApp:
         ttk.Label(details, text="Heating-fit time limit (min; −1 = all)", style="Card.TLabel").grid(row=1, column=0, sticky="w", pady=2)
         ttk.Entry(details, textvariable=self.max_time, width=11).grid(row=1, column=1, sticky="e")
         self._advanced_panel()
+
+        ttk.Separator(self.sidebar).pack(fill="x", pady=10)
+        ttk.Label(self.sidebar, text="RESULTS DESTINATION", style="Section.TLabel").pack(anchor="w", pady=(3, 4))
+        output_row = ttk.Frame(self.sidebar, style="Card.TFrame")
+        output_row.pack(fill="x", pady=(0, 8))
+        ttk.Entry(output_row, textvariable=self.output_path, width=25).pack(side="left", fill="x", expand=True)
+        ttk.Button(output_row, text="Browse", command=self._choose_output).pack(side="left", padx=(5, 0))
+
 
     def _choice(self, label: str, variable: tk.StringVar, values: tuple[str, ...]) -> None:
         row = ttk.Frame(self.sidebar, style="Card.TFrame")
@@ -315,6 +564,7 @@ class TpdSpectraApp:
         ttk.Label(top, text="Spectrum comparison", style="Section.TLabel").pack(side="left")
         self.count_label = ttk.Label(top, text="0 traces", style="Muted.TLabel")
         self.count_label.pack(side="right")
+        ttk.Button(top, text="Export plot PNG…", command=self._export_png).pack(side="right", padx=(8, 16))
         plot_wrap = ttk.Frame(parent, style="Card.TFrame")
         plot_wrap.grid(row=1, column=0, sticky="nsew")
         plot_wrap.rowconfigure(0, weight=1)
@@ -330,13 +580,95 @@ class TpdSpectraApp:
         self.nav_toolbar.pack(side="left")
         self._empty_plot()
 
+
+    def _precise_windows(self) -> None:
+        """Typed temperature windows also permit sub-degree selections."""
+        frame = ttk.Frame(self.sidebar, style="Card.TFrame")
+        frame.pack(fill="x", pady=6)
+        self.window_entries = []
+        for i, (label, low, high) in enumerate((
+            ("Leading", self.leading_low, self.leading_high),
+            ("Peak", self.peak_low, self.peak_high),
+        )):
+            ttk.Label(frame, text=label, style="Card.TLabel").grid(row=i, column=0, sticky="w")
+            a, b = ttk.Entry(frame, width=8), ttk.Entry(frame, width=8)
+            a.grid(row=i, column=1, padx=3, pady=3)
+            b.grid(row=i, column=2, padx=3, pady=3)
+            self.window_entries.append((a, b, low, high))
+        self._refresh_window_entries()
+        ttk.Button(self.sidebar, text="Apply exact windows (°C)",
+                   command=self._apply_exact_windows).pack(fill="x", pady=(0, 6))
+
+    def _refresh_window_entries(self) -> None:
+        for a, b, low, high in getattr(self, "window_entries", []):
+            for entry, value in ((a, low.get()), (b, high.get())):
+                entry.delete(0, tk.END)
+                entry.insert(0, f"{value:g}")
+
+    def _apply_exact_windows(self) -> None:
+        try:
+            values = [validate_temperature_window(a.get(), b.get())
+                      for a, b, _, _ in self.window_entries]
+        except (ValueError, OverflowError) as exc:
+            messagebox.showerror("Invalid analysis interval", str(exc), parent=self.root)
+            return
+        for (_, _, low, high), (lo, hi) in zip(self.window_entries, values):
+            low.set(lo)
+            high.set(hi)
+        self._draw_plot()
+
+    def _stop_span(self) -> None:
+        if self._span_selector is not None:
+            self._span_selector.set_active(False)
+            self._span_selector.disconnect_events()
+        self._span_selector = None
+        self._selection_kind = None
+
+    def _start_span(self, which: str) -> None:
+        if self.x_mode.get() != "Temperature":
+            messagebox.showinfo("Temperature axis required",
+                                "Switch the X axis to Temperature.", parent=self.root)
+            return
+        if not any(row["visible"] for row in self.spectra.values()):
+            messagebox.showinfo("Nothing to select", "Show a spectrum first.", parent=self.root)
+            return
+        if self.nav_toolbar.mode:
+            messagebox.showinfo("Pan/zoom active", "Disable plot pan/zoom first.", parent=self.root)
+            return
+        self._stop_span()
+        self._selection_kind = which
+        self._span_selector = SpanSelector(
+            self.axis, self._span_finished, "horizontal",
+            useblit=False, props={"facecolor": "#f59e0b" if which == "leading" else "#8b5cf6",
+                                   "alpha": 0.25},
+        )
+        self.status.set(f"Drag horizontally to select the {which} interval.")
+
+    def _span_finished(self, a: float, b: float) -> None:
+        which = self._selection_kind
+        self._stop_span()
+        if which is None:
+            return
+        try:
+            lo, hi = window_from_drag(a, b)
+        except ValueError as exc:
+            self.status.set(str(exc))
+            return
+        low, high = ((self.leading_low, self.leading_high) if which == "leading"
+                     else (self.peak_low, self.peak_high))
+        low.set(lo)
+        high.set(hi)
+        self._refresh_window_entries()
+        self._draw_plot()
+        self.status.set(f"{which.title()} interval: {lo:.2f}–{hi:.2f} °C.")
+
     def _empty_plot(self) -> None:
         self.axis.clear()
         self.axis.set_facecolor("#ffffff")
-        self.axis.text(.5, .54, "Import spectra to start exploring", transform=self.axis.transAxes,
-                       ha="center", va="center", fontsize=16, color="#64748b", weight="bold")
-        self.axis.text(.5, .47, "Use Import CSV files or Add folder above", transform=self.axis.transAxes,
-                       ha="center", va="center", fontsize=10, color="#94a3b8")
+        self.axis.text(.5, .56, "Your spectra, ready to explore", transform=self.axis.transAxes,
+                       ha="center", va="center", fontsize=17, color=INK, weight="bold")
+        self.axis.text(.5, .46, "Import CSV files or add a folder to begin.\nNew here? Quick start includes a synthetic-data walkthrough.",
+                       transform=self.axis.transAxes, ha="center", va="center", fontsize=10, color=MUTED, linespacing=1.8)
         self.axis.set_xticks([]); self.axis.set_yticks([])
         for edge in self.axis.spines.values(): edge.set_visible(False)
         self.figure.tight_layout()
@@ -367,10 +699,11 @@ class TpdSpectraApp:
                 continue
             try:
                 spec = load_spectrum(path)
-                self.spectra[key] = {"path": path, "spec": spec, "visible": True}
-                self.file_table.insert("", "end", iid=key, values=("✓", path.name, f"{spec.signal.size:,}"))
+                self.spectra[key] = {"path": path.resolve(), "spec": spec, "visible": True, "included": True, "sha256": sha256(path)}
+                self.file_table.insert("", "end", iid=key, values=("✓", "✓", path.name, f"{spec.signal.size:,}"))
                 added += 1
             except Exception as exc:
+                self.diagnostic_log.record('Import failed',str(exc),exc)
                 errors.append(f"{path.name}: {exc}")
         self.status.set(f"Added {added} trace{'s' if added != 1 else ''}." if added else "No new spectra were added.")
         self._draw_plot()
@@ -380,13 +713,22 @@ class TpdSpectraApp:
     def _toggle_row(self, event) -> str | None:
         row = self.file_table.identify_row(event.y)
         column = self.file_table.identify_column(event.x)
-        if row and column == "#1" and row in self.spectra:
+        if row and column in {"#1", "#2"} and row in self.spectra:
             item = self.spectra[row]
-            item["visible"] = not item["visible"]
-            self.file_table.set(row, "visible", "✓" if item["visible"] else "—")
+            field = "visible" if column == "#1" else "included"
+            item[field] = not item[field]
+            self.file_table.set(row, field, "✓" if item[field] else "—")
             self._draw_plot()
             return "break"
         return None
+
+    def _toggle_included_selection(self, _event=None):
+        for key in self.file_table.selection():
+            row = self.spectra[key]
+            row["included"] = not row["included"]
+            self.file_table.set(key, "included", "✓" if row["included"] else "—")
+        self._draw_plot()
+        return "break"
 
     def _set_visible(self, visible: bool) -> None:
         for key, item in self.spectra.items():
@@ -405,6 +747,7 @@ class TpdSpectraApp:
             self.leading_high.set(min(700, self.leading_low.get() + 1))
         if self.peak_low.get() >= self.peak_high.get():
             self.peak_high.set(min(700, self.peak_low.get() + 1))
+        self._refresh_window_entries()
         self._draw_plot()
 
     def _draw_plot(self) -> None:
@@ -412,9 +755,17 @@ class TpdSpectraApp:
             return
         visible = [(key, row) for key, row in self.spectra.items() if row["visible"]]
         self.count_label.configure(text=f"{len(visible)} of {len(self.spectra)} traces shown")
+        if not self.running:
+            included = sum(row["included"] for row in self.spectra.values())
+            self.status.set(workflow_guidance(len(self.spectra), len(visible)) + f" {included} included in analysis.")
         if not visible:
             self._empty_plot()
+            if self.spectra:
+                self.axis.text(.5, .38, "All traces hidden · Click Show all in the sidebar",
+                               transform=self.axis.transAxes, ha="center", fontsize=10, color=MUTED)
+                self.canvas.draw_idle()
             return
+        self._stop_span()
         self.figure.clear()
         mode = self.view_mode.get()
         count = len(visible) if mode == "Small multiples" else 1
@@ -487,64 +838,90 @@ class TpdSpectraApp:
     def _run_analysis(self) -> None:
         if self.running:
             return
-        selected = [(key, row["path"]) for key, row in self.spectra.items() if row["visible"]]
+        selected = [row for row in self.spectra.values() if row["included"]]
         if not selected:
-            messagebox.showinfo("No spectra selected", "Import spectra and turn on at least one trace to analyze.", parent=self.root)
+            messagebox.showinfo("No spectra selected", "Import spectra and enable Include for at least one file.", parent=self.root)
             return
         outdir = Path(self.output_path.get()).expanduser()
         try:
-            outdir.mkdir(parents=True, exist_ok=True)
-            settings = self._settings([path for _, path in selected], outdir)
-            args = build_cli_arguments(settings)
+            settings = self._settings([row["path"] for row in selected], outdir)
+            build_cli_arguments(settings)
+            ReviewDialog(self.root, settings, selected, self._start_reviewed_run)
         except Exception as exc:
             messagebox.showerror("Could not prepare analysis", str(exc), parent=self.root)
             return
+    def _start_reviewed_run(self, settings, preview=False):
+        if self.running:
+            return False
+        settings = json.loads(json.dumps(settings))
+        if preview:
+            workspace = tempfile.TemporaryDirectory(prefix="tpd-preview-")
+            self.preview_workspaces.append(workspace)
+            settings["output_path"] = str(Path(workspace.name) / "preview")
+        args = build_cli_arguments(settings)
+        plan = RunPlan.create(settings, args, preview=preview)
+        self.active_plan = plan
+        if not preview:
+            self.output_path.set(str(plan.output.parent))
         self.running = True
+        self.cancel_event = threading.Event()
+        self.run_log = []
         self.run_button.configure(state="disabled")
-        self.status.set(f"Analyzing {len(selected)} spectrum{'s' if len(selected) != 1 else ''}…")
-        threading.Thread(target=self._analysis_worker, args=(args,), daemon=True).start()
+        self.cancel_button.configure(state="normal")
+        self.status.set(f"Analyzing {len(plan.inputs)} spectra · {'unsaved preview' if preview else plan.output}")
+        self.worker = threading.Thread(target=execute, args=(plan, self.worker_messages, self.cancel_event), daemon=False)
+        self.worker.start()
+        return True
 
-    def _analysis_worker(self, args: list[str]) -> None:
-        try:
-            if getattr(sys, "frozen", False):
-                # The GUI executable doubles as a hidden CLI entry point.
-                command = [sys.executable, "--tpd-cli", *args]
-            else:
-                command = [sys.executable, "-m", "tpd_spectra", *args]
-            completed = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                       errors="replace", check=False)
-            for line in completed.stdout.splitlines():
-                self.worker_messages.put(("log", line))
-            self.worker_messages.put(("done", str(completed.returncode)))
-        except Exception as exc:
-            self.worker_messages.put(("error", str(exc)))
+    def _cancel_run(self):
+        if self.running:
+            self.cancel_event.set()
+            self.cancel_button.configure(state="disabled")
+            self.status.set("Cancelling analysis… waiting for the calculation process to exit.")
 
     def _poll_worker(self) -> None:
         try:
             while True:
                 kind, value = self.worker_messages.get_nowait()
-                if kind == "done":
+                if kind == "finished":
                     self.running = False
                     self.run_button.configure(state="normal")
-                    if value == "0":
-                        self.status.set(f"Analysis complete · results saved to {self.output_path.get()}")
-                        messagebox.showinfo("Analysis complete", f"Your tables, comparison plot, and diagnostics are in:\n{self.output_path.get()}", parent=self.root)
-                    else:
-                        self.status.set("Analysis finished with errors; review the run log.")
+                    self.cancel_button.configure(state="disabled")
+                    plan = self.active_plan
+                    if not plan.preview:
+                        self.last_output = plan.output
+                    self.status.set(f"Analysis {value} · {'unsaved preview' if plan.preview else plan.output}")
+                    if self.close_after_run:
+                        self._finish_close()
+                        return
+                    submitted = json.loads(plan.settings_json)
+                    try:
+                        current = self._settings([Path(p) for p, _ in plan.inputs], plan.output)
+                    except (ValueError, tk.TclError):
+                        current = {}
+                    ResultsDialog(self.root, plan.output, value, preview=plan.preview, stale=current != submitted)
                 elif kind == "error":
                     self.running = False
                     self.run_button.configure(state="normal")
-                    self.status.set("Could not start the analysis.")
-                    messagebox.showerror("Analysis could not start", value, parent=self.root)
+                    self.cancel_button.configure(state="disabled")
+                    self.run_log.append(value)
+                    self.status.set("Analysis failed. Review the run log.")
+                    if self.close_after_run:
+                        self._finish_close()
+                        return
+                    messagebox.showerror("Analysis failed", value, parent=self.root)
                 else:
+                    self.run_log.append(value)
                     self.status.set(value[:100])
         except queue.Empty:
             pass
         self.root.after(120, self._poll_worker)
 
     def _open_output(self) -> None:
-        path = Path(self.output_path.get()).expanduser()
-        path.mkdir(parents=True, exist_ok=True)
+        path = self.last_output or Path(self.output_path.get()).expanduser()
+        if not path.is_dir():
+            messagebox.showinfo("No saved results", "Complete a saved analysis first, or choose an existing results folder.", parent=self.root)
+            return
         try:
             if sys.platform == "win32":
                 import os
@@ -557,12 +934,29 @@ class TpdSpectraApp:
             messagebox.showerror("Cannot open folder", str(exc), parent=self.root)
 
     def _close(self) -> None:
-        if self.running and not messagebox.askyesno("Analysis is running", "Close the app while analysis is in progress?", parent=self.root):
+        if self.running:
+            if messagebox.askyesno("Analysis is running", "Cancel the running calculation and close when it has stopped? Partial output will be marked cancelled.", parent=self.root):
+                self.close_after_run = True
+                self._cancel_run()
             return
+        self._finish_close()
+
+    def _finish_close(self):
+        active = [explorer for explorer in self.explorers if explorer.busy]
+        if active:
+            for explorer in active:
+                explorer.closing = True
+                explorer.cancel_event.set()
+            self.status.set("Stopping Explorer calculations before closing…")
+            self.root.after(100, self._finish_close)
+            return
+        for workspace in self.preview_workspaces:
+            workspace.cleanup()
         self.root.destroy()
 
 
 def main() -> int:
+    set_windows_app_identity()
     root = tk.Tk()
     TpdSpectraApp(root)
     root.mainloop()

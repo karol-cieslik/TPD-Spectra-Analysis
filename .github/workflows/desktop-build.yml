@@ -2,21 +2,51 @@ name: Windows desktop build
 
 on:
   workflow_dispatch:
+  workflow_call:
+    outputs:
+      artifact_name:
+        description: Verified portable package artifact
+        value: ${{ jobs.package.outputs.artifact_name }}
   push:
-    branches: [main]
+    branches: [main, 'feature/gui-usability', 'release/beta-v0.11-candidate', 'feature/workflow-redesign', 'release/external-beta-v0.11.0b2', 'release/external-beta-v0.11.0b3']
     paths:
       - 'tpd_spectra/**'
+      - 'tests/**'
+      - 'examples/**'
+      - 'scripts/generate_demo.py'
+      - 'scripts/generate_brand_assets.py'
+      - 'scripts/verify_windows_build.py'
+      - 'scripts/**'
+      - 'docs/beta/QUICK_START.pdf'
+      - 'docs/beta/RELEASE_NOTES.md'
+      - 'START_HERE.md'
       - 'run_tpd_spectra*.py'
       - 'pyproject.toml'
       - 'requirements*.txt'
       - 'README.md'
-      - '.github/workflows/desktop-build.yml'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tpd_spectra/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'examples/**'
+      - 'docs/**'
+      - 'START_HERE.md'
+      - 'README.md'
+      - 'run_tpd_spectra*.py'
+      - 'pyproject.toml'
+      - 'requirements*.txt'
+      - '.github/workflows/**'
 
 permissions:
   contents: read
 
 jobs:
   package:
+    outputs:
+      artifact_name: ${{ steps.identity.outputs.artifact_name }}
     runs-on: windows-latest
     steps:
       - name: Check out source
@@ -31,26 +61,62 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-build.txt
           python -m pip install -e .
+      - name: Identify beta package and validate release tag
+        id: identity
+        shell: pwsh
+        run: |
+          $version = python -c "from tpd_spectra import __version__; print(__version__)"
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v$version") {
+            throw "Tag must match application version v$version"
+          }
+          "artifact_name=tpd-spectra-windows-x64-beta-$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+      - name: Verify scientific and GUI regression tests
+        run: python -m pytest -q -rx --junitxml=validation/beta-tests.xml
+      - name: Record candidate build identity
+        shell: pwsh
+        run: |
+          "COMMIT = '$env:GITHUB_SHA'" | Set-Content -Encoding utf8 tpd_spectra/_build_info.py
+          python -m pip freeze | Set-Content -Encoding utf8 build-dependencies.txt
+      - name: Validate desktop entrypoint without a display
+        run: |
+          python -c "import tpd_spectra.gui; import tpd_spectra.gui_ranges; import tpd_spectra.identifiability; print('Desktop modules import successfully')"
+          python run_tpd_spectra_gui.py --tpd-cli --help
+      - name: Validate installable command entry points
+        run: |
+          tpd-spectra --help
       - name: Build single-file desktop app
         run: >-
           pyinstaller --clean --noconfirm --onefile --windowed
           --name TPD-Spectra-Studio
+          --icon tpd_spectra/assets/studio.ico --collect-data tpd_spectra
+          --copy-metadata numpy --copy-metadata scipy --copy-metadata pandas --copy-metadata matplotlib
+          --hidden-import matplotlib.backends.backend_svg
+          --hidden-import matplotlib.backends.backend_pdf
           run_tpd_spectra_gui.py
+      - name: Verify frozen executable with shipped demo
+        run: python scripts/verify_windows_build.py dist/TPD-Spectra-Studio.exe
       - name: Assemble portable package
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force release-package | Out-Null
           Copy-Item dist/TPD-Spectra-Studio.exe release-package/
           Copy-Item README.md,CHANGELOG.md,CITATION.cff,LICENSE,ASSET-RIGHTS.md release-package/
+          Copy-Item build-dependencies.txt release-package/
+          Copy-Item START_HERE.md release-package/
+          python -c "import json; from tpd_spectra.identity import build_identity; print(json.dumps(build_identity(),indent=2))" | Set-Content -Encoding utf8 release-package/VERSION.json
+          Copy-Item examples release-package/examples -Recurse
+          Copy-Item docs release-package/docs -Recurse
+          Copy-Item validation release-package/validation -Recurse
+          $exeHash = (Get-FileHash release-package/TPD-Spectra-Studio.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$exeHash  TPD-Spectra-Studio.exe" | Set-Content -Encoding ascii release-package/SHA256SUMS.txt
           @'
-          TPD Spectra Studio — Windows x64
+          TPD Spectra Studio 0.11.0b3 — external beta review candidate
 
-          START HERE: double-click TPD-Spectra-Studio.exe. This is the only application file.
-          Import CSV files (or a folder), choose spectra, explore the plot, and use
-          Export plot PNG or Run full analysis. Batch analysis is built into this app.
-
-          Experimental data are not included. Bring your own CSV spectra. See README.md
-          for input formats, analysis assumptions, outputs, and citation information.
+          Read START_HERE.md and docs/beta/QUICK_START.pdf.
+          Extract this entire folder. Double-click TPD-Spectra-Studio.exe.
+          Use Open Example Dataset, then the clean first-order example.
+          Zero-order fits report conditional prefactor/scale brackets, not unique values.
+          See docs/beta/RELEASE_NOTES.md before interpreting results.
           '@ | Set-Content -Encoding utf8 release-package/QUICKSTART.txt
           @'
           The project-authored software code is offered under the MIT License; see LICENSE.
@@ -58,6 +124,8 @@ jobs:
           notebook files, images, or other third-party material. Validate all scientific
           outputs and assumptions before interpretation.
           '@ | Set-Content -Encoding utf8 release-package/DISTRIBUTION-NOTE.txt
+          if (!(Test-Path release-package/docs/EXPLORER_MONTE_CARLO.md)) { throw 'Explorer guide missing from package' }
+          if (!(Test-Path release-package/docs/CHECKPOINT_LEDGER.md)) { throw 'Checkpoint ledger missing from package' }
           New-Item -ItemType Directory -Force release-package/THIRD-PARTY-LICENSES | Out-Null
           $sitePackages = python -c "import site; print(site.getsitepackages()[0])"
           Get-ChildItem $sitePackages -Recurse -File -Include 'LICENSE*','COPYING*' |
@@ -67,10 +135,12 @@ jobs:
               $packageName = (Split-Path $distInfo -Leaf) -replace '\.dist-info$',''
               Copy-Item $_.FullName (Join-Path 'release-package/THIRD-PARTY-LICENSES' ($packageName + '-' + $_.Name))
             }
+      - name: Verify assembled beta resources and offline feedback
+        run: python scripts/verify_beta_package.py release-package
       - name: Publish downloadable build
         uses: actions/upload-artifact@v4
         with:
-          name: tpd-spectra-windows-x64
+          name: ${{ steps.identity.outputs.artifact_name }}
           path: release-package/*
           if-no-files-found: error
           retention-days: 90

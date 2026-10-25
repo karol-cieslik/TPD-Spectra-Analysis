@@ -1,0 +1,2 @@
+# Preserve generated CSV bytes across platforms; adjacent metadata records SHA256.
+examples/beta_collection/*.csv -text

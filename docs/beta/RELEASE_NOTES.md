@@ -1,8 +1,9 @@
-# 0.11.0b3 - zero-order fitting correction, review candidate
+# TPD Spectra Studio 0.11.0b3 — external beta notes
 
-Prepared for Karol Cieślik's review, not a published release or declaration of
-scientific validation. Existing main, beta and workflow-preview branches remain
-intact. Download/build evidence is recorded in PREPARATION.md after verification.
+This is a research beta for informal colleague feedback, not a stable release
+or a claim of experimental validation. The consolidated application is on
+`main`. For downloading and starting, see [START_HERE](../../START_HERE.md);
+technical build evidence is maintained separately in the repository.
 
 ## Changes
 
@@ -40,12 +41,11 @@ intact. Download/build evidence is recorded in PREPARATION.md after verification
   It is not microscopic kinetic MC, MCMC, mechanism probability or a validated
   uncertainty-coverage procedure. Ranges are withheld below 100 successful refits.
 - Real-instrument validation, independent scientific review and human Windows
-  layout/scaling acceptance remain open. Capture failed with `FrameArrived timed
-  out` and `window capture timed out`; the guide contains no invented screenshots.
-  Add actual reviewed GUI screenshots before treating the guide as final.
+  layout/scaling acceptance remain open. Please report any clipped controls or
+  unusual layout at your usual display resolution and scaling.
 - Windows executable is unsigned. Follow institutional software policies.
 - Analysis reports and portable projects contain scientific data; the separate
   diagnostic ZIP contains only its editable report and explanatory README.
 
-Do not publish a prerelease or invite colleagues automatically. First review the
-build evidence, outstanding gates and the scope of the proposed limited beta.
+If you find a confusing step, a crash or a scientific discrepancy, use the
+application's **Report a Bug / Send Feedback** action or email the maintainer.

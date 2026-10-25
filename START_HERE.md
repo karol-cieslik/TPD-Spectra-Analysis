@@ -1,8 +1,14 @@
 # Welcome to TPD Spectra Studio 0.11.0b3
 
-**External beta review candidate** by **Karol Cieślik**. Please try the synthetic
-example first. This package is for review; experimental validation and visual
-acceptance on colleagues' Windows displays remain open.
+**Informal research beta** by **Karol Cieślik**. Please try the synthetic
+example first; no experimental data is needed. This version has passed automated
+tests, but experimental validation and testing on different Windows displays
+are still in progress.
+
+Download the Windows ZIP from the latest **successful `main`** run in
+[Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml)
+under **Artifacts** (GitHub sign-in may be required). It is a temporary build
+download, not a published release.
 
 1. Extract the **whole ZIP** to a writable folder. Keep the executable, `docs`
    and `examples` together. No Python installation is needed for the Windows build.

@@ -8,6 +8,6 @@ Scientific-output corrections must be described in CHANGELOG.md with affected qu
 
 Schemas are versioned independently of app version. Current run_status schema is 1; analysis_project is 1; Explorer export is 2. Automated full project migration/reopening is not yet implemented. Keep the original inputs, output folders and matching executable/source. Unique run folders prevent routine GUI reruns overwriting previous evidence. Cancelled/failed runs may contain partial output; read run_status.json before using it.
 
-No automatic data upload or crash reporting is added. A future diagnostic bundle must show exactly what will be shared and omit raw data and private paths by default. Until implemented, copy only reviewed build information from About.
+The beta provides an inspectable offline diagnostic report and ZIP through **Report a Bug / Send Feedback**. They exclude raw spectra and private paths by default; user-entered text remains in the report and should be reviewed before sending. Nothing is uploaded automatically. Analysis projects and exported results may contain experimental data and must be shared separately and intentionally.
 
 The public release remains gated on the checkpoint ledger, independent scientific review and Windows acceptance. A successful automated build is necessary but insufficient for release.

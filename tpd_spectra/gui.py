@@ -396,7 +396,7 @@ class TpdSpectraApp:
         ttk.Button(links, text="GitHub", command=lambda: webbrowser.open(REPOSITORY)).pack(side="left")
         ttk.Button(links, text="Email developer", command=lambda: webbrowser.open('mailto:'+CONTACT_EMAIL)).pack(side='left',padx=4)
         ttk.Button(links, text="Fork project", command=lambda: webbrowser.open(REPOSITORY+'/fork')).pack(side='left',padx=4)
-        ttk.Button(links, text="Documentation", command=lambda: webbrowser.open(REPOSITORY + "/blob/release/beta-v0.11-candidate/docs/USER_AND_SCIENTIFIC_MANUAL.md")).pack(side="left", padx=6)
+        ttk.Button(links, text="Documentation", command=lambda: webbrowser.open(REPOSITORY + "/blob/main/docs/USER_AND_SCIENTIFIC_MANUAL.md")).pack(side="left", padx=6)
         ttk.Button(links, text="Report issue", command=lambda: webbrowser.open(REPOSITORY + "/issues/new/choose")).pack(side="left")
         ttk.Button(dialog,text='Report a Bug / Send Feedback',command=self._show_feedback).pack(anchor='w',padx=10,pady=8)
         dialog.bind("<Escape>", lambda _event: dialog.destroy())

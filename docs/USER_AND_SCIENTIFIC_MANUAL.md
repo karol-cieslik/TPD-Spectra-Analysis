@@ -1,6 +1,6 @@
 # TPD Spectra Studio — User and Scientific Methods Manual
 
-**Document status:** beta working draft · **Software source:** `release/beta-v0.11-candidate` · **Package metadata:** 0.10.2 (v0.11 is a proposed release designation, **not yet tagged**)  
+**Document status:** beta user and scientific manual · **Software source:** `main` · **Current beta version:** 0.11.0b3 (not yet tagged as a public release)
 **Audience:** experimental surface scientists, TPD/TDS users, students, and developers.  
 **Scope:** current application behavior and defensible model assumptions. This is documentation, not a claim of experimental validation. Please open an issue for any discrepancy between this manual and the executable.
 
@@ -26,9 +26,9 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 
 ### Portable Windows application
 
-1. Open [the Windows desktop build workflow](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
-2. Select the latest **successful** run on `release/beta-v0.11-candidate`. Do not accidentally download the older `main` build.
-3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-candidate`.
+1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
+2. Choose the latest **successful** build on `main`.
+3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b3`. GitHub sign-in may be required.
 4. Extract the archive completely, then launch `TPD-Spectra-Studio.exe`. No separate Python installation should be required.
 5. Keep the package contents together, including licenses and documentation. The executable is not digitally signed; verify its GitHub origin and follow your institution's software policy.
 
@@ -41,7 +41,7 @@ Requirements: Python 3.10+, NumPy, pandas, SciPy, Matplotlib; Tkinter must be pr
 ```bash
 git clone https://github.com/karol-cieslik/TPD-Spectra-Analysis.git
 cd TPD-Spectra-Analysis
-git checkout release/beta-v0.11-candidate
+git checkout main
 python -m pip install -e .
 python run_tpd_spectra_gui.py
 ```
@@ -255,10 +255,10 @@ The user manual is intentionally more detailed than a JOSS article. A paper shou
 Project repository: [TPD-Spectra-Analysis](https://github.com/karol-cieslik/TPD-Spectra-Analysis). Citation details: `CITATION.cff`. Scope of code license: `LICENSE` and `ASSET-RIGHTS.md`. Please submit reproducible issues and suggested improvements through GitHub. The manuscript author list and affiliations are separate from code contribution history and must be confirmed with the relevant researchers.
 
 
-## Reviewed runs and experimental Explorer (0.11.0b1 candidate)
+## Reviewed runs and experimental Explorer (0.11.0b3 beta)
 
 Show and Include are independent. Run full analysis opens review with import reports and raw/processed setup previews. Confirm the included inputs, assumed prefactor and a new output folder; Compute selected preview runs one spectrum without final saved output. Run and save starts the reviewed snapshot with live log/cancel and opens results/warnings afterward. Reruns use different folders. Closing during execution cancels and waits for the child.
 
 The leading-edge intercept is exported separately; a physical prefactor is unavailable for arbitrary-unit detector signal. The legacy prefactor field is empty/NaN to prevent interpretation as a calibrated rate constant. Kinetic information criteria now count estimated noise variance. Prior rankings can therefore change.
 
-The [Explorer guide](EXPLORER_MONTE_CARLO.md) covers four-order comparison and explicitly experimental seeded Monte Carlo. Conditional refit percentile ranges are not coverage-validated confidence limits. See [method status](METHOD_STATUS.md) and [checkpoint evidence](CHECKPOINT_LEDGER.md).
+The [Explorer guide](EXPLORER_MONTE_CARLO.md) covers four-order comparison and explicitly experimental seeded Monte Carlo. Conditional refit percentile ranges are not coverage-validated confidence limits. See [method status](METHOD_STATUS.md) for the current scientific scope.

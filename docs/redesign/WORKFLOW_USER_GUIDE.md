@@ -6,6 +6,17 @@ testing, not as a claim of validated experimental analysis.
 
 ## First run with the synthetic example
 
+The desktop opens `synthetic_two_peak_demo.csv` with a prepared 70–210 °C
+first-peak interval. Simulate parameters, compare the checked model hypotheses,
+then run seeded Monte Carlo. For a quick software check use only first order,
+multistart off, 2 replicates and seed 42; parameter uncertainty needs substantially
+more refits. Select a converged row to transfer initial guesses to Kinetic Analysis,
+then explicitly fit. This single-state approximation does not explain both peaks.
+The original spectrum stays visible in Modeling and Kinetic Analysis, including
+when no region exists. Arbitrary imports require an explicit named interval:
+enter bounds and **Add peak** in Spectra & Preparation. Region selection does not
+deconvolve overlapping contributions.
+
 1. Click **Open Example Dataset** and select **first order single peak**. The
    chooser loads a synthetic 801-point spectrum with a 1 K/s ramp and a named
    full-trace interval. The source time unit is milliseconds; temperature is Celsius.

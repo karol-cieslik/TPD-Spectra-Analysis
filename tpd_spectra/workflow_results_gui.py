@@ -148,7 +148,7 @@ class ResultsMixin:
             self.displayed_result = deepcopy(result)
             current = self.project.result_is_current(result)
             status = result['status'].upper() if current else 'STALE — original settings shown; recalculate for current inputs'
-            draw_result(self.result_figure, result)
+            draw_result(self.result_figure, result, self.project.datasets.get(self.project.active_dataset))
             self.result_figure.suptitle(status, fontsize=9)
             values=result['values']
             energy=values.get('energy_ev',values.get('activation_energy_eV'))
@@ -175,6 +175,13 @@ class ResultsMixin:
                                 + '\nEffective settings: ' + json.dumps(result['snapshot']['settings']))
         else:
             self.result_message('Not calculated for this dataset / peak / method.')
+            dataset = self.project.datasets.get(self.project.active_dataset)
+            if dataset is not None:
+                ax = self.result_figure.add_subplot(111)
+                ax.plot(dataset.spectrum.temperature_clean_c, dataset.spectrum.signal,
+                        color='0.5', linewidth=.8, label='Original measured spectrum')
+                ax.set(xlabel='Temperature (°C)', ylabel='Signal (instrument units)')
+                ax.legend(fontsize=8)
         self.result_canvas.draw_idle()
         self.refresh_saved_runs()
 

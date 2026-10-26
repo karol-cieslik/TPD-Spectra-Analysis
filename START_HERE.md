@@ -14,6 +14,13 @@ download, not a published release.
    and `examples` together. No Python installation is needed for the Windows build.
 2. Double-click **TPD-Spectra-Studio.exe**. The application is unsigned; follow
    your institution's software policy. Do not disable security protections.
+   The bundled two-peak demo opens with its first peak (70–210 °C) selected.
+   In **Modeling & Order Identification**, click **Simulate parameters**, then
+   **Compare models**. For a short first software check, select only first order,
+   disable multistart and use 2 Monte Carlo replicates, seed 42; then **Run Monte Carlo**.
+   Two replicates exercise the workflow; they do not estimate uncertainty.
+   Select the first-order result row, transfer it to Kinetic Analysis, and fit.
+   This fits one approximate isolated peak, not the entire two-state spectrum.
 3. Click **Open Example Dataset**, keep **first order single peak**, and open it.
    This supplies a synthetic 801-point trace, a named interval and a 1 K/s ramp.
 4. Open **Kinetic Analysis**, select **Redhead**, and check the assumed prefactor

@@ -1,3 +1,10 @@
+## Unreleased — beta feedback
+
+- Keep the original spectrum visible in Modeling and Kinetic Analysis without
+  a named region, during calculations and after errors. Provide actionable region guidance.
+- Open the shipped default demo with a prepared first-peak region; document a
+  simulation, comparison, seeded Monte Carlo and explicit-fit walkthrough.
+
 ## 0.11.0b3 — external research beta (25 October 2026, unreleased)
 
 - Consolidated the verified beta into `main`; the current Windows artifact is

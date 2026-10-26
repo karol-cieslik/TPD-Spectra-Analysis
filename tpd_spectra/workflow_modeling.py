@@ -151,7 +151,17 @@ class ModelingPanel:
         self.notes.configure(state='disabled')
 
     def render(self):
+        # A region is an analysis prerequisite, never a prerequisite for viewing data.
+        dataset = self.app.project.datasets.get(self.app.project.active_dataset)
         self.fig.clear()
+        ax = self.fig.add_subplot(211)
+        residual = self.fig.add_subplot(212)
+        ax.set(ylabel='Signal (instrument units)')
+        residual.axhline(0,color='gray',linewidth=.7)
+        residual.set(xlabel='Temperature (°C)',ylabel='Residual')
+        if dataset is not None:
+            ax.plot(dataset.spectrum.temperature_clean_c, dataset.spectrum.signal,
+                    color='0.5', linewidth=.8, label='Original measured spectrum')
         self.table.delete(*self.table.get_children())
         try:
             session = self.session()
@@ -159,12 +169,16 @@ class ModelingPanel:
             dataset, _ = self.app.project.context()
             t,y = selected_arrays(dataset,self.snapshot()) if not result else (result['temperature'],result['signal'])
         except ValueError:
-            self.note('Select an imported dataset and named peak to model.')
+            guidance = ('In Spectra & Preparation, enter a peak name and bounds, then Add peak (or use Drag interval). '
+                        'The original spectrum remains visible; calculations need a named region.'
+                        if dataset is not None else 'Open a spectrum or use Open Example Dataset to begin.')
+            ax.text(.02,.97,guidance,transform=ax.transAxes,va='top',wrap=True,fontsize=9)
+            if dataset is not None:
+                ax.legend(fontsize=8)
+            self.note(guidance)
             self.canvas.draw_idle()
             return
-        ax = self.fig.add_subplot(211)
-        residual = self.fig.add_subplot(212)
-        ax.plot(t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal')
+        ax.plot(t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal', linewidth=.9)
         notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\nZero-order fits search the depletion edge; displayed prefactors are representative, with conditional ranges rather than unique values. Edge-model AICc rankings are heuristic.\n'
         if result:
             notes += ('Current comparison.\n' if self.current(result) else 'STALE comparison — original interval/settings plotted. Compare again before transfer or Monte Carlo.\n')
@@ -187,10 +201,7 @@ class ModelingPanel:
             notes += 'Conditional parameter ranges: ' + json.dumps(r['parameter_intervals']) + '\n'
             notes += ('MC settings are current. ' if self.current(mc) else 'MC settings are stale. ')
         notes += 'Monte Carlo uses iid Gaussian residual noise around the lowest-AICc converged reference; ranges withheld below 100 successful refits. Frequencies are not mechanism probabilities.'
-        ax.set(ylabel='Signal (instrument units)')
         ax.legend(fontsize=8)
-        residual.axhline(0,color='gray',linewidth=.7)
-        residual.set(xlabel='Temperature (°C)',ylabel='Residual')
         self.note(notes)
         self.canvas.draw_idle()
 

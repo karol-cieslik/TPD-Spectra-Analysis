@@ -104,15 +104,25 @@ def calculate(dataset, snapshot, cancelled=lambda: False):
                    'created_utc': datetime.now(timezone.utc).isoformat(), 'import_report': dataset.spectrum.import_report})
 
 
-def draw_result(figure, result):
+def draw_result(figure, result, dataset=None):
     figure.clear()
     p = result['plots']
     predicted = p.get('predicted')
-    ax = figure.add_subplot(211 if predicted is not None else 111)
+    leading = result['snapshot']['method'] == 'Leading edge'
+    if leading and dataset is not None:
+        raw = figure.add_subplot(311)
+        raw.plot(dataset.spectrum.temperature_clean_c, dataset.spectrum.signal,
+                 color='0.5', linewidth=.8, label='Original measured spectrum')
+        raw.set(xlabel='Temperature (°C)', ylabel='Signal (instrument units)')
+        raw.legend(fontsize=8)
+    ax = figure.add_subplot(312 if leading and dataset is not None else (211 if predicted is not None else 111))
+    if dataset is not None and not leading:
+        ax.plot(dataset.spectrum.temperature_clean_c, dataset.spectrum.signal,
+                color='0.5', linewidth=.8, label='Original measured spectrum')
     ax.plot(p['x'], p['observed'], label='Selected processed signal')
     if predicted is not None:
         ax.plot(p['x'], predicted, label='Fitted curve')
-        residual = figure.add_subplot(212)
+        residual = figure.add_subplot(313 if leading and dataset is not None else 212)
         residual.plot(p['x'], np.asarray(p['observed'])-np.asarray(predicted))
         residual.axhline(0, color='gray', linewidth=.7)
         residual.set(xlabel=p['x_label'], ylabel='Residual')

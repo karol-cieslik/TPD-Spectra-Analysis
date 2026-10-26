@@ -124,8 +124,9 @@ def generate(output=OUTPUT):
             offset_fraction=.025 if with_baseline else 0.,slope_fraction_per_K=.00015 if with_baseline else 0.,
             ar1_coefficient=.8 if 'challenging' in config['name'] else 0.)
         csv=output/(config['name']+'.csv')
-        # Legacy beta CSV hashes use CRLF. Explicit line endings make generation
-        # byte-identical on Windows and POSIX without changing those references.
+        # Preserve the CRLF convention used by shipped beta hashes. Repeated
+        # runs are byte-identical within one numerical environment; another
+        # math library can change the final printed signal digit.
         with csv.open('w',encoding='utf-8',newline='') as handle:
             np.savetxt(handle,np.column_stack(((t-50)/config['beta_K_s']*1000,y,t)),delimiter=',',
                 header='Time_ms,Signal,Temperature',comments='',fmt=['%.6f','%.12e','%.2f'],newline='\r\n')

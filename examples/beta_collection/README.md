@@ -28,7 +28,16 @@ Noise is applied after computing the clean rate, with no clipping of negative
 observations. The new noise variants record the fractional standard deviation
 and a clean-reference filename. Original clean and noisy CSVs and their seeds
 are preserved byte for byte. Explicit CSV line endings protect metadata hashes
-across operating systems; tests regenerate the collection and compare bytes.
+when files are checked out on another operating system. Repeating generation
+with the same seed and numerical environment must reproduce CSV and JSON bytes
+exactly. Different NumPy/SciPy or system math libraries can change the last
+printed signal digit; cross-platform checks therefore require identical time,
+temperature, seeds, physical inputs and model descriptions, and signal agreement
+within `1e-12` of the clean maximum, matching the CSV export precision. Only
+computed noise/baseline floating-point values receive the same small relative
+tolerance. Each shipped or regenerated metadata hash must match its own CSV;
+hashes need not match between numerically equivalent artifacts from different
+environments. Scientific recovery thresholds remain unchanged.
 The 5% case is a stress example, not the default demonstration noise level.
 The top-level `../synthetic_two_peak_demo.csv` uses 2% iid detector noise and
 also has clean, 1%, 2%, 5% and baseline-drift variants.

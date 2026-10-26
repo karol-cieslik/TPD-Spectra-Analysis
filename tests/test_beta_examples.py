@@ -1,5 +1,6 @@
 import hashlib
 import json
+from copy import deepcopy
 from pathlib import Path
 import numpy as np
 import pytest
@@ -85,13 +86,46 @@ def test_example_chooser_opens_clean_reference_and_supplies_ramp(root):
 
 
 def test_beta_generator_reproduces_csv_bytes_and_metadata(tmp_path):
-    from scripts.generate_beta_examples import generate
-    catalog=generate(tmp_path)
-    assert catalog==CATALOG
+    from scripts.generate_beta_examples import generate,simulate
+    first,second=tmp_path/'first',tmp_path/'second'
+    catalog=generate(first)
+    assert generate(second)==catalog==CATALOG
+    assert (first/'catalog.json').read_bytes()==(second/'catalog.json').read_bytes()
     for entry in catalog:
-        assert (tmp_path/entry['file']).read_bytes()==(FOLDER/entry['file']).read_bytes()
-        # JSON text may be checked out with platform-specific line endings.
-        assert (tmp_path/entry['metadata']).read_text(encoding='utf-8')==(FOLDER/entry['metadata']).read_text(encoding='utf-8')
+        # A repeated seeded run in one numerical environment must be exact.
+        for name in (entry['file'],entry['metadata']):
+            assert (first/name).read_bytes()==(second/name).read_bytes()
+
+        generated=json.loads((first/entry['metadata']).read_text(encoding='utf-8'))
+        shipped=json.loads((FOLDER/entry['metadata']).read_text(encoding='utf-8'))
+        assert generated.keys()==shipped.keys()
+        # Each artifact's hash identifies its actual bytes. Numerical libraries
+        # on another platform can round the last printed signal digit differently.
+        for folder,metadata in ((first,generated),(FOLDER,shipped)):
+            assert hashlib.sha256((folder/entry['file']).read_bytes()).hexdigest()==metadata['csv_sha256']
+            if 'clean_reference_sha256' in metadata:
+                reference=folder/metadata['clean_reference_file']
+                assert hashlib.sha256(reference.read_bytes()).hexdigest()==metadata['clean_reference_sha256']
+
+        generated_truth,shipped_truth=deepcopy(generated),deepcopy(shipped)
+        for key in ('csv_sha256','clean_reference_sha256'):
+            generated_truth.pop(key,None)
+            shipped_truth.pop(key,None)
+        # Only these values are computed from the floating-point clean peak.
+        # Models, seeds, physical inputs, grid, units and validation limits stay exact.
+        for section,key in (('noise','sigma_signal_units'),('baseline','offset_signal_units'),
+                            ('baseline','slope_signal_units_per_K')):
+            assert generated_truth[section].pop(key)==pytest.approx(shipped_truth[section].pop(key),rel=1e-12,abs=0)
+        assert generated_truth==shipped_truth
+
+        produced=np.loadtxt(first/entry['file'],delimiter=',',skiprows=1)
+        reference=np.loadtxt(FOLDER/entry['file'],delimiter=',',skiprows=1)
+        assert (first/entry['file']).read_bytes().splitlines()[0]==(FOLDER/entry['file']).read_bytes().splitlines()[0]
+        np.testing.assert_array_equal(produced[:,[0,2]],reference[:,[0,2]])
+        clean=simulate(shipped,np.linspace(50.,450.,80001))[::100]
+        # Both CSVs use %.12e. Bound cross-library roundoff at that export
+        # precision, far below the separate physical recovery tolerances.
+        np.testing.assert_allclose(produced[:,1],reference[:,1],rtol=0,atol=1e-12*clean.max())
 
 
 @pytest.mark.parametrize('label,fraction',[('low',.01),('moderate',.02),('high',.05)])

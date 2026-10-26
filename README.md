@@ -89,6 +89,9 @@ The desktop uses an original spectrum icon and a shared navy/teal identity.
 - 🎯 **Fit-window selection** — drag temperature intervals on the plot or enter exact boundaries.
 - 🧮 **Classical analysis** — heating-rate regression, leading-edge apparent energies and first-order Redhead estimates.
 - ⚗️ **Kinetic modeling** — optional single-state and exploratory two-state Polanyi–Wigner fits.
+- **Simultaneous physical components** — up to three independent positive-order
+  PW populations, joint energies/scales, explicit fixed kinetic hypotheses,
+  summed residuals and individual exports; see the component-method guide.
 - 🔎 **Fit diagnostics** — quality metrics, residual plots, numerical identifiability warnings and file-level errors.
 - 🖼️ **Export and provenance** — high-resolution PNGs, CSV tables and JSON records of analysis settings and input hashes.
 - **Reviewed runs** — separate plot visibility and analysis inclusion, setup/computed preview, destination confirmation, unique output folders, live logs/cancel and results review.
@@ -99,19 +102,19 @@ The desktop uses an original spectrum icon and a shared navy/teal identity.
 
 ### Option A — Windows desktop beta (no Python required)
 
-1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) and choose the latest **successful** run on `main`.
-2. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b3`. GitHub sign-in may be needed.
+1. Open [PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19) and choose its latest successful **Windows desktop build** check.
+2. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b4`. GitHub sign-in may be needed.
 3. Extract the entire ZIP, keeping its folders together, and double-click `TPD-Spectra-Studio.exe`.
 4. Click **Open Example Dataset**, choose **first order single peak**, and follow [START_HERE](START_HERE.md).
 
-New beta packages include `examples/synthetic_two_peak_demo.csv`: a clearly labeled, noiseless two-population Polanyi–Wigner simulation with known inputs. Follow the [demo walkthrough](examples/README.md) for settings and expected results. Synthetic tests do not replace experimental validation. The executable is currently unsigned; verify the GitHub source and follow institutional security policy.
+The package opens `examples/synthetic_two_peak_demo.csv`: a clearly labeled two-population Polanyi–Wigner simulation with seeded 2% detector noise and known inputs. Clean and graded-noise references remain available. Follow the [demo walkthrough](examples/README.md) for settings and expected results. Synthetic tests do not replace experimental validation. The executable is currently unsigned; follow institutional software policy.
 
 ### Option B — Run from Python source
 
 ```bash
 git clone https://github.com/karol-cieslik/TPD-Spectra-Analysis.git
 cd TPD-Spectra-Analysis
-git checkout main
+git checkout fix/beta-feedback-14-17
 python -m pip install -e .
 python run_tpd_spectra_gui.py
 ```

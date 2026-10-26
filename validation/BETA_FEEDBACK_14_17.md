@@ -80,6 +80,16 @@ Full-suite runs exposed process-wide Tk scaling leaking from branding tests;
 fixtures restore it, and component scrolling/actions are tested at both scales.
 No scientific warning was suppressed to make a test pass.
 
+The first CI run exposed one additional generator-test assumption on all
+platforms/Python versions: mathematical libraries can change the final printed
+signal digit. The test now demands exact CSV/JSON regeneration twice in the
+same environment, and tight export-precision agreement with shipped fixtures
+across environments. Seeds, physical inputs, grids, units and recovery limits
+remain exact; each artifact's own recorded hashes are verified. The focused
+portability/reference suite passed 61 tests with one GUI test deselected
+(`ci-portability-tests.xml`). Shipped CSV bytes and scientific recovery tolerances
+were unchanged by this correction.
+
 Independent code review also led to SVD covariance instead of normal equations,
 valid exported correlation diagonals, detector-unit invariance and withholding
 of labeled intervals when equivalent components can exchange identities.

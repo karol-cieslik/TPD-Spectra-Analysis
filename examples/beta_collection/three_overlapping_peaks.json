@@ -27,7 +27,7 @@
     }
   ],
   "beta_K_s": 1.0,
-  "expected_behavior": "Three independent additive states; the current GUI does not provide a three-state inverse model.",
+  "expected_behavior": "Three independent additive states; use the GUI simultaneous full-spectrum Polanyi-Wigner fitter with fixed orders, prefactors and initial coverages. Visible features do not establish three physical states; see docs/MULTICOMPONENT_FITTING.md.",
   "number_of_states": 3,
   "temperature_range_c": [
     50.0,

@@ -1,0 +1,21 @@
+{
+  "identity": {
+    "product": "TPD Spectra Studio",
+    "version": "0.11.0b4",
+    "channel": "external beta review candidate",
+    "commit": "unrecorded source checkout",
+    "author": "Karol Cie\u015blik",
+    "repository": "https://github.com/karol-cieslik/TPD-Spectra-Analysis"
+  },
+  "examples_imported": 21,
+  "frozen_executable": false,
+  "resource_lookup_from_unrelated_cwd": true,
+  "redhead_reference_passed": true,
+  "offline_feedback_copy_zip_passed": true,
+  "external_drafts_opened": false,
+  "zero_order_gui_fit_project_report_and_short_mc_passed": true,
+  "default_demo_named_region_and_raw_trace_passed": true,
+  "three_component_gui_fit_project_individual_exports_passed": true,
+  "callback_errors": [],
+  "visual_acceptance": "not assessed by automation"
+}

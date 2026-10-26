@@ -62,9 +62,13 @@ experimental legacy path; this correction does not validate it.
 No readsorption, transport, instrument response or lateral interaction is modeled.
 Fractional order is not a microscopic mechanism. Constant-baseline fitting cannot
 remove linear drift; iid-noise Monte Carlo cannot represent correlated noise.
-Three-state inverse fitting is not offered by the redesigned GUI. Compare
-residuals, alternative explanations and acquisition conditions before interpreting
-any real spectrum. These tests do not establish experimental validity.
+The GUI now offers simultaneous full-spectrum fitting of one to three independent
+Polanyi–Wigner components, with supplied orders, prefactors and initial coverages
+held fixed while energies and nonnegative detector scales are fitted together.
+See [Simultaneous overlapping-component fitting](../../docs/MULTICOMPONENT_FITTING.md)
+for the conditional uncertainty, identifiability and model-count limitations.
+Compare residuals, alternative explanations and acquisition conditions before
+interpreting any real spectrum. These tests do not establish experimental validity.
 
 This newly authored synthetic collection and generator are provided under the
 repository's MIT license. This does not extend rights to unrelated historical

@@ -1,11 +1,24 @@
-# TPD Spectra Studio 0.11.0b3 — external beta notes
+# TPD Spectra Studio 0.11.0b4 — development beta notes
 
 This is a research beta for informal colleague feedback, not a stable release
-or a claim of experimental validation. The consolidated application is on
-`main`. For downloading and starting, see [START_HERE](../../START_HERE.md);
+or a claim of experimental validation. This candidate is on the separate
+`fix/beta-feedback-14-17` branch in PR #19. For downloading and starting, see [START_HERE](../../START_HERE.md);
 technical build evidence is maintained separately in the repository.
 
 ## Changes
+
+- The default demo opens with a prepared region; raw spectra remain visible
+  across stages, missing regions, calculations, failures and cancellation.
+- Monte Carlo progress, elapsed/estimated remaining time, Cancel and fit/failure
+  counts are prominent. Existing threaded calculation and seeds are retained.
+- Seeded 1/2/5% detector-noise variants and offset/drift demonstrations preserve
+  clean physical truth; observation markers and model curves are distinguishable.
+- Up to three independent Polanyi–Wigner components fit simultaneously on one
+  full spectrum. Fixed component orders/prefactors/coverages, joint energy/scale
+  estimates, shared offset/drift, heuristic count comparison, conditional local
+  uncertainty and individual exports are documented in MULTICOMPONENT_FITTING.md.
+- Component Monte Carlo and multicomponent zero-order searches remain outside
+  this increment. Synthetic recovery does not establish physical state identity.
 
 - Fixed-single-state zero-order fits now search the depletion edge explicitly,
   profile energy and solve amplitude/baseline. The original clean-reference
@@ -20,10 +33,10 @@ technical build evidence is maintained separately in the repository.
   diagnostics, offline copy and ZIP, and explicitly reviewed email/GitHub drafts.
   No automatic submission or spectral attachment.
 - About/contact/contribution links for Dr. Karol Cieślik.
-- Sixteen physical synthetic datasets with independent generation, per-file truth,
+- Twenty-one physical synthetic datasets with independent generation, per-file truth,
   seeds, units, noise/baseline descriptions and automated import/recovery checks.
 - Open Example Dataset, parameter hints, accessible Quick Start and feedback.
-- Four-page Quick Start, short START_HERE and optional colleague test checklist.
+- Updated Quick Start, short START_HERE and optional colleague test checklist.
 - Preserved classic/batch functionality, three-stage workflow, project/report
   exports and seeded parametric Monte Carlo. Positive-order integration and
   fitting algorithms are retained. Fixed-order initialization now respects the

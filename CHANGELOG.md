@@ -1,5 +1,12 @@
-## Unreleased — beta feedback
+## 0.11.0b4 — beta feedback (development candidate, unreleased)
 
+- Fit up to three independent Polanyi–Wigner populations simultaneously on one
+  full spectrum, with per-component fixed order/prefactor/coverage, joint energy
+  and nonnegative scale estimates, and shared offset/optional drift. Show each
+  contribution, sum and residual; compare counts, save projects and export parameters.
+  Withhold local intervals for ambiguous, exchangeable, bounded or ill-conditioned
+  decompositions. This exploratory increment excludes component Monte Carlo and
+  multicomponent zero-order depletion searches.
 - Supply seeded clean/low/moderate/high-noise demonstrations and an offset/drift
   example. Preserve theoretical reference curves and kinetic validation truth.
   Plot observations as muted open markers and models as contrasting curves.

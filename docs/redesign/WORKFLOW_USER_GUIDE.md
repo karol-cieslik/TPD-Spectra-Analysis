@@ -1,7 +1,7 @@
-# Three-stage workflow guide — 0.11.0b3 beta
+# Three-stage workflow guide — 0.11.0b4 candidate
 
 TPD Spectra Studio by **Karol Cieślik**. This guide describes the three-stage
-workflow in the `main` branch's 0.11.0b3 beta. It is intended for practical
+workflow in the 0.11.0b4 development candidate (PR #19). It is intended for practical
 testing, not as a claim of validated experimental analysis.
 
 ## First run with the synthetic example
@@ -68,6 +68,10 @@ and residuals show observation minus prediction.
 ## Modeling and Monte Carlo
 
 **Modeling & Order Identification** exposes the existing numerical engines.
+Use its **Spectrum & residuals**, **Parameters & models** and **Assumptions &
+warnings** views to inspect curves, select a model row and read scientific
+diagnostics. The views keep all three accessible on smaller displays; Monte
+Carlo controls stay above them.
 Simulate parameters to overlay a manual hypothesis. Simulation order, initial
 coverage, amplitude and baseline are distinct from optimized values. Coverage
 must be in (0, 1]; amplitude is a positive detector scale.
@@ -110,6 +114,36 @@ used separately because the legacy LSODA integrator is not reentrant.
 Select a converged row and choose **Use selected model in Kinetic Analysis**.
 This explicitly transfers a hypothesis and initial guesses; it does not create
 a final fit. In Stage C press **Calculate / Fit selected peak** to optimize.
+
+## Overlapping contributions
+
+Use **Overlapping components…** in Modeling to define up to three independent
+physical populations. Add/remove/name rows, supply each fixed order, prefactor
+and initial coverage, and choose energy guesses and bounds. **Fit components
+together** optimizes energies and nonnegative detector scales jointly against
+the **entire selected spectrum**, regardless of the named navigation region.
+The plot shows observations, individual contributions, their sum, the shared
+baseline and observation-minus-sum residuals. The table and notes show conditional
+uncertainty or explain why it is withheld. Definitions and results are retained
+by **Save project…**; **Export component fit…** writes component parameters,
+curves, residuals, JSON provenance and PNG/SVG figures to a new folder.
+
+For a reproducible three-state exercise, open **three overlapping peaks**, set
+three first-order rows with prefactor `1e13 s⁻¹`, coverage one, initial energies
+`1.185`, `1.265`, `1.345 eV` and bounds `1.14–1.22`, `1.22–1.30`, `1.30–1.38 eV`.
+Use 1 K/s, multistart off and 300 maximum evaluations. This truth-informed
+synthetic example checks numerical recovery; it is not blind state identification.
+Try the moderate-noise variant and plausible alternative fixed assumptions.
+
+**Compare component counts** fits the first 1, 2, … defined rows on identical
+observations and baseline assumptions, reporting heuristic AICc/BIC and relative
+weights. Double-click a component-count row in **Parameters & models** to plot
+that submitted hypothesis. Local minima, exchangeable labels and correlated parameters can make
+individual estimates ambiguous. Three visible features do not prove three
+independent desorption states. Zero-order component fitting and component Monte
+Carlo are outside this initial implementation. The existing single-state
+methods and Monte Carlo remain available in **Single-state view**. See
+[scientific assumptions and validation](../MULTICOMPONENT_FITTING.md).
 
 ## Kinetic interpretation
 

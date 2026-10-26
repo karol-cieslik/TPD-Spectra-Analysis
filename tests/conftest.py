@@ -14,10 +14,14 @@ def root():
         if sys.platform == "win32":
             raise
         pytest.skip("Tk display unavailable")
+    # Tk scaling is process-wide on Windows, even across destroyed roots.
+    # High-DPI tests must not alter subsequent tests' native display settings.
+    original_scaling=value.tk.call('tk','scaling')
     yield value
     value.update_idletasks()
     for callback in value.tk.call("after", "info"):
         value.after_cancel(callback)
+    value.tk.call('tk','scaling',original_scaling)
     value.destroy()
 
 

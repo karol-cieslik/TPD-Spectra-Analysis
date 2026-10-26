@@ -30,7 +30,7 @@ def configurations():
         ('second_order_single_peak',[state(2)],'Second-order tail; a wider fitting interval matters.'),
         ('fractional_order_1p5',[state(1.5)],'Phenomenological fixed non-integer order; not a coverage-dependent microscopic mechanism.'),
         ('two_overlapping_peaks',[state(1,1.2),state(1,1.28,.65)],'Two independent additive states; single-state fitting can be misleading.'),
-        ('three_overlapping_peaks',[state(1,1.18),state(1,1.26,.7),state(1,1.34,.5)],'Three independent additive states; the current GUI does not provide a three-state inverse model.'),
+        ('three_overlapping_peaks',[state(1,1.18),state(1,1.26,.7),state(1,1.34,.5)],'Three independent additive states; use the GUI simultaneous full-spectrum Polanyi-Wigner fitter with fixed orders, prefactors and initial coverages. Visible features do not establish three physical states; see docs/MULTICOMPONENT_FITTING.md.'),
         ('first_order_noisy',[state(1)],'Independent Gaussian detector noise; compare residuals and try seeded Monte Carlo.'),
         ('first_order_noisy_baseline',[state(1)],'Gaussian noise plus constant offset and linear drift; a constant-baseline fitter cannot model the drift.'),
         ('challenging_overlap_drift',[state(.5,1.2),state(2,1.27,.7)],'Overlapping different-order states, correlated noise and drift deliberately violate single-state/MC assumptions.')]

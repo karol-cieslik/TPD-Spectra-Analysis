@@ -38,7 +38,7 @@
     "file": "three_overlapping_peaks.csv",
     "metadata": "three_overlapping_peaks.json",
     "title": "three overlapping peaks",
-    "description": "Three independent additive states; the current GUI does not provide a three-state inverse model.",
+    "description": "Three independent additive states; use the GUI simultaneous full-spectrum Polanyi-Wigner fitter with fixed orders, prefactors and initial coverages. Visible features do not establish three physical states; see docs/MULTICOMPONENT_FITTING.md.",
     "beta_K_s": 1.0
   },
   {

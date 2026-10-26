@@ -1,6 +1,7 @@
 """Exercise resources and offline feedback in the assembled frozen package."""
 from pathlib import Path
 import json
+import sys
 import tkinter as tk
 from zipfile import ZipFile
 from .analysis import load_spectrum
@@ -21,11 +22,16 @@ def main(output):
         assert len(load_spectrum(resource('examples/beta_collection/'+entry['file'])).signal)==801
     assert resource('docs/beta/QUICK_START.pdf').read_bytes().startswith(b'%PDF')
     assert resource('START_HERE.md').is_file()
+    assert resource('docs/MULTICOMPONENT_FITTING.md').is_file()
     root=tk.Tk()
     app=WorkflowApp(root)
     errors=[]
     root.report_callback_exception=lambda *args:errors.append(str(args))
     try:
+        app.open_default_demo()
+        assert app.project.context()[1].lower==70
+        assert app.project.context()[1].upper==210
+        assert any(line.get_label()=='Original measured spectrum' for line in app.modeling_panel.fig.axes[0].lines)
         dialog=app.open_example()
         dialog.open()
         app.stages.select(2)
@@ -79,15 +85,53 @@ def main(output):
             seed=42,fit_baseline=False,minimum_successful_refits=2)
         assert mc.successful_parameter_fits['zero']==2
         assert 'log10_prefactor' not in mc.parameter_intervals['zero']
+        # Test the actual frozen three-component GUI, solver, project and exports.
+        from dataclasses import asdict
+        from .multicomponent import ComponentDefinition
+        from .component_export import export_components
+        app._load_paths([resource('examples/beta_collection/three_overlapping_peaks.csv')])
+        app.project.add_region('Joint full-spectrum hypothesis',50,450)
+        app.refresh_context()
+        panel=app.modeling_panel
+        panel.variables['multistart'].set(False)
+        panel.session()['component_settings']=dict(fit_baseline=False,fit_drift=False,components=[
+            asdict(ComponentDefinition(f'State {i+1}',energy_eV=e+.005,energy_bounds=(e-.04,e+.04)))
+            for i,e in enumerate((1.18,1.26,1.34))])
+        app.stages.select(1)
+        assert panel.components.run()
+        deadline=time.monotonic()+90
+        while app.job_busy and time.monotonic()<deadline:
+            root.update()
+            time.sleep(.01)
+        assert not app.job_busy
+        joint=panel.session()['components']
+        assert joint['fit']['normalized_rmse']<1e-3
+        assert len(joint['fit']['components'])==3
+        np.testing.assert_allclose(joint['fit']['prediction'],np.sum(joint['fit']['component_predictions'],axis=0)+joint['fit']['baseline_prediction'])
+        key=panel.key()
+        restored=load_project(save_project(app.project,output/'components.tpd.json'))
+        assert restored.modeling[key]['components']==joint
+        export_components(joint,output/'component-export')
+        assert (output/'component-export/component_parameters.csv').is_file()
+        panel.components.open()
+        root.update()
+        assert len(panel.components.rows)==3
+        panel.components.window.destroy()
         assert not errors,errors
         record={'identity':build_identity(),'examples_imported':len(catalog),
-            'resource_lookup_from_unrelated_cwd':True,'redhead_reference_passed':True,
+            'frozen_executable':bool(getattr(sys,'frozen',False)),
+            'resource_lookup_from_unrelated_cwd':Path.cwd().resolve()!=resource('START_HERE.md').parent,
+            'redhead_reference_passed':True,
             'offline_feedback_copy_zip_passed':True,'external_drafts_opened':False,
             'zero_order_gui_fit_project_report_and_short_mc_passed':True,
+            'default_demo_named_region_and_raw_trace_passed':True,
+            'three_component_gui_fit_project_individual_exports_passed':True,
             'callback_errors':errors,'visual_acceptance':'not assessed by automation'}
         (output/'beta_smoke.json').write_text(json.dumps(record,indent=2),encoding='utf-8')
-        print(f'Frozen external beta: {len(catalog)} imports, bundled guide, example chooser, Redhead preview, offline feedback copy/ZIP and contact passed',flush=True)
-        print('Frozen zero order: explicit GUI fit, conditional ranges, project, report and two MC refits passed',flush=True)
+        mode='Frozen' if getattr(sys,'frozen',False) else 'Source'
+        print(f'{mode} external beta: {len(catalog)} imports, bundled guide, example chooser, Redhead preview, offline feedback copy/ZIP and contact passed',flush=True)
+        print(f'{mode} zero order: explicit GUI fit, conditional ranges, project, report and two MC refits passed',flush=True)
+        print(f'{mode} overlap: three simultaneous physical components, sum/residual, editor, project roundtrip and individual exports passed',flush=True)
     finally:
         for callback in root.tk.call('after','info'):
             root.after_cancel(callback)

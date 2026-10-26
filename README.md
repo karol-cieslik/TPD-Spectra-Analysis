@@ -20,19 +20,26 @@ Built for surface-science researchers who need transparent fitting methods, repr
 
 ---
 
-## Try the beta — 0.11.0b3
+## Try the beta — 0.11.0b4 candidate
 
 The Windows beta is available for **informal testing by researchers**. You can
 try it without Python or experimental data. Open the
 [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml),
-choose the latest **successful `main`** run, and download its ZIP under
+open the latest successful Windows check in [PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19),
+and download `tpd-spectra-windows-x64-beta-0.11.0b4` under
 **Artifacts** (GitHub sign-in may be required). Extract the entire archive and run
 `TPD-Spectra-Studio.exe`. The executable is unsigned; follow your institution's
 software policy. This is a time-limited GitHub Actions download, not a tagged release.
 
 Start with [the five-minute walkthrough](START_HERE.md) and the
-[four-page Quick Start guide](docs/beta/QUICK_START.pdf), then explore the
-[16 documented synthetic spectra](examples/beta_collection/README.md).
+[Quick Start guide](docs/beta/QUICK_START.pdf), then explore the
+[21 documented synthetic spectra](examples/beta_collection/README.md).
+
+The default demo opens with a named first peak and seeded 2% detector noise.
+Monte Carlo has visible progress, elapsed/estimated time and cancellation.
+[Simultaneous physical component fitting](docs/MULTICOMPONENT_FITTING.md)
+models overlapping contributions jointly, with explicit fixed kinetic assumptions,
+individual curves, summed residuals and conservative uncertainty warnings.
 The beta includes the three-stage workflow, model comparison, conditional
 Monte Carlo refitting, save/load projects, and PDF/CSV/JSON/figure exports.
 

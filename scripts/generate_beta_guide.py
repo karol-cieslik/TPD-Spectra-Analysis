@@ -1,4 +1,4 @@
-"""Build the four-page review guide; no fabricated application screenshots."""
+"""Build the five-page review guide; no fabricated application screenshots."""
 from pathlib import Path
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.colors import HexColor
@@ -20,10 +20,10 @@ def generate(font_directory=None):
     pdfmetrics.registerFont(TTFont('GuideBold',str(fonts/'DejaVuSans-Bold.ttf')))
     pdfmetrics.registerFontFamily('Guide',normal='Guide',bold='GuideBold')
     c=Canvas(str(OUT),pagesize=(595.28,841.89))
-    c.setTitle('TPD Spectra Studio - Quick Start 0.11.0b3 (review guide)')
+    c.setTitle('TPD Spectra Studio - Quick Start 0.11.0b4 (review guide)')
     c.setAuthor('Karol Cieślik')
     c.setCreator('TPD Spectra Studio')
-    c.setSubject('Four-page Quick Start for informal research beta testing')
+    c.setSubject('Five-page Quick Start for informal research beta testing')
     body=ParagraphStyle('body',fontName='Guide',fontSize=10.5,leading=16,textColor=HexColor('#243748'))
     heading=ParagraphStyle('heading',parent=body,fontName='GuideBold',fontSize=14,leading=20,textColor=HexColor('#087e8b'))
     y=0
@@ -31,12 +31,12 @@ def generate(font_directory=None):
         nonlocal y
         c.setFillColor(HexColor('#11283e'));c.rect(0,726,596,116,fill=1,stroke=0)
         c.setFillColor(HexColor('#73d6d3'));c.setFont('GuideBold',10)
-        c.drawString(42,808,'TPD SPECTRA STUDIO  /  0.11.0b3')
+        c.drawString(42,808,'TPD SPECTRA STUDIO  /  0.11.0b4')
         c.setFillColor(HexColor('#ffffff'));c.setFont('GuideBold',23);c.drawString(42,772,title)
         c.setFont('Guide',10);c.drawString(42,746,subtitle)
         c.setFillColor(HexColor('#657482'));c.setFont('Guide',8)
-        c.drawString(42,31,'Karol Cieślik  •  External beta review guide  •  25 October 2026')
-        c.drawRightString(553,31,f'{number} / 4')
+        c.drawString(42,31,'Karol Cieślik  •  External beta review guide  •  26 October 2026')
+        c.drawRightString(553,31,f'{number} / 5')
         y=701
     def p(text,style=body,gap=12):
         nonlocal y
@@ -45,7 +45,7 @@ def generate(font_directory=None):
         paragraph.drawOn(c,42,y-h);y-=h+gap
     start(1,'Your first useful result','A five-to-ten-minute starting exercise using clearly labeled synthetic data')
     p('1  Extract and launch',heading)
-    p('Open <link href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml" color="#087e8b">Windows beta builds on GitHub</link>, choose the latest <b>successful main</b> run, and download the 0.11.0b3 ZIP under Artifacts. GitHub sign-in may be required. Extract the entire ZIP, keeping <b>docs</b> and <b>examples</b> beside <b>TPD-Spectra-Studio.exe</b>, then double-click the executable. No Python installation is needed. The unsigned beta must comply with your institution’s software policy.')
+    p('Open <link href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19" color="#087e8b">PR #19 on GitHub</link>, choose its latest successful <b>Windows desktop build</b> check, and download the 0.11.0b4 ZIP under Artifacts. GitHub sign-in may be required. Extract the entire ZIP, keeping <b>docs</b> and <b>examples</b> beside <b>TPD-Spectra-Studio.exe</b>. Double-click the executable. The seeded noisy two-peak demo opens with its first peak selected. Check VERSION.json for the build commit. The unsigned beta must comply with your institution’s software policy.')
     p('2  Open the clean example',heading)
     p('Click <b>Open Example Dataset</b>. Keep <b>first order single peak</b> and open it. You should see 801 points and a named full-trace interval, 50–450 °C. The chooser supplies the documented 1 K/s ramp. These are simulated rates, not measurements.')
     p('3  Read an energy estimate',heading)
@@ -65,21 +65,31 @@ def generate(font_directory=None):
     p('In <b>Modeling &amp; Order Identification</b>, simulate parameters or select candidate orders and <b>Compare models</b>. Start with the first-order candidate on the clean first-order example. Inspect fit residuals, convergence and identifiability warnings, not only the lowest AICc. A good curve match does not identify a unique mechanism.')
     p('<b>Fixed zero-order fitting:</b> the new method searches the depletion edge. Include rising signal and at least three samples after exhaustion. Prefactor and scale represent conditional ranges, not unique estimates or confidence intervals. Review residuals; numerical completion does not prove the model.')
     p('Other examples',heading)
-    p('The chooser includes second/fractional order, overlapping populations, noisy/drifting traces, heating-rate series and coverage series. Each CSV has an adjacent JSON with its true parameters and assumptions. Read <b>examples/beta_collection/README.md</b> before interpreting a challenge dataset.')
+    p('The chooser includes second/fractional order, overlapping populations, noisy/drifting traces, heating-rate and coverage series. The default demo also has clean, 1%, 2%, 5% noise and baseline-drift variants. Noise is added after the physical calculation with fixed seeds; clean truth is retained. Each CSV has an adjacent JSON with generating parameters and assumptions. Read <b>examples/README.md</b>.')
     c.showPage()
     start(3,'Fit and inspect uncertainty','Simulation, model comparison and a final kinetic fit are separate steps')
     p('Transfer a candidate deliberately',heading)
-    p('Select a converged comparison row and choose <b>Use selected model in Kinetic Analysis</b>. This transfers a hypothesis and initial guesses. In Kinetic Analysis, check the method, ramp, order and fit interval, then press <b>Calculate / Fit selected peak</b>. Inspect the residuals and warnings before saving a labeled result.')
+    p('Open <b>Parameters &amp; models</b>, select a converged comparison row and choose <b>Use selected model in Kinetic Analysis</b>. This transfers a hypothesis and initial guesses. Check the method, ramp, order and interval, then press <b>Calculate / Fit selected peak</b>. Inspect residuals and <b>Assumptions &amp; warnings</b> before saving.')
     p('Choose a method that fits the question',heading)
     p('<b>Leading edge:</b> apparent slope energy on a rising interval with little coverage change. On the clean reference, try 90–110 °C; expect about 1.2 eV. Do not use the entire peak. This does not assign zero order.<br/><br/><b>Redhead:</b> first-order estimate with an assumed prefactor and linear ramp.<br/><br/><b>Polanyi–Wigner:</b> single-state numerical fitting. Energy, prefactor and amplitude may be poorly identifiable. The fitter normalizes initial coverage to one; absolute coverage is not measured here.')
     p('Try Monte Carlo after comparison',heading)
-    p('Return to Modeling, complete a current comparison, choose a seed and replicate count, then <b>Run Monte Carlo</b>. A short run checks the workflow; a repeat with the same seed helps assess reproducibility. Cancel is available. Ranges require 100 successful refits and are not coverage-validated. Zero-order prefactor percentiles are withheld; per-refit depletion brackets are recorded.')
+    p('Return to Modeling, complete a current comparison, choose a seed/count, then <b>Run Monte Carlo</b>. For a short software check use first order only, multistart off, 2 replicates and seed 42. The visible bar shows count, percentage, elapsed time and an estimated remainder. <b>Cancel</b> preserves prior valid results. Completion separates fit failures from incomplete rankings. Conditional ranges require 100 successful refits and are not coverage-validated.')
     p('What Monte Carlo means here',heading)
     p('This is <b>parametric refitting</b> with iid Gaussian noise around the lowest-AICc converged reference and its residual noise estimate. It is not microscopic kinetic Monte Carlo or Bayesian MCMC. Rank frequencies describe conditional stability, not probabilities of mechanisms. Drift, correlated noise, calibration and model uncertainty are not included.')
     p('Science before presentation',heading)
     p('Synthetic recovery is a software check. The clean benchmarks use known-order, truth-informed starts; they do not demonstrate robust blind inference. Compare real results with an independent calculation and suitable reference measurements. Keep acquisition conditions, model assumptions and limitations with every exported result.')
     c.showPage()
-    start(4,'Save, share and report','Choose what leaves the application and inspect it before sharing')
+    start(4,'Fit overlapping components','Explicit independent physical populations on one full experimental spectrum')
+    p('Define physical hypotheses',heading)
+    p('In Modeling click <b>Overlapping components…</b>. Add up to three named rows. Set each fixed positive order, prefactor, initial normalized coverage, initial energy and energy bounds. <b>Fit components together</b> optimizes all energies and nonnegative detector scales jointly. Shared offset and optional linear drift can be fitted. Heating rate, evaluation budget and multistart come from Modeling.')
+    p('Try the three-state synthetic reference',heading)
+    p('Open <b>three overlapping peaks</b>. Define three first-order rows with prefactor <b>1e13 s⁻¹</b> and coverage one. Use initial energies <b>1.185, 1.265, 1.345 eV</b>; bounds <b>1.14–1.22, 1.22–1.30, 1.30–1.38 eV</b>; heating rate 1 K/s; multistart off and 300 evaluations. This truth-informed numerical exercise does not demonstrate blind physical identification. Try the moderate-noise variant and alternative justified assumptions.')
+    p('Inspect the whole fitted signal',heading)
+    p('The joint calculation uses the <b>entire selected dataset</b>; named regions do not crop it. <b>Spectrum &amp; residuals</b> shows observations, every component, baseline, combined fit and observation-minus-sum residuals. <b>Compare component counts</b> fits the first 1, 2, … defined rows on identical data/baseline assumptions. Double-click a count in <b>Parameters &amp; models</b> to plot it. Read <b>Assumptions &amp; warnings</b>; rankings are heuristic.')
+    p('Retain assumptions and uncertainty limits',heading)
+    p('<b>Save project…</b> retains definitions/results. <b>Export component fit…</b> writes individual parameters, curves, residuals, JSON provenance and PNG/SVG into a new folder. Local intervals are conditional on fixed kinetics and iid noise; ambiguous, exchangeable or ill-conditioned decompositions withhold them. Three features do not prove three states. Component Monte Carlo and multicomponent zero-order fitting are unavailable in this increment. See <b>docs/MULTICOMPONENT_FITTING.md</b>.')
+    c.showPage()
+    start(5,'Save, share and report','Choose what leaves the application and inspect it before sharing')
     p('Review results and choose the destination',heading)
     p('Use <b>Save labeled result…</b> for each result you want to retain. <b>Report / Export…</b> shows the saved-run selection; use Ctrl/Shift for multiple rows. Click <b>Choose destination and generate report…</b>. A fresh folder receives PDF, parameter/curve CSV, JSON, PNG and SVG. Existing report folders are preserved. The dialog previews selected content, not the rendered PDF.')
     p('Save a portable project',heading)

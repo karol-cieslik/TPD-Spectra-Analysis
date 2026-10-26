@@ -13,6 +13,7 @@ from .kinetics_explorer import compare_desorption_orders, ModelCandidate
 from .kinetics_uncertainty import run_kinetics_monte_carlo
 from .equation_help import EquationCard
 from .job_progress import MonteCarloProgress
+from .component_gui import ComponentsController
 
 DEFAULTS = dict(beta='1', energy='1.25', prefactor='1e13', order='1', coverage='1',
                 amplitude='1', baseline='0', max_nfev='300', replicates='500', seed='42',
@@ -71,6 +72,14 @@ class ModelingPanel:
             button = ttk.Button(sidebar, text=title, command=callback)
             button.pack(fill='x', pady=3)
             self.calculation_buttons.append(button)
+        self.components = ComponentsController(self)
+        component_actions=ttk.Frame(workspace,padding=(4,4))
+        component_actions.pack(fill='x')
+        component_button=ttk.Button(component_actions,text='Overlapping components…',command=self.components.open)
+        component_button.pack(side='left')
+        self.calculation_buttons.append(component_button)
+        ttk.Button(component_actions,text='Single-state view',command=self.show_single).pack(side='left',padx=4)
+        ttk.Button(component_actions,text='Export component fit…',command=self.components.export).pack(side='left')
         # Keep feedback and cancellation visible even when the parameter sidebar scrolls.
         self.mc_progress = MonteCarloProgress()
         self.mc_active = False
@@ -90,27 +99,55 @@ class ModelingPanel:
         self.progress_detail_label.grid(row=2, column=0, columnspan=3, sticky='w')
         self.progress_frame.bind('<Configure>',lambda e:self.progress_detail_label.configure(wraplength=max(150,e.width-20)))
         self.update_progress_view()
+        # Separate views keep parameters and scientific cautions reachable on
+        # smaller displays instead of letting the canvas push them off-screen.
+        self.views=ttk.Notebook(workspace)
+        self.views.pack(fill='both',expand=True)
+        plot_view,table_view,notes_view=(ttk.Frame(self.views) for _ in range(3))
+        for view,title in ((plot_view,'Spectrum & residuals'),(table_view,'Parameters & models'),(notes_view,'Assumptions & warnings')):
+            self.views.add(view,text=title)
         self.fig = Figure(figsize=(8,5), constrained_layout=True)
-        self.canvas = FigureCanvasTkAgg(self.fig, master=workspace)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=plot_view)
         self.canvas.get_tk_widget().pack(fill='both', expand=True)
         columns = ('model','order','energy','prefactor','rmse','aicc','warning')
-        self.table = ttk.Treeview(workspace, columns=columns, show='headings', height=4)
+        self.table = ttk.Treeview(table_view, columns=columns, show='headings', height=4)
         labels = ('Model','Order','E (eV)','ν (s⁻¹)','RMSE','Δ AICc','Validity / warnings')
         for col,label in zip(columns,labels):
             self.table.heading(col, text=label, command=lambda c=col:self.sort(c))
             self.table.column(col, width=85 if col != 'warning' else 260, minwidth=60)
-        self.table.pack(fill='x')
-        scroll = ttk.Scrollbar(workspace, orient='horizontal', command=self.table.xview)
+        table_view.rowconfigure(1,weight=1)
+        table_view.columnconfigure(0,weight=1)
+        table_help=ttk.Label(table_view,text='Select a single-state model for transfer. Double-click a component-count row to inspect its fit.',wraplength=650)
+        table_help.grid(row=0,column=0,columnspan=2,sticky='ew',padx=6,pady=4)
+        table_view.bind('<Configure>',lambda e:table_help.configure(wraplength=max(200,e.width-16)))
+        self.table.grid(row=1,column=0,sticky='nsew')
+        self.table.bind('<Double-1>',lambda _e:self.components.select_count())
+        scroll = ttk.Scrollbar(table_view, orient='horizontal', command=self.table.xview)
         self.table.configure(xscrollcommand=scroll.set)
-        scroll.pack(fill='x')
-        self.notes = tk.Text(workspace, height=6, wrap='word', font=('Segoe UI',10))
-        self.notes.pack(fill='x')
+        scroll.grid(row=2,column=0,sticky='ew')
+        vertical=ttk.Scrollbar(table_view,orient='vertical',command=self.table.yview)
+        vertical.grid(row=1,column=1,sticky='ns')
+        self.table.configure(yscrollcommand=vertical.set)
+        notes_view.rowconfigure(0,weight=1)
+        notes_view.columnconfigure(0,weight=1)
+        self.notes = tk.Text(notes_view, height=6, wrap='word', font=('Segoe UI',10))
+        self.notes.grid(row=0,column=0,sticky='nsew')
+        note_scroll=ttk.Scrollbar(notes_view,orient='vertical',command=self.notes.yview)
+        note_scroll.grid(row=0,column=1,sticky='ns')
+        self.notes.configure(yscrollcommand=note_scroll.set)
         for key,var in self.variables.items():
             var.trace_add('write',lambda *_args,k=key:self.changed(k))
 
     def key(self):
         dataset, region = self.app.project.context()
         return f'{dataset.id}/{region.id}'
+
+    def show_single(self):
+        try:
+            self.session()['display_mode']='single'
+            self.render()
+        except ValueError as exc:
+            self.app.status.set(str(exc))
 
     def set_job_busy(self, busy):
         for button in [*self.calculation_buttons, self.mc_run]:
@@ -177,7 +214,7 @@ class ModelingPanel:
         try:
             self.session()['settings'] = {k:v.get() for k,v in self.variables.items()}
             self.render()
-            if key in {'beta','energy','prefactor','order','coverage','amplitude','baseline'}:
+            if key in {'beta','energy','prefactor','order','coverage','amplitude','baseline'} and self.session().get('display_mode')!='components':
                 if self.preview_after is not None:
                     self.app.root.after_cancel(self.preview_after)
                 self.preview_after = self.app.root.after(650,self.preview)
@@ -224,6 +261,11 @@ class ModelingPanel:
         self.table.delete(*self.table.get_children())
         try:
             session = self.session()
+            component_result=session.get('components')
+            if component_result and session.get('display_mode')=='components':
+                self.components.render(ax,residual,component_result)
+                self.canvas.draw_idle()
+                return
             result = session.get('comparison')
             dataset, _ = self.app.project.context()
             t,y = selected_arrays(dataset,self.snapshot()) if not result else (result['temperature'],result['signal'])
@@ -261,7 +303,7 @@ class ModelingPanel:
             notes += 'Conditional parameter ranges: ' + json.dumps(r['parameter_intervals']) + '\n'
             notes += ('MC settings are current. ' if self.current(mc) else 'MC settings are stale. ')
         notes += 'Monte Carlo uses iid Gaussian residual noise around the lowest-AICc converged reference; ranges withheld below 100 successful refits. Frequencies are not mechanism probabilities.'
-        ax.legend(fontsize=8)
+        ax.legend(fontsize=7,ncol=2)
         self.note(notes)
         self.canvas.draw_idle()
 
@@ -310,6 +352,8 @@ class ModelingPanel:
         key = f"{snap['dataset_id']}/{snap['region_id']}"
         session = self.app.project.modeling[key]
         session[kind] = result
+        if kind in ('comparison','components','simulation'):
+            session['display_mode']='components' if kind=='components' else 'single'
         if kind == 'comparison':
             session.pop('monte_carlo',None)
         self.render()
@@ -321,6 +365,8 @@ class ModelingPanel:
             self.app.status.set('A calculation is already running; finish or cancel it first.')
             return
         try:
+            if self.session().get('display_mode')=='components':
+                raise ValueError('Component Monte Carlo is not implemented. Single-state view uses the separate order comparison; component intervals are conditional local estimates.')
             previous = self.session().get('comparison')
             if not previous or not self.current(previous):
                 raise ValueError('Compare current models before running Monte Carlo.')
@@ -347,6 +393,8 @@ class ModelingPanel:
     def transfer(self):
         try:
             session = self.session()
+            if session.get('display_mode')=='components':
+                raise ValueError('Simultaneous components are retained and exported in Modeling. Use Single-state view before transferring an isolated-peak hypothesis.')
             result = session.get('comparison')
             if not result or not self.current(result):
                 raise ValueError('Compare current settings before transferring a candidate.')

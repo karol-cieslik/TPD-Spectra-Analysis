@@ -12,6 +12,7 @@ from .kinetics import simulate_tpd, KineticFitResult
 from .kinetics_explorer import compare_desorption_orders, ModelCandidate
 from .kinetics_uncertainty import run_kinetics_monte_carlo
 from .equation_help import EquationCard
+from .job_progress import MonteCarloProgress
 
 DEFAULTS = dict(beta='1', energy='1.25', prefactor='1e13', order='1', coverage='1',
                 amplitude='1', baseline='0', max_nfev='300', replicates='500', seed='42',
@@ -64,10 +65,31 @@ class ModelingPanel:
         for key in ('zero','first','second','fractional','fit_baseline','multistart'):
             ttk.Checkbutton(sidebar, text=key.replace('_',' ').capitalize(), variable=self.variables[key]).pack(anchor='w')
         ttk.Label(sidebar, text='Fits normalize initial coverage to one and optimize signal scale. Simulation coverage/amplitude/baseline apply only to manual preview.', wraplength=280).pack(fill='x', pady=8)
+        self.calculation_buttons = []
         for title, callback in (('Simulate parameters',self.simulate), ('Compare models',self.compare),
-                                ('Run Monte Carlo',self.monte_carlo), ('Cancel',lambda: app.job_cancel.set()),
                                 ('Use selected model in Kinetic Analysis',self.transfer)):
-            ttk.Button(sidebar, text=title, command=callback).pack(fill='x', pady=3)
+            button = ttk.Button(sidebar, text=title, command=callback)
+            button.pack(fill='x', pady=3)
+            self.calculation_buttons.append(button)
+        # Keep feedback and cancellation visible even when the parameter sidebar scrolls.
+        self.mc_progress = MonteCarloProgress()
+        self.mc_active = False
+        self.progress_frame = ttk.LabelFrame(workspace, text='Monte Carlo', padding=8)
+        self.progress_frame.pack(fill='x')
+        self.progress_frame.columnconfigure(0, weight=1)
+        self.mc_run = ttk.Button(self.progress_frame, text='Run Monte Carlo', command=self.monte_carlo)
+        self.mc_run.grid(row=0, column=1, padx=4)
+        self.mc_cancel = ttk.Button(self.progress_frame, text='Cancel', command=self.cancel_job, state='disabled')
+        self.mc_cancel.grid(row=0, column=2)
+        self.progress_bar = ttk.Progressbar(self.progress_frame, mode='determinate', maximum=100)
+        self.progress_bar.grid(row=0, column=0, sticky='ew', padx=(0,8))
+        self.progress_count = tk.StringVar(app.root)
+        self.progress_detail = tk.StringVar(app.root)
+        ttk.Label(self.progress_frame, textvariable=self.progress_count).grid(row=1, column=0, columnspan=3, sticky='w')
+        self.progress_detail_label = ttk.Label(self.progress_frame, textvariable=self.progress_detail, wraplength=650)
+        self.progress_detail_label.grid(row=2, column=0, columnspan=3, sticky='w')
+        self.progress_frame.bind('<Configure>',lambda e:self.progress_detail_label.configure(wraplength=max(150,e.width-20)))
+        self.update_progress_view()
         self.fig = Figure(figsize=(8,5), constrained_layout=True)
         self.canvas = FigureCanvasTkAgg(self.fig, master=workspace)
         self.canvas.get_tk_widget().pack(fill='both', expand=True)
@@ -89,6 +111,43 @@ class ModelingPanel:
     def key(self):
         dataset, region = self.app.project.context()
         return f'{dataset.id}/{region.id}'
+
+    def set_job_busy(self, busy):
+        for button in [*self.calculation_buttons, self.mc_run]:
+            button.configure(state='disabled' if busy else 'normal')
+        self.mc_cancel.configure(state='normal' if busy else 'disabled')
+
+    def cancel_job(self):
+        if self.app.job_busy:
+            self.app.job_cancel.set()
+            if self.mc_active:
+                self.mc_progress.state = 'Cancelling'
+                self.update_progress_view()
+            self.mc_cancel.configure(state='disabled')
+            self.app.status.set('Cancelling calculation; previous successful results retained.')
+
+    def update_progress_view(self):
+        count, detail = self.mc_progress.text()
+        self.progress_count.set(count)
+        self.progress_detail.set(detail)
+        self.progress_bar.configure(maximum=max(1,self.mc_progress.total), value=self.mc_progress.completed)
+
+    def progress_updated(self, completed, total):
+        self.mc_progress.update(completed,total)
+        self.update_progress_view()
+
+    def job_finished(self, error=None, cancelled=False):
+        if self.mc_active and (error is not None or cancelled):
+            self.mc_progress.finish('Cancelled' if cancelled else 'Failed',
+                'previous results retained' if cancelled else str(error))
+            self.mc_active = False
+            self.update_progress_view()
+
+    def tick_progress(self):
+        if self.mc_active:
+            if self.app.job_cancel.is_set():
+                self.mc_progress.state = 'Cancelling'
+            self.update_progress_view()
 
     def session(self):
         return self.app.project.modeling.setdefault(self.key(), {'settings':deepcopy(DEFAULTS)})
@@ -231,6 +290,21 @@ class ModelingPanel:
             self.app.status.set(str(exc))
 
     def complete(self,kind,result):
+        if kind == 'monte_carlo':
+            r = result['result']
+            if r['cancelled']:
+                self.mc_progress.update(r['replicates_completed'],r['replicates_requested'])
+                self.job_finished(cancelled=True)
+                self.app.status.set('Monte Carlo cancelled; previous successful results retained.')
+                return
+            successful = sum(r['successful_parameter_fits'].values())
+            attempted = r['replicates_completed'] * len(r['successful_parameter_fits'])
+            summary = (f"{successful} successful / {attempted-successful} failed fitting attempts; "
+                       f"{r['failed_rankings']} incomplete rankings; seed {r['seed']}")
+            self.mc_progress.update(r['replicates_completed'],r['replicates_requested'])
+            self.mc_progress.finish('Completed',summary)
+            self.mc_active = False
+            self.update_progress_view()
         snap = result['snapshot']
         key = f"{snap['dataset_id']}/{snap['region_id']}"
         session = self.app.project.modeling[key]
@@ -238,9 +312,13 @@ class ModelingPanel:
         if kind == 'comparison':
             session.pop('monte_carlo',None)
         self.render()
-        self.app.status.set(kind.replace('_',' ').capitalize() + ' finished; results retain submitted settings.')
+        self.app.status.set(('Monte Carlo finished: ' + summary) if kind == 'monte_carlo' else
+                            kind.replace('_',' ').capitalize() + ' finished; results retain submitted settings.')
 
     def monte_carlo(self):
+        if self.app.job_busy:
+            self.app.status.set('A calculation is already running; finish or cancel it first.')
+            return
         try:
             previous = self.session().get('comparison')
             if not previous or not self.current(previous):
@@ -255,9 +333,13 @@ class ModelingPanel:
                     orders=tuple(c['name'] for c in previous['candidates']),replicates=replicates,seed=seed,
                     fit_baseline=s['fit_baseline'],max_nfev=int(s['max_nfev']),multistart=s['multistart'],
                     reference_comparison=models_from_records(previous['candidates']),cancelled=self.app.job_cancel.is_set,
-                    progress=lambda done,total:self.app.jobs.put(('progress',f'Monte Carlo {done}/{total}')))
+                    progress=lambda done,total:self.app.jobs.put(('progress', (done,total))))
                 return serial(dict(snapshot=snap,result=result))
-            self.app.start_job(work,lambda r:self.complete('monte_carlo',r))
+            self.mc_active = True
+            self.mc_progress.start(replicates)
+            self.update_progress_view()
+            if not self.app.start_job(work,lambda r:self.complete('monte_carlo',r)):
+                self.job_finished(error=self.app.status.get())
         except (ValueError,KeyError) as exc:
             self.app.status.set(str(exc))
 

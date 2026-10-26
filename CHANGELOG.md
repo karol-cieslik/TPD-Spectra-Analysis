@@ -1,5 +1,8 @@
 ## Unreleased — beta feedback
 
+- Show Monte Carlo progress, elapsed/estimated remaining time and fit/failure
+  counts beside Run/Cancel. Retain the worker thread, prevent duplicate jobs,
+  and discard cancelled results even if success was already queued.
 - Keep the original spectrum visible in Modeling and Kinetic Analysis without
   a named region, during calculations and after errors. Provide actionable region guidance.
 - Open the shipped default demo with a prepared first-peak region; document a

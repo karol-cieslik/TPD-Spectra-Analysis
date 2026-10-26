@@ -83,12 +83,15 @@ class ResultsMixin:
         self.job_cancel.clear()
         self.fit_button.configure(state='disabled')
         self.cancel_fit.configure(state='normal')
+        self.modeling_panel.set_job_busy(True)
         def work():
             try:
                 value = function()
                 if self.job_cancel.is_set():
                     raise InterruptedError('Cancelled; previous successful results retained.')
                 self.jobs.put(('done', (on_success, value)))
+            except InterruptedError as exc:
+                self.jobs.put(('cancelled', str(exc)))
             except Exception as exc:
                 self.diagnostic_log.record('Calculation stopped',str(exc),exc)
                 self.jobs.put(('error', str(exc)))
@@ -101,19 +104,32 @@ class ResultsMixin:
             while True:
                 kind, payload = self.jobs.get_nowait()
                 if kind == 'progress':
-                    self.status.set(payload)
+                    if isinstance(payload, tuple):
+                        self.modeling_panel.progress_updated(*payload)
+                        self.status.set(self.modeling_panel.progress_count.get())
+                    else:
+                        self.status.set(payload)
                     continue
+                # Cancellation may arrive after the worker queued success but before
+                # this GUI-thread commit. Never replace valid results in that race.
+                cancelled = kind == 'cancelled' or self.job_cancel.is_set()
                 self.job_busy = False
                 self.fit_button.configure(state='normal')
                 self.cancel_fit.configure(state='disabled')
-                if kind == 'done':
+                self.modeling_panel.set_job_busy(False)
+                if cancelled:
+                    self.modeling_panel.job_finished(cancelled=True)
+                    self.status.set('Calculation cancelled; previous successful results retained.')
+                elif kind == 'done':
                     self.diagnostic_log.record('Calculation finished','Background calculation returned successfully.')
                     callback, value = payload
                     callback(value)
                 else:
+                    self.modeling_panel.job_finished(error=payload)
                     self.status.set('Calculation stopped: ' + payload)
         except queue.Empty:
             pass
+        self.modeling_panel.tick_progress()
         self.root.after(100, self.poll_jobs)
 
     def calculate_selected(self):

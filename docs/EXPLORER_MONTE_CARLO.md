@@ -6,6 +6,20 @@ Zero, first and second order have fixed orders 0, 1 and 2. Fractional order is a
 
 After comparison, **Monte Carlo…** uses that exact fitted data/settings snapshot. Changes to inputs, range, baseline, heating rate or selected orders require a new comparison. The reference is the lowest-AICc converged candidate. Before running, review that reference's residuals. Choose a seed and replicate count (1–10000; default 500). Cancellation is checked between numerical fit evaluations and retains only completed replicates.
 
+In the three-stage workflow, **Modeling & Order Identification** has a persistent
+Monte Carlo control above the plot. **Run Monte Carlo** shows a progress bar,
+completed/total replicates and percentage, elapsed time and an approximate
+remaining time once refits begin. The estimate can fluctuate because fitting
+cost varies. **Cancel** changes the state to Cancelling until the current
+numerical evaluation returns. Calculations use the existing worker thread;
+progress and plots update on the GUI thread. Duplicate calculations are blocked.
+The input spectrum and previous successful results remain visible. Cancellation
+or an error keeps the previous result; partial Monte Carlo output does not replace
+it. A successful completion reports successful and failed **individual model
+fits**, separately from incomplete **replicate rankings**. These counts differ
+when more than one model is requested. Retry after reviewing an error or after
+cancellation; use the same seed and settings to reproduce the calculation.
+
 The calculation generates independent Gaussian residual noise around the fitted reference and refits the selected models to each simulated trace. This is parametric Monte Carlo refitting, **not microscopic kinetic Monte Carlo and not Bayesian MCMC**. Replicate fitting uses the reference energy/prefactor as its initial guess, 150 maximum evaluations and no multistart. These choices affect convergence and must be included in interpretation.
 
 A winner is counted only when every requested model converges. Failed/incomplete rankings remain in the denominator; individual successful parameter refits are still counted and retained. The 2.5–97.5 percentile range is a **conditional refit range**, not a demonstrated 95% confidence interval. Ranges are withheld below 100 successful refits. This practical minimum is not a guarantee of stability or nominal coverage. Check seed/count sensitivity before scientific use.

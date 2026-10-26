@@ -80,6 +80,15 @@ Parameter ranges are withheld below 100 successful refits and have not been
 coverage-validated. Correlated noise, drift, calibration and model uncertainty
 are not represented. A two-replicate test only checks the software path.
 
+The Monte Carlo bar and **Run Monte Carlo / Cancel** buttons remain above the
+plot while the parameter sidebar scrolls. Feedback shows completed/total
+simulations, percentage, elapsed time and an approximate remaining time.
+Completion lists successful and failed individual fitting attempts separately
+from incomplete model rankings. Cancel shows Cancelling until a numerical
+evaluation returns, then preserves the previous successful result. Worker errors
+are shown beside the bar and in the status area; calculations can be retried.
+All calculation buttons are disabled while one worker is active.
+
 Simulations, comparisons, optimization and Monte Carlo run outside the UI
 thread. Cancel takes effect between numerical evaluations. A cancelled or failed
 calculation preserves previous successful output. Switching context during work

@@ -110,5 +110,40 @@
     "title": "first order coverage 0p5",
     "description": "Coverage series; compare with the corresponding single_peak file (coverage 1). First-order peak position is coverage-independent in this model; zero-order peaks shift.",
     "beta_K_s": 1.0
+  },
+  {
+    "file": "first_order_low_noise.csv",
+    "metadata": "first_order_low_noise.json",
+    "title": "first order low noise",
+    "description": "Fixed-seed iid Gaussian detector noise, 1% of the clean maximum; compare with the clean first-order reference.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "first_order_moderate_noise.csv",
+    "metadata": "first_order_moderate_noise.json",
+    "title": "first order moderate noise",
+    "description": "Fixed-seed iid Gaussian detector noise, 2% of the clean maximum; compare with the clean first-order reference.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "first_order_high_noise.csv",
+    "metadata": "first_order_high_noise.json",
+    "title": "first order high noise",
+    "description": "Fixed-seed iid Gaussian detector noise, 5% of the clean maximum; compare with the clean first-order reference.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "two_overlapping_moderate_noise.csv",
+    "metadata": "two_overlapping_moderate_noise.json",
+    "title": "two overlapping moderate noise",
+    "description": "Independent additive physical states with 2% iid Gaussian detector noise; visible features alone do not establish the number of physical states.",
+    "beta_K_s": 1.0
+  },
+  {
+    "file": "three_overlapping_moderate_noise.csv",
+    "metadata": "three_overlapping_moderate_noise.json",
+    "title": "three overlapping moderate noise",
+    "description": "Independent additive physical states with 2% iid Gaussian detector noise; visible features alone do not establish the number of physical states.",
+    "beta_K_s": 1.0
   }
 ]

@@ -15,7 +15,8 @@ def main(output):
     output=Path(output)
     output.mkdir(parents=True,exist_ok=False)
     catalog=json.loads(resource('examples/beta_collection/catalog.json').read_text(encoding='utf-8'))
-    assert len(catalog)==16
+    assert len(catalog)>=19
+    assert {'first_order_low_noise.csv','first_order_moderate_noise.csv','first_order_high_noise.csv'} <= {entry['file'] for entry in catalog}
     for entry in catalog:
         assert len(load_spectrum(resource('examples/beta_collection/'+entry['file'])).signal)==801
     assert resource('docs/beta/QUICK_START.pdf').read_bytes().startswith(b'%PDF')
@@ -85,7 +86,7 @@ def main(output):
             'zero_order_gui_fit_project_report_and_short_mc_passed':True,
             'callback_errors':errors,'visual_acceptance':'not assessed by automation'}
         (output/'beta_smoke.json').write_text(json.dumps(record,indent=2),encoding='utf-8')
-        print('Frozen external beta: 16 imports, bundled guide, example chooser, Redhead preview, offline feedback copy/ZIP and contact passed',flush=True)
+        print(f'Frozen external beta: {len(catalog)} imports, bundled guide, example chooser, Redhead preview, offline feedback copy/ZIP and contact passed',flush=True)
         print('Frozen zero order: explicit GUI fit, conditional ranges, project, report and two MC refits passed',flush=True)
     finally:
         for callback in root.tk.call('after','info'):

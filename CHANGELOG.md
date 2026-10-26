@@ -1,5 +1,8 @@
 ## Unreleased — beta feedback
 
+- Supply seeded clean/low/moderate/high-noise demonstrations and an offset/drift
+  example. Preserve theoretical reference curves and kinetic validation truth.
+  Plot observations as muted open markers and models as contrasting curves.
 - Show Monte Carlo progress, elapsed/estimated remaining time and fit/failure
   counts beside Run/Cancel. Retain the worker thread, prevent duplicate jobs,
   and discard cancelled results even if success was already queued.

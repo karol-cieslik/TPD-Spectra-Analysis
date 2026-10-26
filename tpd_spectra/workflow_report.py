@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_pdf import PdfPages
 from . import __version__
-from .workflow_analysis import draw_result, processed_signal, serial
+from .workflow_analysis import draw_result, processed_signal, serial, plot_observations
 
 
 def dependencies():
@@ -109,10 +109,11 @@ def export_report(project,run_ids,directory):
                     fig=Figure(figsize=(8.27,11.69))
                     ax=fig.add_subplot(211)
                     res=fig.add_subplot(212)
-                    ax.plot(c['temperature'],c['signal'],label='Comparison input')
-                    for model in c['candidates']:
+                    plot_observations(ax,c['temperature'],c['signal'],label='Comparison input')
+                    for model_index,model in enumerate(c['candidates']):
                         if model['prediction'] is not None and not model['error']:
-                            ax.plot(c['temperature'],model['prediction'],label=model['name'])
+                            ax.plot(c['temperature'],model['prediction'],label=model['name'],
+                                    linestyle=('-', '--', '-.', ':')[model_index%4],linewidth=1.5)
                             res.plot(c['temperature'],np.asarray(c['signal'])-np.asarray(model['prediction']),label=model['name'])
                     ax.set(ylabel='Signal (instrument units)')
                     ax.legend(fontsize=8)

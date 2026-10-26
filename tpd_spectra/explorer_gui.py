@@ -15,6 +15,7 @@ from .kinetics_explorer import compare_desorption_orders
 from .kinetics_uncertainty import run_kinetics_monte_carlo
 from .explorer_export import export_explorer_bundle
 from .run_session import proposed_run_folder, sha256
+from .workflow_analysis import plot_observations
 
 
 def select_peak_window(temperature, signal, start, end):
@@ -193,7 +194,7 @@ class KineticsExplorerWindow:
         y = np.asarray(spec.signal, dtype=float)
         self.raw_ax.clear()
         self.res_ax.clear()
-        self.raw_ax.plot(t, y, label="Input signal", color="#2563eb")
+        plot_observations(self.raw_ax,t,y,label='Input signal')
         for child in self.table.get_children():
             self.table.delete(child)
         self.raw_ax.set_ylabel("Detector signal")
@@ -372,11 +373,12 @@ class KineticsExplorerWindow:
             self.table.delete(child)
         self.raw_ax.clear()
         self.res_ax.clear()
-        self.raw_ax.plot(t, y, color="#2563eb", label="Input signal")
-        for candidate in models:
+        plot_observations(self.raw_ax,t,y,label='Input signal')
+        for index,candidate in enumerate(models):
             fit = candidate.fit
             if candidate.error is None:
-                self.raw_ax.plot(t, candidate.prediction, label=candidate.name)
+                self.raw_ax.plot(t, candidate.prediction, label=candidate.name,
+                                 linestyle=('-', '--', '-.', ':')[index%4],linewidth=1.5)
                 self.res_ax.plot(t, y - candidate.prediction, label=candidate.name)
             self.table.insert("", "end", values=(
                 candidate.name,

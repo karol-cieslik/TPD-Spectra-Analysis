@@ -1,6 +1,6 @@
 # Physical synthetic TPD collection
 
-All 16 CSVs are **simulations, not experimental measurements**. Start with
+All 21 CSVs are **simulations, not experimental measurements**. Start with
 `first_order_single_peak.csv`. The GUI's **Open Example Dataset** supplies the
 documented ramp and a full-trace interval. Each CSV has an adjacent JSON file
 with truth, units, seed, noise, baseline, generation method, limitations and hash.
@@ -13,6 +13,8 @@ with truth, units, seed, noise, baseline, generation method, limitations and has
 | two/three_overlapping_peaks | Additive independent populations; single-state models are inadequate |
 | first_order_noisy | iid Gaussian noise, 1% of clean maximum |
 | first_order_noisy_baseline | Same noise plus constant offset and linear drift |
+| first_order_low/moderate/high_noise | Additional seeded observations at 1%, 2% and 5% of the clean maximum; compare with first_order_single_peak |
+| two/three_overlapping_moderate_noise | 2% iid detector noise; exact clean counterparts retain their original names |
 | challenging_overlap_drift | Mixed orders, AR(1) noise and drift deliberately violate simple assumptions |
 | heating_rate_0p5/2p0/5p0_K_s | Compare with first-order reference at 1 K/s; higher ramp shifts maximum upward |
 | zero/first_order_coverage_0p25/0p5 | Compare with coverage-one reference; zero-order maxima shift, first-order amplitudes scale |
@@ -22,6 +24,14 @@ The independent generator `scripts/generate_beta_examples.py` integrates
 0.005 K grid and the separable analytic coverage solution. It does not call the
 production ODE or fitting engine. CSV sampling is 0.5 K, 50–450 °C, 801 points;
 time is milliseconds, signal arbitrary detector units proportional to rate.
+Noise is applied after computing the clean rate, with no clipping of negative
+observations. The new noise variants record the fractional standard deviation
+and a clean-reference filename. Original clean and noisy CSVs and their seeds
+are preserved byte for byte. Explicit CSV line endings protect metadata hashes
+across operating systems; tests regenerate the collection and compare bytes.
+The 5% case is a stress example, not the default demonstration noise level.
+The top-level `../synthetic_two_peak_demo.csv` uses 2% iid detector noise and
+also has clean, 1%, 2%, 5% and baseline-drift variants.
 The single-state references use E=1.2 eV, ν=1e13 s⁻¹, θ₀=1, β=1 K/s and detector
 scale 10000. Multi-state truths and noise/baseline parameters are in each JSON.
 

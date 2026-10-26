@@ -7,7 +7,7 @@ from tkinter import ttk
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from .workflow_analysis import selected_arrays, serial
+from .workflow_analysis import selected_arrays, serial, plot_observations
 from .kinetics import simulate_tpd, KineticFitResult
 from .kinetics_explorer import compare_desorption_orders, ModelCandidate
 from .kinetics_uncertainty import run_kinetics_monte_carlo
@@ -237,7 +237,7 @@ class ModelingPanel:
             self.note(guidance)
             self.canvas.draw_idle()
             return
-        ax.plot(t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal', linewidth=.9)
+        plot_observations(ax,t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal')
         notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\nZero-order fits search the depletion edge; displayed prefactors are representative, with conditional ranges rather than unique values. Edge-model AICc rankings are heuristic.\n'
         if result:
             notes += ('Current comparison.\n' if self.current(result) else 'STALE comparison — original interval/settings plotted. Compare again before transfer or Monte Carlo.\n')
@@ -247,7 +247,8 @@ class ModelingPanel:
                 vals = [c['name']] + ([fit['reaction_order'],fit['activation_energy_eV'],fit['prefactor_s_inv'],fit['rmse_signal'],c['delta_aicc']] if fit else ['—']*5)
                 self.table.insert('','end',iid=str(index),values=vals+[c['error'] or '; '.join(c['warnings'])])
                 if c['prediction'] is not None and not c['error']:
-                    ax.plot(t,c['prediction'],label=c['name'])
+                    ax.plot(t,c['prediction'],linestyle=('-', '--', '-.', ':')[index%4],
+                            linewidth=1.5,label=c['name'])
                     residual.plot(t,np.asarray(y)-np.asarray(c['prediction']),label=c['name'])
         simulation = session.get('simulation')
         if simulation and self.current(simulation):

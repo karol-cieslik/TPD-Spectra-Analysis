@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "experimental": false,
+  "name": "two_overlapping_moderate_noise",
+  "states": [
+    {
+      "order": 1,
+      "energy_eV": 1.2,
+      "prefactor_s_inv": 10000000000000.0,
+      "initial_normalized_coverage": 1.0,
+      "detector_scale": 10000.0
+    },
+    {
+      "order": 1,
+      "energy_eV": 1.28,
+      "prefactor_s_inv": 10000000000000.0,
+      "initial_normalized_coverage": 0.65,
+      "detector_scale": 10000.0
+    }
+  ],
+  "beta_K_s": 1.0,
+  "noise_fraction_of_clean_maximum": 0.02,
+  "clean_reference_file": "two_overlapping_peaks.csv",
+  "expected_behavior": "Independent additive physical states with 2% iid Gaussian detector noise; visible features alone do not establish the number of physical states.",
+  "number_of_states": 2,
+  "temperature_range_c": [
+    50.0,
+    450.0
+  ],
+  "temperature_unit": "degC",
+  "time_unit": "ms",
+  "signal_unit": "arbitrary detector units proportional to normalized coverage/s",
+  "points": 801,
+  "sampling_step_K": 0.5,
+  "integration_step_K": 0.005,
+  "noise": {
+    "model": "iid Gaussian",
+    "sigma_signal_units": 7.010639387013166,
+    "ar1_coefficient": 0.0
+  },
+  "baseline": {
+    "offset_signal_units": 0.0,
+    "slope_signal_units_per_K": 0.0,
+    "reference_temperature_c": 50.0
+  },
+  "random_seed": 20261043,
+  "generation_method": "Separable constant-order Polanyi-Wigner solution; cumulative trapezoidal quadrature of Arrhenius rate on 0.005 K grid. Independent of production ODE solver.",
+  "limitations": [
+    "Synthetic data, not experimental measurements.",
+    "No readsorption, lateral interactions, transport limitation or instrument response.",
+    "Normalized coverage is dimensionless; prefactors are expressed in s^-1 under this convention.",
+    "Good parameter recovery is numerical verification, not proof of a unique physical mechanism."
+  ],
+  "recommended_peak_c": [
+    50.0,
+    450.0
+  ],
+  "csv_sha256": "8225dff881dbdca4f3c0433eedcf7e3cc4d486a3d1da94b191287b35485fb1a3"
+}

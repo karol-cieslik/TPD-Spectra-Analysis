@@ -17,6 +17,17 @@ when no region exists. Arbitrary imports require an explicit named interval:
 enter bounds and **Add peak** in Spectra & Preparation. Region selection does not
 deconvolve overlapping contributions.
 
+The default observations contain reproducible iid Gaussian detector noise with
+standard deviation 2% of the clean maximum (seed 20261026). The adjacent JSON
+records the independent physical generating parameters and clean reference.
+Files ending `_clean`, `_low_noise`, `_moderate_noise`, `_high_noise` and
+`_baseline_drift` offer 0%, 1%, 2%, 5% and offset/drift comparisons. Noise is
+added after the physical calculation; negative noisy observations are retained.
+Leading-edge logarithms become unreliable near the detector noise floor. Use
+the clean first-order chooser example for the numerical walkthrough below.
+Markers identify observations, solid/dashed curves identify fitted models,
+and residuals show observation minus prediction.
+
 1. Click **Open Example Dataset** and select **first order single peak**. The
    chooser loads a synthetic 801-point spectrum with a 1 K/s ramp and a named
    full-trace interval. The source time unit is milliseconds; temperature is Celsius.

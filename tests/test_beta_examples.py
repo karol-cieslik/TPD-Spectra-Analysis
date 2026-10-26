@@ -82,3 +82,27 @@ def test_example_chooser_opens_clean_reference_and_supplies_ramp(root):
     assert app.project.method_settings('Redhead')['beta']==1
     app.preview_selected()
     assert app.displayed_result['values']['energy_ev']==pytest.approx(1.2,rel=.025)
+
+
+def test_beta_generator_reproduces_csv_bytes_and_metadata(tmp_path):
+    from scripts.generate_beta_examples import generate
+    catalog=generate(tmp_path)
+    assert catalog==CATALOG
+    for entry in catalog:
+        assert (tmp_path/entry['file']).read_bytes()==(FOLDER/entry['file']).read_bytes()
+        # JSON text may be checked out with platform-specific line endings.
+        assert (tmp_path/entry['metadata']).read_text(encoding='utf-8')==(FOLDER/entry['metadata']).read_text(encoding='utf-8')
+
+
+@pytest.mark.parametrize('label,fraction',[('low',.01),('moderate',.02),('high',.05)])
+def test_noise_variants_retain_clean_reference_and_record_relative_sigma(label,fraction):
+    path=FOLDER/f'first_order_{label}_noise.csv'
+    meta=json.loads(path.with_suffix('.json').read_text(encoding='utf-8'))
+    clean=load_spectrum(FOLDER/meta['clean_reference_file'])
+    observed=load_spectrum(path)
+    assert meta['noise_fraction_of_clean_maximum']==fraction
+    sigma=meta['noise']['sigma_signal_units']
+    assert sigma==pytest.approx(fraction*clean.signal.max(),rel=1e-12)
+    expected=clean.signal+np.random.default_rng(meta['random_seed']).normal(0,sigma,len(clean.signal))
+    # Allow only the accumulated rounding of two %.12e CSV observations.
+    np.testing.assert_allclose(observed.signal,expected,rtol=0,atol=1e-12*clean.signal.max())

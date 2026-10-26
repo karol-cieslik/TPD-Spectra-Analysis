@@ -14,6 +14,7 @@ import json
 import numpy as np
 from matplotlib.figure import Figure
 from .identity import build_identity
+from .workflow_analysis import plot_observations
 
 
 def export_explorer_bundle(folder, temperature_c, signal, comparison, *,
@@ -79,10 +80,10 @@ def export_explorer_bundle(folder, temperature_c, signal, comparison, *,
 
     fig = Figure(figsize=(9, 6))
     ax = fig.add_subplot(211)
-    ax.plot(temp, y, label="Input signal", linewidth=1.5)
+    plot_observations(ax,temp,y,label='Input signal')
     residual_ax = fig.add_subplot(212, sharex=ax)
-    for name, pred in curves:
-        ax.plot(temp, pred, label=name)
+    for index,(name, pred) in enumerate(curves):
+        ax.plot(temp, pred, label=name,linestyle=('-', '--', '-.', ':')[index%4],linewidth=1.5)
         residual_ax.plot(temp, y - pred, label=name)
     ax.set_ylabel("Signal (a.u.)")
     ax.legend(fontsize=8)

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from tpd_spectra.scientific_help import CATALOG_RESOURCE, load_help_catalog
+from tpd_spectra.scientific_help import CATALOG_RESOURCE, load_help_catalog, topic_heading
 
 
 DEMO = Path(__file__).resolve().parents[1] / 'examples/synthetic_two_peak_demo.csv'
@@ -42,6 +42,14 @@ def test_catalog_rejects_duplicate_and_incomplete_topics(tmp_path):
     path.write_text(json.dumps(bad), encoding='utf-8')
     with pytest.raises(ValueError, match='missing required fields'):
         load_help_catalog(path)
+
+
+def test_scientific_help_title_and_optional_drift_do_not_imply_missing_or_fitted_values():
+    topics = {topic['id']: topic for topic in load_help_catalog()['topics']}
+    assert topic_heading(topics['mc_seed']) == 'Random seed'
+    assert topic_heading(topics['activation_energy']) == 'Activation (desorption) energy  (E)'
+    assert topics['baseline_drift']['role'] == 'method_dependent'
+    assert 'only when' in topics['baseline_drift']['role_notes']
 
 
 def test_help_browser_is_searchable_reusable_and_read_only(root):

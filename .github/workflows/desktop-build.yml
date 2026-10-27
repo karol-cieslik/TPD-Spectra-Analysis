@@ -26,7 +26,7 @@ on:
       - 'README.md'
       - '.github/workflows/**'
   pull_request:
-    branches: [main]
+    branches: [main, 'fix/beta-feedback-14-17']
     paths:
       - 'tpd_spectra/**'
       - 'tests/**'
@@ -75,7 +75,7 @@ jobs:
       - name: Record candidate build identity
         shell: pwsh
         run: |
-          "COMMIT = '$env:GITHUB_SHA'" | Set-Content -Encoding utf8 tpd_spectra/_build_info.py
+          python scripts/prepare_windows_beta.py
           python -m pip freeze | Set-Content -Encoding utf8 build-dependencies.txt
       - name: Validate desktop entrypoint without a display
         run: |
@@ -88,6 +88,7 @@ jobs:
         run: >-
           pyinstaller --clean --noconfirm --onefile --windowed
           --name TPD-Spectra-Studio
+          --version-file output/windows-version.txt
           --icon tpd_spectra/assets/studio.ico --collect-data tpd_spectra
           --copy-metadata numpy --copy-metadata scipy --copy-metadata pandas --copy-metadata matplotlib
           --hidden-import matplotlib.backends.backend_svg
@@ -107,6 +108,7 @@ jobs:
           Copy-Item examples release-package/examples -Recurse
           # Ship focused user documentation. Development records remain on GitHub.
           New-Item -ItemType Directory -Force release-package/docs/beta,release-package/docs/redesign,release-package/validation | Out-Null
+          Copy-Item validation/WINDOWS_B5_ACCEPTANCE.md release-package/validation/
           $testerDocs = @(
             'docs/USER_AND_SCIENTIFIC_MANUAL.md',
             'docs/METHOD_STATUS.md',
@@ -121,6 +123,8 @@ jobs:
             'docs/beta/WORKED_EXAMPLES.html',
             'docs/beta/RELEASE_NOTES.md',
             'docs/beta/REVIEW_STATUS.md',
+            'docs/beta/SHARE_WITH_COLLEAGUES.md',
+            'docs/beta/SCIENTIFIC_CONSISTENCY_AUDIT.md',
             'docs/beta/FEEDBACK_FORM.md',
             'docs/beta/TESTER_CHECKLIST.md'
           )

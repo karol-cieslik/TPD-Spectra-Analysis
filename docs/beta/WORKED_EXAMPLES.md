@@ -4,11 +4,11 @@
 **External beta candidate | updated 27 October 2026**  
 Dr. Karol Cieślik
 
-> **Research beta.** This walkthrough uses the `0.11.0b4` candidate ([PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19)) and the follow-up Results/Help changes ([PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20)). The older downloadable Windows `0.11.0b4` artifact does not yet include PR #20. Confirm your exact build in `VERSION.json`. Windows visual acceptance and independent experimental validation remain incomplete. All tutorial spectra are synthetic; they are not experimental evidence for a physical mechanism.
+> **Research beta.** This walkthrough uses the `0.11.0b5` candidate ([PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19)) and the follow-up Results/Help changes ([PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20)). The older downloadable Windows `0.11.0b4` artifact does not yet include PR #20. Confirm your exact build in `VERSION.json`. Windows visual acceptance and independent experimental validation remain incomplete. All tutorial spectra are synthetic; they are not experimental evidence for a physical mechanism.
 
 ## Start here: your first result in five minutes
 
-1. Download `tpd-spectra-windows-x64-beta-0.11.0b4` from the **Artifacts** section of the [successful Windows build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40366654717). GitHub sign-in may be required. Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable.
+1. Use the newly supplied `tpd-spectra-windows-x64-beta-0.11.0b5` ZIP. Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for the executable checksum. The older b4 artifact lacks this interface. Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable. No public b5 download URL is approved yet.
 2. Double-click **TPD-Spectra-Studio.exe**. No Python installation is needed. This development executable is unsigned: follow your institution's software-security policy.
 3. Click **Open Example Dataset**, choose **first order single peak**, then **Open selected example**. This loads 801 simulated points from 50 to 450 °C, with an already selected full-trace interval and a heating rate of 1 K/s.
 4. Go to **Kinetic Analysis** and select **Redhead**. Check **Heating rate = 1 K/s** and **Assumed prefactor = 1e13 s⁻¹**. An energy estimate should appear after the preview updates; if needed click **Calculate / Fit selected peak**.

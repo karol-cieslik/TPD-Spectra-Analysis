@@ -14,3 +14,6 @@ images/
 tpd_spectra/_build_info.py
 build-dependencies.txt
 release-package/
+
+# CI-generated test evidence; build identity requires clean source.
+/validation/beta-tests.xml

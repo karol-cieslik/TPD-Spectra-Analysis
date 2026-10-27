@@ -108,10 +108,26 @@ def test_editor_multiple_components_validation_and_context_guard(root,joint_app,
     for widget in children(controller.window):
         if widget.winfo_class()=='TButton':
             assert widget.winfo_ismapped()
+            # Field Help is inside the deliberately scrollable editor. Keep
+            # primary action visibility strict; test Help reachability below.
+            if widget.cget('text') == '?':
+                continue
             assert widget.winfo_rootx()+widget.winfo_width()<=controller.window.winfo_rootx()+controller.window.winfo_width()
             assert widget.winfo_rooty()+widget.winfo_height()<=controller.window.winfo_rooty()+controller.window.winfo_height()
     assert controller.editor_horizontal.winfo_ismapped()
     assert controller.editor_vertical.winfo_ismapped()
+    help_buttons=[w for w in children(controller.window)
+                  if w.winfo_class()=='TButton' and w.cget('text')=='?']
+    assert help_buttons
+    controller.editor_canvas.xview_moveto(1)
+    controller.editor_canvas.yview_moveto(0)
+    root.update()
+    heading_help=help_buttons[0]
+    assert heading_help.winfo_rootx()>=controller.editor_canvas.winfo_rootx()
+    assert heading_help.winfo_rootx()+heading_help.winfo_width()<=controller.editor_canvas.winfo_rootx()+controller.editor_canvas.winfo_width()
+    heading_help.invoke()
+    assert app.scientific_help_dialog._current_id()=='simultaneous_components'
+    app.scientific_help_dialog.close()
     controller.editor_canvas.xview_moveto(1)
     controller.editor_canvas.yview_moveto(1)
     root.update()

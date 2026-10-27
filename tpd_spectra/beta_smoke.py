@@ -10,6 +10,7 @@ from .feedback_gui import FeedbackDialog
 from .feedback import save_zip
 from .identity import build_identity, about_text
 from .workflow_gui import WorkflowApp
+from .scientific_help import load_help_catalog
 
 
 def main(output):
@@ -23,12 +24,26 @@ def main(output):
     assert resource('docs/beta/QUICK_START.pdf').read_bytes().startswith(b'%PDF')
     assert resource('START_HERE.md').is_file()
     assert resource('docs/MULTICOMPONENT_FITTING.md').is_file()
+    help_catalog=load_help_catalog()
+    assert len(help_catalog['topics'])==40
+    assert next(t for t in help_catalog['topics'] if t['id']=='mc_seed')['short']
     root=tk.Tk()
     app=WorkflowApp(root)
     errors=[]
     root.report_callback_exception=lambda *args:errors.append(str(args))
     try:
         app.open_default_demo()
+        help_window=app.open_scientific_help('mc_seed')
+        root.update()
+        assert help_window is not None
+        assert 'random' in help_window.detail.get('1.0','end').lower()
+        assert help_window._current_id()=='mc_seed'
+        help_window.query.set('energy')
+        assert help_window.count.get().split(' / ')[0]!='0'
+        help_window.select_topic('mc_seed')
+        assert help_window._current_id()=='mc_seed'
+        help_window.close()
+        assert app.scientific_help_dialog is None
         assert app.project.context()[1].lower==70
         assert app.project.context()[1].upper==210
         assert any(line.get_label()=='Original measured spectrum' for line in app.modeling_panel.fig.axes[0].lines)
@@ -120,6 +135,7 @@ def main(output):
         assert not errors,errors
         record={'identity':build_identity(),'examples_imported':len(catalog),
             'frozen_executable':bool(getattr(sys,'frozen',False)),
+            'scientific_help_40_topics_and_keyboard_browser_passed':True,
             'resource_lookup_from_unrelated_cwd':Path.cwd().resolve()!=resource('START_HERE.md').parent,
             'redhead_reference_passed':True,
             'offline_feedback_copy_zip_passed':True,'external_drafts_opened':False,

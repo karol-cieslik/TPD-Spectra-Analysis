@@ -71,7 +71,8 @@ brackets are not confidence intervals.
 5. Send a brief note about clarity, suspected numerical issues and Windows
    behavior. Experimental data are optional and require separate permission.
 
-See [the tester checklist](TESTER_CHECKLIST.md),
+See [the colleague handoff and release gate](SHARE_WITH_COLLEAGUES.md),
+[the tester checklist](TESTER_CHECKLIST.md),
 [the source-level scientific consistency audit](SCIENTIFIC_CONSISTENCY_AUDIT.md)
 and [the scientific methods status](../METHOD_STATUS.md). The current maintainers
 can review the PRs and CI logs directly; no code or results have been merged

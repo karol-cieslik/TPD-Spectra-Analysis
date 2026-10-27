@@ -16,6 +16,12 @@ REQUIRED_FIELDS = {'id', 'group', 'title', 'symbol', 'unit', 'role', 'context',
                    'short', 'detail', 'example', 'caution'}
 
 
+def topic_heading(topic):
+    """Show a scientific symbol only if the topic actually defines one."""
+    symbol = topic['symbol'].strip()
+    return f"{topic['title']}  ({symbol})" if symbol and symbol not in ('—', '-') else topic['title']
+
+
 def load_help_catalog(path=None):
     """Load and check the bundled topics; useful independently of Tk/display."""
     location = path if path is not None else resource(CATALOG_RESOURCE)
@@ -172,7 +178,7 @@ class ScientificHelpDialog:
         def line(value, tag=None):
             self.detail.insert('end', str(value).strip() + '\n', (tag,) if tag else ())
 
-        line(topic['title'] + ('  (' + topic['symbol'] + ')' if topic['symbol'] not in ('—', '-') else ''), 'title')
+        line(topic_heading(topic), 'title')
         line('Unit: ' + topic['unit'])
         role = topic['role'].replace('_', ' ').capitalize()
         legend = self.catalog.get('role_legend', {}).get(topic['role'], '')

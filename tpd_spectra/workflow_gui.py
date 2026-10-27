@@ -16,6 +16,7 @@ from .workflow_project_gui import ProjectMixin
 from .beta_onboarding import ExampleDialog, Tooltip
 from .beta_resources import resource
 from .scientific_help import ScientificHelpDialog, help_button
+from .quickstart_dialog import QuickStartDialog
 from . import __version__
 from .equation_help import EquationCard
 
@@ -476,22 +477,15 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.refresh_context()
 
     def workflow_help(self):
-        dialog=tk.Toplevel(self.root)
-        dialog.title('Workflow quick start')
-        dialog.geometry('720x560')
-        text=tk.Text(dialog,wrap='word',padx=20,pady=16,font=('Segoe UI',11))
-        text.pack(fill='both',expand=True)
-        text.insert('end','TPD Spectra Studio — workflow preview\n\n'
-            '1. Import and inspect\nImport CSV spectra. Raw signal stays unchanged. Confirm temperature/time units and the heating ramp.\n\n'
-            '2. Define a peak\nIn Spectra & Preparation, enter a name and temperature bounds, then Add peak. Drag interval can also set bounds.\n\n'
-            '3. Explore hypotheses\nIn Modeling, simulate parameters or compare candidate orders. Seeded Monte Carlo refits simulated noisy traces; rankings do not prove mechanisms.\n\n'
-            '4. Analyze one peak\nIn Kinetic Analysis, choose Leading edge, Redhead or Polanyi–Wigner. Lightweight estimates update after edits; numerical fitting runs explicitly and can be cancelled.\n\n'
-            '5. Retain and export\nSave labeled results, then Report / Export. Select runs, review their labels and choose a destination. Save project retains your workspace.\n\n'
-            'Synthetic first test\nClick Open Example Dataset and keep first order single peak. Redhead: 1 K/s and 1e13 s⁻¹ gives about 1.2 eV. Leading edge: 90–110 °C. This example is simulated, not experimental. Zero-order fits need a resolved depletion edge; reported parameter brackets are not confidence intervals.\n\n'
-            'Classic / batch workspace retains advanced and batch functions.\nCreated by Karol Cieślik. Scientific applicability still requires independent validation.')
-        text.configure(state='disabled')
-        ttk.Button(dialog,text='Close',command=dialog.destroy).pack(anchor='e',padx=12,pady=8)
-        ttk.Button(dialog,text='Open beta Quick Start PDF',command=self.open_beta_guide).pack(anchor='w',padx=12,pady=8)
+        return QuickStartDialog(self)
+
+    def open_worked_examples(self):
+        """Open the full, self-contained offline tutorial in the default reader."""
+        try:
+            import webbrowser
+            webbrowser.open(resource('docs/beta/WORKED_EXAMPLES.html').as_uri())
+        except (OSError, ValueError) as exc:
+            self.status.set('Worked examples unavailable: ' + str(exc))
 
     def open_example(self):
         try:

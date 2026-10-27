@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ('README.md', 'START_HERE.md', 'docs/beta/REVIEW_STATUS.md',
         'docs/beta/RELEASE_NOTES.md', 'docs/beta/TESTER_CHECKLIST.md',
-        'docs/beta/FEEDBACK_FORM.md')
+        'docs/beta/FEEDBACK_FORM.md', 'docs/beta/SHARE_WITH_COLLEAGUES.md')
 LINK = re.compile(r'(?<!!)\[[^]]+\]\(([^)]+)\)')
 
 
@@ -40,3 +40,12 @@ def test_colleague_feedback_is_optional_and_privacy_conscious():
     assert 'Nothing is submitted' in form
     assert 'karol.j.cieslik@gmail.com' in form
     assert 'VERSION.json' in form
+
+
+def test_colleague_handoff_requires_fresh_accepted_windows_build():
+    handoff = (ROOT / 'docs/beta/SHARE_WITH_COLLEAGUES.md').read_text(encoding='utf-8')
+    assert 'does not contain' in handoff
+    assert 'Do not send that old ZIP' in handoff
+    assert 'Windows machine without Python' in handoff
+    assert 'only after verification' in handoff
+    assert 'permission' in handoff.lower()

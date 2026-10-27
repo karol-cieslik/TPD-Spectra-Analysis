@@ -4,12 +4,19 @@ Thank you for trying this early beta. Ten to twenty minutes is useful; there is
 no need to complete every item or produce a formal review.
 
 - [ ] Extract the whole package and launch on Windows without Python.
+- [ ] Check that the default demo has a selected first-peak region and retains its
+  raw trace in Modeling, including during simulation and cancellation.
 - [ ] Find About, the developer contact, Quick Start and feedback actions.
 - [ ] Open the clean first-order example and obtain an approximately 1.2 eV
   Redhead estimate using the supplied 1 K/s ramp and assumed 1e13 s⁻¹ prefactor.
 - [ ] Switch peaks/methods and verify the visible settings belong to your selection.
 - [ ] Try a first-order model comparison, inspect residuals and run a short seeded
   Monte Carlo test. A short run tests usability, not uncertainty coverage.
+- [ ] Watch the progress bar/count, elapsed time and Cancel state; check completion
+  separates fitting failures from incomplete rankings and preserves prior output.
+- [ ] Optional: use the documented three-state synthetic exercise in
+  `docs/MULTICOMPONENT_FITTING.md`, inspect individual curves/sum/residuals and
+  export component parameters. Fixed assumptions do not establish physical states.
 - [ ] Save a labeled result; choose the report destination; inspect the PDF and CSV.
 - [ ] Save/reopen a project. Check the selected data, interval and settings.
 - [ ] Resize the window and try your usual display scaling. Note clipped controls,

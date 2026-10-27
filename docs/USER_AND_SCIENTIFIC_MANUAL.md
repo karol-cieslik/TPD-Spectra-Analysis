@@ -1,8 +1,13 @@
 # TPD Spectra Studio — User and Scientific Methods Manual
 
-**Document status:** beta user and scientific manual · **Software source:** `main` · **Current beta version:** 0.11.0b3 (not yet tagged as a public release)
+**Document status:** beta user and scientific manual · **Software source:** `fix/beta-feedback-14-17` (PR #19) · **Current beta version:** 0.11.0b4 development candidate (not publicly tagged)
 **Audience:** experimental surface scientists, TPD/TDS users, students, and developers.  
 **Scope:** current application behavior and defensible model assumptions. This is documentation, not a claim of experimental validation. Please open an issue for any discrepancy between this manual and the executable.
+
+For the default three-stage desktop, follow the [workflow guide](redesign/WORKFLOW_USER_GUIDE.md).
+Classic/batch controls described below remain available in **Classic / batch workspace**.
+The b4 candidate opens a seeded noisy demo with a prepared region, provides visible
+Monte Carlo progress/cancellation and adds [simultaneous component fitting](MULTICOMPONENT_FITTING.md).
 
 ## 1. Purpose and scope
 
@@ -17,6 +22,9 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 - GUI temperature intervals set by sliders, exact numeric entry, or horizontal dragging (temperature-axis mode only).
 - Heating-rate regression, leading-edge apparent activation energy, first-order Redhead estimate, signal-quality diagnostics.
 - Optional one-state and two-state Polanyi–Wigner fitting and exploratory model comparison.
+- Simultaneous 1–3 positive-order physical components in Modeling, with fixed
+  per-component order/prefactor/coverage, joint energies/scales, optional shared
+  offset/drift, individual curves, summed residuals, conditional uncertainty and exports.
 - Batch output with settings/provenance and warnings.
 - Numerical Jacobian rank, bounds, and conditioning warnings for the single-state fit.
 
@@ -27,8 +35,8 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 ### Portable Windows application
 
 1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
-2. Choose the latest **successful** build on `main`.
-3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b3`. GitHub sign-in may be required.
+2. Open the latest successful Windows check in [PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19).
+3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b4`. GitHub sign-in may be required.
 4. Extract the archive completely, then launch `TPD-Spectra-Studio.exe`. No separate Python installation should be required.
 5. Keep the package contents together, including licenses and documentation. The executable is not digitally signed; verify its GitHub origin and follow your institution's software policy.
 
@@ -41,7 +49,7 @@ Requirements: Python 3.10+, NumPy, pandas, SciPy, Matplotlib; Tkinter must be pr
 ```bash
 git clone https://github.com/karol-cieslik/TPD-Spectra-Analysis.git
 cd TPD-Spectra-Analysis
-git checkout main
+git checkout fix/beta-feedback-14-17
 python -m pip install -e .
 python run_tpd_spectra_gui.py
 ```

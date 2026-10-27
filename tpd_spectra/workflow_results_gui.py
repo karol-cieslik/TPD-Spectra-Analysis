@@ -83,12 +83,15 @@ class ResultsMixin:
         self.job_cancel.clear()
         self.fit_button.configure(state='disabled')
         self.cancel_fit.configure(state='normal')
+        self.modeling_panel.set_job_busy(True)
         def work():
             try:
                 value = function()
                 if self.job_cancel.is_set():
                     raise InterruptedError('Cancelled; previous successful results retained.')
                 self.jobs.put(('done', (on_success, value)))
+            except InterruptedError as exc:
+                self.jobs.put(('cancelled', str(exc)))
             except Exception as exc:
                 self.diagnostic_log.record('Calculation stopped',str(exc),exc)
                 self.jobs.put(('error', str(exc)))
@@ -101,19 +104,32 @@ class ResultsMixin:
             while True:
                 kind, payload = self.jobs.get_nowait()
                 if kind == 'progress':
-                    self.status.set(payload)
+                    if isinstance(payload, tuple):
+                        self.modeling_panel.progress_updated(*payload)
+                        self.status.set(self.modeling_panel.progress_count.get())
+                    else:
+                        self.status.set(payload)
                     continue
+                # Cancellation may arrive after the worker queued success but before
+                # this GUI-thread commit. Never replace valid results in that race.
+                cancelled = kind == 'cancelled' or self.job_cancel.is_set()
                 self.job_busy = False
                 self.fit_button.configure(state='normal')
                 self.cancel_fit.configure(state='disabled')
-                if kind == 'done':
+                self.modeling_panel.set_job_busy(False)
+                if cancelled:
+                    self.modeling_panel.job_finished(cancelled=True)
+                    self.status.set('Calculation cancelled; previous successful results retained.')
+                elif kind == 'done':
                     self.diagnostic_log.record('Calculation finished','Background calculation returned successfully.')
                     callback, value = payload
                     callback(value)
                 else:
+                    self.modeling_panel.job_finished(error=payload)
                     self.status.set('Calculation stopped: ' + payload)
         except queue.Empty:
             pass
+        self.modeling_panel.tick_progress()
         self.root.after(100, self.poll_jobs)
 
     def calculate_selected(self):
@@ -148,7 +164,7 @@ class ResultsMixin:
             self.displayed_result = deepcopy(result)
             current = self.project.result_is_current(result)
             status = result['status'].upper() if current else 'STALE — original settings shown; recalculate for current inputs'
-            draw_result(self.result_figure, result)
+            draw_result(self.result_figure, result, self.project.datasets.get(self.project.active_dataset))
             self.result_figure.suptitle(status, fontsize=9)
             values=result['values']
             energy=values.get('energy_ev',values.get('activation_energy_eV'))
@@ -175,6 +191,13 @@ class ResultsMixin:
                                 + '\nEffective settings: ' + json.dumps(result['snapshot']['settings']))
         else:
             self.result_message('Not calculated for this dataset / peak / method.')
+            dataset = self.project.datasets.get(self.project.active_dataset)
+            if dataset is not None:
+                ax = self.result_figure.add_subplot(111)
+                ax.plot(dataset.spectrum.temperature_clean_c, dataset.spectrum.signal,
+                        color='0.5', linewidth=.8, label='Original measured spectrum')
+                ax.set(xlabel='Temperature (°C)', ylabel='Signal (instrument units)')
+                ax.legend(fontsize=8)
         self.result_canvas.draw_idle()
         self.refresh_saved_runs()
 

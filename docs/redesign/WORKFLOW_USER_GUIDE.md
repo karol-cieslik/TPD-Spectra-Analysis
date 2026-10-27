@@ -1,10 +1,32 @@
-# Three-stage workflow guide — 0.11.0b3 beta
+# Three-stage workflow guide — 0.11.0b4 candidate
 
 TPD Spectra Studio by **Karol Cieślik**. This guide describes the three-stage
-workflow in the `main` branch's 0.11.0b3 beta. It is intended for practical
+workflow in the 0.11.0b4 development candidate (PR #19). It is intended for practical
 testing, not as a claim of validated experimental analysis.
 
 ## First run with the synthetic example
+
+The desktop opens `synthetic_two_peak_demo.csv` with a prepared 70–210 °C
+first-peak interval. Simulate parameters, compare the checked model hypotheses,
+then run seeded Monte Carlo. For a quick software check use only first order,
+multistart off, 2 replicates and seed 42; parameter uncertainty needs substantially
+more refits. Select a converged row to transfer initial guesses to Kinetic Analysis,
+then explicitly fit. This single-state approximation does not explain both peaks.
+The original spectrum stays visible in Modeling and Kinetic Analysis, including
+when no region exists. Arbitrary imports require an explicit named interval:
+enter bounds and **Add peak** in Spectra & Preparation. Region selection does not
+deconvolve overlapping contributions.
+
+The default observations contain reproducible iid Gaussian detector noise with
+standard deviation 2% of the clean maximum (seed 20261026). The adjacent JSON
+records the independent physical generating parameters and clean reference.
+Files ending `_clean`, `_low_noise`, `_moderate_noise`, `_high_noise` and
+`_baseline_drift` offer 0%, 1%, 2%, 5% and offset/drift comparisons. Noise is
+added after the physical calculation; negative noisy observations are retained.
+Leading-edge logarithms become unreliable near the detector noise floor. Use
+the clean first-order chooser example for the numerical walkthrough below.
+Markers identify observations, solid/dashed curves identify fitted models,
+and residuals show observation minus prediction.
 
 1. Click **Open Example Dataset** and select **first order single peak**. The
    chooser loads a synthetic 801-point spectrum with a 1 K/s ramp and a named
@@ -46,6 +68,10 @@ testing, not as a claim of validated experimental analysis.
 ## Modeling and Monte Carlo
 
 **Modeling & Order Identification** exposes the existing numerical engines.
+Use its **Spectrum & residuals**, **Parameters & models** and **Assumptions &
+warnings** views to inspect curves, select a model row and read scientific
+diagnostics. The views keep all three accessible on smaller displays; Monte
+Carlo controls stay above them.
 Simulate parameters to overlay a manual hypothesis. Simulation order, initial
 coverage, amplitude and baseline are distinct from optimized values. Coverage
 must be in (0, 1]; amplitude is a positive detector scale.
@@ -69,6 +95,15 @@ Parameter ranges are withheld below 100 successful refits and have not been
 coverage-validated. Correlated noise, drift, calibration and model uncertainty
 are not represented. A two-replicate test only checks the software path.
 
+The Monte Carlo bar and **Run Monte Carlo / Cancel** buttons remain above the
+plot while the parameter sidebar scrolls. Feedback shows completed/total
+simulations, percentage, elapsed time and an approximate remaining time.
+Completion lists successful and failed individual fitting attempts separately
+from incomplete model rankings. Cancel shows Cancelling until a numerical
+evaluation returns, then preserves the previous successful result. Worker errors
+are shown beside the bar and in the status area; calculations can be retried.
+All calculation buttons are disabled while one worker is active.
+
 Simulations, comparisons, optimization and Monte Carlo run outside the UI
 thread. Cancel takes effect between numerical evaluations. A cancelled or failed
 calculation preserves previous successful output. Switching context during work
@@ -79,6 +114,36 @@ used separately because the legacy LSODA integrator is not reentrant.
 Select a converged row and choose **Use selected model in Kinetic Analysis**.
 This explicitly transfers a hypothesis and initial guesses; it does not create
 a final fit. In Stage C press **Calculate / Fit selected peak** to optimize.
+
+## Overlapping contributions
+
+Use **Overlapping components…** in Modeling to define up to three independent
+physical populations. Add/remove/name rows, supply each fixed order, prefactor
+and initial coverage, and choose energy guesses and bounds. **Fit components
+together** optimizes energies and nonnegative detector scales jointly against
+the **entire selected spectrum**, regardless of the named navigation region.
+The plot shows observations, individual contributions, their sum, the shared
+baseline and observation-minus-sum residuals. The table and notes show conditional
+uncertainty or explain why it is withheld. Definitions and results are retained
+by **Save project…**; **Export component fit…** writes component parameters,
+curves, residuals, JSON provenance and PNG/SVG figures to a new folder.
+
+For a reproducible three-state exercise, open **three overlapping peaks**, set
+three first-order rows with prefactor `1e13 s⁻¹`, coverage one, initial energies
+`1.185`, `1.265`, `1.345 eV` and bounds `1.14–1.22`, `1.22–1.30`, `1.30–1.38 eV`.
+Use 1 K/s, multistart off and 300 maximum evaluations. This truth-informed
+synthetic example checks numerical recovery; it is not blind state identification.
+Try the moderate-noise variant and plausible alternative fixed assumptions.
+
+**Compare component counts** fits the first 1, 2, … defined rows on identical
+observations and baseline assumptions, reporting heuristic AICc/BIC and relative
+weights. Double-click a component-count row in **Parameters & models** to plot
+that submitted hypothesis. Local minima, exchangeable labels and correlated parameters can make
+individual estimates ambiguous. Three visible features do not prove three
+independent desorption states. Zero-order component fitting and component Monte
+Carlo are outside this initial implementation. The existing single-state
+methods and Monte Carlo remain available in **Single-state view**. See
+[scientific assumptions and validation](../MULTICOMPONENT_FITTING.md).
 
 ## Kinetic interpretation
 

@@ -1,4 +1,4 @@
-# Scientific scope and method status — 0.11.0b3 candidate
+# Scientific scope and method status — 0.11.0b4 candidate
 
 Maintainer: Karol Cieślik. This is a research beta, not a validated instrument system.
 Method status describes the available evidence, not regulatory certification.
@@ -21,6 +21,7 @@ experimental and are outside this correction. See [the method description](ZERO_
 | Four-order Explorer | Experimental comparison of fixed 0/1/2 and fitted fractional order on the same selected observations | Independent separable coverage references at six orders and three ramps; synthetic fitter tests. Full-peak selection, baseline and initialization remain consequential. |
 | Explorer Monte Carlo | Experimental parametric refitting with seeded iid Gaussian noise around one fitted reference | Repeatability, cancellation and accounting tests. Conditional percentile ranges of successful refits only, withheld below 100 successes; this operational floor does not establish coverage. Not MCMC, Bayesian inference or a microscopic kinetic Monte Carlo lattice simulation. |
 | Two-state and global fits | Exploratory numerical APIs | Correlated parameters, model inadequacy and error-model assumptions remain unresolved. No general uncertainty validation. |
+| Simultaneous 1–3 positive-order components | Experimental full-spectrum GUI/API; independent PW populations with fixed per-component order/prefactor/coverage, jointly fitted energies/scales and shared offset/drift | Independent quadrature recovery, mixed-order, detector-unit, degeneracy, label-permutation, cancellation and export tests. Conditional local intervals withheld for diagnosed ambiguity; no experimental coverage validation, component Monte Carlo or multicomponent zero-order support. See MULTICOMPONENT_FITTING.md. |
 | Nonlinear ramps, automated mechanism assignment, calibrated coverage and general confidence limits | Not supported as validated claims | Require separate scientific development and independent experimental evidence. |
 
 ## Equations, code and scientific interpretation

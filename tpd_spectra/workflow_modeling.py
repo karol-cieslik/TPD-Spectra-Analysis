@@ -7,11 +7,13 @@ from tkinter import ttk
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from .workflow_analysis import selected_arrays, serial
+from .workflow_analysis import selected_arrays, serial, plot_observations
 from .kinetics import simulate_tpd, KineticFitResult
 from .kinetics_explorer import compare_desorption_orders, ModelCandidate
 from .kinetics_uncertainty import run_kinetics_monte_carlo
 from .equation_help import EquationCard
+from .job_progress import MonteCarloProgress
+from .component_gui import ComponentsController
 
 DEFAULTS = dict(beta='1', energy='1.25', prefactor='1e13', order='1', coverage='1',
                 amplitude='1', baseline='0', max_nfev='300', replicates='500', seed='42',
@@ -64,31 +66,125 @@ class ModelingPanel:
         for key in ('zero','first','second','fractional','fit_baseline','multistart'):
             ttk.Checkbutton(sidebar, text=key.replace('_',' ').capitalize(), variable=self.variables[key]).pack(anchor='w')
         ttk.Label(sidebar, text='Fits normalize initial coverage to one and optimize signal scale. Simulation coverage/amplitude/baseline apply only to manual preview.', wraplength=280).pack(fill='x', pady=8)
+        self.calculation_buttons = []
         for title, callback in (('Simulate parameters',self.simulate), ('Compare models',self.compare),
-                                ('Run Monte Carlo',self.monte_carlo), ('Cancel',lambda: app.job_cancel.set()),
                                 ('Use selected model in Kinetic Analysis',self.transfer)):
-            ttk.Button(sidebar, text=title, command=callback).pack(fill='x', pady=3)
+            button = ttk.Button(sidebar, text=title, command=callback)
+            button.pack(fill='x', pady=3)
+            self.calculation_buttons.append(button)
+        self.components = ComponentsController(self)
+        component_actions=ttk.Frame(workspace,padding=(4,4))
+        component_actions.pack(fill='x')
+        component_button=ttk.Button(component_actions,text='Overlapping components…',command=self.components.open)
+        component_button.pack(side='left')
+        self.calculation_buttons.append(component_button)
+        ttk.Button(component_actions,text='Single-state view',command=self.show_single).pack(side='left',padx=4)
+        ttk.Button(component_actions,text='Export component fit…',command=self.components.export).pack(side='left')
+        # Keep feedback and cancellation visible even when the parameter sidebar scrolls.
+        self.mc_progress = MonteCarloProgress()
+        self.mc_active = False
+        self.progress_frame = ttk.LabelFrame(workspace, text='Monte Carlo', padding=8)
+        self.progress_frame.pack(fill='x')
+        self.progress_frame.columnconfigure(0, weight=1)
+        self.mc_run = ttk.Button(self.progress_frame, text='Run Monte Carlo', command=self.monte_carlo)
+        self.mc_run.grid(row=0, column=1, padx=4)
+        self.mc_cancel = ttk.Button(self.progress_frame, text='Cancel', command=self.cancel_job, state='disabled')
+        self.mc_cancel.grid(row=0, column=2)
+        self.progress_bar = ttk.Progressbar(self.progress_frame, mode='determinate', maximum=100)
+        self.progress_bar.grid(row=0, column=0, sticky='ew', padx=(0,8))
+        self.progress_count = tk.StringVar(app.root)
+        self.progress_detail = tk.StringVar(app.root)
+        ttk.Label(self.progress_frame, textvariable=self.progress_count).grid(row=1, column=0, columnspan=3, sticky='w')
+        self.progress_detail_label = ttk.Label(self.progress_frame, textvariable=self.progress_detail, wraplength=650)
+        self.progress_detail_label.grid(row=2, column=0, columnspan=3, sticky='w')
+        self.progress_frame.bind('<Configure>',lambda e:self.progress_detail_label.configure(wraplength=max(150,e.width-20)))
+        self.update_progress_view()
+        # Separate views keep parameters and scientific cautions reachable on
+        # smaller displays instead of letting the canvas push them off-screen.
+        self.views=ttk.Notebook(workspace)
+        self.views.pack(fill='both',expand=True)
+        plot_view,table_view,notes_view=(ttk.Frame(self.views) for _ in range(3))
+        for view,title in ((plot_view,'Spectrum & residuals'),(table_view,'Parameters & models'),(notes_view,'Assumptions & warnings')):
+            self.views.add(view,text=title)
         self.fig = Figure(figsize=(8,5), constrained_layout=True)
-        self.canvas = FigureCanvasTkAgg(self.fig, master=workspace)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=plot_view)
         self.canvas.get_tk_widget().pack(fill='both', expand=True)
         columns = ('model','order','energy','prefactor','rmse','aicc','warning')
-        self.table = ttk.Treeview(workspace, columns=columns, show='headings', height=4)
+        self.table = ttk.Treeview(table_view, columns=columns, show='headings', height=4)
         labels = ('Model','Order','E (eV)','ν (s⁻¹)','RMSE','Δ AICc','Validity / warnings')
         for col,label in zip(columns,labels):
             self.table.heading(col, text=label, command=lambda c=col:self.sort(c))
             self.table.column(col, width=85 if col != 'warning' else 260, minwidth=60)
-        self.table.pack(fill='x')
-        scroll = ttk.Scrollbar(workspace, orient='horizontal', command=self.table.xview)
+        table_view.rowconfigure(1,weight=1)
+        table_view.columnconfigure(0,weight=1)
+        table_help=ttk.Label(table_view,text='Select a single-state model for transfer. Double-click a component-count row to inspect its fit.',wraplength=650)
+        table_help.grid(row=0,column=0,columnspan=2,sticky='ew',padx=6,pady=4)
+        table_view.bind('<Configure>',lambda e:table_help.configure(wraplength=max(200,e.width-16)))
+        self.table.grid(row=1,column=0,sticky='nsew')
+        self.table.bind('<Double-1>',lambda _e:self.components.select_count())
+        scroll = ttk.Scrollbar(table_view, orient='horizontal', command=self.table.xview)
         self.table.configure(xscrollcommand=scroll.set)
-        scroll.pack(fill='x')
-        self.notes = tk.Text(workspace, height=6, wrap='word', font=('Segoe UI',10))
-        self.notes.pack(fill='x')
+        scroll.grid(row=2,column=0,sticky='ew')
+        vertical=ttk.Scrollbar(table_view,orient='vertical',command=self.table.yview)
+        vertical.grid(row=1,column=1,sticky='ns')
+        self.table.configure(yscrollcommand=vertical.set)
+        notes_view.rowconfigure(0,weight=1)
+        notes_view.columnconfigure(0,weight=1)
+        self.notes = tk.Text(notes_view, height=6, wrap='word', font=('Segoe UI',10))
+        self.notes.grid(row=0,column=0,sticky='nsew')
+        note_scroll=ttk.Scrollbar(notes_view,orient='vertical',command=self.notes.yview)
+        note_scroll.grid(row=0,column=1,sticky='ns')
+        self.notes.configure(yscrollcommand=note_scroll.set)
         for key,var in self.variables.items():
             var.trace_add('write',lambda *_args,k=key:self.changed(k))
 
     def key(self):
         dataset, region = self.app.project.context()
         return f'{dataset.id}/{region.id}'
+
+    def show_single(self):
+        try:
+            self.session()['display_mode']='single'
+            self.render()
+        except ValueError as exc:
+            self.app.status.set(str(exc))
+
+    def set_job_busy(self, busy):
+        for button in [*self.calculation_buttons, self.mc_run]:
+            button.configure(state='disabled' if busy else 'normal')
+        self.mc_cancel.configure(state='normal' if busy else 'disabled')
+
+    def cancel_job(self):
+        if self.app.job_busy:
+            self.app.job_cancel.set()
+            if self.mc_active:
+                self.mc_progress.state = 'Cancelling'
+                self.update_progress_view()
+            self.mc_cancel.configure(state='disabled')
+            self.app.status.set('Cancelling calculation; previous successful results retained.')
+
+    def update_progress_view(self):
+        count, detail = self.mc_progress.text()
+        self.progress_count.set(count)
+        self.progress_detail.set(detail)
+        self.progress_bar.configure(maximum=max(1,self.mc_progress.total), value=self.mc_progress.completed)
+
+    def progress_updated(self, completed, total):
+        self.mc_progress.update(completed,total)
+        self.update_progress_view()
+
+    def job_finished(self, error=None, cancelled=False):
+        if self.mc_active and (error is not None or cancelled):
+            self.mc_progress.finish('Cancelled' if cancelled else 'Failed',
+                'previous results retained' if cancelled else str(error))
+            self.mc_active = False
+            self.update_progress_view()
+
+    def tick_progress(self):
+        if self.mc_active:
+            if self.app.job_cancel.is_set():
+                self.mc_progress.state = 'Cancelling'
+            self.update_progress_view()
 
     def session(self):
         return self.app.project.modeling.setdefault(self.key(), {'settings':deepcopy(DEFAULTS)})
@@ -118,7 +214,7 @@ class ModelingPanel:
         try:
             self.session()['settings'] = {k:v.get() for k,v in self.variables.items()}
             self.render()
-            if key in {'beta','energy','prefactor','order','coverage','amplitude','baseline'}:
+            if key in {'beta','energy','prefactor','order','coverage','amplitude','baseline'} and self.session().get('display_mode')!='components':
                 if self.preview_after is not None:
                     self.app.root.after_cancel(self.preview_after)
                 self.preview_after = self.app.root.after(650,self.preview)
@@ -151,20 +247,39 @@ class ModelingPanel:
         self.notes.configure(state='disabled')
 
     def render(self):
+        # A region is an analysis prerequisite, never a prerequisite for viewing data.
+        dataset = self.app.project.datasets.get(self.app.project.active_dataset)
         self.fig.clear()
+        ax = self.fig.add_subplot(211)
+        residual = self.fig.add_subplot(212)
+        ax.set(ylabel='Signal (instrument units)')
+        residual.axhline(0,color='gray',linewidth=.7)
+        residual.set(xlabel='Temperature (°C)',ylabel='Residual')
+        if dataset is not None:
+            ax.plot(dataset.spectrum.temperature_clean_c, dataset.spectrum.signal,
+                    color='0.5', linewidth=.8, label='Original measured spectrum')
         self.table.delete(*self.table.get_children())
         try:
             session = self.session()
+            component_result=session.get('components')
+            if component_result and session.get('display_mode')=='components':
+                self.components.render(ax,residual,component_result)
+                self.canvas.draw_idle()
+                return
             result = session.get('comparison')
             dataset, _ = self.app.project.context()
             t,y = selected_arrays(dataset,self.snapshot()) if not result else (result['temperature'],result['signal'])
         except ValueError:
-            self.note('Select an imported dataset and named peak to model.')
+            guidance = ('In Spectra & Preparation, enter a peak name and bounds, then Add peak (or use Drag interval). '
+                        'The original spectrum remains visible; calculations need a named region.'
+                        if dataset is not None else 'Open a spectrum or use Open Example Dataset to begin.')
+            ax.text(.02,.97,guidance,transform=ax.transAxes,va='top',wrap=True,fontsize=9)
+            if dataset is not None:
+                ax.legend(fontsize=8)
+            self.note(guidance)
             self.canvas.draw_idle()
             return
-        ax = self.fig.add_subplot(211)
-        residual = self.fig.add_subplot(212)
-        ax.plot(t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal')
+        plot_observations(ax,t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal')
         notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\nZero-order fits search the depletion edge; displayed prefactors are representative, with conditional ranges rather than unique values. Edge-model AICc rankings are heuristic.\n'
         if result:
             notes += ('Current comparison.\n' if self.current(result) else 'STALE comparison — original interval/settings plotted. Compare again before transfer or Monte Carlo.\n')
@@ -174,7 +289,8 @@ class ModelingPanel:
                 vals = [c['name']] + ([fit['reaction_order'],fit['activation_energy_eV'],fit['prefactor_s_inv'],fit['rmse_signal'],c['delta_aicc']] if fit else ['—']*5)
                 self.table.insert('','end',iid=str(index),values=vals+[c['error'] or '; '.join(c['warnings'])])
                 if c['prediction'] is not None and not c['error']:
-                    ax.plot(t,c['prediction'],label=c['name'])
+                    ax.plot(t,c['prediction'],linestyle=('-', '--', '-.', ':')[index%4],
+                            linewidth=1.5,label=c['name'])
                     residual.plot(t,np.asarray(y)-np.asarray(c['prediction']),label=c['name'])
         simulation = session.get('simulation')
         if simulation and self.current(simulation):
@@ -187,10 +303,7 @@ class ModelingPanel:
             notes += 'Conditional parameter ranges: ' + json.dumps(r['parameter_intervals']) + '\n'
             notes += ('MC settings are current. ' if self.current(mc) else 'MC settings are stale. ')
         notes += 'Monte Carlo uses iid Gaussian residual noise around the lowest-AICc converged reference; ranges withheld below 100 successful refits. Frequencies are not mechanism probabilities.'
-        ax.set(ylabel='Signal (instrument units)')
-        ax.legend(fontsize=8)
-        residual.axhline(0,color='gray',linewidth=.7)
-        residual.set(xlabel='Temperature (°C)',ylabel='Residual')
+        ax.legend(fontsize=7,ncol=2)
         self.note(notes)
         self.canvas.draw_idle()
 
@@ -220,17 +333,40 @@ class ModelingPanel:
             self.app.status.set(str(exc))
 
     def complete(self,kind,result):
+        if kind == 'monte_carlo':
+            r = result['result']
+            if r['cancelled']:
+                self.mc_progress.update(r['replicates_completed'],r['replicates_requested'])
+                self.job_finished(cancelled=True)
+                self.app.status.set('Monte Carlo cancelled; previous successful results retained.')
+                return
+            successful = sum(r['successful_parameter_fits'].values())
+            attempted = r['replicates_completed'] * len(r['successful_parameter_fits'])
+            summary = (f"{successful} successful / {attempted-successful} failed fitting attempts; "
+                       f"{r['failed_rankings']} incomplete rankings; seed {r['seed']}")
+            self.mc_progress.update(r['replicates_completed'],r['replicates_requested'])
+            self.mc_progress.finish('Completed',summary)
+            self.mc_active = False
+            self.update_progress_view()
         snap = result['snapshot']
         key = f"{snap['dataset_id']}/{snap['region_id']}"
         session = self.app.project.modeling[key]
         session[kind] = result
+        if kind in ('comparison','components','simulation'):
+            session['display_mode']='components' if kind=='components' else 'single'
         if kind == 'comparison':
             session.pop('monte_carlo',None)
         self.render()
-        self.app.status.set(kind.replace('_',' ').capitalize() + ' finished; results retain submitted settings.')
+        self.app.status.set(('Monte Carlo finished: ' + summary) if kind == 'monte_carlo' else
+                            kind.replace('_',' ').capitalize() + ' finished; results retain submitted settings.')
 
     def monte_carlo(self):
+        if self.app.job_busy:
+            self.app.status.set('A calculation is already running; finish or cancel it first.')
+            return
         try:
+            if self.session().get('display_mode')=='components':
+                raise ValueError('Component Monte Carlo is not implemented. Single-state view uses the separate order comparison; component intervals are conditional local estimates.')
             previous = self.session().get('comparison')
             if not previous or not self.current(previous):
                 raise ValueError('Compare current models before running Monte Carlo.')
@@ -244,15 +380,21 @@ class ModelingPanel:
                     orders=tuple(c['name'] for c in previous['candidates']),replicates=replicates,seed=seed,
                     fit_baseline=s['fit_baseline'],max_nfev=int(s['max_nfev']),multistart=s['multistart'],
                     reference_comparison=models_from_records(previous['candidates']),cancelled=self.app.job_cancel.is_set,
-                    progress=lambda done,total:self.app.jobs.put(('progress',f'Monte Carlo {done}/{total}')))
+                    progress=lambda done,total:self.app.jobs.put(('progress', (done,total))))
                 return serial(dict(snapshot=snap,result=result))
-            self.app.start_job(work,lambda r:self.complete('monte_carlo',r))
+            self.mc_active = True
+            self.mc_progress.start(replicates)
+            self.update_progress_view()
+            if not self.app.start_job(work,lambda r:self.complete('monte_carlo',r)):
+                self.job_finished(error=self.app.status.get())
         except (ValueError,KeyError) as exc:
             self.app.status.set(str(exc))
 
     def transfer(self):
         try:
             session = self.session()
+            if session.get('display_mode')=='components':
+                raise ValueError('Simultaneous components are retained and exported in Modeling. Use Single-state view before transferring an isolated-peak hypothesis.')
             result = session.get('comparison')
             if not result or not self.current(result):
                 raise ValueError('Compare current settings before transferring a candidate.')

@@ -39,6 +39,14 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.setup_results()
         self.setup_project_actions()
 
+    def open_default_demo(self):
+        """Explicit startup action, also usable from a source or frozen build."""
+        try:
+            self._load_paths([resource('examples/synthetic_two_peak_demo.csv')])
+            self.status.set('Bundled synthetic demo: first peak selected. Open Modeling to simulate or compare models; the second peak needs a separate hypothesis.')
+        except (OSError, ValueError) as exc:
+            self.status.set(f'Demo unavailable: {exc}. Use Open Example Dataset or Open Spectrum.')
+
     def _build(self):
         header = tk.Frame(self.root, bg=NAVY, padx=16, pady=10)
         header.pack(fill="x")
@@ -180,7 +188,15 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
     def _load_paths(self, paths):
         super()._load_paths(paths)
         for row in self.spectra.values():
-            self.project.add_dataset(row["path"], row["spec"])
+            dataset = self.project.add_dataset(row["path"], row["spec"])
+            # Seed only the actual shipped demo, never an arbitrary imported spectrum.
+            try:
+                bundled = resource('examples/synthetic_two_peak_demo.csv').resolve()
+            except FileNotFoundError:
+                bundled = None
+            if Path(dataset.path) == bundled and not any(r.dataset_id == dataset.id for r in self.project.regions.values()):
+                self.project.select_dataset(dataset.id)
+                self.project.add_region('Demo — first peak (single-state approximation)', 70., 210.)
         self.refresh_context()
 
     def refresh_context(self):
@@ -418,6 +434,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
 def main():
     set_windows_app_identity()
     root = tk.Tk()
-    WorkflowApp(root)
+    app = WorkflowApp(root)
+    app.open_default_demo()
     root.mainloop()
     return 0

@@ -39,6 +39,13 @@ def selected_arrays(dataset, snapshot):
     return t[keep].copy(), y[keep].copy()
 
 
+def plot_observations(axis, temperature, signal, label='Selected processed signal'):
+    """Distinguish observations from model curves without changing the data."""
+    return axis.plot(temperature, signal, color='#64748b', linewidth=.65,
+        marker='o', markersize=3, markerfacecolor='white', markeredgewidth=.65,
+        markevery=max(1,len(signal)//120), label=label)
+
+
 def calculate(dataset, snapshot, cancelled=lambda: False):
     """Compute only the submitted snapshot; never consult live UI/project state."""
     t, y = selected_arrays(dataset, snapshot)
@@ -104,15 +111,25 @@ def calculate(dataset, snapshot, cancelled=lambda: False):
                    'created_utc': datetime.now(timezone.utc).isoformat(), 'import_report': dataset.spectrum.import_report})
 
 
-def draw_result(figure, result):
+def draw_result(figure, result, dataset=None):
     figure.clear()
     p = result['plots']
     predicted = p.get('predicted')
-    ax = figure.add_subplot(211 if predicted is not None else 111)
-    ax.plot(p['x'], p['observed'], label='Selected processed signal')
+    leading = result['snapshot']['method'] == 'Leading edge'
+    if leading and dataset is not None:
+        raw = figure.add_subplot(311)
+        raw.plot(dataset.spectrum.temperature_clean_c, dataset.spectrum.signal,
+                 color='0.5', linewidth=.8, label='Original measured spectrum')
+        raw.set(xlabel='Temperature (°C)', ylabel='Signal (instrument units)')
+        raw.legend(fontsize=8)
+    ax = figure.add_subplot(312 if leading and dataset is not None else (211 if predicted is not None else 111))
+    if dataset is not None and not leading:
+        ax.plot(dataset.spectrum.temperature_clean_c, dataset.spectrum.signal,
+                color='0.5', linewidth=.8, label='Original measured spectrum')
+    plot_observations(ax,p['x'],p['observed'])
     if predicted is not None:
-        ax.plot(p['x'], predicted, label='Fitted curve')
-        residual = figure.add_subplot(212)
+        ax.plot(p['x'], predicted, color='#d35400', linewidth=1.6, label='Fitted curve')
+        residual = figure.add_subplot(313 if leading and dataset is not None else 212)
         residual.plot(p['x'], np.asarray(p['observed'])-np.asarray(predicted))
         residual.axhline(0, color='gray', linewidth=.7)
         residual.set(xlabel=p['x_label'], ylabel='Residual')

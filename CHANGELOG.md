@@ -1,3 +1,23 @@
+## 0.11.0b4 — beta feedback (development candidate, unreleased)
+
+- Fit up to three independent Polanyi–Wigner populations simultaneously on one
+  full spectrum, with per-component fixed order/prefactor/coverage, joint energy
+  and nonnegative scale estimates, and shared offset/optional drift. Show each
+  contribution, sum and residual; compare counts, save projects and export parameters.
+  Withhold local intervals for ambiguous, exchangeable, bounded or ill-conditioned
+  decompositions. This exploratory increment excludes component Monte Carlo and
+  multicomponent zero-order depletion searches.
+- Supply seeded clean/low/moderate/high-noise demonstrations and an offset/drift
+  example. Preserve theoretical reference curves and kinetic validation truth.
+  Plot observations as muted open markers and models as contrasting curves.
+- Show Monte Carlo progress, elapsed/estimated remaining time and fit/failure
+  counts beside Run/Cancel. Retain the worker thread, prevent duplicate jobs,
+  and discard cancelled results even if success was already queued.
+- Keep the original spectrum visible in Modeling and Kinetic Analysis without
+  a named region, during calculations and after errors. Provide actionable region guidance.
+- Open the shipped default demo with a prepared first-peak region; document a
+  simulation, comparison, seeded Monte Carlo and explicit-fit walkthrough.
+
 ## 0.11.0b3 — external research beta (25 October 2026, unreleased)
 
 - Consolidated the verified beta into `main`; the current Windows artifact is

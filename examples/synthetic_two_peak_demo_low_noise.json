@@ -1,0 +1,44 @@
+{
+  "schema_version": 2,
+  "synthetic": true,
+  "experimental": false,
+  "model": "two independent first-order Polanyi-Wigner populations",
+  "beta_K_s": 1.0,
+  "temperature_unit": "degC",
+  "time_unit": "ms",
+  "signal_unit": "arbitrary units, numerically total initial-population coverage/s",
+  "points": 601,
+  "integration_step_K": 0.01,
+  "sampling_step_K": 0.5,
+  "populations": [
+    {
+      "energy_eV": 1.25,
+      "prefactor_s_inv": 10000000000000.0,
+      "initial_coverage": 1.0,
+      "component_peak_C": 172.5
+    },
+    {
+      "energy_eV": 1.55,
+      "prefactor_s_inv": 10000000000000.0,
+      "initial_coverage": 0.65,
+      "component_peak_C": 276.0
+    }
+  ],
+  "limitations": "Additive detector noise is simulated after the clean kinetic calculation. No interactions, readsorption, transport effects, or instrument response. Not experimental evidence or a test of unique parameter identifiability.",
+  "observational_variant": "low_noise",
+  "noise": {
+    "model": "iid Gaussian",
+    "sigma_signal_units": 0.00028449544928011567,
+    "ar1_coefficient": 0.0
+  },
+  "baseline": {
+    "offset_signal_units": 0.0,
+    "slope_signal_units_per_K": 0.0,
+    "reference_temperature_c": 70.0
+  },
+  "noise_fraction_of_clean_maximum": 0.01,
+  "random_seed": 20261026,
+  "clean_reference_file": "synthetic_two_peak_demo_clean.csv",
+  "clean_reference_sha256": "886ecbf96da0b763181ae79867442bf283747e532f9569621b86c27be30ffc65",
+  "csv_sha256": "b3bef0d60275077dba77e0760ef17b48d783a1b833520b13d55189ef805d3bac"
+}

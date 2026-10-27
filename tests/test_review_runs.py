@@ -73,13 +73,17 @@ def test_changed_input_and_collision_never_write_results(tmp_path):
     assert list(plan.output.iterdir()) == []
 
 
-def test_real_preview_and_saved_run_have_identical_results(tmp_path):
+@pytest.mark.parametrize('demo,expected_state',[
+    ('synthetic_two_peak_demo_clean.csv','completed'),
+    ('synthetic_two_peak_demo.csv','completed with warnings'),
+])
+def test_real_preview_and_saved_run_have_identical_results(tmp_path,demo,expected_state):
     for name, preview in (("preview", True), ("saved", False)):
-        plan = plan_for(tmp_path / name, preview=preview)
+        plan = plan_for(tmp_path / name, inputs=[DEMO.parent/demo], preview=preview)
         messages = queue.Queue()
         execute(plan, messages, threading.Event())
         events = drain(messages)
-        assert events[-1] == ("finished", "completed")
+        assert events[-1] == ("finished", expected_state)
         assert any(kind == "log" and "[1/1]" in text for kind, text in events)
         record = json.loads((plan.output / "run_status.json").read_text())
         assert record["preview"] == preview

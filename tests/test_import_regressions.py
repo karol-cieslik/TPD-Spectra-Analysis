@@ -71,8 +71,9 @@ def test_cleaner_invalid_bounds_and_insufficient_anchors():
 
 def test_shipped_demo_import_and_independent_physical_reference():
     from tpd_spectra.kinetics import simulate_tpd
-    spectrum = load_spectrum(EXAMPLES / "synthetic_two_peak_demo.csv")
-    meta = json.loads((EXAMPLES / "synthetic_two_peak_demo.json").read_text())
+    # Keep deterministic numerical validation separate from noisy observations.
+    spectrum = load_spectrum(EXAMPLES / "synthetic_two_peak_demo_clean.csv")
+    meta = json.loads((EXAMPLES / "synthetic_two_peak_demo_clean.json").read_text())
     assert meta["synthetic"] is True
     assert len(spectrum.signal) == meta["points"] == 601
     assert spectrum.temperature_c[[0, -1]].tolist() == [70., 370.]

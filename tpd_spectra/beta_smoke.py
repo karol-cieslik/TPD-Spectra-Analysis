@@ -24,6 +24,7 @@ def main(output):
     assert resource('docs/beta/QUICK_START.pdf').read_bytes().startswith(b'%PDF')
     assert resource('START_HERE.md').is_file()
     assert resource('docs/MULTICOMPONENT_FITTING.md').is_file()
+    assert 'first result' in resource('docs/beta/WORKED_EXAMPLES.html').read_text(encoding='utf-8').lower()
     help_catalog=load_help_catalog()
     assert len(help_catalog['topics'])==40
     assert next(t for t in help_catalog['topics'] if t['id']=='mc_seed')['short']
@@ -33,6 +34,10 @@ def main(output):
     root.report_callback_exception=lambda *args:errors.append(str(args))
     try:
         app.open_default_demo()
+        tutorial=app.workflow_help()
+        root.update()
+        assert len(tutorial.tabs.tabs())==5
+        tutorial.window.destroy()
         help_window=app.open_scientific_help('mc_seed')
         root.update()
         assert help_window is not None

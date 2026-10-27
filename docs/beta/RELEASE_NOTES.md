@@ -5,6 +5,12 @@ or a claim of experimental validation. This candidate is on the separate
 `fix/beta-feedback-14-17` branch in PR #19. For downloading and starting, see [START_HERE](../../START_HERE.md);
 technical build evidence is maintained separately in the repository.
 
+**Pending next Windows build:** [PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20)
+adds a structured Results summary, 40-topic searchable scientific Help, five
+in-app tutorials and an offline worked-examples guide. These additions are
+not present in the older downloadable b4 executable. They require a fresh
+frozen build and visual acceptance before inclusion in a colleague ZIP.
+
 ## Changes
 
 - The default demo opens with a prepared region; raw spectra remain visible
@@ -57,6 +63,8 @@ technical build evidence is maintained separately in the repository.
   layout/scaling acceptance remain open. Please report any clipped controls or
   unusual layout at your usual display resolution and scaling.
 - Windows executable is unsigned. Follow institutional software policies.
+- The old b4 Windows package does not include the pending PR #20 Help and
+  Results features; verify the exact commit in `VERSION.json`.
 - Analysis reports and portable projects contain scientific data; the separate
   diagnostic ZIP contains only its editable report and explanatory README.
 

@@ -3,12 +3,23 @@
 Thank you for trying this early beta. Ten to twenty minutes is useful; there is
 no need to complete every item or produce a formal review.
 
+Use the revised [worked examples](WORKED_EXAMPLES.html) for exact button names
+and settings, or the **Workflow quick start** tabs in the program. A separate
+[short feedback form](FEEDBACK_FORM.md) is available if you prefer written
+questions. Check `VERSION.json`: older b4 ZIPs do not include the pending
+Results/Help improvements from PR #20.
+
 - [ ] Extract the whole package and launch on Windows without Python.
 - [ ] Check that the default demo has a selected first-peak region and retains its
   raw trace in Modeling, including during simulation and cancellation.
 - [ ] Find About, the developer contact, Quick Start and feedback actions.
+- [ ] Open **Scientific Help / Parameters**, search for `seed`, and try a
+  field-level **?** button. Does it explain units, roles and scientific cautions?
 - [ ] Open the clean first-order example and obtain an approximately 1.2 eV
   Redhead estimate using the supplied 1 K/s ramp and assumed 1e13 s⁻¹ prefactor.
+- [ ] In **Parameter summary**, confirm that Redhead energy is shown as a
+  calculated estimate and the prefactor as an assumed input. Check
+  **Assumptions & provenance** for the submitted settings and warnings.
 - [ ] Switch peaks/methods and verify the visible settings belong to your selection.
 - [ ] Try a first-order model comparison, inspect residuals and run a short seeded
   Monte Carlo test. A short run tests usability, not uncertainty coverage.
@@ -21,6 +32,8 @@ no need to complete every item or produce a formal review.
 - [ ] Save/reopen a project. Check the selected data, interval and settings.
 - [ ] Resize the window and try your usual display scaling. Note clipped controls,
   confusing names, unexpected waits or any step needing explanation.
+- [ ] Check that the five Quick Start tabs can be navigated and the offline
+  detailed guide opens without needing an internet connection.
 - [ ] Inspect a diagnostic report, copy it or save the ZIP. Nothing needs to be sent
   unless you choose. No GitHub account is needed to email feedback.
 - [ ] Optional: try one spectrum you are permitted to use and check against an

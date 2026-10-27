@@ -56,7 +56,8 @@ readable Results tabs, searchable scientific Help and five in-app tutorials.
 to inspect and copy a diagnostic report or save a ZIP. No account, automatic
 upload, or experimental spectrum is required. You can email
 **Dr. Karol Cieślik** at **karol.j.cieslik@gmail.com**. See the
-[short tester checklist](docs/beta/TESTER_CHECKLIST.md) and
+[short tester checklist](docs/beta/TESTER_CHECKLIST.md),
+[optional feedback form](docs/beta/FEEDBACK_FORM.md), and
 [release notes](docs/beta/RELEASE_NOTES.md).
 
 **Scientific status:** numerical and synthetic tests have passed, but independent
@@ -184,6 +185,7 @@ Read the [User and Scientific Methods Manual](docs/USER_AND_SCIENTIFIC_MANUAL.md
 | [Scientific Help topics](docs/beta/SCIENTIFIC_HELP_TOPICS.json) | Source of the in-app offline help, with units, roles, examples and cautions |
 | [Current beta review status](docs/beta/REVIEW_STATUS.md) | What is implemented, awaiting packaging, or not yet scientifically validated |
 | [Colleague tester checklist](docs/beta/TESTER_CHECKLIST.md) | Short, informal tasks and feedback guidance |
+| [Optional feedback form](docs/beta/FEEDBACK_FORM.md) | Eight short questions; no experiment data required |
 | [Example dataset](examples/README.md) | Synthetic CSV origin, units and appropriate use |
 | [Contributing](CONTRIBUTING.md) | Setup, architecture, testing and contribution standards |
 | [Scientific method status](docs/METHOD_STATUS.md) | Which methods are supported, experimental or not yet validated |

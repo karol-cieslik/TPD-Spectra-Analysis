@@ -108,6 +108,7 @@ jobs:
           Copy-Item examples release-package/examples -Recurse
           # Ship focused user documentation. Development records remain on GitHub.
           New-Item -ItemType Directory -Force release-package/docs/beta,release-package/docs/redesign,release-package/validation | Out-Null
+          Copy-Item validation/WINDOWS_B5_ACCEPTANCE.md release-package/validation/
           $testerDocs = @(
             'docs/USER_AND_SCIENTIFIC_MANUAL.md',
             'docs/METHOD_STATUS.md',

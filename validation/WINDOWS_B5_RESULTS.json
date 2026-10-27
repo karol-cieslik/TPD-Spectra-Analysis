@@ -1,0 +1,20 @@
+{
+  "source_commit": "07f59afebe95111386fa2945d5fac79db9b70b59",
+  "version": "0.11.0b5",
+  "windows_full_suite": {
+    "passed": 343,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 272.6
+  },
+  "post_report_documentation_tests": {
+    "passed": 7
+  },
+  "frozen_cli_gui_workflow": "passed",
+  "frozen_packaged_resources_and_components": "passed",
+  "visual_acceptance": "unverified: Windows screen capture timed out twice",
+  "clean_machine_windows_10_11": "not tested",
+  "pe_machine": "AMD64 (0x8664)",
+  "exe_sha256": "dc6b51e69eda1f7afc03bfd960d8b5a7e0ccde3d379600a7aa309e61ab1968d5"
+}

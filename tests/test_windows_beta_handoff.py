@@ -17,6 +17,7 @@ def test_review_documents_shipped_with_their_local_links():
     workflow = (ROOT / '.github/workflows/desktop-build.yml').read_text(encoding='utf-8')
     docs = set(re.findall(r"'(docs/[^']+)'", workflow))
     assert 'docs/beta/SHARE_WITH_COLLEAGUES.md' in docs
+    assert 'Copy-Item validation/WINDOWS_B5_ACCEPTANCE.md release-package/validation/' in workflow
     for name in ('REVIEW_STATUS.md', 'SHARE_WITH_COLLEAGUES.md', 'SCIENTIFIC_CONSISTENCY_AUDIT.md'):
         file = ROOT / 'docs/beta' / name
         for target in re.findall(r'\[[^]]+\]\(([^)]+)\)', file.read_text(encoding='utf-8')):

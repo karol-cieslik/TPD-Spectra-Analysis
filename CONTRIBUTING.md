@@ -20,6 +20,12 @@ Run the graphical application using `python run_tpd_spectra_gui.py`; for CLI com
 - `tpd_spectra/kinetics.py`: numerical desorption models and inverse fitting.
 - `tpd_spectra/identifiability.py`: numerical fitting diagnostics.
 - `tpd_spectra/gui.py` and `gui_ranges.py`: GUI and plot-interval input.
+- `tpd_spectra/workflow_gui.py`, `workflow_modeling.py` and `workflow_results_gui.py`:
+  the three-stage desktop flow and its result presentation.
+- `tpd_spectra/scientific_help.py`, `quickstart_dialog.py` and
+  `result_view.py`: offline Help, onboarding and scientifically labeled outputs.
+- `docs/beta/SCIENTIFIC_HELP_TOPICS.json`: maintained Help content; keep IDs
+  stable and update the browser/tests together when changing parameter meaning.
 - `tpd_spectra/cli.py`: command-line and batch analysis.
 - `tests/`: automated regression and scientific tests.
 - `docs/USER_AND_SCIENTIFIC_MANUAL.md`: user guide, scientific assumptions and known limitations.

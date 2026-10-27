@@ -1,5 +1,8 @@
 # Scientific consistency audit: colleague beta
 
+> Historical development snapshot. PRs #19–21 are now merged into main.
+> For current beta/download status see [START_HERE](../../START_HERE.md). Original evidence below is preserved.
+
 **Scope:** the source changes proposed in draft PR #20, stacked on PR #19 and the historical `0.11.0b4` candidate. This is a **source/documentation audit**, not a completed Windows-binary acceptance test or experimental validation.
 
 The scientific Help catalog, [worked examples](WORKED_EXAMPLES.md), result role labels and underlying model implementations were compared for agreement. The checks below are deliberately narrow: they establish what the program computes and how it should be described, not whether one fitted mechanism is physically correct.

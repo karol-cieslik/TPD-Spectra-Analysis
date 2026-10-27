@@ -4,11 +4,11 @@
 **External beta candidate | updated 27 October 2026**  
 Dr. Karol Cieślik
 
-> **Research beta.** This walkthrough uses the `0.11.0b5` candidate ([PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19)) and the follow-up Results/Help changes ([PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20)). The older downloadable Windows `0.11.0b4` artifact does not yet include PR #20. Confirm your exact build in `VERSION.json`. Windows visual acceptance and independent experimental validation remain incomplete. All tutorial spectra are synthetic; they are not experimental evidence for a physical mechanism.
+> **Research beta 0.11.0b5.** Current source is `main`, including merged PRs #19–21 and the Results, Help and guided exercises. Confirm the exact build in `VERSION.json`. Human Windows visual/DPI acceptance, independent installation without Python and experimental validation remain incomplete. All tutorial spectra are synthetic; they do not establish a physical mechanism.
 
 ## Start here: your first result in five minutes
 
-1. Use the newly supplied `tpd-spectra-windows-x64-beta-0.11.0b5` ZIP. Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for the executable checksum. The older b4 artifact lacks this interface. Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable. No public b5 download URL is approved yet.
+1. Use the newly supplied `tpd-spectra-windows-x64-beta-0.11.0b5` ZIP. Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for the executable checksum. Get the latest successful **main** run from [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain). Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable. No tagged prerelease has been published; Actions artifacts expire and may require GitHub sign-in.
 2. Double-click **TPD-Spectra-Studio.exe**. No Python installation is needed. This development executable is unsigned: follow your institution's software-security policy.
 3. Click **Open Example Dataset**, choose **first order single peak**, then **Open selected example**. This loads 801 simulated points from 50 to 450 °C, with an already selected full-trace interval and a heating rate of 1 K/s.
 4. Go to **Kinetic Analysis** and select **Redhead**. Check **Heating rate = 1 K/s** and **Assumed prefactor = 1e13 s⁻¹**. An energy estimate should appear after the preview updates; if needed click **Calculate / Fit selected peak**.
@@ -216,7 +216,7 @@ In a simultaneous fit, the detected signal is a sum of independent rates multipl
 
 ### Scientific and compatibility scope
 
-The beta is for informal evaluation, teaching-style demonstrations and exploratory research. Independent experimental benchmarks, uncertainty-coverage studies and external scientific review remain necessary before quantitative method claims or publication. Read [`docs/MULTICOMPONENT_FITTING.md`](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/7139c4659/docs/MULTICOMPONENT_FITTING.md) and [`docs/METHOD_STATUS.md`](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/7139c4659/docs/METHOD_STATUS.md) before interpreting advanced fits.
+The beta is for informal evaluation, teaching-style demonstrations and exploratory research. Independent experimental benchmarks, uncertainty-coverage studies and external scientific review remain necessary before quantitative method claims or publication. Read [`docs/MULTICOMPONENT_FITTING.md`](../MULTICOMPONENT_FITTING.md) and [`docs/METHOD_STATUS.md`](../METHOD_STATUS.md) before interpreting advanced fits.
 
 **Feedback:** In the program choose **Report a Bug / Send Feedback**, or email **Dr. Karol Cieślik** at **karol.j.cieslik@gmail.com**. State the version/build, chosen example, what you expected and what happened. A screenshot helps, but check it for confidential data first. No account or experimental dataset is required to send useful comments.
 
@@ -224,4 +224,4 @@ The beta is for informal evaluation, teaching-style demonstrations and explorato
 
 ---
 
-*Preparation note: tutorial instructions and synthetic truth are cross-checked against the 0.11.0b4 source and the draft Results/Help improvements; the final Windows package needs acceptance testing before external distribution.*
+*Tutorial instructions and synthetic truth are covered by source and frozen-package checks. Human first-run, visual/DPI and clean-machine acceptance of the exact final ZIP remain necessary before external distribution.*

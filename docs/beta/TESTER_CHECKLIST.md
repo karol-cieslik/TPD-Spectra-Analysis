@@ -6,8 +6,8 @@ no need to complete every item or produce a formal review.
 Use the revised [worked examples](WORKED_EXAMPLES.html) for exact button names
 and settings, or the **Workflow quick start** tabs in the program. A separate
 [short feedback form](FEEDBACK_FORM.md) is available if you prefer written
-questions. Check `VERSION.json`: older b4 ZIPs do not include the pending
-Results/Help improvements from PR #20.
+questions. Use the current 0.11.0b5 package from main and record its exact
+source commit from `VERSION.json`. Results, Help and five tutorials are included.
 
 - [ ] Extract the whole package and launch on Windows without Python.
 - [ ] Check that the default demo has a selected first-peak region and retains its
@@ -21,8 +21,8 @@ Results/Help improvements from PR #20.
   calculated estimate and the prefactor as an assumed input. Check
   **Assumptions & provenance** for the submitted settings and warnings.
 - [ ] Switch peaks/methods and verify the visible settings belong to your selection.
-- [ ] Try a first-order model comparison, inspect residuals and run a short seeded
-  Monte Carlo test. A short run tests usability, not uncertainty coverage.
+- [ ] Try a first-order model comparison, inspect residuals and run 20 seeded
+  Monte Carlo replicates (seed 42). A short run tests usability, not uncertainty coverage.
 - [ ] Watch the progress bar/count, elapsed time and Cancel state; check completion
   separates fitting failures from incomplete rankings and preserves prior output.
 - [ ] Optional: use the documented three-state synthetic exercise in

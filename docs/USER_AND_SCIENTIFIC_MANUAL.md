@@ -1,12 +1,12 @@
 # TPD Spectra Studio — User and Scientific Methods Manual
 
-**Document status:** beta user and scientific manual · **Software source:** `fix/beta-feedback-14-17` (PR #19) · **Current beta version:** 0.11.0b4 development candidate (not publicly tagged)
+**Document status:** beta user and scientific manual · **Software source:** `main` (PRs #19–21 merged) · **Current beta version:** 0.11.0b5 research beta (not publicly tagged)
 **Audience:** experimental surface scientists, TPD/TDS users, students, and developers.  
 **Scope:** current application behavior and defensible model assumptions. This is documentation, not a claim of experimental validation. Please open an issue for any discrepancy between this manual and the executable.
 
 For the default three-stage desktop, follow the [workflow guide](redesign/WORKFLOW_USER_GUIDE.md).
 Classic/batch controls described below remain available in **Classic / batch workspace**.
-The b4 candidate opens a seeded noisy demo with a prepared region, provides visible
+The b5 candidate opens a seeded noisy demo with a prepared region, provides visible
 Monte Carlo progress/cancellation and adds [simultaneous component fitting](MULTICOMPONENT_FITTING.md).
 
 ## 1. Purpose and scope
@@ -35,8 +35,8 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 ### Portable Windows application
 
 1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
-2. Open the latest successful Windows check in [PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19).
-3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b4`. GitHub sign-in may be required.
+2. Choose the latest successful **main** run in the Windows desktop workflow.
+3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b5`. GitHub sign-in may be required.
 4. Extract the archive completely, then launch `TPD-Spectra-Studio.exe`. No separate Python installation should be required.
 5. Keep the package contents together, including licenses and documentation. The executable is not digitally signed; verify its GitHub origin and follow your institution's software policy.
 

@@ -43,7 +43,7 @@ def main(output):
         assert help_window is not None
         assert 'random' in help_window.detail.get('1.0','end').lower()
         assert help_window._current_id()=='mc_seed'
-        help_window.query.set('energy')
+        help_window.query.set('seed')
         assert help_window.count.get().split(' / ')[0]!='0'
         help_window.select_topic('mc_seed')
         assert help_window._current_id()=='mc_seed'

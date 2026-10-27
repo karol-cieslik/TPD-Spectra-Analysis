@@ -24,14 +24,30 @@ def test_local_onboarding_links_exist():
     assert not missing, '\n'.join(missing)
 
 
-def test_readme_distinguishes_unreleased_ui_from_old_windows_artifact():
-    text = (ROOT / 'README.md').read_text(encoding='utf-8')
-    assert 'PR #19' in text and 'PR #20' in text
-    assert 'not in that older executable' in text
-    assert 'VERSION.json' in text
+def test_current_docs_share_application_version_and_main_download():
+    from tpd_spectra import __version__
+    current = ('README.md', 'START_HERE.md', 'docs/beta/RELEASE_NOTES.md',
+               'docs/METHOD_STATUS.md', 'docs/USER_AND_SCIENTIFIC_MANUAL.md',
+               'docs/redesign/WORKFLOW_USER_GUIDE.md', 'docs/beta/WORKED_EXAMPLES.md',
+               'docs/beta/WORKED_EXAMPLES.html')
+    for name in current:
+        text = (ROOT / name).read_text(encoding='utf-8')
+        assert __version__ in text, name
+        # Historical version mentions are allowed; actionable obsolete downloads are not.
+        for artifact in re.findall(r'tpd-spectra-windows-x64-beta-([0-9.a-z]+)', text):
+            assert artifact == __version__, (name, artifact)
+        assert 'git checkout ux/' not in text
+        assert not re.search(r'(?:Both PRs|PRs #19 and #20|Newer work) (?:remain|remains|are) (?:separate from|in draft|draft)', text)
+    readme = (ROOT / 'README.md').read_text(encoding='utf-8')
+    assert 'successful **main**' in readme
+    assert f'version: {__version__}' in (ROOT / 'CITATION.cff').read_text(encoding='utf-8')
+    guide = (ROOT / 'scripts/generate_beta_guide.py').read_text(encoding='utf-8')
+    assert __version__ in guide and 'pull/19' not in guide
+    assert '20 replicates' in guide
+    assert 'VERSION.json' in readme and 'SHA256SUMS.txt' in readme
     status = (ROOT / 'docs/beta/REVIEW_STATUS.md').read_text(encoding='utf-8')
-    assert 'new Windows build' in status
-    assert 'scientific' in status.lower()
+    assert 'PR #21' in status and 'merged' in status
+    assert 'visual' in status and 'experimental' in status
 
 
 def test_colleague_feedback_is_optional_and_privacy_conscious():
@@ -44,7 +60,7 @@ def test_colleague_feedback_is_optional_and_privacy_conscious():
 
 def test_colleague_handoff_requires_fresh_accepted_windows_build():
     handoff = (ROOT / 'docs/beta/SHARE_WITH_COLLEAGUES.md').read_text(encoding='utf-8')
-    assert 'does not contain' in handoff
+    assert 'do not contain' in handoff
     assert 'Do not send that old ZIP' in handoff
     assert 'Windows machine without Python' in handoff
     assert 'only after verification' in handoff

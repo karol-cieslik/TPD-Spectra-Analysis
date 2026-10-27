@@ -1,5 +1,8 @@
 # Windows research beta b5 acceptance — 27 October 2026
 
+> Historical development snapshot. PRs #19–21 are now merged into main.
+> For current beta/download status see [START_HERE](../START_HERE.md). Original evidence below is preserved.
+
 ## Preserved source and integration review
 
 Both existing local repositories were clean before work. No synced `sources/`

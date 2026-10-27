@@ -5,12 +5,12 @@ example first; no experimental data is needed. This version has passed automated
 tests, but experimental validation and testing on different Windows displays
 are still in progress.
 
-This b5 candidate includes [PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19)
-and [PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20).
-Use the newly supplied b5 ZIP and check `VERSION.json` for its exact commit.
-The older b4 executable lacks the new Results, Help and guided exercises.
-No public release has been published. See `validation/WINDOWS_B5_ACCEPTANCE.md`
-for checks actually completed and remaining acceptance limits.
+The current b5 candidate is on `main`, including merged PRs #19–21.
+Download the latest successful **main** artifact from
+[Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain).
+Check `VERSION.json` for its exact source commit and `SHA256SUMS.txt` for checksums.
+No public prerelease has been published. Human visual/DPI and clean-machine
+Windows acceptance remain outstanding; see [release notes](docs/beta/RELEASE_NOTES.md).
 
 1. Extract the **whole ZIP** to a writable folder. Keep the executable, `docs`
    and `examples` together. No Python installation is needed for the Windows build.

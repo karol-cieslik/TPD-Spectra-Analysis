@@ -1,7 +1,7 @@
-# Three-stage workflow guide — 0.11.0b4 candidate
+# Three-stage workflow guide — 0.11.0b5 candidate
 
 TPD Spectra Studio by **Karol Cieślik**. This guide describes the three-stage
-workflow in the 0.11.0b4 development candidate (PR #19). It is intended for practical
+workflow in the 0.11.0b5 research beta on main (PRs #19–21 merged). It is intended for practical
 testing, not as a claim of validated experimental analysis.
 
 ## First run with the synthetic example
@@ -190,6 +190,6 @@ not an interactive PDF viewer.
 Automated synthetic and regression checks are software verification, not
 experimental validation. Publication still requires rights-cleared independent
 data benchmarks, scientific review of applicability/uncertainty, and user tests
-on target Windows displays/scaling. See `IMPLEMENTATION_CHECKLIST.md` for actual
+on target Windows displays/scaling. See the [repository implementation checklist](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/docs/redesign/IMPLEMENTATION_CHECKLIST.md) for actual
 evidence and remaining checkpoints. Do not infer these are complete from a
 successful build.

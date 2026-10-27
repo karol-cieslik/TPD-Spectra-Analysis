@@ -6,7 +6,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ('README.md', 'START_HERE.md', 'docs/beta/REVIEW_STATUS.md',
-        'docs/beta/RELEASE_NOTES.md')
+        'docs/beta/RELEASE_NOTES.md', 'docs/beta/TESTER_CHECKLIST.md',
+        'docs/beta/FEEDBACK_FORM.md')
 LINK = re.compile(r'(?<!!)\[[^]]+\]\(([^)]+)\)')
 
 
@@ -31,3 +32,11 @@ def test_readme_distinguishes_unreleased_ui_from_old_windows_artifact():
     status = (ROOT / 'docs/beta/REVIEW_STATUS.md').read_text(encoding='utf-8')
     assert 'new Windows build' in status
     assert 'scientific' in status.lower()
+
+
+def test_colleague_feedback_is_optional_and_privacy_conscious():
+    form = (ROOT / 'docs/beta/FEEDBACK_FORM.md').read_text(encoding='utf-8')
+    assert 'not' in form.lower() and 'experimental' in form.lower()
+    assert 'Nothing is submitted' in form
+    assert 'karol.j.cieslik@gmail.com' in form
+    assert 'VERSION.json' in form

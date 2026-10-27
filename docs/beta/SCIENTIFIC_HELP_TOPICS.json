@@ -1,0 +1,677 @@
+{
+  "schema_version": 1,
+  "product": "TPD Spectra Studio",
+  "target_version": "0.11.0b4",
+  "source_commit": "7139c46596b1cebd6adddbdae7ca7cf18972d13b",
+  "status": "Integrated scientific Help catalog for external beta; scientific content remains method-conditional.",
+  "role_legend": {
+    "input": "A value supplied by the user; it is not necessarily inferred from the data.",
+    "initial_guess": "An optimizer starting point, not the final fitted result.",
+    "fixed_assumption": "Held fixed when a specified calculation runs.",
+    "fitted": "Estimated numerically under the selected model and constraints.",
+    "derived": "Calculated from other quantities or from a fitting outcome.",
+    "diagnostic": "A check of fit quality, numerical behavior or scientific limitations.",
+    "workflow": "A control that selects or preserves analysis context.",
+    "method_dependent": "Its role changes with the selected method; read the method-specific explanation."
+  },
+  "topics": [
+    {
+      "id": "temperature",
+      "group": "Physical inputs",
+      "title": "Temperature",
+      "symbol": "T",
+      "unit": "°C in imported plots; K in kinetic equations",
+      "role": "input",
+      "context": [
+        "preparation",
+        "modeling",
+        "analysis",
+        "components"
+      ],
+      "short": "Check the temperature column and units. The kinetic equations convert °C to K internally.",
+      "detail": "All exponential kinetic expressions use absolute temperature in kelvin. The GUI presents input temperature and peak bounds in degrees Celsius. A shift in calibration or a mistaken unit can strongly change the inferred activation energy.",
+      "example": "150 °C corresponds to 423.15 K in the rate equation.",
+      "caution": "A clean import does not establish that the instrument temperature calibration is correct."
+    },
+    {
+      "id": "heating_rate",
+      "group": "Physical inputs",
+      "title": "Heating rate",
+      "symbol": "β = dT/dt",
+      "unit": "K/s",
+      "role": "fixed_assumption",
+      "context": [
+        "modeling",
+        "analysis",
+        "components"
+      ],
+      "short": "Enter the actual positive heating rate from your acquisition record, in kelvin per second.",
+      "detail": "The standard methods assume a constant linear temperature ramp. Heating rate links the depletion of adsorbate coverage to the temperature axis and affects peak position and fitted kinetics. The example chooser sets a value from metadata, but real experiments need manual verification.",
+      "example": "Use 1 for a linear 1 K/s ramp; do not assume all experimental files used this setting.",
+      "caution": "A nonlinear ramp is outside the constant-rate model used here."
+    },
+    {
+      "id": "activation_energy",
+      "group": "Physical inputs",
+      "title": "Activation (desorption) energy",
+      "symbol": "E",
+      "unit": "eV",
+      "role": "method_dependent",
+      "role_notes": "Simulation: entered value; initial energy: optimizer guess; Redhead/leading edge: derived estimate; Polanyi-Wigner and components: fitted output.",
+      "context": [
+        "modeling",
+        "analysis",
+        "components",
+        "results"
+      ],
+      "short": "Energy sets the temperature dependence of desorption; an initial energy field is only a starting guess.",
+      "detail": "In the Arrhenius factor exp(-E/kBT), larger barriers generally move comparable desorption features to higher temperature when other inputs are fixed. Depending on the method, energy may be an entered simulation value, an optimizer initial guess, a derived Redhead/leading-edge estimate or a jointly fitted component energy.",
+      "example": "The clean first-order teaching spectrum was generated with E = 1.2 eV.",
+      "caution": "A well fitted energy is conditional on the rate model, ramp, prefactor assumptions and chosen interval."
+    },
+    {
+      "id": "prefactor",
+      "group": "Physical inputs",
+      "title": "Kinetic prefactor",
+      "symbol": "ν",
+      "unit": "s⁻¹ under the program's normalized-coverage convention",
+      "role": "method_dependent",
+      "role_notes": "Redhead and simultaneous components: assumed fixed; manual simulation: entered; single-state Polanyi-Wigner: guess and possibly fitted or conditional.",
+      "context": [
+        "modeling",
+        "analysis",
+        "components",
+        "results"
+      ],
+      "short": "A rate-law prefactor; Redhead and component fitting assume it, while other fits may optimize it.",
+      "detail": "The Polanyi-Wigner rate uses ν times normalized coverage raised to the selected order, times an Arrhenius exponential. Its numerical value depends on how coverage is normalized for non-first-order kinetics. Energy, prefactor and signal scale can be strongly correlated in one spectrum.",
+      "example": "The tutorial uses an assumed ν = 1e13 s⁻¹; entering it does not mean the experiment measured it.",
+      "caution": "Do not present a supplied, representative or weakly identified prefactor as an experimentally determined unique value."
+    },
+    {
+      "id": "reaction_order",
+      "group": "Physical inputs",
+      "title": "Desorption order",
+      "symbol": "n",
+      "unit": "dimensionless",
+      "role": "method_dependent",
+      "role_notes": "Model comparison/components: selected hypothesis; positive-order fitting can optimize it when Fit order is enabled.",
+      "context": [
+        "modeling",
+        "analysis",
+        "components"
+      ],
+      "short": "The exponent of normalized coverage in the rate law; order is a hypothesis, not a mechanism label.",
+      "detail": "The software can explore zero, first, second and fractional-order descriptions. Some methods hold the order fixed; positive-order fitting can optionally optimize it within stated bounds. A phenomenological fractional order may summarize data without representing a unique microscopic process.",
+      "example": "n = 1 gives rate proportional to remaining normalized coverage.",
+      "caution": "A smaller residual for one order does not prove that physical desorption follows that mechanism."
+    },
+    {
+      "id": "initial_coverage",
+      "group": "Physical inputs",
+      "title": "Initial normalized coverage",
+      "symbol": "θ₀",
+      "unit": "dimensionless, 0 < θ₀ ≤ 1",
+      "role": "method_dependent",
+      "role_notes": "Simulation/components: supplied starting coverage; normal single-state fits use a normalized starting coverage of one.",
+      "context": [
+        "modeling",
+        "components"
+      ],
+      "short": "The normalized population present at the first included temperature.",
+      "detail": "Coverage depletes as desorption proceeds. The selected starting temperature matters: if a spectrum is truncated after desorption has already begun, the effective initial coverage is different. Single-state fitting generally normalizes coverage to one at the selected interval start; the joint component editor preserves the user-supplied normalized coverages.",
+      "example": "The three-component synthetic truth starts with coverages 1.0, 0.7 and 0.5 at 50 °C.",
+      "caution": "Normalized coverage is not an absolute monolayer calibration. Rescaling it can change the effective prefactor when n ≠ 1."
+    },
+    {
+      "id": "signal_scale",
+      "group": "Physical inputs",
+      "title": "Detector signal scale",
+      "symbol": "A",
+      "unit": "signal units per modeled-rate unit",
+      "role": "method_dependent",
+      "role_notes": "Simulation: entered amplitude; simultaneous component fit: individually optimized nonnegative scales.",
+      "context": [
+        "modeling",
+        "analysis",
+        "components",
+        "results"
+      ],
+      "short": "Converts calculated desorption rate into the units of the observed detector signal.",
+      "detail": "A depends on detection sensitivity and the chosen normalization of the modeled population. Simulation lets you enter an amplitude; simultaneous component fitting optimizes a separate nonnegative scale for each component. Scale and prefactor can be confounded.",
+      "example": "Changing A changes vertical height without, by itself, changing the activation-energy barrier.",
+      "caution": "A detector scale is not automatically an absolute molecule count."
+    },
+    {
+      "id": "constant_baseline",
+      "group": "Physical inputs",
+      "title": "Constant baseline",
+      "symbol": "b₀",
+      "unit": "same units as measured signal",
+      "role": "method_dependent",
+      "role_notes": "Preparation: applied processing offset; model fitting: optional optimized nuisance offset.",
+      "context": [
+        "preparation",
+        "modeling",
+        "analysis",
+        "components"
+      ],
+      "short": "A constant background offset; choose whether the model fits it or you subtract it in preparation.",
+      "detail": "A baseline can shift the entire signal vertically. Applying baseline subtraction in preparation changes the processed analysis recipe, while enabling a model baseline estimates a nuisance offset during fitting. Record which choice was used.",
+      "example": "A small positive detector offset may be modeled by b₀ rather than mistaken for desorption.",
+      "caution": "A constant offset cannot remove temperature-dependent drift."
+    },
+    {
+      "id": "baseline_drift",
+      "group": "Physical inputs",
+      "title": "Linear baseline drift",
+      "symbol": "b₁",
+      "unit": "signal units/K",
+      "role": "fitted",
+      "context": [
+        "components"
+      ],
+      "short": "An optional common linear background trend across the full simultaneous-component spectrum.",
+      "detail": "The initial joint component model can include a shared baseline offset and linear slope around a reference temperature. The slope is not a kinetic component. The simple single-state comparison has different baseline capabilities.",
+      "example": "A detector background rising slowly as the sample heats can resemble a nonzero b₁.",
+      "caution": "Do not use an arbitrary drift term to conceal a missing physical peak or an incorrect temperature model."
+    },
+    {
+      "id": "peak_interval",
+      "group": "Preparation and workflow",
+      "title": "Named peak interval",
+      "symbol": "",
+      "unit": "°C",
+      "role": "workflow",
+      "context": [
+        "preparation",
+        "modeling",
+        "analysis"
+      ],
+      "short": "Name a temperature range and save it with Add peak or Update peak.",
+      "detail": "A named region tells single-state methods which section to analyse. A selected interval should contain enough onset and tail for the method in question. Creating a region does not physically deconvolve overlapping contributions. Simultaneous components intentionally fit the entire selected dataset, even if a named navigation interval exists.",
+      "example": "The default demo opens with a first-peak tutorial region from 70 to 210 °C.",
+      "caution": "A convenient visual crop is not proof of an isolated desorption state."
+    },
+    {
+      "id": "drag_interval",
+      "group": "Preparation and workflow",
+      "title": "Drag interval",
+      "symbol": "",
+      "unit": "°C",
+      "role": "workflow",
+      "context": [
+        "preparation"
+      ],
+      "short": "Turn off plot pan/zoom, enable Drag interval, move the handles and save the selected bounds.",
+      "detail": "The plot interaction helps set a temperature window without typing exact bounds. After dragging, Add peak creates a named region or Update peak modifies an existing one. The named region shown in the dataset/peak selectors controls subsequent single-state analysis.",
+      "example": "Set a leading-edge subinterval only on the rising side; do not drag over the whole peak for that method.",
+      "caution": "Always inspect numerical bounds and save the region explicitly."
+    },
+    {
+      "id": "smoothing",
+      "group": "Preparation and workflow",
+      "title": "Smoothing and processing",
+      "symbol": "",
+      "unit": "signal units after processing",
+      "role": "workflow",
+      "context": [
+        "preparation"
+      ],
+      "short": "A preview does not affect analysis until you apply the smoothing/baseline recipe.",
+      "detail": "The original imported arrays are retained. Smoothing and baseline operations first preview the plot; Apply smoothing / baseline to analysis records a dataset-wide processing recipe. Undo and reset remain available. Saving a result retains the recipe used for that calculation.",
+      "example": "If a smoothed curve looks attractive, compare it with the raw observations before applying it.",
+      "caution": "Over-smoothing can change peak position, shape and derived parameters."
+    },
+    {
+      "id": "display_normalization",
+      "group": "Preparation and workflow",
+      "title": "Display normalization",
+      "symbol": "",
+      "unit": "display-only relative scale",
+      "role": "workflow",
+      "context": [
+        "preparation"
+      ],
+      "short": "Changes only how curves are displayed; it does not rescale the underlying fitted data.",
+      "detail": "Normalization in the preparation display can make traces easier to compare visually. In the current three-stage workflow it is not an analysis preprocessing operation and should not be confused with the normalized physical coverage θ.",
+      "example": "Two traces may both plot with a maximum of one while retaining different original detector amplitudes.",
+      "caution": "Display scaling does not calibrate detector sensitivity or absolute coverage."
+    },
+    {
+      "id": "stale_result",
+      "group": "Preparation and workflow",
+      "title": "Stale result",
+      "symbol": "",
+      "unit": "status",
+      "role": "diagnostic",
+      "context": [
+        "modeling",
+        "analysis",
+        "results",
+        "components"
+      ],
+      "short": "A saved calculation no longer matches current bounds, processing or method settings.",
+      "detail": "The software keeps earlier results with the exact settings that produced them. Changing a peak, processing recipe or numerical input may mark the previous result stale; it is retained for inspection, not silently updated. Recalculate to obtain a result for current settings.",
+      "example": "Changing a region from 70-210 °C to 80-220 °C can make a previous peak fit stale.",
+      "caution": "Do not present a stale estimate as belonging to the current spectrum/interval."
+    },
+    {
+      "id": "simulation",
+      "group": "Methods",
+      "title": "Simulate parameters",
+      "symbol": "",
+      "unit": "modeled signal versus temperature",
+      "role": "workflow",
+      "context": [
+        "modeling"
+      ],
+      "short": "Draws a predicted curve from your entered values; it does not infer them from the observed spectrum.",
+      "detail": "The manual simulation follows the selected Polanyi-Wigner order, energy, prefactor, coverage, scale and baseline. It is useful for exploring parameter sensitivity and understanding curve shapes. Parameter edits may trigger a delayed preview when no calculation is active.",
+      "example": "Enter E=1.25 eV, ν=1e13 s⁻¹, n=1 and β=1 K/s for the first peak of the default demo.",
+      "caution": "A visually similar simulated curve is not a completed inverse fit."
+    },
+    {
+      "id": "leading_edge",
+      "group": "Methods",
+      "title": "Leading-edge method",
+      "symbol": "",
+      "unit": "apparent energy in eV",
+      "role": "derived",
+      "context": [
+        "analysis"
+      ],
+      "short": "Fits an apparent Arrhenius slope only on a suitable rising-edge interval.",
+      "detail": "The method uses a regression of log positive signal against inverse absolute temperature, assuming signal proportional to desorption rate and little coverage depletion in that interval. It estimates apparent activation energy, not an absolute prefactor. The clean first-order tutorial uses 90-110 °C.",
+      "example": "The clean 1.2 eV first-order reference should give an estimate near its generating energy.",
+      "caution": "Near the noise floor, logging small or nonpositive signals is unreliable; never fit the complete peak as a leading edge."
+    },
+    {
+      "id": "redhead",
+      "group": "Methods",
+      "title": "Redhead approximation",
+      "symbol": "",
+      "unit": "estimated energy in eV",
+      "role": "derived",
+      "context": [
+        "analysis"
+      ],
+      "short": "Estimates first-order energy from the peak maximum, heating rate and an assumed prefactor.",
+      "detail": "The classical approximation assumes a linear ramp and first-order kinetics. You supply ν, the program reads the selected peak maximum and β, and it derives an energy. The prefactor is not fitted by this method and no measured confidence interval follows from the approximate formula alone.",
+      "example": "For the clean first-order teaching example, β=1 K/s and assumed ν=1e13 s⁻¹ yield approximately 1.2 eV.",
+      "caution": "A boundary maximum or overlapping peak violates the simple interpretation; inspect warnings."
+    },
+    {
+      "id": "polanyi_wigner_fit",
+      "group": "Methods",
+      "title": "Polanyi-Wigner single-state fit",
+      "symbol": "r = ν θⁿ exp(-E/kBT)",
+      "unit": "modeled rate and fitted kinetic parameters",
+      "role": "fitted",
+      "context": [
+        "modeling",
+        "analysis"
+      ],
+      "short": "Numerically fits a specified single-population kinetic model to the selected region.",
+      "detail": "The numerical engine integrates coverage depletion and optimizes allowed parameters, detector scale and optionally a constant baseline. Some values in the input panel are initial guesses, not fixed experimental facts. E and ν may be strongly correlated, and a low residual does not establish a unique mechanism.",
+      "example": "Use first-order fitting on a reasonably isolated synthetic first-order peak; inspect both residuals and warnings.",
+      "caution": "The method does not automatically separate multiple overlapping desorption populations."
+    },
+    {
+      "id": "fixed_zero_order",
+      "group": "Methods",
+      "title": "Fixed zero-order depletion fit",
+      "symbol": "n = 0",
+      "unit": "conditional energy, prefactor/scale ranges",
+      "role": "fitted",
+      "context": [
+        "modeling",
+        "analysis"
+      ],
+      "short": "Uses a specialized depletion-edge search; include rising signal and samples beyond exhaustion.",
+      "detail": "Zero order has an exhaustion edge whose location carries important information. The corrected single-state fitter searches that edge, profiles energy and solves scale/baseline. Prefactor and scale can trade off under normalized coverage, so displayed representative values and conditional brackets are not unique estimates or statistical confidence intervals.",
+      "example": "Choose a complete synthetic zero-order trace with at least three samples after depletion.",
+      "caution": "The initial simultaneous-component implementation does not fit zero-order populations jointly."
+    },
+    {
+      "id": "simultaneous_components",
+      "group": "Methods",
+      "title": "Overlapping components",
+      "symbol": "I(T) = Σ Aᵢ rᵢ(T) + baseline",
+      "unit": "component energies in eV and scales in detector units",
+      "role": "fitted",
+      "context": [
+        "components",
+        "modeling"
+      ],
+      "short": "Fit 1-3 independent Polanyi-Wigner populations together on the full dataset.",
+      "detail": "For each component you enter a label, fixed positive order, fixed prefactor, fixed initial normalized coverage, energy guess and energy bounds. The program jointly optimizes each energy and nonnegative detector scale plus optional shared baseline terms. A named navigation peak does not crop this full-spectrum calculation.",
+      "example": "The clean three-state example has generating energies 1.18, 1.26 and 1.34 eV.",
+      "caution": "Independence excludes exchange, readsorption and many interactions; components need not correspond to physically distinct adsorption states."
+    },
+    {
+      "id": "energy_bounds",
+      "group": "Methods",
+      "title": "Component energy bounds",
+      "symbol": "Emin, Emax",
+      "unit": "eV",
+      "role": "fixed_assumption",
+      "context": [
+        "components"
+      ],
+      "short": "Restrict where the optimizer can place a component's energy.",
+      "detail": "Different justified ranges can help prevent component labels from swapping, but bounds condition the inference. The bound values and component order are exported as part of the hypothesis. An optimum on a bound is a warning sign for simple local uncertainty approximations.",
+      "example": "The three-state tutorial uses 1.14-1.22, 1.22-1.30 and 1.30-1.38 eV.",
+      "caution": "Never impose very narrow bounds only to obtain the parameter values you expect."
+    },
+    {
+      "id": "component_count",
+      "group": "Methods",
+      "title": "Compare component counts",
+      "symbol": "Ncomponents",
+      "unit": "integer, 1-3",
+      "role": "diagnostic",
+      "context": [
+        "components",
+        "modeling"
+      ],
+      "short": "Compare explicit hypotheses using the first 1, 2, and 3 component definitions.",
+      "detail": "Each candidate uses the same complete observations and baseline assumptions, while the number of jointly fitted physical rates differs. You can inspect convergence, residuals, AICc/BIC and warnings. The convenience comparison uses prefixes of your entered rows; it does not search every possible subset.",
+      "example": "Reorder or edit definitions before comparing a different 2-component hypothesis.",
+      "caution": "AICc/BIC weights are heuristic with weak/vanishing components and do not tell you the number of physical adsorption states."
+    },
+    {
+      "id": "initial_guess",
+      "group": "Optimization",
+      "title": "Initial guess",
+      "symbol": "",
+      "unit": "same unit as the parameter",
+      "role": "initial_guess",
+      "context": [
+        "modeling",
+        "analysis",
+        "components"
+      ],
+      "short": "A starting value for numerical fitting; compare it with the final estimate.",
+      "detail": "Nonlinear optimizers need a starting point. Different guesses can converge to different local minima or fail, particularly when physical parameters correlate. When the interface says Initial energy or Initial prefactor, that entered number should not be copied as if it were an estimated result.",
+      "example": "Start at 1.185 eV for a synthetic component generated at 1.18 eV.",
+      "caution": "Truth-informed guesses verify a numerical pathway; they do not demonstrate blind recovery."
+    },
+    {
+      "id": "multistart",
+      "group": "Optimization",
+      "title": "Multistart",
+      "symbol": "",
+      "unit": "on/off",
+      "role": "workflow",
+      "context": [
+        "modeling",
+        "components"
+      ],
+      "short": "Try multiple deterministic initial guesses to reduce dependence on one starting point.",
+      "detail": "Multistart can improve the chance of finding a lower-residual local optimum, but it increases computation and does not guarantee the global best solution. Record whether it was enabled when comparing runs.",
+      "example": "Turn it off for the short first-order tutorial to keep computation brief.",
+      "caution": "Successful convergence from several starts is not proof of physical identifiability."
+    },
+    {
+      "id": "max_evaluations",
+      "group": "Optimization",
+      "title": "Maximum evaluations",
+      "symbol": "max_nfev",
+      "unit": "numerical objective evaluations",
+      "role": "input",
+      "context": [
+        "modeling",
+        "analysis",
+        "components"
+      ],
+      "short": "Limits how much work an optimizer can do per fit; it is not the Monte Carlo replicate count.",
+      "detail": "A nonlinear least-squares attempt evaluates candidate predictions repeatedly. If its budget is exhausted before adequate convergence, increase the budget cautiously or reconsider bounds, guesses and model suitability. Additional evaluations do not guarantee a scientifically correct model.",
+      "example": "The three-component teaching exercise uses 300 maximum evaluations.",
+      "caution": "Do not turn this number up simply to suppress a convergence warning."
+    },
+    {
+      "id": "residual",
+      "group": "Results and diagnostics",
+      "title": "Residual",
+      "symbol": "observation - prediction",
+      "unit": "same units as signal",
+      "role": "diagnostic",
+      "context": [
+        "modeling",
+        "analysis",
+        "components",
+        "results"
+      ],
+      "short": "The point-by-point difference between observed and predicted signal.",
+      "detail": "For a simultaneous fit, the prediction is the complete sum of all components plus the common baseline, not any one component alone. Examine whether residuals have systematic shoulders, drift, asymmetry or autocorrelation. A scalar fit statistic can conceal structure.",
+      "example": "An unexplained second peak produces structured residuals in an inadequate single-state model.",
+      "caution": "Noise-like residuals alone still do not prove a unique microscopic mechanism."
+    },
+    {
+      "id": "rmse",
+      "group": "Results and diagnostics",
+      "title": "Root mean square error",
+      "symbol": "RMSE",
+      "unit": "signal units",
+      "role": "diagnostic",
+      "context": [
+        "modeling",
+        "analysis",
+        "components",
+        "results"
+      ],
+      "short": "Summarizes average residual size; smaller is better only for suitably comparable fits.",
+      "detail": "RMSE is the square root of the mean squared residual. It is most useful when candidate fits use the same observations and signal units. Compare visual residual structure and model complexity as well.",
+      "example": "Compare first- and second-order fits on exactly the same selected peak points.",
+      "caution": "Different data ranges, scaling or processing recipes make raw RMSE comparisons misleading."
+    },
+    {
+      "id": "aicc_bic",
+      "group": "Results and diagnostics",
+      "title": "AICc, BIC and ΔAICc",
+      "symbol": "AICc / BIC",
+      "unit": "dimensionless score",
+      "role": "diagnostic",
+      "context": [
+        "modeling",
+        "components",
+        "results"
+      ],
+      "short": "Compare fit versus model complexity under a common dataset and error assumption.",
+      "detail": "These criteria penalize the number of fitted parameters. Lower is generally preferred within a well-defined comparison; ΔAICc measures the difference from the best displayed candidate. In singular or weakly identifiable component models, the usual regular-model interpretation can fail.",
+      "example": "If two candidates use identical observations, inspect ΔAICc alongside residuals and failed-start warnings.",
+      "caution": "Neither a small AICc nor a high relative weight proves a desorption mechanism or state count."
+    },
+    {
+      "id": "identifiability",
+      "group": "Results and diagnostics",
+      "title": "Parameter identifiability",
+      "symbol": "",
+      "unit": "warning/diagnostic",
+      "role": "diagnostic",
+      "context": [
+        "modeling",
+        "analysis",
+        "components",
+        "results"
+      ],
+      "short": "Checks whether different parameter combinations may explain essentially the same spectrum.",
+      "detail": "Energy, prefactor, scale and overlapping component labels can correlate. In simultaneous fitting, the program screens local Jacobian conditioning, bounds, strong correlations, weak components and exchangeable labels; it may withhold component intervals. Passing local checks does not establish global identifiability.",
+      "example": "Two very similar components can trade labels without altering the fitted total curve.",
+      "caution": "Do not force the program to print an interval when the model cannot support it."
+    },
+    {
+      "id": "mc_seed",
+      "group": "Monte Carlo",
+      "title": "Random seed",
+      "symbol": "seed",
+      "unit": "non-negative integer",
+      "role": "input",
+      "context": [
+        "modeling"
+      ],
+      "short": "Starts the pseudo-random generator so a Monte Carlo exercise can be reproduced.",
+      "detail": "The seed determines which random numbers are drawn for the simulated noise. Using the same seed, data, settings and numerical environment should reproduce the same sequence. A different seed generates a different noise realization; it does not change your assumed kinetic model or the measured original spectrum.",
+      "example": "Use seed 42 for the tutorial. Try another non-negative integer to see sampling variation.",
+      "caution": "A seed is a computational reproducibility setting, not a fit parameter or uncertainty estimate."
+    },
+    {
+      "id": "mc_replicates",
+      "group": "Monte Carlo",
+      "title": "Monte Carlo replicates",
+      "symbol": "N",
+      "unit": "integer, 1-10000",
+      "role": "input",
+      "context": [
+        "modeling"
+      ],
+      "short": "Number of synthetic noisy traces to refit; higher counts take longer.",
+      "detail": "Each replicate perturbs the selected reference fit under the assumed iid Gaussian noise model and reruns the requested candidate fits. Twenty replicates exercise the interface; 500 is the usual more substantial demonstration. This implementation withholds conditional parameter ranges below 100 successful refits.",
+      "example": "20, seed 42 for a short tour; 500, seed 42 for a longer stability study.",
+      "caution": "Many replicates reduce random sampling fluctuation but do not correct an incorrect reference model or noise assumption."
+    },
+    {
+      "id": "mc_reference",
+      "group": "Monte Carlo",
+      "title": "Monte Carlo reference model",
+      "symbol": "Sref(T)",
+      "unit": "predicted signal units",
+      "role": "fixed_assumption",
+      "context": [
+        "modeling"
+      ],
+      "short": "The lowest-AICc converged candidate from the current comparison supplies the reference curve.",
+      "detail": "The algorithm does not sample from an unknown true mechanism. It takes a fitted candidate as a conditional reference, uses its residual noise estimate and simulates new traces around it. Changes to the current data, region, orders or fitting settings require another comparison before Monte Carlo.",
+      "example": "Compare First order on the selected first peak before clicking Run Monte Carlo.",
+      "caution": "If the reference fit is physically wrong or includes unmodeled drift, the refit distribution may be misleading."
+    },
+    {
+      "id": "mc_noise",
+      "group": "Monte Carlo",
+      "title": "Monte Carlo noise assumption",
+      "symbol": "ε ~ Normal(0, σ²)",
+      "unit": "signal units",
+      "role": "fixed_assumption",
+      "context": [
+        "modeling"
+      ],
+      "short": "Adds independent Gaussian noise estimated from reference-fit residuals.",
+      "detail": "The program forms simulated signals by adding iid Gaussian perturbations to the reference prediction. The same generated trace is used to refit every requested candidate within a replicate, enabling a conditional ranking comparison. The procedure does not model correlated instrument noise, drift, temperature calibration or physical kinetic stochasticity.",
+      "example": "A synthetic 2% noisy example is a useful user-interface test, but its residuals may contain model mismatch.",
+      "caution": "This is parametric refitting, not microscopic kinetic Monte Carlo and not Bayesian MCMC."
+    },
+    {
+      "id": "mc_progress",
+      "group": "Monte Carlo",
+      "title": "Monte Carlo progress and cancel",
+      "symbol": "",
+      "unit": "completed/total, %, elapsed and estimated remaining time",
+      "role": "diagnostic",
+      "context": [
+        "modeling"
+      ],
+      "short": "Shows refit progress; Cancel requests a safe stop without replacing previous valid results.",
+      "detail": "The long calculation runs in a background worker. A progress bar, completed replicate count and approximate remaining time are visible. The remaining-time estimate can fluctuate. Cancellation is checked during numerical work; a currently expensive evaluation may finish before the stop takes effect. Partial output does not replace previous successful results.",
+      "example": "A 500-replicate clean/noisy regression run took roughly 2-3 minutes in the recorded Windows test environment.",
+      "caution": "Do not start a duplicate job while another calculation is active."
+    },
+    {
+      "id": "mc_success_counts",
+      "group": "Monte Carlo",
+      "title": "Successful fits and incomplete rankings",
+      "symbol": "",
+      "unit": "counts",
+      "role": "diagnostic",
+      "context": [
+        "modeling",
+        "results"
+      ],
+      "short": "A model fit can succeed even when the replicate's full candidate ranking is incomplete.",
+      "detail": "With multiple requested orders, each simulated trace triggers several individual fits. A replicate ranking is complete only when every requested candidate converges. Reports distinguish successful/failed fitting attempts from incomplete rankings; these denominators are not interchangeable.",
+      "example": "If two of three candidate fits converge, two parameter fits may be retained but the three-way ranking is incomplete.",
+      "caution": "Do not interpret a ranking frequency without inspecting convergence failures."
+    },
+    {
+      "id": "mc_intervals",
+      "group": "Monte Carlo",
+      "title": "Conditional Monte Carlo parameter ranges",
+      "symbol": "2.5th-97.5th percentiles",
+      "unit": "same as fitted parameter",
+      "role": "derived",
+      "context": [
+        "modeling",
+        "results"
+      ],
+      "short": "Percentile ranges of successful refits under the assumed reference/noise model.",
+      "detail": "The program may report the middle 95% of simulated-refit estimates, but it withholds ranges when fewer than 100 refits succeed. These are conditional refit ranges. They have not been experimentally calibrated for 95% frequentist coverage and do not include model, heating-rate or calibration uncertainty.",
+      "example": "A 20-replicate tutorial should finish without displaying a numerical parameter range.",
+      "caution": "Do not label the displayed range a validated 95% confidence interval."
+    },
+    {
+      "id": "mc_rank_frequency",
+      "group": "Monte Carlo",
+      "title": "Monte Carlo ranking frequency",
+      "symbol": "",
+      "unit": "count or fraction",
+      "role": "diagnostic",
+      "context": [
+        "modeling",
+        "results"
+      ],
+      "short": "How often each candidate ranks best among complete refit comparisons.",
+      "detail": "Ranking frequency describes the stability of an AICc model choice when the fitted reference is perturbed by assumed Gaussian noise. Replicates with incomplete rankings are tracked separately. The frequency is not a Bayesian posterior or the probability that an actual surface mechanism is correct.",
+      "example": "First order winning most refits means the numerical ranking is conditionally stable under those inputs.",
+      "caution": "Report the number of completed rankings and failed fits with the frequency."
+    },
+    {
+      "id": "save_labeled_run",
+      "group": "Results and diagnostics",
+      "title": "Save labeled result",
+      "symbol": "",
+      "unit": "named result snapshot",
+      "role": "workflow",
+      "context": [
+        "analysis",
+        "results"
+      ],
+      "short": "Keeps a completed result together with the method, peak, settings, warnings and processing recipe.",
+      "detail": "Use Save labeled result after obtaining the desired calculation. A labeled run preserves its original scientific context and can be reopened. It does not automatically update when current controls change.",
+      "example": "Name a run 'Clean first order - Redhead - assumed 1e13 s^-1'.",
+      "caution": "A saved run is not an independent validation of the underlying physical model."
+    },
+    {
+      "id": "project_and_export",
+      "group": "Results and diagnostics",
+      "title": "Project save and report export",
+      "symbol": "",
+      "unit": ".tpd.json project; PDF/CSV/JSON/PNG/SVG report",
+      "role": "workflow",
+      "context": [
+        "analysis",
+        "results",
+        "global",
+        "components"
+      ],
+      "short": "Save project preserves the workspace; Report / Export produces files from selected labeled runs.",
+      "detail": "Projects contain imported arrays, named regions, processing recipes, settings and results. Report / Export asks you to select runs and choose a destination, then creates a new report folder. Component fitting has a separate Export component fit action for individual curves and parameter provenance.",
+      "example": "Save project before closing; export PDF and parameter CSV when sharing a finished tutorial result.",
+      "caution": "Projects and analysis reports contain scientific data. Inspect them before sending outside your group."
+    },
+    {
+      "id": "feedback_privacy",
+      "group": "Results and diagnostics",
+      "title": "Report a Bug / Send Feedback",
+      "symbol": "",
+      "unit": "reviewable text or diagnostic ZIP",
+      "role": "workflow",
+      "context": [
+        "global"
+      ],
+      "short": "Creates an inspectable report; nothing is automatically sent or attached.",
+      "detail": "The feedback dialog lets you select a category and type steps and optional contact information. You can preview, edit, copy or save a diagnostic ZIP. The ZIP omits spectra and arbitrary project files. Email and GitHub actions open reviewable drafts that you must choose to send.",
+      "example": "Report the version, selected example, clicked action, expected behavior and actual result.",
+      "caution": "Text you type and screenshots you choose may contain private information; inspect them first."
+    }
+  ]
+}

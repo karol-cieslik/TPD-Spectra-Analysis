@@ -46,7 +46,8 @@ def test_catalog_rejects_duplicate_and_incomplete_topics(tmp_path):
 
 def test_scientific_help_title_and_optional_drift_do_not_imply_missing_or_fitted_values():
     topics = {topic['id']: topic for topic in load_help_catalog()['topics']}
-    assert topic_heading(topics['mc_seed']) == 'Random seed'
+    assert topic_heading(topics['peak_interval']) == 'Named peak interval'
+    assert topic_heading(topics['mc_seed']) == 'Random seed  (seed)'
     assert topic_heading(topics['activation_energy']) == 'Activation (desorption) energy  (E)'
     assert topics['baseline_drift']['role'] == 'method_dependent'
     assert 'only when' in topics['baseline_drift']['role_notes']

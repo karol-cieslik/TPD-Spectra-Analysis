@@ -121,6 +121,7 @@ jobs:
             'docs/beta/WORKED_EXAMPLES.html',
             'docs/beta/RELEASE_NOTES.md',
             'docs/beta/REVIEW_STATUS.md',
+            'docs/beta/FEEDBACK_FORM.md',
             'docs/beta/TESTER_CHECKLIST.md'
           )
           foreach ($doc in $testerDocs) {

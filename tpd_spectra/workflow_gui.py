@@ -178,11 +178,49 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.method_action_frame.pack(fill="x", side="bottom")
         self.result_title = ttk.Label(workspace, text="Results · select a dataset and peak", padding=8)
         self.result_title.pack(fill="x")
+        # A full-sized plot and an inspectable parameter table are different
+        # reading tasks. Separate tabs avoid squeezing either below the other.
+        self.result_views = ttk.Notebook(workspace)
+        self.result_views.pack(fill="both", expand=True)
+        plot_view, parameter_view, notes_view = (ttk.Frame(self.result_views) for _ in range(3))
+        for view, title in ((plot_view, 'Spectrum & residuals'),
+                            (parameter_view, 'Parameter summary'),
+                            (notes_view, 'Assumptions & provenance')):
+            self.result_views.add(view, text=title)
         self.result_figure = Figure(figsize=(8, 5), constrained_layout=True)
-        self.result_canvas = FigureCanvasTkAgg(self.result_figure, master=workspace)
+        self.result_canvas = FigureCanvasTkAgg(self.result_figure, master=plot_view)
         self.result_canvas.get_tk_widget().pack(fill="both", expand=True)
-        self.result_text = tk.Text(workspace, height=7, wrap="word", font=("Segoe UI", 10), padx=12, pady=8)
-        self.result_text.pack(fill="x")
+        self.result_state = tk.StringVar(self.root, value='No result for this selection.')
+        ttk.Label(parameter_view, textvariable=self.result_state, padding=(8, 8)).grid(
+            row=0, column=0, columnspan=2, sticky='ew')
+        ttk.Label(parameter_view,
+                  text='Roles distinguish fitted parameters, assumed inputs, approximate estimates and diagnostics.',
+                  wraplength=650, padding=(8, 0, 8, 8)).grid(row=1, column=0, columnspan=2, sticky='ew')
+        parameter_view.rowconfigure(2, weight=1)
+        parameter_view.columnconfigure(0, weight=1)
+        columns = ('parameter', 'value', 'unit', 'role')
+        self.result_table = ttk.Treeview(parameter_view, columns=columns, show='headings', height=8)
+        for key, title, width in (("parameter", "Parameter", 240), ("value", "Value", 170),
+                                  ("unit", "Unit", 75), ("role", "How obtained", 180)):
+            self.result_table.heading(key, text=title)
+            self.result_table.column(key, width=width, minwidth=65, stretch=(key != 'unit'))
+        self.result_table.grid(row=2, column=0, sticky='nsew', padx=(8, 0))
+        yscroll = ttk.Scrollbar(parameter_view, orient='vertical', command=self.result_table.yview)
+        yscroll.grid(row=2, column=1, sticky='ns')
+        self.result_table.configure(yscrollcommand=yscroll.set)
+        xscroll = ttk.Scrollbar(parameter_view, orient='horizontal', command=self.result_table.xview)
+        xscroll.grid(row=3, column=0, sticky='ew', padx=(8, 0))
+        self.result_table.configure(xscrollcommand=xscroll.set)
+        ttk.Button(parameter_view, text='Copy parameter summary', command=self.copy_result_summary).grid(
+            row=4, column=0, sticky='w', padx=8, pady=8)
+        notes_view.rowconfigure(0, weight=1)
+        notes_view.columnconfigure(0, weight=1)
+        # Keep this text widget for the legacy result status consumers.
+        self.result_text = tk.Text(notes_view, height=9, wrap="word", font=("Segoe UI", 10), padx=12, pady=8)
+        self.result_text.grid(row=0, column=0, sticky='nsew')
+        notes_scroll = ttk.Scrollbar(notes_view, orient='vertical', command=self.result_text.yview)
+        notes_scroll.grid(row=0, column=1, sticky='ns')
+        self.result_text.configure(yscrollcommand=notes_scroll.set)
         self.refresh_method()
 
     def _load_paths(self, paths):

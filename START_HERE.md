@@ -1,17 +1,16 @@
-# Welcome to TPD Spectra Studio 0.11.0b4
+# Welcome to TPD Spectra Studio 0.11.0b5
 
 **Informal research beta** by **Karol Cieślik**. Please try the synthetic
 example first; no experimental data is needed. This version has passed automated
 tests, but experimental validation and testing on different Windows displays
 are still in progress.
 
-The initial b4 candidate is developed in [PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19).
-Readable Results, built-in scientific Help and the expanded Quick Start are in
-[PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20), which is not yet included in
-the older b4 downloadable artifact. When a new Windows build is available,
-download the ZIP from its successful **Windows desktop build** under Artifacts
-(GitHub sign-in may be required). Check `VERSION.json` for the exact commit.
-This temporary build is for review; no public release has been published.
+This b5 candidate includes [PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19)
+and [PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20).
+Use the newly supplied b5 ZIP and check `VERSION.json` for its exact commit.
+The older b4 executable lacks the new Results, Help and guided exercises.
+No public release has been published. See `validation/WINDOWS_B5_ACCEPTANCE.md`
+for checks actually completed and remaining acceptance limits.
 
 1. Extract the **whole ZIP** to a writable folder. Keep the executable, `docs`
    and `examples` together. No Python installation is needed for the Windows build.

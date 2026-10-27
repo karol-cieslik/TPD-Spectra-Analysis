@@ -14,6 +14,7 @@ from .kinetics_uncertainty import run_kinetics_monte_carlo
 from .equation_help import EquationCard
 from .job_progress import MonteCarloProgress
 from .component_gui import ComponentsController
+from .scientific_help import help_button
 
 DEFAULTS = dict(beta='1', energy='1.25', prefactor='1e13', order='1', coverage='1',
                 amplitude='1', baseline='0', max_nfev='300', replicates='500', seed='42',
@@ -53,6 +54,11 @@ class ModelingPanel:
         ttk.Label(sidebar, text='Model hypotheses', style='Section.TLabel').pack(anchor='w')
         self.model_equation = EquationCard(sidebar, 'Polanyi–Wigner')
         self.model_equation.pack(fill='x', pady=8)
+        help_button(sidebar,app,'polanyi_wigner_fit').pack(anchor='e')
+        parameter_topics = {'beta':'heating_rate','energy':'activation_energy',
+            'prefactor':'prefactor','order':'reaction_order','coverage':'initial_coverage',
+            'amplitude':'signal_scale','baseline':'constant_baseline',
+            'max_nfev':'max_evaluations','replicates':'mc_replicates','seed':'mc_seed'}
         for key, label in (('beta','Heating rate (K/s)'), ('energy','Initial / simulated energy (eV)'),
             ('prefactor','Initial / simulated prefactor (s⁻¹)'), ('order','Simulation order (≥0)'),
             ('coverage','Simulation initial coverage (0–1)'), ('amplitude','Simulation signal scale'),
@@ -61,10 +67,18 @@ class ModelingPanel:
             if key == 'replicates':
                 self.mc_equation = EquationCard(sidebar, 'Monte Carlo')
                 self.mc_equation.pack(fill='x', pady=(12, 8))
-            ttk.Label(sidebar, text=label).pack(anchor='w', pady=(4,0))
+            label_row=ttk.Frame(sidebar)
+            label_row.pack(fill='x',pady=(4,0))
+            ttk.Label(label_row, text=label).pack(side='left')
+            help_button(label_row,app,parameter_topics[key]).pack(side='right')
             ttk.Entry(sidebar, textvariable=self.variables[key]).pack(fill='x')
         for key in ('zero','first','second','fractional','fit_baseline','multistart'):
-            ttk.Checkbutton(sidebar, text=key.replace('_',' ').capitalize(), variable=self.variables[key]).pack(anchor='w')
+            option_row=ttk.Frame(sidebar)
+            option_row.pack(fill='x')
+            ttk.Checkbutton(option_row, text=key.replace('_',' ').capitalize(), variable=self.variables[key]).pack(side='left')
+            help_button(option_row,app, {'zero':'fixed_zero_order','first':'reaction_order',
+                'second':'reaction_order','fractional':'reaction_order',
+                'fit_baseline':'constant_baseline','multistart':'multistart'}[key]).pack(side='right')
         ttk.Label(sidebar, text='Fits normalize initial coverage to one and optimize signal scale. Simulation coverage/amplitude/baseline apply only to manual preview.', wraplength=280).pack(fill='x', pady=8)
         self.calculation_buttons = []
         for title, callback in (('Simulate parameters',self.simulate), ('Compare models',self.compare),
@@ -72,11 +86,13 @@ class ModelingPanel:
             button = ttk.Button(sidebar, text=title, command=callback)
             button.pack(fill='x', pady=3)
             self.calculation_buttons.append(button)
+        help_button(sidebar,app,'simulation').pack(anchor='e')
         self.components = ComponentsController(self)
         component_actions=ttk.Frame(workspace,padding=(4,4))
         component_actions.pack(fill='x')
         component_button=ttk.Button(component_actions,text='Overlapping components…',command=self.components.open)
         component_button.pack(side='left')
+        help_button(component_actions,app,'simultaneous_components').pack(side='left',padx=(0,8))
         self.calculation_buttons.append(component_button)
         ttk.Button(component_actions,text='Single-state view',command=self.show_single).pack(side='left',padx=4)
         ttk.Button(component_actions,text='Export component fit…',command=self.components.export).pack(side='left')
@@ -90,6 +106,7 @@ class ModelingPanel:
         self.mc_run.grid(row=0, column=1, padx=4)
         self.mc_cancel = ttk.Button(self.progress_frame, text='Cancel', command=self.cancel_job, state='disabled')
         self.mc_cancel.grid(row=0, column=2)
+        help_button(self.progress_frame,app,'mc_progress').grid(row=0,column=3,padx=4)
         self.progress_bar = ttk.Progressbar(self.progress_frame, mode='determinate', maximum=100)
         self.progress_bar.grid(row=0, column=0, sticky='ew', padx=(0,8))
         self.progress_count = tk.StringVar(app.root)

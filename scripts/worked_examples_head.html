@@ -1,0 +1,30 @@
+<style>
+  :root { --navy: #18334b; --teal: #087e8b; --ink: #20394a; --muted: #536a7a; --rule: #d5e4e9; --pale: #f2f8fa; }
+  * { box-sizing: border-box; }
+  body { margin: 0 auto; max-width: 920px; padding: 2.8rem 3rem 5rem; color: var(--ink); background: #fff;
+         font: 15px/1.6 "Segoe UI", Arial, sans-serif; }
+  h1 { color: var(--navy); font-size: 2.5rem; line-height: 1.15; letter-spacing: -.035em; }
+  h2 { color: var(--navy); border-bottom: 3px solid var(--teal); padding-bottom: .55rem; margin-top: 3rem; }
+  h3, h4 { color: var(--teal); margin-top: 1.75rem; }
+  a { color: #096d78; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  strong { color: #15374d; }
+  blockquote { margin: 1.5rem 0; border-left: 5px solid var(--teal); padding: .6rem 1.2rem;
+               background: var(--pale); border-radius: 0 8px 8px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1.3rem 0 1.8rem; font-size: .92rem; }
+  th { text-align: left; color: var(--navy); background: #e9f3f6; }
+  th, td { border: 1px solid var(--rule); padding: .6rem .7rem; vertical-align: top; }
+  tbody tr:nth-child(even) { background: #f8fbfc; }
+  code { background: #f0f5f6; border: 1px solid #dce9eb; border-radius: 4px; padding: .06em .25em; }
+  li { margin-bottom: .45rem; }
+  @media screen and (max-width: 700px) {
+    body { padding: 1.25rem 1rem 3rem; }
+    h1 { font-size: 2rem; }
+    table { display: block; overflow-x: auto; }
+  }
+  @media print {
+    body { max-width: 100%; padding: 0; font-size: 10pt; }
+    h2 { page-break-after: avoid; }
+    table, blockquote { break-inside: avoid; }
+    a { color: var(--ink); }
+  }
+</style>

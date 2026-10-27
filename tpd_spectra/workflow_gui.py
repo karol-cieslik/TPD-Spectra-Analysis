@@ -15,6 +15,8 @@ from .workflow_modeling import ModelingPanel
 from .workflow_project_gui import ProjectMixin
 from .beta_onboarding import ExampleDialog, Tooltip
 from .beta_resources import resource
+from .scientific_help import ScientificHelpDialog, help_button
+from .quickstart_dialog import QuickStartDialog
 from . import __version__
 from .equation_help import EquationCard
 
@@ -24,6 +26,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.project = WorkflowProject()
         self.restoring = False
         self.classic = None
+        self.scientific_help_dialog = None
         self.dataset_choice = tk.StringVar(root)
         self.region_choice = tk.StringVar(root)
         self.region_name = tk.StringVar(root, value="Peak 1")
@@ -47,6 +50,23 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         except (OSError, ValueError) as exc:
             self.status.set(f'Demo unavailable: {exc}. Use Open Example Dataset or Open Spectrum.')
 
+    def open_scientific_help(self, topic_id=None):
+        """Open or reuse the non-modal, read-only parameter reference."""
+        dialog = self.scientific_help_dialog
+        if dialog is not None and dialog.window.winfo_exists():
+            dialog.select_topic(topic_id)
+            return dialog
+        try:
+            dialog = ScientificHelpDialog(self, topic_id)
+            self.scientific_help_dialog = dialog
+            return dialog
+        except (OSError, ValueError) as exc:
+            self.status.set(f'Scientific Help unavailable: {exc}')
+            messagebox.showwarning('Scientific Help unavailable',
+                                   'The Help reference could not be loaded. Extract the full beta ZIP.\n\n' + str(exc),
+                                   parent=self.root)
+            return None
+
     def _build(self):
         header = tk.Frame(self.root, bg=NAVY, padx=16, pady=10)
         header.pack(fill="x")
@@ -64,6 +84,8 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.project_actions = ttk.Frame(self.root,padding=(10,0,10,8))
         self.project_actions.pack(fill='x')
         ttk.Button(self.project_actions,text='Workflow quick start',command=self.workflow_help).pack(side='right')
+        ttk.Button(self.project_actions,text='Scientific Help / Parameters',
+                   command=self.open_scientific_help).pack(side='right',padx=(0,8))
         context = ttk.Frame(self.root, padding=(12, 0, 12, 8))
         context.pack(fill="x")
         context.columnconfigure(1, weight=1)
@@ -106,9 +128,13 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         ttk.Label(self.sidebar, text="Normalization is display-only. Smoothing is a view preview here.\n"
                   "Analysis uses the recorded processing recipe for the selected dataset.", wraplength=320).pack(fill="x", pady=8)
         self.processing_baseline = tk.StringVar(self.root, value='0')
-        ttk.Label(self.sidebar, text='Subtract constant baseline (signal units)').pack(anchor='w')
+        baseline_row = ttk.Frame(self.sidebar)
+        baseline_row.pack(fill='x')
+        ttk.Label(baseline_row, text='Subtract constant baseline (signal units)').pack(side='left')
+        help_button(baseline_row,self,'constant_baseline').pack(side='right')
         ttk.Entry(self.sidebar, textvariable=self.processing_baseline).pack(fill='x')
         ttk.Button(self.sidebar, text='Apply smoothing / baseline to analysis', command=self.apply_processing).pack(fill='x', pady=4)
+        help_button(self.sidebar,self,'smoothing').pack(anchor='e')
         ttk.Button(self.sidebar, text='Undo processing', command=self.undo_processing).pack(fill='x')
         ttk.Button(self.sidebar, text='Reset processing to raw signal', command=self.reset_processing).pack(fill='x', pady=4)
         self.processing_label = ttk.Label(self.sidebar, text='Analysis recipe: raw signal', wraplength=320)
@@ -123,6 +149,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         ttk.Button(region_bar, text="Add peak", command=self.add_region).grid(row=0, column=6, padx=5)
         ttk.Button(region_bar, text="Update peak", command=self.update_region).grid(row=0, column=7, padx=5)
         ttk.Button(region_bar, text="Drag interval", command=self.select_region_on_plot).grid(row=0, column=8, padx=5)
+        help_button(region_bar,self,'peak_interval').grid(row=0,column=9,padx=3)
         self.region_table = ttk.Treeview(frame, columns=("peak", "lower", "upper"), show="headings", height=3)
         for name, label in (("peak", "Named peak"), ("lower", "From °C"), ("upper", "To °C")):
             self.region_table.heading(name, text=label)
@@ -159,8 +186,18 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             equation = EquationCard(panel, method)
             equation.pack(fill='x', pady=(0, 8))
             self.method_equations[method] = equation
+            method_topic = {METHODS[0]:'leading_edge',METHODS[1]:'redhead',
+                            METHODS[2]:'polanyi_wigner_fit'}[method]
+            help_button(panel,self,method_topic).pack(anchor='e')
             for key, label in fields[method]:
-                ttk.Label(panel, text=label).pack(anchor="w", pady=(6, 0))
+                label_row = ttk.Frame(panel)
+                label_row.pack(fill='x',pady=(6,0))
+                ttk.Label(label_row, text=label).pack(side='left')
+                topic = {'lower':'peak_interval','upper':'peak_interval',
+                         'beta':'heating_rate','energy':'initial_guess',
+                         'prefactor':'prefactor','order':'reaction_order',
+                         'max_nfev':'max_evaluations'}[key]
+                help_button(label_row,self,topic).pack(side='right')
                 entry=ttk.Entry(panel, textvariable=self.method_values[key])
                 entry.pack(fill="x")
                 Tooltip(entry,{'beta':'Linear heating rate in kelvin per second. Confirm acquisition conditions; it is not inferred automatically.',
@@ -173,16 +210,56 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             if method == METHODS[2]:
                 ttk.Checkbutton(panel, text="Fit order (0.2–3)", variable=self.method_flags["free_order"]).pack(anchor="w", pady=5)
                 ttk.Checkbutton(panel, text="Fit constant baseline", variable=self.method_flags["fit_baseline"]).pack(anchor="w")
+                help_button(panel,self,'fixed_zero_order').pack(anchor='e')
             ttk.Label(panel, text=help_text[method], wraplength=280, padding=(0, 12)).pack(fill="x")
         self.method_action_frame = ttk.Frame(sidebar)
         self.method_action_frame.pack(fill="x", side="bottom")
         self.result_title = ttk.Label(workspace, text="Results · select a dataset and peak", padding=8)
         self.result_title.pack(fill="x")
+        # A full-sized plot and an inspectable parameter table are different
+        # reading tasks. Separate tabs avoid squeezing either below the other.
+        self.result_views = ttk.Notebook(workspace)
+        self.result_views.pack(fill="both", expand=True)
+        plot_view, parameter_view, notes_view = (ttk.Frame(self.result_views) for _ in range(3))
+        for view, title in ((plot_view, 'Spectrum & residuals'),
+                            (parameter_view, 'Parameter summary'),
+                            (notes_view, 'Assumptions & provenance')):
+            self.result_views.add(view, text=title)
         self.result_figure = Figure(figsize=(8, 5), constrained_layout=True)
-        self.result_canvas = FigureCanvasTkAgg(self.result_figure, master=workspace)
+        self.result_canvas = FigureCanvasTkAgg(self.result_figure, master=plot_view)
         self.result_canvas.get_tk_widget().pack(fill="both", expand=True)
-        self.result_text = tk.Text(workspace, height=7, wrap="word", font=("Segoe UI", 10), padx=12, pady=8)
-        self.result_text.pack(fill="x")
+        self.result_state = tk.StringVar(self.root, value='No result for this selection.')
+        ttk.Label(parameter_view, textvariable=self.result_state, padding=(8, 8)).grid(
+            row=0, column=0, columnspan=2, sticky='ew')
+        ttk.Label(parameter_view,
+                  text='Roles distinguish fitted parameters, assumed inputs, approximate estimates and diagnostics.',
+                  wraplength=650, padding=(8, 0, 8, 8)).grid(row=1, column=0, columnspan=2, sticky='ew')
+        parameter_view.rowconfigure(2, weight=1)
+        parameter_view.columnconfigure(0, weight=1)
+        columns = ('parameter', 'value', 'unit', 'role')
+        self.result_table = ttk.Treeview(parameter_view, columns=columns, show='headings', height=8)
+        for key, title, width in (("parameter", "Parameter", 240), ("value", "Value", 170),
+                                  ("unit", "Unit", 75), ("role", "How obtained", 180)):
+            self.result_table.heading(key, text=title)
+            self.result_table.column(key, width=width, minwidth=65, stretch=(key != 'unit'))
+        self.result_table.grid(row=2, column=0, sticky='nsew', padx=(8, 0))
+        yscroll = ttk.Scrollbar(parameter_view, orient='vertical', command=self.result_table.yview)
+        yscroll.grid(row=2, column=1, sticky='ns')
+        self.result_table.configure(yscrollcommand=yscroll.set)
+        xscroll = ttk.Scrollbar(parameter_view, orient='horizontal', command=self.result_table.xview)
+        xscroll.grid(row=3, column=0, sticky='ew', padx=(8, 0))
+        self.result_table.configure(xscrollcommand=xscroll.set)
+        ttk.Button(parameter_view, text='Copy parameter summary', command=self.copy_result_summary).grid(
+            row=4, column=0, sticky='w', padx=8, pady=8)
+        help_button(parameter_view,self,'identifiability').grid(row=4,column=1,sticky='e',padx=8)
+        notes_view.rowconfigure(0, weight=1)
+        notes_view.columnconfigure(0, weight=1)
+        # Keep this text widget for the legacy result status consumers.
+        self.result_text = tk.Text(notes_view, height=9, wrap="word", font=("Segoe UI", 10), padx=12, pady=8)
+        self.result_text.grid(row=0, column=0, sticky='nsew')
+        notes_scroll = ttk.Scrollbar(notes_view, orient='vertical', command=self.result_text.yview)
+        notes_scroll.grid(row=0, column=1, sticky='ns')
+        self.result_text.configure(yscrollcommand=notes_scroll.set)
         self.refresh_method()
 
     def _load_paths(self, paths):
@@ -400,22 +477,15 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.refresh_context()
 
     def workflow_help(self):
-        dialog=tk.Toplevel(self.root)
-        dialog.title('Workflow quick start')
-        dialog.geometry('720x560')
-        text=tk.Text(dialog,wrap='word',padx=20,pady=16,font=('Segoe UI',11))
-        text.pack(fill='both',expand=True)
-        text.insert('end','TPD Spectra Studio — workflow preview\n\n'
-            '1. Import and inspect\nImport CSV spectra. Raw signal stays unchanged. Confirm temperature/time units and the heating ramp.\n\n'
-            '2. Define a peak\nIn Spectra & Preparation, enter a name and temperature bounds, then Add peak. Drag interval can also set bounds.\n\n'
-            '3. Explore hypotheses\nIn Modeling, simulate parameters or compare candidate orders. Seeded Monte Carlo refits simulated noisy traces; rankings do not prove mechanisms.\n\n'
-            '4. Analyze one peak\nIn Kinetic Analysis, choose Leading edge, Redhead or Polanyi–Wigner. Lightweight estimates update after edits; numerical fitting runs explicitly and can be cancelled.\n\n'
-            '5. Retain and export\nSave labeled results, then Report / Export. Select runs, review their labels and choose a destination. Save project retains your workspace.\n\n'
-            'Synthetic first test\nClick Open Example Dataset and keep first order single peak. Redhead: 1 K/s and 1e13 s⁻¹ gives about 1.2 eV. Leading edge: 90–110 °C. This example is simulated, not experimental. Zero-order fits need a resolved depletion edge; reported parameter brackets are not confidence intervals.\n\n'
-            'Classic / batch workspace retains advanced and batch functions.\nCreated by Karol Cieślik. Scientific applicability still requires independent validation.')
-        text.configure(state='disabled')
-        ttk.Button(dialog,text='Close',command=dialog.destroy).pack(anchor='e',padx=12,pady=8)
-        ttk.Button(dialog,text='Open beta Quick Start PDF',command=self.open_beta_guide).pack(anchor='w',padx=12,pady=8)
+        return QuickStartDialog(self)
+
+    def open_worked_examples(self):
+        """Open the full, self-contained offline tutorial in the default reader."""
+        try:
+            import webbrowser
+            webbrowser.open(resource('docs/beta/WORKED_EXAMPLES.html').as_uri())
+        except (OSError, ValueError) as exc:
+            self.status.set('Worked examples unavailable: ' + str(exc))
 
     def open_example(self):
         try:

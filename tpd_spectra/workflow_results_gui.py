@@ -1,11 +1,11 @@
 """Method-scoped results controller and cancellable background work."""
 from copy import deepcopy
-import json
 import queue
 import threading
 import tkinter as tk
 from tkinter import ttk, simpledialog
 from .workflow_analysis import calculate, draw_result
+from .result_view import parameter_rows, scientific_notes
 
 
 class ResultsMixin:
@@ -37,6 +37,23 @@ class ResultsMixin:
         self.result_text.delete('1.0', 'end')
         self.result_text.insert('end', text)
         self.result_text.configure(state='disabled')
+
+    def copy_result_summary(self):
+        """Copy only the submitted result; no implicit recomputation or export mutation."""
+        if self.displayed_result is None:
+            self.status.set('Calculate a result before copying parameters.')
+            return
+        result = self.displayed_result
+        current = self.project.result_is_current(result)
+        lines = [f"{result['snapshot']['method']} — {'CURRENT' if current else 'STALE'}",
+                 f"Peak: {result['snapshot'].get('peak', '')}",
+                 f"Dataset: {result['snapshot'].get('dataset', '')}",
+                 'Parameter\tValue\tUnit\tHow obtained']
+        lines += ['\t'.join(row) for row in parameter_rows(result)]
+        lines += ['', scientific_notes(result, current)]
+        self.root.clipboard_clear()
+        self.root.clipboard_append('\n'.join(lines))
+        self.status.set('Parameter summary and scientific cautions copied to clipboard.')
 
     def method_edited(self, *_):
         if self.restoring:
@@ -155,6 +172,7 @@ class ResultsMixin:
         if not hasattr(self, 'jobs'):
             return
         self.displayed_result = None
+        self.result_table.delete(*self.result_table.get_children())
         self.result_figure.clear()
         try:
             result = self.project.current_results.get(self.project.key(self.method.get()))
@@ -164,6 +182,7 @@ class ResultsMixin:
             self.displayed_result = deepcopy(result)
             current = self.project.result_is_current(result)
             status = result['status'].upper() if current else 'STALE — original settings shown; recalculate for current inputs'
+            self.result_state.set(status + ' · ' + result['snapshot']['method'])
             draw_result(self.result_figure, result, self.project.datasets.get(self.project.active_dataset))
             self.result_figure.suptitle(status, fontsize=9)
             values=result['values']
@@ -172,25 +191,14 @@ class ResultsMixin:
                 self.result_figure.axes[0].text(.02,.97,f'E = {energy:.6g} eV\n'+result['snapshot']['method'],
                     transform=self.result_figure.axes[0].transAxes,va='top',fontsize=9,
                     bbox=dict(boxstyle='round,pad=0.5',facecolor='white',edgecolor='#087E8B',alpha=.9))
-            labels={'energy_ev':'Apparent energy (eV)','activation_energy_eV':'Fitted energy (eV)',
-                'peak_temperature_c':'Peak maximum (°C)','beta_k_s':'Heating rate (K/s)',
-                'prefactor_s_inv':'Prefactor (s⁻¹)','assumed_prefactor_s_inv':'Assumed prefactor (s⁻¹)',
-                'energy_ci95_lower_ev':'Regression-only energy interval, lower (eV)',
-                'energy_ci95_upper_ev':'Regression-only energy interval, upper (eV)',
-                'r_squared':'R²','rmse_signal':'Signal RMSE','reaction_order':'Reaction order',
-                'reaction_order_fitted':'Order optimized','n_points':'Points used','energy_interval':'Energy uncertainty interval'}
-            lines=[]
-            if values.get('reaction_order') == 0 and 'conditional_prefactor_range_s_inv' in values:
-                labels['prefactor_s_inv']='Representative prefactor (s⁻¹; not unique)'
-                labels['signal_scale']='Representative signal scale (not unique)'
-            for key,value in values.items():
-                formatted='Not available' if value is None else (f'{value:.6g}' if isinstance(value,float) else str(value))
-                lines.append(labels.get(key,key.replace('_',' ').capitalize())+': '+formatted)
-            self.result_message(status + '\n' + '\n'.join(lines)
-                                + '\n' + '\n'.join(result['warnings'])
-                                + '\nEffective settings: ' + json.dumps(result['snapshot']['settings']))
+            for row in parameter_rows(result):
+                self.result_table.insert('', 'end', values=row)
+            self.result_message(scientific_notes(result, current))
         else:
-            self.result_message('Not calculated for this dataset / peak / method.')
+            self.result_state.set('Not calculated for this dataset / peak / method.')
+            self.result_message('Not calculated for this dataset / peak / method.\n\n'
+                                'Select a named peak and method, then calculate or fit.\n'
+                                'Model comparisons and Monte Carlo results remain in Modeling & Order Identification.')
             dataset = self.project.datasets.get(self.project.active_dataset)
             if dataset is not None:
                 ax = self.result_figure.add_subplot(111)

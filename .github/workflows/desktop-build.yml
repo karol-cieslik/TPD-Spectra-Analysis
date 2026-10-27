@@ -116,7 +116,12 @@ jobs:
             'docs/SUPPORT_AND_COMPATIBILITY.md',
             'docs/redesign/WORKFLOW_USER_GUIDE.md',
             'docs/beta/QUICK_START.pdf',
+            'docs/beta/SCIENTIFIC_HELP_TOPICS.json',
+            'docs/beta/WORKED_EXAMPLES.md',
+            'docs/beta/WORKED_EXAMPLES.html',
             'docs/beta/RELEASE_NOTES.md',
+            'docs/beta/REVIEW_STATUS.md',
+            'docs/beta/FEEDBACK_FORM.md',
             'docs/beta/TESTER_CHECKLIST.md'
           )
           foreach ($doc in $testerDocs) {
@@ -127,9 +132,11 @@ jobs:
           @'
           TPD Spectra Studio — development beta (see VERSION.json for version/commit)
 
-          Read START_HERE.md and docs/beta/QUICK_START.pdf.
+          Read START_HERE.md and docs/beta/WORKED_EXAMPLES.html (full tutorial).
+          The brief five-page PDF remains at docs/beta/QUICK_START.pdf.
           Extract this entire folder. Double-click TPD-Spectra-Studio.exe.
           Use Open Example Dataset, then the clean first-order example.
+          Scientific Help / Parameters explains units, assumptions and seeds offline.
           Zero-order fits report conditional prefactor/scale brackets, not unique values.
           See docs/beta/RELEASE_NOTES.md before interpreting results.
           '@ | Set-Content -Encoding utf8 release-package/QUICKSTART.txt
@@ -142,6 +149,8 @@ jobs:
           if (!(Test-Path release-package/docs/EXPLORER_MONTE_CARLO.md)) { throw 'Explorer guide missing from package' }
           if (!(Test-Path release-package/docs/USER_AND_SCIENTIFIC_MANUAL.md)) { throw 'User manual missing from package' }
           if (!(Test-Path release-package/docs/beta/QUICK_START.pdf)) { throw 'Quick Start missing from package' }
+          if (!(Test-Path release-package/docs/beta/SCIENTIFIC_HELP_TOPICS.json)) { throw 'Scientific Help catalog missing from package' }
+          if (!(Test-Path release-package/docs/beta/WORKED_EXAMPLES.html)) { throw 'Worked Quick Start missing from package' }
           New-Item -ItemType Directory -Force release-package/THIRD-PARTY-LICENSES | Out-Null
           $sitePackages = python -c "import site; print(site.getsitepackages()[0])"
           Get-ChildItem $sitePackages -Recurse -File -Include 'LICENSE*','COPYING*' |

@@ -7,6 +7,7 @@ This is a **research checklist**, not a repository of downloaded or validated da
 - [`literature_tpd_candidates.csv`](literature_tpd_candidates.csv): bibliography, prioritization and validation status.
 - [`literature_extraction_notes.csv`](literature_extraction_notes.csv): paper-by-paper instructions for all 26 candidates, keyed by `id`.
 - [`DIGITIZATION_GUIDE.md`](DIGITIZATION_GUIDE.md): step-by-step source retrieval, calibration, quality controls and manuscript reporting.
+- [`FIRST_EXPERIMENTAL_BENCHMARK.md`](FIRST_EXPERIMENTAL_BENCHMARK.md): a concrete three-paper starting order, application import columns, evidence stages and a complete per-trace record for the first external test.
 
 ## Suggested workflow
 

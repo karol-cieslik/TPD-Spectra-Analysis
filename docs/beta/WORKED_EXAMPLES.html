@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TPD Spectra Studio — Worked Quick Start</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+    :root { --navy: #18334b; --teal: #087e8b; --ink: #20394a; --muted: #536a7a; --rule: #d5e4e9; --pale: #f2f8fa; }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; max-width: 920px; padding: 2.8rem 3rem 5rem; color: var(--ink); background: #fff;
+           font: 15px/1.6 "Segoe UI", Arial, sans-serif; }
+    h1 { color: var(--navy); font-size: 2.5rem; line-height: 1.15; letter-spacing: -.035em; }
+    h2 { color: var(--navy); border-bottom: 3px solid var(--teal); padding-bottom: .55rem; margin-top: 3rem; }
+    h3, h4 { color: var(--teal); margin-top: 1.75rem; }
+    a { color: #096d78; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    strong { color: #15374d; }
+    blockquote { margin: 1.5rem 0; border-left: 5px solid var(--teal); padding: .6rem 1.2rem;
+                 background: var(--pale); border-radius: 0 8px 8px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1.3rem 0 1.8rem; font-size: .92rem; }
+    th { text-align: left; color: var(--navy); background: #e9f3f6; }
+    th, td { border: 1px solid var(--rule); padding: .6rem .7rem; vertical-align: top; }
+    tbody tr:nth-child(even) { background: #f8fbfc; }
+    code { background: #f0f5f6; border: 1px solid #dce9eb; border-radius: 4px; padding: .06em .25em; }
+    li { margin-bottom: .45rem; }
+    @media screen and (max-width: 700px) {
+      body { padding: 1.25rem 1rem 3rem; }
+      h1 { font-size: 2rem; }
+      table { display: block; overflow-x: auto; }
+    }
+    @media print {
+      body { max-width: 100%; padding: 0; font-size: 10pt; }
+      h2 { page-break-after: avoid; }
+      table, blockquote { break-inside: avoid; }
+      a { color: var(--ink); }
+    }
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">TPD Spectra Studio — Worked Quick Start</h1>
+</header>
+<h1 id="tpd-spectra-studio">TPD Spectra Studio</h1>
+<p><strong>Practical Quick Start and worked examples</strong><br />
+<strong>External beta candidate | updated 27 October 2026</strong><br />
+Dr. Karol Cieślik</p>
+<blockquote>
+<p><strong>Research beta.</strong> This walkthrough uses the
+<code>0.11.0b4</code> candidate (<a
+href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19">PR
+#19</a>) and the follow-up Results/Help changes (<a
+href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20">PR
+#20</a>). The older downloadable Windows <code>0.11.0b4</code> artifact
+does not yet include PR #20. Confirm your exact build in
+<code>VERSION.json</code>. Windows visual acceptance and independent
+experimental validation remain incomplete. All tutorial spectra are
+synthetic; they are not experimental evidence for a physical
+mechanism.</p>
+</blockquote>
+<h2 id="start-here-your-first-result-in-five-minutes">Start here: your
+first result in five minutes</h2>
+<ol type="1">
+<li>Download <code>tpd-spectra-windows-x64-beta-0.11.0b4</code> from the
+<strong>Artifacts</strong> section of the <a
+href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40366654717">successful
+Windows build</a>. GitHub sign-in may be required. Extract <strong>the
+entire archive</strong> into a writable folder; leave <code>docs</code>
+and <code>examples</code> beside the executable.</li>
+<li>Double-click <strong>TPD-Spectra-Studio.exe</strong>. No Python
+installation is needed. This development executable is unsigned: follow
+your institution's software-security policy.</li>
+<li>Click <strong>Open Example Dataset</strong>, choose <strong>first
+order single peak</strong>, then <strong>Open selected example</strong>.
+This loads 801 simulated points from 50 to 450 °C, with an already
+selected full-trace interval and a heating rate of 1 K/s.</li>
+<li>Go to <strong>Kinetic Analysis</strong> and select
+<strong>Redhead</strong>. Check <strong>Heating rate = 1 K/s</strong>
+and <strong>Assumed prefactor = 1e13 s⁻¹</strong>. An energy estimate
+should appear after the preview updates; if needed click
+<strong>Calculate / Fit selected peak</strong>.</li>
+<li>In the updated interface, open <strong>Parameter summary</strong> to
+find the estimate with its units and scientific role; use
+<strong>Spectrum &amp; residuals</strong> to inspect the plotted signal.
+The expected Redhead estimate is <strong>approximately 1.2 eV, within
+2.5% of the synthetic input</strong>. This is an approximate first-order
+estimate, not an independently measured activation energy or confidence
+interval.</li>
+<li>Click <strong>Save labeled result...</strong>, enter a descriptive
+run name, then <strong>Report / Export...</strong>. Select the saved
+run, click <strong>Choose destination and generate report...</strong>,
+choose a new folder, and inspect the PDF and associated CSV/JSON/figure
+files.</li>
+</ol>
+<p><strong>You have now completed one useful analysis.</strong> To
+preserve the data, intervals, settings and results for another session,
+use <strong>Save project...</strong> to create a <code>.tpd.json</code>
+project file.</p>
+<h2 id="using-help-inside-the-program">Using Help inside the
+program</h2>
+<p>The follow-up beta adds <strong>Scientific Help / Parameters</strong>
+beside <strong>Workflow quick start</strong>. It opens an offline
+searchable reference covering 40 topics. Focus a <strong>?</strong>
+button next to a field to read its definition, unit, whether it is
+assumed or fitted, a numerical example and scientific limitations. Start
+with <strong>Monte Carlo seed</strong>, <strong>Replicates</strong> and
+<strong>Activation energy</strong> if those terms are unfamiliar. Help
+does not change any inputs or run calculations.</p>
+<h2 id="understand-the-three-stage-workspace">Understand the three-stage
+workspace</h2>
+<p>The normal desktop workflow uses three connected stages. The selected
+dataset and named peak stay associated with subsequent calculations.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Stage</th>
+<th style="text-align: left;">What to do</th>
+<th style="text-align: left;">What to check before continuing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Spectra &amp;
+Preparation</strong></td>
+<td style="text-align: left;">Open/import data; inspect units, cleaning,
+baseline and named peak intervals</td>
+<td style="text-align: left;">Correct spectrum, temperature range and
+peak selection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Modeling &amp; Order
+Identification</strong></td>
+<td style="text-align: left;">Simulate a physical hypothesis, compare
+candidate orders, optionally run Monte Carlo or fit overlapping
+components</td>
+<td style="text-align: left;">Heating rate, starting assumptions,
+residuals and warnings</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Kinetic Analysis</strong></td>
+<td style="text-align: left;">Perform an explicit analysis on a selected
+region; save and export a labeled result</td>
+<td style="text-align: left;">Method assumptions, fitted versus assumed
+quantities and current/stale status</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Four distinct operations:</strong></p>
+<ul>
+<li><strong>Simulate parameters</strong> plots the prediction from
+values you enter. It does <strong>not</strong> recover those parameters
+from the data.</li>
+<li><strong>Compare models</strong> optimizes candidate single-state
+kinetic models and compares their fits for the selected peak
+interval.</li>
+<li><strong>Run Monte Carlo</strong> perturbs a fitted reference with
+assumed Gaussian noise and refits selected candidates. It is not
+microscopic kinetic Monte Carlo or Bayesian MCMC.</li>
+<li><strong>Calculate / Fit selected peak</strong> performs the chosen
+Kinetic Analysis method. Transferring a model from Modeling supplies a
+starting hypothesis; it does not replace this explicit calculation.</li>
+</ul>
+<p>You can inspect a curve that visually fits well and still have an
+underdetermined kinetic model. Always review <strong>Spectrum &amp;
+residuals</strong>, <strong>Parameters &amp; models</strong> and
+<strong>Assumptions &amp; warnings</strong>, not merely the energy
+value.</p>
+<h3 id="how-to-select-a-peak">How to select a peak</h3>
+<ol type="1">
+<li>In <strong>Spectra &amp; Preparation</strong>, inspect the complete
+signal and confirm the correct dataset in the selector.</li>
+<li>Enter a short peak name plus the <strong>From</strong> and
+<strong>To</strong> temperatures in °C. Click <strong>Add peak</strong>.
+To change an existing interval, select it, adjust its bounds and use
+<strong>Update peak</strong>.</li>
+<li>Alternatively enable <strong>Drag interval</strong>, with the plot's
+pan/zoom modes off, and drag the interval handles. Save the selected
+bounds with <strong>Add peak</strong> or <strong>Update
+peak</strong>.</li>
+<li>Check both sides of the selected feature. A one-peak method needs
+enough onset and high-temperature tail to describe the chosen
+population; the named interval alone does not separate overlapping
+contributions.</li>
+</ol>
+<p>The default two-peak demonstration begins with <strong>Demo - first
+peak (single-state approximation)</strong> selected from <strong>70 to
+210 °C</strong>. Its raw noisy trace remains visible even when you
+change stages or cancel a calculation.</p>
+<h2 id="exercise-1-one-peak-two-simple-kinetic-methods">Exercise 1: one
+peak, two simple kinetic methods</h2>
+<p><strong>Purpose:</strong> Learn where a parameter comes from, where
+it appears and how to save it.</p>
+<p><strong>Dataset:</strong> <strong>Open Example Dataset</strong> →
+<strong>first order single peak</strong>. Source truth: first order,
+(E=1.2 eV), (ν=10^{13} s⁻¹), (β=1 K/s), normalized initial coverage 1,
+no noise or baseline. All 801 points cover 50-450 °C.</p>
+<h3 id="a-first-order-redhead-estimate">A. First-order Redhead
+estimate</h3>
+<ol type="1">
+<li>Confirm the full-trace peak interval is selected.</li>
+<li>In <strong>Kinetic Analysis</strong>, choose
+<strong>Redhead</strong>.</li>
+<li>Confirm <code>Heating rate (K/s)</code> = <code>1</code> and
+<code>Assumed prefactor (s⁻¹)</code> = <code>1e13</code>.</li>
+<li>Inspect the estimated energy and the original spectrum. If no
+estimate has appeared, click <strong>Calculate / Fit selected
+peak</strong>.</li>
+<li>Save it as <code>Tutorial A - Redhead - clean first order</code> via
+<strong>Save labeled result...</strong>.</li>
+</ol>
+<p><strong>Check:</strong> An estimate near <strong>1.2 eV</strong> is
+expected (the reference guide allows 2.5% deviation). Redhead requires
+an <em>assumed</em> prefactor and first-order kinetics. It is a useful
+approximate check, not a fitted determination of the prefactor.</p>
+<h3 id="b-leading-edge-estimate">B. Leading-edge estimate</h3>
+<ol type="1">
+<li>Keep the same dataset and switch to <strong>Leading
+edge</strong>.</li>
+<li>Use the <strong>90 to 110 °C</strong> leading-edge interval and
+inspect the transformation and residuals.</li>
+<li>Save the result under a different label, such as
+<code>Tutorial A - leading edge</code>.</li>
+</ol>
+<p><strong>Check:</strong> The apparent energy should also be around
+<strong>1.2 eV</strong> on the clean generated example. A leading-edge
+fit assumes that coverage has changed little over the selected rising
+segment. Do not use the whole desorption peak as a leading edge. Its
+intercept does not identify an absolute physical prefactor.</p>
+<h3 id="export-and-inspect-the-parameters">Export and inspect the
+parameters</h3>
+<ol type="1">
+<li>Click <strong>Report / Export...</strong> in Kinetic Analysis.</li>
+<li>Select one or both labeled runs; use Ctrl/Shift if you want multiple
+rows.</li>
+<li>Click <strong>Choose destination and generate report...</strong> and
+select a folder.</li>
+<li>Open the generated PDF and parameter CSV. Compare method, energy,
+assumed values, units, interval, source and warnings.</li>
+</ol>
+<p><strong>If you cannot find a result:</strong> Check that
+<strong>Kinetic Analysis</strong> still has the intended dataset, named
+peak and method selected. A result from another peak or earlier settings
+may be marked <strong>STALE</strong>; re-run the current analysis rather
+than interpreting it as a fresh fit.</p>
+<h2 id="exercise-2-simulation-model-comparison-and-monte-carlo">Exercise
+2: simulation, model comparison and Monte Carlo</h2>
+<p><strong>Purpose:</strong> Complete the default first-run workflow
+without silently treating two peaks as one state.</p>
+<p><strong>Dataset:</strong> <code>synthetic_two_peak_demo.csv</code>,
+automatically opened at startup. It contains two generated first-order
+populations, (E_1=1.25 eV) and (E_2=1.55 eV), with a 1 K/s ramp, 601
+points over 70-370 °C, and seeded 2% iid Gaussian detector noise. The
+initial region is 70-210 °C, a <strong>single-state approximation to the
+first peak only</strong>.</p>
+<h3 id="a-explore-a-manually-chosen-hypothesis">A. Explore a manually
+chosen hypothesis</h3>
+<ol type="1">
+<li>Go to <strong>Modeling &amp; Order Identification</strong> and
+verify that the dataset and <strong>Demo - first peak</strong> region
+remain selected.</li>
+<li>Enter <code>Heating rate = 1</code>,
+<code>Initial energy = 1.25</code>,
+<code>Initial prefactor = 1e13</code>,
+<code>Simulation order = 1</code>, and
+<code>Simulation initial coverage = 1</code>.</li>
+<li>Leave the amplitude/baseline as editable detector-signal choices;
+they can change the vertical comparison without changing the kinetic
+energy. Click <strong>Simulate parameters</strong>.</li>
+<li>Inspect the simulated curve against the noisy observations. This is
+an overlay from <em>input</em> values, not an optimized fit.</li>
+</ol>
+<h3 id="b-compare-a-candidate-order">B. Compare a candidate order</h3>
+<ol type="1">
+<li>Enable only the <strong>First</strong> order candidate; deselect
+Zero, Second and Fractional for this introductory check.</li>
+<li>Turn <strong>Multistart</strong> off and click <strong>Compare
+models</strong>.</li>
+<li>Open <strong>Parameters &amp; models</strong>. Identify the
+converged first-order row, then inspect <strong>Spectrum &amp;
+residuals</strong> and <strong>Assumptions &amp; warnings</strong>.</li>
+<li>Select the converged row and click <strong>Use selected model in
+Kinetic Analysis</strong>.</li>
+<li>In <strong>Kinetic Analysis</strong>, review the transferred
+hypothesis and click <strong>Calculate / Fit selected peak</strong>.
+Save the result under a descriptive label.</li>
+</ol>
+<p><strong>Check:</strong> The raw two-peak spectrum must stay visible.
+The fitted single-state prediction applies only to the selected
+first-peak interval. Its residuals and warning messages matter more than
+visually matching the complete two-feature signal.</p>
+<h3 id="c-run-a-short-monte-carlo-software-check">C. Run a short Monte
+Carlo software check</h3>
+<ol type="1">
+<li>Return to Modeling. A <strong>current completed comparison</strong>
+must exist for the same settings; otherwise compare again.</li>
+<li>Set <strong>Monte Carlo replicates = 20</strong> and <strong>Monte
+Carlo seed = 42</strong>. Keep First order only and Multistart off for
+this introductory exercise.</li>
+<li>Click <strong>Run Monte Carlo</strong>. Watch the completed/total
+count, percent, elapsed/estimated time and failure summary. The window
+should remain responsive; <strong>Cancel</strong> is available.</li>
+<li>Inspect the final summary, the number of successful/failed fits, the
+rank count and any withheld intervals.</li>
+</ol>
+<p><strong>Important:</strong> A seed is the initial state of the
+pseudo-random number generator. Using the same seed and settings
+reproduces the random sequence in the same computational environment. It
+is <strong>not</strong> a fitted TPD parameter. Twenty replicates are
+only a workflow demonstration; this implementation withholds parameter
+ranges below <strong>100 successful refits</strong>. Even ranges from
+500 refits are conditional on the assumed reference model and iid
+Gaussian noise - they are not validated experimental confidence
+intervals. A previously recorded 500-run test took about three minutes
+on one Windows environment; your machine may differ.</p>
+<h2 id="exercise-3-fit-three-overlapping-populations-together">Exercise
+3: fit three overlapping populations together</h2>
+<p><strong>Purpose:</strong> Learn the difference between selecting a
+named peak and decomposing a complete overlapping spectrum.</p>
+<p><strong>Dataset:</strong> <strong>Open Example Dataset</strong> →
+<strong>three overlapping peaks</strong>. It is a clean, synthetic
+801-point trace between 50 and 450 °C. Its generating model has three
+independent additive first-order populations with the inputs below. A
+moderate-noise variant is also available for a harder test.</p>
+<ol type="1">
+<li>In <strong>Modeling &amp; Order Identification</strong>, click
+<strong>Overlapping components...</strong>.</li>
+<li>Define <strong>three component rows</strong>. Use the following
+trial inputs for this truth-informed numerical exercise:</li>
+</ol>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Component</th>
+<th style="text-align: right;">Fixed order</th>
+<th style="text-align: right;">Fixed prefactor</th>
+<th style="text-align: right;">Fixed initial coverage</th>
+<th style="text-align: right;">Initial energy</th>
+<th style="text-align: left;">Energy bounds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"><code>1e13 s⁻¹</code></td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">1.185 eV</td>
+<td style="text-align: left;">1.14-1.22 eV</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"><code>1e13 s⁻¹</code></td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">1.265 eV</td>
+<td style="text-align: left;">1.22-1.30 eV</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"><code>1e13 s⁻¹</code></td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">1.345 eV</td>
+<td style="text-align: left;">1.30-1.38 eV</td>
+</tr>
+</tbody>
+</table>
+<ol start="3" type="1">
+<li>Confirm <strong>Heating rate = 1 K/s</strong>, turn Multistart off
+and use <strong>Maximum evaluations = 300</strong> in Modeling. For this
+clean reference the generating baseline is zero; do not add an arbitrary
+drift term.</li>
+<li>Click <strong>Fit components together</strong>. The energies and
+nonnegative detector scales are optimized jointly against the
+<strong>whole selected dataset</strong>, regardless of the named
+single-peak navigation region.</li>
+<li>In <strong>Spectrum &amp; residuals</strong>, inspect each fitted
+component, their sum, the observations and the observation-minus-sum
+residuals.</li>
+<li>In <strong>Parameters &amp; models</strong>, compare estimated
+energies with the generating values <strong>1.18, 1.26, 1.34
+eV</strong>. Inspect scales and any withheld local uncertainty
+intervals.</li>
+<li>Optionally click <strong>Compare component counts</strong>. This
+compares the first 1, 2 and 3 defined component hypotheses. Inspect
+errors, convergence and the relevant fixed assumptions; AICc/BIC results
+are <strong>heuristics</strong>, not probabilities of physical state
+counts.</li>
+<li>Click <strong>Export component fit...</strong> and choose a
+destination for component parameters, curves, residuals, provenance and
+figures. Save the project if you want to restore this
+configuration.</li>
+</ol>
+<p><strong>Interpretation:</strong> Here the order, prefactor and
+coverage are <em>fixed</em>; only energy, nonnegative signal scale and
+optional common baseline parameters are fitted. The example has known
+generating truth and deliberately helpful initial guesses/bounds, so it
+tests numerical consistency, not blind identification. Actual
+overlapping TPD signals may involve readsorption, interactions,
+exchange, coverage-dependent energies or instrument response. Three
+visible shoulders do <strong>not</strong> establish three physical
+states. This beta does not offer multicomponent Monte Carlo or
+multicomponent zero-order depletion fitting.</p>
+<h2
+id="exercise-4-noise-baselines-and-what-uncertainty-does-not-tell-you">Exercise
+4: noise, baselines and what uncertainty does not tell you</h2>
+<p>Open <strong>first order single peak</strong> and compare it with
+<strong>first order low noise</strong>, <strong>first order moderate
+noise</strong> and <strong>first order high noise</strong>. The
+deliberately generated standard deviations are 0%, 1%, 2% and 5% of the
+clean peak maximum. Each adjacent JSON records the seed and generating
+truth. For the default two-peak example there are also clean, noisy and
+baseline-drift variants.</p>
+<ol type="1">
+<li>Observe how the points become less smooth while the underlying
+physical inputs stay constant.</li>
+<li>Compare a candidate model and inspect residuals, especially around
+the low-signal tails.</li>
+<li>Run a short seeded Monte Carlo check, then consider more replicates
+if you are studying numerical stability.</li>
+<li>Repeat after loading a drift example and ask whether a
+constant-baseline, iid-noise model still describes the residuals.</li>
+</ol>
+<p><strong>Do not interpret every reported interval as a calibrated
+confidence interval.</strong> The current Monte Carlo algorithm
+simulates independent Gaussian perturbations around a fitted reference
+and refits the specified candidates. It does not account for unknown
+order, incorrect model structure, correlated drift, temperature
+calibration or instrument response. Ranking frequency is not the
+probability that a mechanism is physically true.</p>
+<h3 id="bring-your-own-spectrum">Bring your own spectrum</h3>
+<p>When you are comfortable with the synthetic examples:</p>
+<ol type="1">
+<li>Use <strong>Open Spectrum...</strong> and select your CSV. The
+documented example convention is
+<code>Time_ms, Signal, Temperature</code> (temperature in °C). Inspect
+the import report and verify how your file's columns and units were
+interpreted.</li>
+<li>Confirm the heating program from the experiment, not from the
+default 1 K/s example assumption. The standard kinetic calculations
+assume a positive constant linear heating rate.</li>
+<li>In <strong>Spectra &amp; Preparation</strong>, select a useful
+physically motivated interval. If necessary preview smoothing/baseline
+corrections, then explicitly use <strong>Apply smoothing / baseline to
+analysis</strong>. Display normalization alone does not alter fitted
+signal values.</li>
+<li>Choose a method suitable for your experimental question. Save the
+project and results with metadata and any warnings.</li>
+</ol>
+<p>Do not send unpublished or third-party data to anyone without
+permission. <strong>Report a Bug / Send Feedback</strong> creates a
+reviewable diagnostic report; it does not automatically attach your
+spectral files or send anything. Analysis projects and full reports,
+unlike diagnostic ZIPs, can contain scientific data.</p>
+<h2 id="parameters-at-a-glance">Parameters at a glance</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Display term</th>
+<th style="text-align: left;">Meaning</th>
+<th style="text-align: left;">What the program does with it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Heating rate</strong> (β)
+(K/s)</td>
+<td style="text-align: left;">Rate of temperature increase; verify from
+experiment</td>
+<td style="text-align: left;">Supplied physical input, not inferred from
+a fit</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Energy</strong> (E) (eV)</td>
+<td style="text-align: left;">Activation/desorption barrier in chosen
+model</td>
+<td style="text-align: left;">Simulation input, fit initialization or
+fitted output depending on action</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Prefactor</strong> (ν) (s⁻¹)</td>
+<td style="text-align: left;">Kinetic attempt frequency under
+normalized-coverage convention</td>
+<td style="text-align: left;">Assumed for Redhead/components; initial
+guess or fitted/conditional quantity in other methods</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Order</strong> (n)</td>
+<td style="text-align: left;">Exponent of normalized coverage</td>
+<td style="text-align: left;">Can be fixed or selected/fitted according
+to method; not proof of mechanism</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Initial coverage</strong>
+(\theta_0)</td>
+<td style="text-align: left;">Dimensionless normalized population at
+first included temperature</td>
+<td style="text-align: left;">Supplied for simulation/components; may be
+normalized to 1 for single-state fitting</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Signal scale</strong> (A)</td>
+<td style="text-align: left;">Conversion from calculated rate to
+detector signal</td>
+<td style="text-align: left;">Optimized in full fits; may absorb unknown
+detection sensitivity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Baseline / drift</strong></td>
+<td style="text-align: left;">Constant signal offset and optional linear
+trend</td>
+<td style="text-align: left;">Selected/fitted as specified; cannot
+repair every instrument artifact</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Multistart</strong></td>
+<td style="text-align: left;">Tries several starting guesses in
+optimization</td>
+<td style="text-align: left;">Can reduce sensitivity to initialization,
+not guarantee global optimum</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Maximum evaluations</strong></td>
+<td style="text-align: left;">Budget for a numerical optimization</td>
+<td style="text-align: left;">Not the number of Monte Carlo
+replicates</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Seed</strong></td>
+<td style="text-align: left;">Starting state for reproducible
+pseudo-random draws</td>
+<td style="text-align: left;">Does not change the physical kinetic
+model</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Replicates</strong></td>
+<td style="text-align: left;">Number of noisy datasets refitted</td>
+<td style="text-align: left;">More usually costs more time; ranges
+require at least 100 successful refits here</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>RMSE / residual</strong></td>
+<td style="text-align: left;">Size/pattern of
+observation-minus-prediction error</td>
+<td style="text-align: left;">Quality diagnostics; a small value is not
+mechanism proof</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>AICc / BIC</strong></td>
+<td style="text-align: left;">Criteria for comparing fitted candidate
+descriptions</td>
+<td style="text-align: left;">Heuristic rankings under stated
+assumptions, not mechanism probabilities</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Stale result</strong></td>
+<td style="text-align: left;">Stored result no longer corresponds to
+current settings</td>
+<td style="text-align: left;">Preserved for inspection; recalculate for
+current inputs</td>
+</tr>
+</tbody>
+</table>
+<p>For the actual Polanyi-Wigner independent-population model, the code
+uses temperature in Kelvin internally:</p>
+<p>[ r_i(T)=ν_i\theta_i(T)^{n_i}\exp\left(-\frac{E_i}{k_B
+T}\right),\qquad \frac{d\theta_i}{dT}=-\frac{r_i(T)}{β}. ]</p>
+<p>In a simultaneous fit, the detected signal is a sum of independent
+rates multiplied by detector scales, plus a shared baseline. Not every
+physical process can be represented this way.</p>
+<h2 id="if-something-goes-wrong">If something goes wrong</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symptom</th>
+<th style="text-align: left;">First check</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">The program does not open</td>
+<td style="text-align: left;">Did you extract the
+<strong>complete</strong> ZIP? Check Windows/institution security
+policy; this beta is unsigned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Modeling shows no useful fit</td>
+<td style="text-align: left;">Confirm a dataset and named peak region;
+verify candidate selection; inspect <strong>Assumptions &amp;
+warnings</strong>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Run Monte Carlo</strong> is
+unavailable</td>
+<td style="text-align: left;">Complete a model comparison for the
+<strong>current</strong> settings first; let another running job finish
+or cancel.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">No Monte Carlo parameter intervals
+appear</td>
+<td style="text-align: left;">Fewer than 100 successful refits, failed
+fits, or numerical/identifiability restrictions can suppress them.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">The first peak fit does not explain both
+peaks</td>
+<td style="text-align: left;">The default region is a single-state
+approximation. Use <strong>Overlapping components...</strong> for a
+justified joint hypothesis.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Parameters appear different after
+switching methods</td>
+<td style="text-align: left;">Check the selected dataset, named peak,
+method and <strong>STALE</strong> status; previous sessions retain their
+original snapshots.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dragging a region does nothing</td>
+<td style="text-align: left;">Turn off the plot toolbar's pan/zoom mode,
+enable <strong>Drag interval</strong>, and save with Add/Update
+peak.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Your exported report is missing</td>
+<td style="text-align: left;">Select and label a completed run, choose a
+new destination, and check export status; do not assume the preview is
+the rendered PDF.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">You want to report a bug</td>
+<td style="text-align: left;">Use <strong>Report a Bug / Send
+Feedback</strong>; inspect the diagnostic text/ZIP before sharing. No
+spectra are automatically attached.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scientific-and-compatibility-scope">Scientific and compatibility
+scope</h3>
+<p>The beta is for informal evaluation, teaching-style demonstrations
+and exploratory research. Independent experimental benchmarks,
+uncertainty-coverage studies and external scientific review remain
+necessary before quantitative method claims or publication. Read <a
+href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/7139c4659/docs/MULTICOMPONENT_FITTING.md"><code>docs/MULTICOMPONENT_FITTING.md</code></a>
+and <a
+href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/7139c4659/docs/METHOD_STATUS.md"><code>docs/METHOD_STATUS.md</code></a>
+before interpreting advanced fits.</p>
+<p><strong>Feedback:</strong> In the program choose <strong>Report a Bug
+/ Send Feedback</strong>, or email <strong>Dr. Karol Cieślik</strong> at
+<strong><a
+href="mailto:karol.j.cieslik@gmail.com">karol.j.cieslik@gmail.com</a></strong>.
+State the version/build, chosen example, what you expected and what
+happened. A screenshot helps, but check it for confidential data first.
+No account or experimental dataset is required to send useful
+comments.</p>
+<p><strong>Source:</strong> <a
+href="https://github.com/karol-cieslik/TPD-Spectra-Analysis">github.com/karol-cieslik/TPD-Spectra-Analysis</a>.
+Code is MIT licensed; see the repository's <code>LICENSE</code> and
+<code>ASSET-RIGHTS.md</code>.</p>
+<hr />
+<p><em>Preparation note: tutorial instructions and synthetic truth are
+cross-checked against the 0.11.0b4 source and the draft Results/Help
+improvements; the final Windows package needs acceptance testing before
+external distribution.</em></p>
+</body>
+</html>

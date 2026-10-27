@@ -167,7 +167,8 @@
       "title": "Linear baseline drift",
       "symbol": "b₁",
       "unit": "signal units/K",
-      "role": "fitted",
+      "role": "method_dependent",
+      "role_notes": "Simultaneous component fitting: an optional nuisance slope optimized only when Fit drift is enabled; otherwise no drift term is fitted.",
       "context": [
         "components"
       ],

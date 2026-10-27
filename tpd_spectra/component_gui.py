@@ -9,6 +9,7 @@ from .workflow_analysis import processed_signal, serial
 from .multicomponent import ComponentDefinition, fit_components, compare_component_counts, _definitions
 from .component_export import draw_components, export_components
 from .run_session import proposed_run_folder
+from .scientific_help import help_button
 
 
 def defaults():
@@ -74,6 +75,7 @@ class ComponentsController:
         self.window.bind('<MouseWheel>',lambda e:self.editor_canvas.yview_scroll(-int(e.delta/120),'units'))
         self.window.bind('<Shift-MouseWheel>',lambda e:self.editor_canvas.xview_scroll(-int(e.delta/120),'units'))
         ttk.Label(body,text='Fit the full spectrum as a sum of independent Polanyi–Wigner rates.',font=('Segoe UI',12,'bold')).pack(anchor='w')
+        help_button(body,self.app,'simultaneous_components').pack(anchor='e')
         ttk.Label(body,text='Energies and nonnegative detector scales are optimized together. Order, prefactor and initial coverage are fixed assumptions.\n'
             'Use normalized dimensionless coverage (prefactor in s⁻¹ under that convention). Zero order uses the separate single-state method.\n'
             'Three visible features do not establish three physical states. Named regions do not crop this calculation.',
@@ -84,20 +86,32 @@ class ComponentsController:
         row_options.pack(fill='x')
         self.rows_frame=ttk.Frame(body)
         self.rows_frame.pack(fill='x',pady=8)
-        for i,title in enumerate(('Component name','Fixed n (>0)','Initial E (eV)','Fixed ν (s⁻¹)','Fixed θ₀','Min E','Max E')):
-            ttk.Label(self.rows_frame,text=title).grid(row=0,column=i,padx=3,sticky='w')
+        for i,(title,topic) in enumerate(zip(
+                ('Component name','Fixed n (>0)','Initial E (eV)','Fixed ν (s⁻¹)','Fixed θ₀','Min E','Max E'),
+                ('simultaneous_components','reaction_order','initial_guess','prefactor',
+                 'initial_coverage','energy_bounds','energy_bounds'))):
+            header=ttk.Frame(self.rows_frame)
+            header.grid(row=0,column=i,padx=3,sticky='w')
+            ttk.Label(header,text=title).pack(side='left')
+            help_button(header,self.app,topic).pack(side='left',padx=(3,0))
         for definition in settings['components']:
             self.add_row(definition)
         ttk.Button(row_options,text='Add component (up to 3)',command=self.add_row).pack(side='left')
         ttk.Button(row_options,text='Remove last component',command=self.remove_row).pack(side='left',padx=6)
         self.fit_baseline=tk.BooleanVar(self.window,value=settings['fit_baseline'])
         self.fit_drift=tk.BooleanVar(self.window,value=settings['fit_drift'])
-        ttk.Checkbutton(body,text='Fit shared constant offset',variable=self.fit_baseline).pack(anchor='w')
-        ttk.Checkbutton(body,text='Fit shared linear baseline drift (requires offset)',variable=self.fit_drift).pack(anchor='w')
+        for label,variable,topic in (
+                ('Fit shared constant offset',self.fit_baseline,'constant_baseline'),
+                ('Fit shared linear baseline drift (requires offset)',self.fit_drift,'baseline_drift')):
+            option=ttk.Frame(body)
+            option.pack(fill='x')
+            ttk.Checkbutton(option,text=label,variable=variable).pack(side='left')
+            help_button(option,self.app,topic).pack(side='left',padx=4)
         ttk.Label(body,text='Heating rate, maximum evaluations and deterministic multistart come from Modeling.\n'
             'Count comparison uses the first 1, 2, … defined components on identical full-spectrum observations.\n'
             'Review local optima, correlations, residuals and fixed assumptions. Local intervals may be withheld; component Monte Carlo is not implemented.',
             wraplength=980).pack(fill='x',pady=8)
+        help_button(body,self.app,'component_count').pack(anchor='e')
         footer=ttk.Frame(self.window,padding=8)
         footer.grid(row=2,column=0,columnspan=2,sticky='ew')
         buttons=ttk.Frame(footer)

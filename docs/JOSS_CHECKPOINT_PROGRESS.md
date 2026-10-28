@@ -189,3 +189,7 @@ explicit UTF-8 correct those paths. Targeted tests: 34 passed, 2 GUI skips.
 A Windows-style Git checkout-filter check preserves the exact source CSV bytes.
 Corrected scientific CI passed; full rebuilt Windows acceptance remains tracked
 by CI and still does not replace human visual/clean-machine acceptance.
+
+## Optimizer correction
+
+Peak-informed kinetic initialization with profiled linear scale/baseline now recovers the formerly failed 81-point case at 1.09463537 eV, NRMSE 0.01273470. Independent noisy first/second/fractional regressions passed. Full headless suite: 328 passed, 38 display skips. See validation/optimizer_investigation/FIX.md. Historical MC/ranking records remain pre-correction evidence and require reassessment; no universal optimization or experimental validation claim is made.

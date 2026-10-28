@@ -78,3 +78,19 @@ Affiliation, funding, final authorship, AI disclosure and genuine research-use
 evidence require author confirmation. Public-development history also remains
 an unmet time gate. No external adoption, kinetic-energy experimental validation
 or mechanism probability is claimed.
+
+
+## Follow-up: bounded ranking and Windows portability
+
+The first/second-order follow-up is in validation/joss_ranking/. It reuses the
+recorded inputs without repeating the numerical or parameter-only assessment.
+Run `python -m scripts.joss_ranking_assessment --output output/ranking-new`
+to reproduce, with a 120-second wall limit per seed. Its favorable initialization
+and conditional-reference/noise assumptions must accompany any reported ranking.
+The 81-point multistart replay returned a materially wrong first-order energy
+despite convergence; general blind order/parameter recovery remains unvalidated.
+
+The original PR Windows failures were traced to CRLF checkout changing the
+experimental CSV hash and a cp1252 test decoder. Data checkout is now LF and
+the Help test explicitly uses UTF-8. Review the CI for the corrected commit;
+passing Linux tests do not replace it.

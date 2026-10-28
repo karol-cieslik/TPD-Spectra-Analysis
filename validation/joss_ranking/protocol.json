@@ -1,0 +1,13 @@
+{
+  "source_parent": "3827b4ad5014b6710afb6a2e9cff107162ac1dc6",
+  "script_sha256": "0b2ab4887fcabc90efc65bbf5b2c691da37b03b593cec0cac6f78dffaeabe081",
+  "input_csv_sha256": {
+    "matched_gaussian": "6f5999ebf989c6dbfdfde28ff63e81d5199c6331a147fe866c0ca51c977eb7fb",
+    "baseline_drift_mismatch": "fb94b5f6f832e993144d4330d68e88c634bf8b39121be33ab8f77dcf25710a33"
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "numpy": "2.3.5",
+  "scipy": "1.17.0",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "interpretation": "Conditional ranking stability for first/second candidates on two fixed synthetic datasets; not mechanism probabilities or population-level accuracy."
+}

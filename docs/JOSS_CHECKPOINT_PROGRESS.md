@@ -167,3 +167,25 @@ https://joss.readthedocs.io/en/latest/paper.html and
 https://joss.readthedocs.io/en/latest/review_checklist.html.
 Earlier evidence IDs R1–R21 refer to the original readiness audit; new status
 updates above point to the new repository evidence explicitly.
+
+## Follow-up: first/second ranking stability and portability
+
+Completed a separate bounded two-model study on the existing inputs: six seed
+runs, 600 complete rankings and 1200 individual fits; no failed rankings or
+120-second seed-run timeouts. First order won all 50/100 prefixes. Full records,
+protocol/input hashes and initialization profiles are in validation/joss_ranking/.
+Checkpoints 27/28/31 gain this limited evidence but remain partial for general
+model comparison: initialization was favorable, only two orders were compared,
+and no population-level selection accuracy or confidence coverage was assessed.
+
+The old 81-point multistart replay completed quickly but returned 1.464739 eV
+for a first-order synthetic signal generated at 1.1 eV. The previous stall was
+not reproduced, and no solver fix is claimed. Investigating initialization and
+false convergence is now the next technical checkpoint before generalizing
+order-identification or experimental-energy claims.
+
+PR Windows CI exposed CSV CRLF/hash and cp1252 Help-test issues; LF checkout and
+explicit UTF-8 correct those paths. Targeted tests: 34 passed, 2 GUI skips.
+A Windows-style Git checkout-filter check preserves the exact source CSV bytes.
+Corrected scientific CI passed; full rebuilt Windows acceptance remains tracked
+by CI and still does not replace human visual/clean-machine acceptance.

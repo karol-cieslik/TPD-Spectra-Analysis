@@ -1,5 +1,8 @@
 # External beta preparation record
 
+> Historical development snapshot. PRs #19–21 are now merged into main.
+> For current beta/download status see [START_HERE](../../START_HERE.md). Original evidence below is preserved.
+
 ## 0.11.0b3: dedicated zero-order correction
 
 Current branch: `release/external-beta-v0.11.0b3`; the 0.11.0b2 branch and

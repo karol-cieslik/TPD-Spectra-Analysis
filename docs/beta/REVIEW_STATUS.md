@@ -4,18 +4,18 @@
 This note distinguishes implemented code, automated checks and evidence still
 needed before sending a new executable to colleagues.
 
-## What is in which version?
+## Current source and completed integration
 
-| Source | What it contains | Status |
-| --- | --- | --- |
-| `main` | Earlier reviewed development baseline | Not the latest beta |
-| [PR #19](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19) — `fix/beta-feedback-14-17` | Noisy default examples, first-peak selection, visible Monte Carlo progress, constrained overlapping components | Draft; existing Windows 0.11.0b4 artifact derives from this branch |
-| [PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20) — `ux/results-readable-beta` | Structured kinetic Results, fitted/assumed labels, 40-topic offline Help and guided Quick Start | Draft stacked on PR #19; new Windows build and visual acceptance outstanding |
+Current beta: **0.11.0b5 on main**. PR #19 (noisy demo/progress/components),
+PR #20 (Results/Help/tutorials) and PR #21 (b5 identity/frozen acceptance) were
+merged on 27 October 2026. Historical PR descriptions and acceptance records
+describe their original development state, not current download instructions.
 
-The old `tpd-spectra-windows-x64-beta-0.11.0b4` Actions ZIP does **not**
-contain the follow-up PR #20 interface. Always check `VERSION.json` for the
-build's exact commit. A successful Linux test run is not proof that a Windows
-executable containing these changes was packaged or visually inspected.
+The latest successful main Windows build before this cleanup was
+[run 40488914540](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/40488914540),
+source `7a0f6f739835baf4663cea809393bc8d1af28c42`. It includes all three PRs.
+For the current package, follow [START_HERE](../../START_HERE.md) and record
+the run and exact commit; do not reuse older b4 evidence for a later build.
 
 ## Implemented and covered by regression tests
 
@@ -28,25 +28,23 @@ executable containing these changes was packaged or visually inspected.
 - Results parameter roles and submitted-settings provenance (PR #20).
 - Offline scientific Help topics and navigable first-run exercises (PR #20).
 
-## Open release gates
+## Completed automated checks and remaining gates
 
-- [ ] Build PR #20's executable and portable ZIP from a **single reviewed commit**.
-- [ ] Run the frozen-package smoke suite, including the Help catalog, five
-      tutorial tabs, result table, example chooser and three-component exports.
-- [ ] Open the ZIP on clean Windows 10/11 machines without Python; verify the
-      sidebar, help buttons, search, tab navigation and clipboard at different
-      DPI scaling and window sizes.
-- [ ] Follow the worked examples as a new user, recording incorrect labels,
-      missing warnings and steps that cannot actually be completed.
-- [ ] Review zero-order identifiability, MC interval interpretation and
-      overlapping-component assumptions against independent calculations.
-- [ ] Confirm save/reopen/export still preserve source hashes, methods,
-      settings, units and warnings.
-- [ ] Obtain permission and provenance for any experimental data used in
-      benchmark work; keep external data out of the release unless licensed.
-- [ ] Review and merge PR #19, then reconcile PR #20 onto `main` after approval.
-- [ ] Tag a reviewed version, publish its checksums and provide one stable
-      colleague download link.
+- [x] PRs #19–21 merged; b5 Windows CI and frozen-package smoke succeeded.
+- [x] Save/reopen/report, synthetic imports, Help/tutorials, component exports,
+      Monte Carlo progress and cancellation have automated coverage.
+- Automated release gate: the Windows workflow builds and verifies each final
+  source commit, frozen executable, portable resources, hashes and links before
+  uploading its artifact. Follow the latest successful main run in START_HERE.
+- [ ] Human visual first-run, all five tutorials, Help scrolling, Results labels
+      and Monte Carlo controls at ordinary and high display scaling.
+- [ ] Independent Windows 10/11 acceptance without Python on the exact ZIP.
+- [ ] Independent scientific review, experimental benchmarks with permission
+      and uncertainty-coverage validation (not prerequisites for synthetic pilot use).
+- [ ] Publish a stable GitHub prerelease download only after separate approval.
+
+Automated widget/layout checks are not visual acceptance. Source audits and
+synthetic recovery are not independent experimental validation.
 
 ## Scientific boundaries
 
@@ -74,6 +72,4 @@ brackets are not confidence intervals.
 See [the colleague handoff and release gate](SHARE_WITH_COLLEAGUES.md),
 [the tester checklist](TESTER_CHECKLIST.md),
 [the source-level scientific consistency audit](SCIENTIFIC_CONSISTENCY_AUDIT.md)
-and [the scientific methods status](../METHOD_STATUS.md). The current maintainers
-can review the PRs and CI logs directly; no code or results have been merged
-into `main` as part of this note.
+and [the scientific methods status](../METHOD_STATUS.md). Internal release records stay in GitHub and are excluded from the colleague ZIP.

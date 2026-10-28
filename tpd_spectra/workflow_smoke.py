@@ -40,7 +40,7 @@ def main(source,output):
         panel=app.modeling_panel
         for key in ('zero','second','fractional','multistart'):
             panel.variables[key].set(False)
-        panel.variables['replicates'].set('2')
+        panel.variables['replicates'].set('20')
         panel.simulate()
         wait()
         assert panel.session()['simulation']['prediction']
@@ -49,7 +49,7 @@ def main(source,output):
         assert panel.session()['comparison']['candidates'][0]['error'] is None
         panel.monte_carlo()
         wait()
-        assert panel.session()['monte_carlo']['result']['replicates_completed']==2
+        assert panel.session()['monte_carlo']['result']['replicates_completed']==20
         previous=panel.session()['monte_carlo']
         panel.variables['replicates'].set('500')
         panel.monte_carlo()
@@ -63,7 +63,7 @@ def main(source,output):
         wait()
         assert panel.session()['monte_carlo']==previous
         assert 'cancel' in app.status.get().lower()
-        panel.variables['replicates'].set('2')
+        panel.variables['replicates'].set('20')
         panel.table.selection_set('0')
         panel.transfer()
         app.calculate_selected()
@@ -78,7 +78,7 @@ def main(source,output):
         assert len(loaded.runs)==2
         export_report(loaded,[run['id']],output/'report')
         assert (output/'report/report.pdf').stat().st_size>1000
-        (output/'workflow_smoke.json').write_text(json.dumps({'stages':STAGES,'saved_runs':len(loaded.runs),'simulation_passed':True,'real_monte_carlo_progress_and_cancel_preserved_result':True,'monte_carlo_replicates':2,'callback_errors':errors}),encoding='utf-8')
+        (output/'workflow_smoke.json').write_text(json.dumps({'stages':STAGES,'saved_runs':len(loaded.runs),'simulation_passed':True,'real_monte_carlo_progress_and_cancel_preserved_result':True,'monte_carlo_replicates':20,'callback_errors':errors}),encoding='utf-8')
         print('Frozen workflow: three stages, context isolation, model comparison, Monte Carlo, explicit fit, project roundtrip and PDF/CSV/JSON/PNG/SVG passed',flush=True)
     finally:
         root.update_idletasks()

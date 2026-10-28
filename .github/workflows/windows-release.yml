@@ -26,11 +26,16 @@ jobs:
           path: release-package
       - name: Archive verified package
         shell: pwsh
-        run: Compress-Archive -Path release-package/* -DestinationPath tpd-spectra-windows-x64.zip
+        run: |
+          Compress-Archive -Path release-package/* -DestinationPath tpd-spectra-windows-x64.zip
+          $zipHash = (Get-FileHash tpd-spectra-windows-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$zipHash  tpd-spectra-windows-x64.zip" | Set-Content -Encoding ascii tpd-spectra-windows-x64.zip.sha256
       - name: Prepare unpublished beta release draft
         uses: softprops/action-gh-release@v2
         with:
-          files: tpd-spectra-windows-x64.zip
+          files: |
+            tpd-spectra-windows-x64.zip
+            tpd-spectra-windows-x64.zip.sha256
           draft: true
           prerelease: true
           make_latest: false

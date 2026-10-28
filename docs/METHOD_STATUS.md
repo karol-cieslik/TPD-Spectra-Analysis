@@ -1,4 +1,4 @@
-# Scientific scope and method status — 0.11.0b4 candidate
+# Scientific scope and method status — 0.11.0b5 candidate
 
 Maintainer: Karol Cieślik. This is a research beta, not a validated instrument system.
 Method status describes the available evidence, not regulatory certification.
@@ -48,4 +48,4 @@ are preserved in the [repository's research notes](https://github.com/karol-cies
 ordinary desktop analysis and do not supply validated experimental confidence
 limits. The separate research bootstrap rejects fixed zero order.
 
-No independent human scientific sign-off, real-instrument validation, interval-coverage report, representative usability study or clean-machine acceptance is claimed. See the checkpoint ledger for explicit remaining work.
+No independent human scientific sign-off, real-instrument validation, interval-coverage report, representative usability study or clean-machine acceptance is claimed. Human visual/DPI and independent Windows 10/11 installation acceptance remain outstanding.

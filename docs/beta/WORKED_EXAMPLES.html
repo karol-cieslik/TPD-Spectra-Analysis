@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>TPD Spectra Studio — Worked Quick Start</title>
   <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
     html {
       color: #1a1a1a;
       background-color: #fdfdfd;
@@ -60,6 +63,10 @@
     img {
       max-width: 100%;
     }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
     h1, h2, h3, h4, h5, h6 {
       margin-top: 1.4em;
     }
@@ -103,8 +110,8 @@
      overflow: visible;
     }
     hr {
-      background-color: #1a1a1a;
       border: none;
+      border-top: 1px solid #1a1a1a;
       height: 1px;
       margin: 1em 0;
     }
@@ -203,26 +210,26 @@
 <strong>External beta candidate | updated 27 October 2026</strong><br />
 Dr. Karol Cieślik</p>
 <blockquote>
-<p><strong>Research beta.</strong> This walkthrough uses the
-<code>0.11.0b5</code> candidate (<a
-href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/19">PR
-#19</a>) and the follow-up Results/Help changes (<a
-href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20">PR
-#20</a>). The older downloadable Windows <code>0.11.0b4</code> artifact
-does not yet include PR #20. Confirm your exact build in
-<code>VERSION.json</code>. Windows visual acceptance and independent
-experimental validation remain incomplete. All tutorial spectra are
-synthetic; they are not experimental evidence for a physical
-mechanism.</p>
+<p><strong>Research beta 0.11.0b5.</strong> Current source is
+<code>main</code>, including merged PRs #19–21 and the Results, Help and
+guided exercises. Confirm the exact build in <code>VERSION.json</code>.
+Human Windows visual/DPI acceptance, independent installation without
+Python and experimental validation remain incomplete. All tutorial
+spectra are synthetic; they do not establish a physical mechanism.</p>
 </blockquote>
 <h2 id="start-here-your-first-result-in-five-minutes">Start here: your
 first result in five minutes</h2>
 <ol type="1">
-<li>Use the newly supplied <code>tpd-spectra-windows-x64-beta-0.11.0b5</code> ZIP.
-Check <code>VERSION.json</code> for the exact source commit and <code>SHA256SUMS.txt</code>
-for the executable checksum. The older b4 artifact lacks this interface.
-Extract <strong>the entire archive</strong> into a writable folder; leave <code>docs</code>
-and <code>examples</code> beside the executable. No public b5 download URL is approved yet.</li>
+<li>Use the newly supplied
+<code>tpd-spectra-windows-x64-beta-0.11.0b5</code> ZIP. Check
+<code>VERSION.json</code> for the exact source commit and
+<code>SHA256SUMS.txt</code> for the executable checksum. Get the latest
+successful <strong>main</strong> run from <a
+href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain">Windows
+beta builds</a>. Extract <strong>the entire archive</strong> into a
+writable folder; leave <code>docs</code> and <code>examples</code>
+beside the executable. No tagged prerelease has been published; Actions
+artifacts expire and may require GitHub sign-in.</li>
 <li>Double-click <strong>TPD-Spectra-Studio.exe</strong>. No Python
 installation is needed. This development executable is unsigned: follow
 your institution's software-security policy.</li>
@@ -268,14 +275,14 @@ workspace</h2>
 dataset and named peak stay associated with subsequent calculations.</p>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">Stage</th>
 <th style="text-align: left;">What to do</th>
 <th style="text-align: left;">What to check before continuing</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Spectra &amp;
 Preparation</strong></td>
 <td style="text-align: left;">Open/import data; inspect units, cleaning,
@@ -283,7 +290,7 @@ baseline and named peak intervals</td>
 <td style="text-align: left;">Correct spectrum, temperature range and
 peak selection</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Modeling &amp; Order
 Identification</strong></td>
 <td style="text-align: left;">Simulate a physical hypothesis, compare
@@ -292,7 +299,7 @@ components</td>
 <td style="text-align: left;">Heating rate, starting assumptions,
 residuals and warnings</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Kinetic Analysis</strong></td>
 <td style="text-align: left;">Perform an explicit analysis on a selected
 region; save and export a labeled result</td>
@@ -485,7 +492,7 @@ trial inputs for this truth-informed numerical exercise:</li>
 </ol>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">Component</th>
 <th style="text-align: right;">Fixed order</th>
 <th style="text-align: right;">Fixed prefactor</th>
@@ -495,7 +502,7 @@ trial inputs for this truth-informed numerical exercise:</li>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>1e13 s⁻¹</code></td>
@@ -503,7 +510,7 @@ trial inputs for this truth-informed numerical exercise:</li>
 <td style="text-align: right;">1.185 eV</td>
 <td style="text-align: left;">1.14-1.22 eV</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">2</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>1e13 s⁻¹</code></td>
@@ -511,7 +518,7 @@ trial inputs for this truth-informed numerical exercise:</li>
 <td style="text-align: right;">1.265 eV</td>
 <td style="text-align: left;">1.22-1.30 eV</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">3</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>1e13 s⁻¹</code></td>
@@ -611,14 +618,14 @@ unlike diagnostic ZIPs, can contain scientific data.</p>
 <h2 id="parameters-at-a-glance">Parameters at a glance</h2>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">Display term</th>
 <th style="text-align: left;">Meaning</th>
 <th style="text-align: left;">What the program does with it</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Heating rate</strong> (β)
 (K/s)</td>
 <td style="text-align: left;">Rate of temperature increase; verify from
@@ -626,27 +633,27 @@ experiment</td>
 <td style="text-align: left;">Supplied physical input, not inferred from
 a fit</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Energy</strong> (E) (eV)</td>
 <td style="text-align: left;">Activation/desorption barrier in chosen
 model</td>
 <td style="text-align: left;">Simulation input, fit initialization or
 fitted output depending on action</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Prefactor</strong> (ν) (s⁻¹)</td>
 <td style="text-align: left;">Kinetic attempt frequency under
 normalized-coverage convention</td>
 <td style="text-align: left;">Assumed for Redhead/components; initial
 guess or fitted/conditional quantity in other methods</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Order</strong> (n)</td>
 <td style="text-align: left;">Exponent of normalized coverage</td>
 <td style="text-align: left;">Can be fixed or selected/fitted according
 to method; not proof of mechanism</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Initial coverage</strong>
 (\theta_0)</td>
 <td style="text-align: left;">Dimensionless normalized population at
@@ -654,61 +661,61 @@ first included temperature</td>
 <td style="text-align: left;">Supplied for simulation/components; may be
 normalized to 1 for single-state fitting</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Signal scale</strong> (A)</td>
 <td style="text-align: left;">Conversion from calculated rate to
 detector signal</td>
 <td style="text-align: left;">Optimized in full fits; may absorb unknown
 detection sensitivity</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Baseline / drift</strong></td>
 <td style="text-align: left;">Constant signal offset and optional linear
 trend</td>
 <td style="text-align: left;">Selected/fitted as specified; cannot
 repair every instrument artifact</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Multistart</strong></td>
 <td style="text-align: left;">Tries several starting guesses in
 optimization</td>
 <td style="text-align: left;">Can reduce sensitivity to initialization,
 not guarantee global optimum</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Maximum evaluations</strong></td>
 <td style="text-align: left;">Budget for a numerical optimization</td>
 <td style="text-align: left;">Not the number of Monte Carlo
 replicates</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Seed</strong></td>
 <td style="text-align: left;">Starting state for reproducible
 pseudo-random draws</td>
 <td style="text-align: left;">Does not change the physical kinetic
 model</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Replicates</strong></td>
 <td style="text-align: left;">Number of noisy datasets refitted</td>
 <td style="text-align: left;">More usually costs more time; ranges
 require at least 100 successful refits here</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>RMSE / residual</strong></td>
 <td style="text-align: left;">Size/pattern of
 observation-minus-prediction error</td>
 <td style="text-align: left;">Quality diagnostics; a small value is not
 mechanism proof</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>AICc / BIC</strong></td>
 <td style="text-align: left;">Criteria for comparing fitted candidate
 descriptions</td>
 <td style="text-align: left;">Heuristic rankings under stated
 assumptions, not mechanism probabilities</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Stale result</strong></td>
 <td style="text-align: left;">Stored result no longer corresponds to
 current settings</td>
@@ -727,64 +734,64 @@ physical process can be represented this way.</p>
 <h2 id="if-something-goes-wrong">If something goes wrong</h2>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">Symptom</th>
 <th style="text-align: left;">First check</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">The program does not open</td>
 <td style="text-align: left;">Did you extract the
 <strong>complete</strong> ZIP? Check Windows/institution security
 policy; this beta is unsigned.</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">Modeling shows no useful fit</td>
 <td style="text-align: left;">Confirm a dataset and named peak region;
 verify candidate selection; inspect <strong>Assumptions &amp;
 warnings</strong>.</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Run Monte Carlo</strong> is
 unavailable</td>
 <td style="text-align: left;">Complete a model comparison for the
 <strong>current</strong> settings first; let another running job finish
 or cancel.</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">No Monte Carlo parameter intervals
 appear</td>
 <td style="text-align: left;">Fewer than 100 successful refits, failed
 fits, or numerical/identifiability restrictions can suppress them.</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">The first peak fit does not explain both
 peaks</td>
 <td style="text-align: left;">The default region is a single-state
 approximation. Use <strong>Overlapping components...</strong> for a
 justified joint hypothesis.</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">Parameters appear different after
 switching methods</td>
 <td style="text-align: left;">Check the selected dataset, named peak,
 method and <strong>STALE</strong> status; previous sessions retain their
 original snapshots.</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">Dragging a region does nothing</td>
 <td style="text-align: left;">Turn off the plot toolbar's pan/zoom mode,
 enable <strong>Drag interval</strong>, and save with Add/Update
 peak.</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">Your exported report is missing</td>
 <td style="text-align: left;">Select and label a completed run, choose a
 new destination, and check export status; do not assume the preview is
 the rendered PDF.</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">You want to report a bug</td>
 <td style="text-align: left;">Use <strong>Report a Bug / Send
 Feedback</strong>; inspect the diagnostic text/ZIP before sharing. No
@@ -798,9 +805,8 @@ scope</h3>
 and exploratory research. Independent experimental benchmarks,
 uncertainty-coverage studies and external scientific review remain
 necessary before quantitative method claims or publication. Read <a
-href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/7139c4659/docs/MULTICOMPONENT_FITTING.md"><code>docs/MULTICOMPONENT_FITTING.md</code></a>
-and <a
-href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/7139c4659/docs/METHOD_STATUS.md"><code>docs/METHOD_STATUS.md</code></a>
+href="../MULTICOMPONENT_FITTING.md"><code>docs/MULTICOMPONENT_FITTING.md</code></a>
+and <a href="../METHOD_STATUS.md"><code>docs/METHOD_STATUS.md</code></a>
 before interpreting advanced fits.</p>
 <p><strong>Feedback:</strong> In the program choose <strong>Report a Bug
 / Send Feedback</strong>, or email <strong>Dr. Karol Cieślik</strong> at
@@ -815,9 +821,9 @@ href="https://github.com/karol-cieslik/TPD-Spectra-Analysis">github.com/karol-ci
 Code is MIT licensed; see the repository's <code>LICENSE</code> and
 <code>ASSET-RIGHTS.md</code>.</p>
 <hr />
-<p><em>Preparation note: tutorial instructions and synthetic truth are
-cross-checked against the 0.11.0b4 source and the draft Results/Help
-improvements; the final Windows package needs acceptance testing before
-external distribution.</em></p>
+<p><em>Tutorial instructions and synthetic truth are covered by source
+and frozen-package checks. Human first-run, visual/DPI and clean-machine
+acceptance of the exact final ZIP remain necessary before external
+distribution.</em></p>
 </body>
 </html>

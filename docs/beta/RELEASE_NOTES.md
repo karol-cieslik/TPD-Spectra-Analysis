@@ -1,15 +1,25 @@
-# TPD Spectra Studio 0.11.0b4 — development beta notes
+# TPD Spectra Studio 0.11.0b5 — research beta notes
 
-This is a research beta for informal colleague feedback, not a stable release
-or a claim of experimental validation. This candidate is on the separate
-`fix/beta-feedback-14-17` branch in PR #19. For downloading and starting, see [START_HERE](../../START_HERE.md);
-technical build evidence is maintained separately in the repository.
+Current source: `main`, including merged PRs #19, #20 and #21. This is an
+informal research beta, not a stable release or experimental validation.
+See [START_HERE](../../START_HERE.md) for download and extraction instructions.
+`VERSION.json` records the exact source commit; `SHA256SUMS.txt` records package
+file hashes. Historical b4 artifacts lack the Results/Help improvements.
 
-**Pending next Windows build:** [PR #20](https://github.com/karol-cieslik/TPD-Spectra-Analysis/pull/20)
-adds a structured Results summary, 40-topic searchable scientific Help, five
-in-app tutorials and an offline worked-examples guide. These additions are
-not present in the older downloadable b4 executable. They require a fresh
-frozen build and visual acceptance before inclusion in a colleague ZIP.
+## Included in b5
+
+- Structured Results tabs distinguish fitted, assumed and calculated quantities
+  and retain submitted settings and scientific cautions.
+- Searchable offline scientific Help contains 40 topics, with field-level help.
+- Five guided in-app exercises and an offline HTML worked guide accompany the
+  brief five-page Quick Start PDF.
+- Windows executable version metadata and portable commit identity agree.
+- The portable package contains researcher documentation, examples and licenses;
+  internal planning, audit and acceptance records remain in the repository.
+
+Automated Windows tests and frozen smoke checks have passed. Human visual/DPI
+inspection and independent Windows 10/11 installation without Python remain
+outstanding. Run those checks on the exact downloaded ZIP before sharing it.
 
 ## Changes
 
@@ -22,7 +32,7 @@ frozen build and visual acceptance before inclusion in a colleague ZIP.
 - Up to three independent Polanyi–Wigner components fit simultaneously on one
   full spectrum. Fixed component orders/prefactors/coverages, joint energy/scale
   estimates, shared offset/drift, heuristic count comparison, conditional local
-  uncertainty and individual exports are documented in MULTICOMPONENT_FITTING.md.
+  uncertainty and individual exports are documented in [the component guide](../MULTICOMPONENT_FITTING.md).
 - Component Monte Carlo and multicomponent zero-order searches remain outside
   this increment. Synthetic recovery does not establish physical state identity.
 
@@ -63,8 +73,7 @@ frozen build and visual acceptance before inclusion in a colleague ZIP.
   layout/scaling acceptance remain open. Please report any clipped controls or
   unusual layout at your usual display resolution and scaling.
 - Windows executable is unsigned. Follow institutional software policies.
-- The old b4 Windows package does not include the pending PR #20 Help and
-  Results features; verify the exact commit in `VERSION.json`.
+- Verify the exact source commit in `VERSION.json`; do not substitute a historical artifact for the current beta.
 - Analysis reports and portable projects contain scientific data; the separate
   diagnostic ZIP contains only its editable report and explanatory README.
 

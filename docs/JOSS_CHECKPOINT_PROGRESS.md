@@ -193,3 +193,20 @@ by CI and still does not replace human visual/clean-machine acceptance.
 ## Optimizer correction
 
 Peak-informed kinetic initialization with profiled linear scale/baseline now recovers the formerly failed 81-point case at 1.09463537 eV, NRMSE 0.01273470. Independent noisy first/second/fractional regressions passed. Full headless suite: 328 passed, 38 display skips. See validation/optimizer_investigation/FIX.md. Historical MC/ranking records remain pre-correction evidence and require reassessment; no universal optimization or experimental validation claim is made.
+
+## Post-fix Monte Carlo reassessment
+
+Source 39c9d7a96d00e40ca5d7ee777f89ea37155e3d7b passed scientific CI and the
+full Windows build. Reused the original two spectra and three seeds, with 200
+replicates per run and both first/second candidates. All six runs completed:
+1200 full rankings, 2400 individual fit records, no failed rankings or timeouts.
+First order won 600/600 matched-noise and 598/600 drift rankings. Maximum
+first-order percentile endpoint change from historical parameter-only outputs
+was 3.13e-6 eV. Equal-100 prefixes differ for drift seed 73 (99/1 versus 100/0),
+so changes are not solely due to increasing the count. This limited evidence
+advances checkpoints 27/28/31/32; general noise/model robustness, blind recovery
+and confidence coverage remain unvalidated. See validation/joss_postfix/.
+
+Next scientific task: acquire/evaluate a suitable full-peak experimental energy
+comparison. Existing deposited D2 input/peak reproduction remains a deliberately
+limited negative-ramp-screening example, not an energy-validation result.

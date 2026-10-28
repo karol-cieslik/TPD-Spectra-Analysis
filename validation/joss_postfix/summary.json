@@ -1,0 +1,557 @@
+{
+  "protocol": "Post-fix joint parameter/ranking reassessment; not mechanism probabilities.\n\nProtocol fixed before execution: reuse both recorded 65-point datasets, compare\nfirst/second orders with initial E=1.1, nu=1e12, 50 evaluations and no multistart.\nFor seeds 11/42/73 run 200 conditional refits, summarize nested 50/100/200 prefixes.\nEach seed runs in a separate subprocess with a 300-second wall limit. Retain\ntimeouts/failures without calling them completed rankings. Three seeds on one\ndataset per case do not measure frequentist model-selection accuracy/coverage.\n",
+  "runs": [
+    {
+      "case": "baseline_drift_mismatch",
+      "seed": 11,
+      "reference_model": "first",
+      "prefixes": [
+        {
+          "prefix_replicates": 50,
+          "completed": 50,
+          "complete_rankings": 50,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 50,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 50,
+              "energy_range_eV": null
+            },
+            "second": {
+              "successes": 50,
+              "energy_range_eV": null
+            }
+          }
+        },
+        {
+          "prefix_replicates": 100,
+          "completed": 100,
+          "complete_rankings": 100,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 100,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.0637418905185718,
+                1.2236141960595788
+              ]
+            },
+            "second": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.5695763730794905,
+                1.8353922193973387
+              ]
+            }
+          }
+        },
+        {
+          "prefix_replicates": 200,
+          "completed": 200,
+          "complete_rankings": 200,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 199,
+            "second": 1
+          },
+          "winning_fractions_all_completed": {
+            "first": 0.995,
+            "second": 0.005
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.0651047382467742,
+                1.228639161371108
+              ]
+            },
+            "second": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.5690978225832362,
+                1.8591959576802541
+              ]
+            }
+          }
+        }
+      ],
+      "elapsed_seconds": 154.14125078899997
+    },
+    {
+      "case": "baseline_drift_mismatch",
+      "seed": 42,
+      "reference_model": "first",
+      "prefixes": [
+        {
+          "prefix_replicates": 50,
+          "completed": 50,
+          "complete_rankings": 50,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 50,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 50,
+              "energy_range_eV": null
+            },
+            "second": {
+              "successes": 50,
+              "energy_range_eV": null
+            }
+          }
+        },
+        {
+          "prefix_replicates": 100,
+          "completed": 100,
+          "complete_rankings": 100,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 100,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.0793347869769698,
+                1.2231291135626348
+              ]
+            },
+            "second": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.5941140210803033,
+                1.8303543292035367
+              ]
+            }
+          }
+        },
+        {
+          "prefix_replicates": 200,
+          "completed": 200,
+          "complete_rankings": 200,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 200,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.0679487225896207,
+                1.2242371503590874
+              ]
+            },
+            "second": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.586358704614405,
+                1.829323044808524
+              ]
+            }
+          }
+        }
+      ],
+      "elapsed_seconds": 150.64902105800047
+    },
+    {
+      "case": "baseline_drift_mismatch",
+      "seed": 73,
+      "reference_model": "first",
+      "prefixes": [
+        {
+          "prefix_replicates": 50,
+          "completed": 50,
+          "complete_rankings": 50,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 50,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 50,
+              "energy_range_eV": null
+            },
+            "second": {
+              "successes": 50,
+              "energy_range_eV": null
+            }
+          }
+        },
+        {
+          "prefix_replicates": 100,
+          "completed": 100,
+          "complete_rankings": 100,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 99,
+            "second": 1
+          },
+          "winning_fractions_all_completed": {
+            "first": 0.99,
+            "second": 0.01
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.0695207256275685,
+                1.2498035740198352
+              ]
+            },
+            "second": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.5774288619915084,
+                1.8275599214041498
+              ]
+            }
+          }
+        },
+        {
+          "prefix_replicates": 200,
+          "completed": 200,
+          "complete_rankings": 200,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 199,
+            "second": 1
+          },
+          "winning_fractions_all_completed": {
+            "first": 0.995,
+            "second": 0.005
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.0682572831421429,
+                1.246613124920244
+              ]
+            },
+            "second": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.5799704917695805,
+                1.8391484360099886
+              ]
+            }
+          }
+        }
+      ],
+      "elapsed_seconds": 152.2601681799997
+    },
+    {
+      "case": "matched_gaussian",
+      "seed": 11,
+      "reference_model": "first",
+      "prefixes": [
+        {
+          "prefix_replicates": 50,
+          "completed": 50,
+          "complete_rankings": 50,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 50,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 50,
+              "energy_range_eV": null
+            },
+            "second": {
+              "successes": 50,
+              "energy_range_eV": null
+            }
+          }
+        },
+        {
+          "prefix_replicates": 100,
+          "completed": 100,
+          "complete_rankings": 100,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 100,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.0761450409117965,
+                1.1131864604449935
+              ]
+            },
+            "second": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.6003728882130475,
+                1.6606630191593112
+              ]
+            }
+          }
+        },
+        {
+          "prefix_replicates": 200,
+          "completed": 200,
+          "complete_rankings": 200,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 200,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.0759948351849375,
+                1.1154917557689459
+              ]
+            },
+            "second": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.6001035765654605,
+                1.664674401741303
+              ]
+            }
+          }
+        }
+      ],
+      "elapsed_seconds": 160.04505654900004
+    },
+    {
+      "case": "matched_gaussian",
+      "seed": 42,
+      "reference_model": "first",
+      "prefixes": [
+        {
+          "prefix_replicates": 50,
+          "completed": 50,
+          "complete_rankings": 50,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 50,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 50,
+              "energy_range_eV": null
+            },
+            "second": {
+              "successes": 50,
+              "energy_range_eV": null
+            }
+          }
+        },
+        {
+          "prefix_replicates": 100,
+          "completed": 100,
+          "complete_rankings": 100,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 100,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.0794229146602317,
+                1.1127482942521134
+              ]
+            },
+            "second": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.6056508970524703,
+                1.6631009123954277
+              ]
+            }
+          }
+        },
+        {
+          "prefix_replicates": 200,
+          "completed": 200,
+          "complete_rankings": 200,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 200,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.0767312212904958,
+                1.1125711566675303
+              ]
+            },
+            "second": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.604194653236122,
+                1.662384294856232
+              ]
+            }
+          }
+        }
+      ],
+      "elapsed_seconds": 153.15364895699986
+    },
+    {
+      "case": "matched_gaussian",
+      "seed": 73,
+      "reference_model": "first",
+      "prefixes": [
+        {
+          "prefix_replicates": 50,
+          "completed": 50,
+          "complete_rankings": 50,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 50,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 50,
+              "energy_range_eV": null
+            },
+            "second": {
+              "successes": 50,
+              "energy_range_eV": null
+            }
+          }
+        },
+        {
+          "prefix_replicates": 100,
+          "completed": 100,
+          "complete_rankings": 100,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 100,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.0764086801241972,
+                1.117671060629895
+              ]
+            },
+            "second": {
+              "successes": 100,
+              "energy_range_eV": [
+                1.6000723778550765,
+                1.6624876083462015
+              ]
+            }
+          }
+        },
+        {
+          "prefix_replicates": 200,
+          "completed": 200,
+          "complete_rankings": 200,
+          "failed_rankings": 0,
+          "winning_counts": {
+            "first": 200,
+            "second": 0
+          },
+          "winning_fractions_all_completed": {
+            "first": 1.0,
+            "second": 0.0
+          },
+          "parameter_ranges": {
+            "first": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.0758736906789756,
+                1.1158416950323462
+              ]
+            },
+            "second": {
+              "successes": 200,
+              "energy_range_eV": [
+                1.6021655900278362,
+                1.6647788930228196
+              ]
+            }
+          }
+        }
+      ],
+      "elapsed_seconds": 153.2759553779997
+    }
+  ]
+}

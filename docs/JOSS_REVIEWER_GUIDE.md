@@ -94,3 +94,12 @@ The original PR Windows failures were traced to CRLF checkout changing the
 experimental CSV hash and a cp1252 test decoder. Data checkout is now LF and
 the Help test explicitly uses UTF-8. Review the CI for the corrected commit;
 passing Linux tests do not replace it.
+
+## Corrected-fitter reassessment
+
+Read validation/joss_postfix/README.md and comparison.json for the completed
+post-fix reassessment. It preserves old results, reuses original inputs, and
+retains 1200 complete ranking replicates with 2400 model-fit records. To reproduce
+into a new directory: `python -m scripts.joss_postfix_assessment --output output/postfix-new`.
+This combined two-candidate run supplies parameter and ranking evidence; no
+repeat of the unchanged numerical-reference matrix was necessary.

@@ -1,0 +1,23 @@
+{
+  "dataset_doi": "10.14278/rodare.4644",
+  "article_doi": "10.1038/s41467-026-75930-9",
+  "sheet": "H2 D2",
+  "points": 289,
+  "csv_sha256": "9eba6e09297c47ba8e2a6027eeb29a327390746841c9541c4c8e0b531994a99b",
+  "source_units": {
+    "time": "s",
+    "temperature": "K"
+  },
+  "temperature_conversion_max_error_K": 1.4210854715202004e-14,
+  "time_conversion_max_error_s": 4.547473508864641e-13,
+  "signal_max_relative_error": 1.0126049058682479e-16,
+  "temperature_points_corrected": 0,
+  "peak_temperature_K": 92.06,
+  "published_peak_approx_K": 92.0,
+  "peak_difference_from_rounded_text_K": 0.060000000000002274,
+  "published_heating_rate_K_s": 0.1,
+  "whole_trace_regression_beta_K_s": 0.10073705149618921,
+  "ramp_check": null,
+  "ramp_rejection": "Measured/reconstructed ramp mismatch 4.17103 K exceeds 2 K. Inspect holds, cooling, nonlinear ramps and temperature units; a constant-ramp kinetic fit was not performed.",
+  "interpretation": "Experimental import/conversion/rounded peak-position comparison and negative ramp screen only. No kinetic fit performed."
+}

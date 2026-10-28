@@ -34,3 +34,11 @@ The main CSV includes `contact_author`, `contact_email`, `contact_role`, `contac
 Suggested sequence: complete the digitization and independent validation first; then send one personalized professional message to the identified author, explain specifically which published spectrum and figure were used, identify the article citation, provide a link to the software and validation protocol, invite bug reports/usability comments, and avoid implying endorsement or collaboration without the author's agreement. If you want the original numerical data, request them explicitly and ask about permission for public redistribution.
 
 Use `outreach_status` to track `not_contacted`, `sent`, `replied`, `declined`, or `bounced`. Do not publish private email responses or third-party confidential datasets in this public GitHub repository.
+
+## Acquired external numerical input case
+
+A separate deposited CC-BY-4.0 dataset now supports a limited experimental
+input/conversion/peak and negative ramp-screening check. See
+[the RODARE case](experimental/rodare_4644/README.md). It is outside the 26
+figure-digitization leads above and does not change their not_started status.
+It is not a completed desorption-energy validation or external-adoption claim.

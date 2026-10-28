@@ -1,0 +1,169 @@
+# JOSS checkpoint progress — 28 October 2026
+
+This is an evidence update to the 78-checkpoint readiness audit. It records
+completed work and explicit limits, not journal eligibility or acceptance.
+Upstream baseline: `d85be6bbaeb6b58fce12bf9b7ff2e47c5fd123ac` (0.11.0b5).
+Changes are proposed for review; no release, merge or external outreach occurred.
+
+## Completed in this work block
+
+- Executed baseline headless tests (307 passed, 38 GUI/display-dependent skips).
+- Added explicit Python import time units ms/s/min and temperatures degC/K,
+  preserving legacy defaults and exporting source/conversion metadata.
+- Added a quantified CLI constant-ramp mismatch screen and regression that
+  prevents optimizer invocation for a rejected ramp. The default 2 K is an
+  engineering threshold; it is not experimental uncertainty.
+- Fixed missing scientific Help in installed wheels and tested all 40 topics.
+- Corrected stale source installation instructions and narrowed citation wording.
+- Executed 36 independent reference cases; all passed the specified 2e-6
+  normalized-population tolerance, worst error 9.645030716876057e-7.
+- Executed 1200 conditional single-model MC refits: 2 cases × 3 seeds × 200.
+  All completed without failed refits. Full records are compressed alongside
+  the summary; no experiment/coverage/model-selection claim follows.
+- Acquired original CC-BY-4.0 external TDS data, verified source checksum,
+  documented attribution, reproduced a sampled 92.06 K D2 maximum versus the
+  article's rounded ~92 K description, and documented a 4.17103 K full-ramp
+  mismatch. No kinetic fit was forced.
+- Prepared a working JOSS manuscript, bibliography and assessment figure.
+  Affiliation, authorship, funding, actual research-use evidence and historical
+  AI disclosure remain explicit author-confirmation items.
+
+## Results and limits
+
+For the matched Gaussian case, 200-refit energy percentile endpoints across
+three seeds span about 0.000858 eV (lower) and 0.003271 eV (upper). The largest
+100→200 endpoint change is about 0.002692 eV. For the drift-mismatch case the
+endpoint spans are about 0.003152 and 0.022376 eV, with a largest prefix change
+of 0.011386 eV. These are measured sensitivities of this bounded design, not
+universal convergence or coverage guarantees. The first fitted energies are
+1.094779 eV (matched case) and 1.144674 eV (drift case), with input 1.1 eV.
+One fixed dataset per case does not estimate frequentist bias.
+
+A first two-candidate/multistart assessment attempt did not return its initial
+comparison in the observation period. It produced no completed MC evidence.
+The protocol documents narrowing to single-model parameter stability before
+those results were generated. Multi-model ranking convergence is still open.
+
+The installed wheel now provides its core and offline Help from an unrelated
+working directory. It does not include every repository example/tutorial
+sidecar. Full desktop distribution remains source/portable-Windows based.
+The local Pandoc PDF is a draft rendering, not an official JOSS-template proof.
+
+## Next work in order
+
+1. Finish a suitable full-peak experimental kinetic comparison. Current external
+   input/peak reproduction is deliberately narrower and cannot replace it.
+2. Investigate the slow multistart/candidate comparison and finish bounded
+   multi-model ranking stability. Do not interpret parameter-only results as
+   completed model-comparison validation.
+3. Have Karol/tester perform the exact-package clean-Windows visual/DPI checklist,
+   and a domain scientist review equations, units and experimental interpretation.
+4. Confirm manuscript metadata/AI disclosure, genuine research use and final
+   software comparison; compile using the official JOSS preview workflow.
+5. Continue genuine open development; after 17 April 2027 is only a theoretical
+   earliest submission window if public from creation and all other gates pass.
+
+## All checkpoints
+
+E=evidenced for the bounded task; P=partial; G=gap; H=human action;
+D=conditional/deferred; F=later submission/review. No percentage readiness is inferred.
+
+| # | Checkpoint | Status | Evidence / remaining action |
+|---:|---|:---:|---|
+| 1 | Record the exact source commit and version to audit. | E | Pinned upstream d85be6b; working changes isolated for a draft PR, no merge/release. |
+| 2 | Inventory user-facing methods, experimental APIs, export formats and supported environments. | E | README, method status, packaging metadata and source give an inventory; supported environment claims remain bounded. [R3–R5] |
+| 3 | Classify each capability as supported, experimental or excluded from publication claims. | E | METHOD_STATUS explicitly distinguishes experimental methods and unsupported scientific claims. Use this as the manuscript scope baseline. [R4] |
+| 4 | Write the central contribution in two sentences: intended users, research task, and the practical gap addressed. | E | Proposed central contribution supplied in this report, grounded in README/manual; uniqueness remains unproven. [R3, R6] |
+| 5 | Separate established kinetic methods from original software/workflow contributions. Do not claim a new physical theory without evidence. | E | Established equations separated from software/workflow contribution in the proposed scope below. [R4] |
+| 6 | Make a claim–evidence table: proposed sentence, implementation location, verifying test, dataset, citation and limitation. | P | Initial manuscript claim map and 78-row progress ledger created; final sentence audit still required. |
+| 7 | Resolve or narrow claims affected by ambiguous units and temperature-ramp reconstruction. | P | Explicit Python source-unit conversions and quantified CLI ramp rejection implemented/tested. GUI unit mapping remains absent. |
+| 8 | Freeze the feature scope. Add features only when needed to fix a demonstrated defect or support a retained claim. | H | Approve a bounded publication feature scope; no evidence of a final feature freeze. Do not add unsupported methods to enlarge the paper. |
+| 9 | Establish when the repository first became public using available historical evidence; distinguish this from repository creation and earliest commit. | P | Creation date 17 October 2026 establishes a hard upper bound on age. Exact first-public date is not exposed by the inspected metadata. [R1] |
+| 10 | Inspect whether meaningful development spans more than six public months. | G | Cannot pass today: repository was created only 11 days before audit. More than six months of active public development is required. [R1, J1] |
+| 11 | Record releases, fixes, documentation changes and feedback-driven iteration. | E | Issues/PRs and successive beta corrections document iteration; releases endpoint returns none. Long-term sustained development is not yet demonstrated. [R2, R7] |
+| 12 | Identify an actual research workflow using the software; a demo download or intention to use it is insufficient by itself. | G | No completed actual research-use case established by inspected materials. Synthetic demos and a literature catalog do not by themselves establish this gate. [R8] |
+| 13 | Preserve shareable evidence of that use, with permission where needed. | G | No completed research-use evidence package found. Preserve an authentic workflow/application when it exists. |
+| 14 | Check the actual plain-text OSI-approved licence and third-party/data licensing boundaries. | P | LICENSE contains MIT grant text plus a custom scope preamble; GitHub reports NOASSERTION. ASSET-RIGHTS separates code/data. Clarify standard license presentation and confirm ownership. [R1, R9] |
+| 15 | Confirm public source browsing, cloning, readable issues and contribution pathways. | P | Metadata says public and issues/PRs are available. Anonymous clone/browse/issue access was not independently tested; authenticated connector access alone does not prove it. [R1, R7] |
+| 16 | Record truthful software contributions and decide authorship accordingly. | H | CITATION.cff identifies Karol; final author list, contribution account and approvals require humans. [R10] |
+| 17 | Record AI tools/models and versions where known, their roles, and human verification. Do not invent unavailable historical version details. | P | Codex assistance is mentioned for assets, but no consolidated manuscript-level AI tools/roles/human-verification disclosure was found. Reconstruct it truthfully. [R9, J1] |
+| 18 | Inspect existing test coverage by scientific claim, not total number of tests. | E | Existing central tests mapped and baseline executed: 307 passed/38 display-dependent skips. |
+| 19 | Implement or retain independent reference calculations that do not simply call the production simulator again. | E | Independent separable/quadrature references exist for six orders and three ramps, plus zero-order and component references. Reuse them. [R12–R14] |
+| 20 | Define a small benchmark matrix covering the published scope. | E | Frozen bounded protocol and 36-case independent numerical matrix executed; output retained. |
+| 21 | Fix acceptance tolerances and exclusions before evaluating results. | E | Reuse existing 2e-6 normalized-population tolerance; report explicitly limits its scientific meaning. CLI 2 K screen is engineering, not calibration. |
+| 22 | Record absolute/relative parameter error, prediction error, bias and failure rate where relevant. | P | Numerical errors, fit results, conditional ranges and 1200 records retained. No repeated-dataset bias or coverage claim. |
+| 23 | Include difficult cases and publish failures; do not select only favorable spectra. | E | Tests explicitly include coincident/exchangeable components, failed competitors, withheld intervals and cancellation. This verifies tested behavior, not all experimental failure rates. [R13, R14, R17] |
+| 24 | Confirm parameter labels distinguish fitted, assumed, derived and unavailable values. | E | Result-view tests distinguish assumed, derived, regression, fixed and non-unique quantities. [R18] |
+| 25 | Have a domain scientist inspect equations, units and interpretation independently of the implementation. | H | No independent human scientific sign-off is claimed by current method status. Arrange a bounded equation/unit/interpretation review. [R4] |
+| 26 | Specify the reference model, noise estimate, perturbation distribution, refit settings and output statistics. | E | Monte Carlo implementation and guide specify fitted reference, residual sigma, iid Gaussian noise, settings and conditional percentiles. [R17, R19] |
+| 27 | Verify seeded reproducibility and stability across independent seeds. | P | Three seeds and nested 100/200-count prefixes assessed for two single-model cases. Endpoint differences quantified; no universal convergence established. |
+| 28 | Check convergence with replicate count using representative easy and difficult cases. A fixed count such as 500 is not inherently sufficient. | P | 100/200-prefix parameter sensitivity assessed; high-noise drift sensitivity remains. Multi-model ranking convergence is still open. |
+| 29 | Audit accounting: requested, attempted, successful, failed, cancelled and ranking-eligible replicates. | E | Code/tests retain completed replicates, per-model success/failure and incomplete-ranking accounting; cancellation behavior is tested. [R17] |
+| 30 | Check that candidate models receive the same generated observations in each comparison replicate. | E | Synthetic observations are generated once per replicate outside candidate comparison; each candidate uses that realization. [R17] |
+| 31 | Examine how boundary solutions, degeneracy and failed competitors affect reported ranges and rankings. | P | Boundary/degeneracy safeguards and failed-competitor withholding exist; quantify their selection effects on ranges/rankings in a small assessment. [R13, R17] |
+| 32 | Confirm exports retain seed, noise assumptions, settings and failure counts. | P | All 1200 refit records archived with seeds/noise/success counts plus executable assessment script; final GUI export audit remains. |
+| 33 | Choose the claim: conditional stability ranges, or statistically calibrated intervals. | E | Existing docs explicitly choose conditional refit ranges and reject calibrated-CI/mechanism-probability interpretations. Keep this scope. [R4, R19] |
+| 34 | If claiming nominal confidence coverage, run an outer repeated-dataset experiment: generate independent datasets with known parameters, construct an interval for each, and measure coverage with Monte Carlo sampling uncertainty. | D | Defer for the initial paper: no general confidence-coverage claim is proposed. Separate bootstrap tools do not validate Explorer intervals. [R16] |
+| 35 | Assess noise-model mismatch if robustness to correlated/heteroscedastic noise is claimed; otherwise state the exclusion explicitly. | E | Gaussian-noise assumptions and excluded drift/correlation/calibration/model uncertainty are explicit. No robustness claim is supported. [R4, R19] |
+| 36 | Select an isolated, well-characterized desorption case compatible with the implemented physics. | P | First catalog lead inspected and unsuitable for a simple unqualified energy comparison; CC-BY raw external dataset selected for a narrower input/peak test. |
+| 37 | Prefer raw deposited data or author-provided data over extracting a printed curve. | E | Original RODARE workbook acquired and MD5 matched; selected measured columns preserved with SHA256 provenance. |
+| 38 | Record DOI, dataset identity, figure/trace if applicable, acquisition conditions, heating rate, units and sample context. | E | Dataset/article DOIs, sheet, signal, source units, measured time, heating rate and transformations recorded. |
+| 39 | Confirm redistribution rights separately for data, digitized coordinates and source images. | E | RODARE file license CC-BY-4.0 verified; attribution and changes included with derived CSV. No rights inference for Brown/Bolina figure. |
+| 40 | For digitization, record axis calibration, log/linear scales, line thickness/resolution, overlaps, extraction method and uncertainty. | D | No digitization required for the selected deposited numerical dataset. Catalog digitizations remain not started. |
+| 41 | Distinguish measured time from an assumed linear-ramp time reconstruction; document any missing inputs. | E | Actual measured seconds and kelvin retained; explicit conversion verified against source numeric arrays. |
+| 42 | Reproduce the original analysis assumptions before comparing reported parameters. | P | Published heating program and approximate D2 peak confirmed. Kinetic-energy reproduction has not been completed. |
+| 43 | Prespecify baseline, fit interval, fixed prefactor/order and comparison criterion. | P | No smoothing/baseline processing used for input/peak check; full trace rejected by specified ramp screen. Suitable energy-fit design still required. |
+| 44 | Compare predicted spectra/residuals and parameters, accounting for digitization, approximation and methodological differences. | P | 92.06 K sampled peak agrees with rounded ~92 K article description; no experimental energy/parameter-fit validation claimed. |
+| 45 | Examine sensitivity to baseline, fit window, prefactor and heating-rate assumptions. | G | No completed experimental window/baseline/prefactor/heating-rate sensitivity assessment. [R8] |
+| 46 | Explain disagreement rather than tuning settings until the published energy is matched. | P | Full-trace 4.17103 K mismatch recorded rather than relaxing tolerance to force a kinetic result. |
+| 47 | Add one challenging case if it tests a retained claim, such as overlapping populations or a coverage series. | D | Second challenging experimental case is deferred until the first is complete; add only for a retained publication claim. |
+| 48 | Obtain an independent scientific reading of what the case does and does not validate. | H | Independent reading of the completed experimental result remains future human work. [R4] |
+| 49 | Install from source in a clean supported environment using documented instructions. | P | Wheel built and installed into isolated target from unrelated cwd. Core and 40 Help topics verified after a packaging fix; full desktop sidecars/clean Windows remain separate. |
+| 50 | Test the exact packaged Windows build on a clean machine without Python. | H | Clean Windows 10/11 without Python on the exact ZIP explicitly remains untested. [R21] |
+| 51 | Complete human display/DPI acceptance on the supported configurations. | H | Human display/DPI/first-run acceptance explicitly remains unverified; widget geometry tests are not this check. [R21] |
+| 52 | Run a documented import → preparation → analysis → save/load → export workflow. | P | Current frozen CI exercises workflow/project/report export. Complete the human documented workflow on the final ZIP. [R2, R21] |
+| 53 | Confirm cancellation, malformed input, unavailable outputs and recoverable errors behave honestly. | E | Added meaningful CLI regression: hold-like ramp rejected and kinetic optimizer never called. Existing failure/cancel tests retained. |
+| 54 | Check GUI, CLI and Python results agree where they expose equivalent calculations/settings. | P | Adapter-vs-engine tests and CLI export tests exist; no complete equivalent-settings GUI/CLI/API comparison matrix. [R15, R20] |
+| 55 | Confirm exported units, assumptions, settings, input hashes, version and Monte Carlo provenance match the displayed analysis. | P | Source/snapshot/hash/role tests are strong; a final end-to-end audit of exported results against submitted settings is still needed. [R18, R20] |
+| 56 | Document core API, examples with expected outputs, scientific assumptions and supported environments. | P | Fixed stale checkout command and documented explicit API units/ramp screen; wheel offline Help fixed. Comprehensive core API reviewer guide remains partial. |
+| 57 | Supply a concise reviewer verification command plus a manual GUI checklist. | E | Reviewer verification commands and expected bounded results added; manual acceptance clearly separate. |
+| 58 | Check CONTRIBUTING, support routes, changelog and citation metadata. | E | CONTRIBUTING, changelog, README support routes and CITATION.cff exist; final DOI/author metadata are separate unfinished work. [R3, R5, R10] |
+| 59 | Publish a tagged beta/release with durable downloads; expiring Actions artifacts are not the final distribution plan. | G | No published releases returned by GitHub; README confirms no tagged prerelease. Tags collection request was unsupported, so tag absence was not independently established. [R2, R3] |
+| 60 | Ask one or two relevant colleagues to perform a specific workflow and record authentic feedback and fixes. This is a recommendation, not a required user quota. | H | A checklist/feedback form is prepared; authentic external completed workflow/feedback is not established by inspected public records. [R7, R21] |
+| 61 | Verify alternatives from their primary publications, repositories and documentation; do not infer missing features from a quick search. | P | Primary descriptions verified for TPD Calculator, tpd-analyse and TDS Simulator; wider equivalent-workflow alternatives and author rationale still need review. |
+| 62 | Build a compact comparison using task-relevant dimensions: kinetic laws, interface, uncertainty, reproducibility and extensibility. | P | Source-backed comparison and limited build rationale drafted without claiming absent features or superiority; final author assessment pending. |
+| 63 | Verify primary references for each retained physical method and approximation, including exact bibliographic metadata. | P | Method/reference identifiers verified and bibliography drafted. Complete primary-source review of all retained methods remains open. |
+| 64 | Cite datasets, methodological sources, relevant software and dependencies that materially support the work. | P | paper.bib now cites method, tools and dataset/article; dependency citations and final completeness check remain. |
+| 65 | Verify author names, affiliations, ORCIDs where supplied, contributions and funding. | H | Final affiliations, ORCIDs, contributions, funding and author approval require confirmation; do not infer from profile. [R10] |
+| 66 | Draft paper.md and paper.bib with explicit unresolved placeholders; never turn a planned benchmark into a completed result. | E | ~1000-word working paper.md and bibliography created with explicit human-confirmation placeholders; not submission-ready. |
+| 67 | Generate at most one initial overview figure combining a real software workflow and a reproducible analysis result. Additional figures need a clear purpose. | E | Reproducible two-panel numerical/experimental assessment figure generated and visually inspected. No fabricated GUI screenshot. |
+| 68 | Link detailed validation, equations, test commands and tutorials from the repository. | E | Draft and reviewer guide link detailed methods, assessment conditions, source data/provenance and code. |
+| 69 | Audit every factual sentence against the claim–evidence table. | P | Draft avoids unsupported adoption, energy validation and confidence-coverage claims; final human/claim audit remains. |
+| 70 | Compile using the journal's current supported preview workflow; inspect citations, metadata, figure readability and word length. | P | Local Pandoc/citeproc PDF compilation succeeded. Official JOSS-template preview and final layout verification remain open. |
+| 71 | Recheck live journal requirements immediately before submission. | F | Guidelines rechecked for this audit; repeat immediately before actual submission. [J1] |
+| 72 | Confirm all screening gates, exact version, source access, licence and research-use evidence. | F | Submission gate cannot be completed now: public age, research-use evidence and other preparation remain incomplete. [J1] |
+| 73 | Complete the official reviewer checklist against the actual release. | F | Official checklist audit must target the final reviewed release; this report supplies a preliminary evidence map. |
+| 74 | Reserve time for iterative review and fixes; publication timing cannot be guaranteed. | H | Reserve review time when a real submission window is chosen. |
+| 75 | Conduct author–editor/reviewer conversation personally. Current JOSS policy prohibits AI for those conversational interactions except translation. | F | Current JOSS policy requires human author–editor/reviewer conversational interactions, except translation. [J1] |
+| 76 | Track reviewer issues to fixes/tests and maintain an accurate human-authored response record. | F | No active JOSS review exists in the inspected evidence; track technical fixes when review occurs, with human-authored conversations. |
+| 77 | At successful review completion, tag the reviewed version, archive the software with a DOI, and provide the version and archive DOI as directed. | F | Archive the reviewed tagged release and provide DOI/version at successful review completion; do not invent DOI now. [J1] |
+| 78 | Update citation metadata and documentation with the accepted paper and archived software identifiers. | F | Update accepted-paper/archive identifiers after they actually exist. [R10] |
+
+## Local evidence and reproduction
+
+- `docs/JOSS_ASSESSMENT_PROTOCOL.md`: conditions, tolerances and amendment.
+- `validation/joss_parameter_stability/assessment.json`: 36-case matrix, fits,
+  seed/count summaries, environment and script hash.
+- `validation/joss_parameter_stability/*seed*.json.gz`: full 1200 records;
+  standard gzip JSON, preserving requested/completed counts and warnings.
+- `validation/experimental/rodare_4644/`: measured input, attribution,
+  provenance and result. DOI 10.14278/rodare.4644, article 10.1038/s41467-026-75930-9.
+- `validation/joss_checkpoint_tests.xml`: current headless test run.
+- `paper/`: working manuscript, bibliography and inspected assessment figure.
+- `docs/JOSS_REVIEWER_GUIDE.md`: commands and remaining human checks.
+
+Official requirements: https://joss.readthedocs.io/en/latest/submitting.html,
+https://joss.readthedocs.io/en/latest/paper.html and
+https://joss.readthedocs.io/en/latest/review_checklist.html.
+Earlier evidence IDs R1–R21 refer to the original readiness audit; new status
+updates above point to the new repository evidence explicitly.

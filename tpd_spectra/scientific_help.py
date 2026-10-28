@@ -5,6 +5,7 @@ change method inputs or connect to a network service.
 """
 
 import json
+from importlib.resources import files
 import tkinter as tk
 from tkinter import ttk
 
@@ -24,7 +25,15 @@ def topic_heading(topic):
 
 def load_help_catalog(path=None):
     """Load and check the bundled topics; useful independently of Tk/display."""
-    location = path if path is not None else resource(CATALOG_RESOURCE)
+    if path is not None:
+        location = path
+    else:
+        try:
+            location = resource(CATALOG_RESOURCE)
+        except FileNotFoundError:
+            # A Python wheel has no repository-level docs sidecar. Keep the
+            # offline scientific reference available in ordinary installations.
+            location = files('tpd_spectra').joinpath('assets/scientific_help_topics.json')
     with open(location, encoding='utf-8') as handle:
         payload = json.load(handle)
     if payload.get('schema_version') != 1 or not isinstance(payload.get('topics'), list):

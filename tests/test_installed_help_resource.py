@@ -9,6 +9,6 @@ def test_offline_help_without_repository_sidecar(monkeypatch):
         raise FileNotFoundError('no source checkout in a wheel installation')
     monkeypatch.setattr(scientific_help,'resource',missing)
     payload=scientific_help.load_help_catalog()
-    original=json.loads((Path(__file__).parents[1]/scientific_help.CATALOG_RESOURCE).read_text())
+    original=json.loads((Path(__file__).parents[1]/scientific_help.CATALOG_RESOURCE).read_text(encoding='utf-8'))
     assert payload==original
     assert len(payload['topics'])==40

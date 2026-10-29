@@ -77,3 +77,10 @@ QA overlays. Two papers extend the collection; the existing pure-ice study is
 also checked independently against its published figures. No kinetic fits were
 performed. The [CO correspondence correction](digitized/SOURCE_CORRESPONDENCE_UPDATE.md)
 qualifies earlier deposited-data interpretations while preserving all originals.
+
+### Three additional candidate studies
+
+[Additional-study screening](experimental/additional_studies_2026_10_29/README.md)
+records nine molecular-system targets from three more papers, published energy
+references, source hashes, rights/access limits and a comparison sequence.
+These are candidates, not nine completed validation datasets. No new fits.

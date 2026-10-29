@@ -317,3 +317,22 @@ human scientific review remain open. Next: freeze suitable analysis settings
 for the new digitized cases, with gaps/uncertainty respected, and finish the
 manuscript claim/evidence audit. Do not refit historical datasets simply to
 recover a published number.
+
+
+## 29 October 2026 — three additional literature studies screened
+
+Added `validation/experimental/additional_studies_2026_10_29/`: Perrero et al.
+2024 (ethanol/ethylamine), Fulker & Brown 2024 (two esters), and Martín-Doménech
+et al. 2014 (five pure ices). Nine molecular-system targets across three additional
+papers; no additional digitization or kinetic fits claimed. Existing fits were
+not repeated. Five source figure images from the first two papers were acquired
+and hash checked; reproducible retrieval retains their separate licences outside
+the checkout. The third source PDF is accessible but figure reuse rights remain
+unverified. Raw Sussex archive access failed and is recorded.
+
+The new CSV separates trace-specific from aggregate references, fixed prefactors
+from unidentified intensity scales, and single-energy approximations from energy
+distributions. Fig. 6C methyl acetate is 42.8 +/- 0.7 kJ/mol, distinct from Table 2.
+Next admission work: permissions, exact experimental-curve extraction and QA,
+then frozen fit protocols and matched-estimand comparisons. These candidates
+expand source screening; they do not close experimental-accuracy checkpoints.

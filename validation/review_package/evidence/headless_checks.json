@@ -1,0 +1,20 @@
+{
+  "platform": "Linux",
+  "display_available": false,
+  "fixture_import": "passed; measured coordinates preserved under explicit conversion",
+  "exporter": "Explorer export from retained model result; no fitting",
+  "warnings_preserved": true,
+  "prefactor_caution_preserved": true,
+  "curves_and_residuals_preserved": true,
+  "settings_preserved": true,
+  "presentation_helper_warnings_and_roles": "passed without rendering a GUI",
+  "production_fit_calls": 0,
+  "Windows_GUI_acceptance": "NOT RUN",
+  "native_workflow_PDF_export": "NOT RUN",
+  "required_manual_check": "WINDOWS_ACCEPTANCE.md",
+  "source_code_sha256": {
+    "tpd_spectra/explorer_export.py": "6a2f3df2a1ab36e8a95c2f254cc4a329ed089543174bc3ae4756d4b1f8c1ea7f",
+    "tpd_spectra/result_view.py": "e61a60a2bd4c42e97169cc861704c584b3ae9d0b68307c150424e49b3890a753",
+    "tpd_spectra/analysis.py": "d45ad417f7663ec29cb8b4b406ef6a6f171ba8006fc97e068fa44988a4a40974"
+  }
+}

@@ -108,3 +108,10 @@ preprint extraction: 12 records, method-sensitive leading edges and whole-peak
 residuals, no robust reproduction of the TST-conditioned reference.
 [Claim–evidence audit](../docs/JOSS_CLAIM_EVIDENCE_AUDIT.md) consolidates these
 results with ethanol, methyl acetate and earlier numerical/negative cases.
+
+### Focused review package
+
+[Review entry point](review_package/README.md) provides three selected cases,
+three questions, a response template and a measured-coordinate Windows import
+fixture. Headless export/helper checks preserve warnings/settings without
+refitting; Windows GUI and independent scientific acceptance remain pending.

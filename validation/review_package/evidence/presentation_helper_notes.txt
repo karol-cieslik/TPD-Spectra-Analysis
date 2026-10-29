@@ -1,0 +1,65 @@
+Presentation helper called on retained-result state. Not a GUI screenshot or fresh fit.
+
+FITTED — Polanyi–Wigner
+Results correspond to the submitted settings.
+
+Single-state fit: normalized coverage and linear heating are assumptions. A fitted reaction order does not establish a mechanism.
+
+Scientific cautions:
+• Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.
+• Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.
+• Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.
+• Large residual: numerical completion does not establish zero-order model adequacy.
+
+Submitted analysis context:
+Dataset: Retained methyl-acetate figure-derived trace
+Peak: Whole-peak model-limit case
+Region (°C): [-160.20069124399998, -128.67995391699998]
+Settings: {
+  "beta": 0.5,
+  "fit_baseline": false,
+  "order": 0
+}
+Processing: {
+  "baseline": 0,
+  "smoothing": "none"
+}
+
+Identifiability diagnostics:
+{
+  "jacobian_condition_number": null,
+  "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both.",
+  "jacobian_rank": 2,
+  "n_parameters": 3,
+  "near_lower_bound_indices": [],
+  "near_upper_bound_indices": [],
+  "warnings": [
+    "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+    "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+    "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+    "Large residual: numerical completion does not establish zero-order model adequacy."
+  ],
+  "zero_order_profile": {
+    "boundaries_evaluated": 87,
+    "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+    "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+    "conditional_prefactor_range_s_inv": [
+      7510.273494711846,
+      7855.4637482198395
+    ],
+    "conditional_signal_scale_range": [
+      14.365941704884783,
+      15.02623497682514
+    ],
+    "depletion_bracket_c": [
+      -143.79516128999998,
+      -143.42649769599998
+    ],
+    "edge_height_to_residual_sigma": 5.308904271505721,
+    "energy_evaluations": 3365,
+    "fit_status": "Numerical profile search completed; review residuals and assumptions.",
+    "max_energy_evaluations_per_boundary": 150,
+    "mean_model_parameter_count_for_information_criteria": 3,
+    "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds."
+  }
+}

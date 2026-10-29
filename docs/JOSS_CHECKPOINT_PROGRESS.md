@@ -401,3 +401,30 @@ The audit and manuscript now include MeSH as method-limit evidence. Three-paper
 assessment batch complete at this bounded level. Remaining high-value gates:
 independent human scientific/Windows acceptance, actual research-use evidence,
 author/disclosure confirmation and public-development-history eligibility.
+
+
+## 29 October 2026 — focused scientific review package prepared
+
+`validation/review_package/README.md` selects ethanol, methyl-acetate leading
+edge and its whole-peak mismatch, with three scientific questions, an unfilled
+response template and one bounded Windows acceptance exercise. No reviewer was
+contacted and no endorsement/adoption/acceptance is recorded.
+
+Prepared a GUI-compatible D2 CSV using measured time s->ms and temperature
+K->degC, with provenance and no reconstructed ramp. Import retains 289 points,
+peak -181.09 degC/92.06 K and zero temperature-cleaning changes. Signal parsing
+difference is 1.01e-16 of peak. The initially overly strict bitwise signal
+comparison was replaced by an explicit 1e-14 relative tolerance; this is float64
+CSV parsing, not a numerical-method change. No historical fit was repeated.
+
+Using a retained methyl-acetate mismatch, the Explorer exporter preserves all
+warnings, conditional prefactor cautions, settings, curves and residuals.
+Presentation helpers preserve warning text and representative-parameter roles.
+These are headless checks on Linux with no display, not rendered GUI acceptance.
+Native workflow PDF export and all Windows checklist steps remain NOT RUN.
+`scripts/prepare_scientific_review_package.py` reproduces these checks into a
+fresh directory without calling a fitter. Production code unchanged.
+
+Next external gate: obtain an actual independent scientific response and execute
+the bounded Windows exercise on a recorded build. Do not replace these gates
+with additional automated fits or mark the response template completed.

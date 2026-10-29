@@ -152,3 +152,11 @@ conditional literature agreement, transformed-plot reconstruction and model-limi
 findings. Ethanol, methyl acetate and pure MeSH have completed bounded assessments;
 none establishes general accuracy, independent adoption or physical confidence
 coverage. All three case directories retain protocols, residuals and limitations.
+
+## Focused independent review package
+
+Start with [the review package](../validation/review_package/README.md): three
+selected comparisons, three scientific questions, an unfilled response form and
+a Windows acceptance checklist. Its headless exporter/helper checks pass on
+a retained mismatch without refitting. Independent human review, Windows GUI
+execution and native workflow PDF acceptance remain pending.

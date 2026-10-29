@@ -1,0 +1,31 @@
+{
+  "schema_version": 2,
+  "software": {
+    "product": "TPD Spectra Studio",
+    "version": "0.11.0b5",
+    "channel": "external beta review candidate",
+    "commit": "unrecorded source checkout",
+    "author": "Karol Cie\u015blik",
+    "repository": "https://github.com/karol-cieslik/TPD-Spectra-Analysis"
+  },
+  "source": "validation/experimental/methyl_acetate_2024/results.json",
+  "input_arrays_sha256": "89b0ffb5bec30f448eea66bf130f822a0ca3e74a5a6f67532e404dca592b9d4e",
+  "temperature_min_c": -160.20069124399998,
+  "temperature_max_c": -128.67995391699998,
+  "n_points": 89,
+  "heating_rate_k_s": 0.5,
+  "settings": {
+    "review_purpose": "Re-export retained mismatch; no optimizer called",
+    "assumed_order": 0,
+    "fit_baseline": false,
+    "source_case": "whole_peak_baseline0",
+    "source_result_sha256": "ce2950315de25999d6f438e4fbc39bfda8c5b1a806341b0ec9b1994dcfaa0de5",
+    "scientific_code_review_base": "70ef9e2254c1f1aef765dcd2d2f222ecdd76b1e4",
+    "source_signal_units": "Normalized graphical height, not calibrated physical rate"
+  },
+  "models": [
+    "zero"
+  ],
+  "monte_carlo": null,
+  "warning": "Model ranking is not proof of a physical desorption mechanism."
+}

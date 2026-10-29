@@ -42,3 +42,12 @@ input/conversion/peak and negative ramp-screening check. See
 [the RODARE case](experimental/rodare_4644/README.md). It is outside the 26
 figure-digitization leads above and does not change their not_started status.
 It is not a completed desorption-energy validation or external-adoption claim.
+
+### PTCDA/Au(111) deposited-data model challenge
+
+[Records and limitations](experimental/ptcda_au111/README.md) retain the original
+CC-BY-4.0 archive (95 files), frozen screens and 438 conditional first-order fits
+on 73 selected traces. Frequent prefactor-bound flags and baseline-dependent
+energies make this a model challenge, not reproduction of the published
+zero-coverage energy. The existing 26-entry literature catalog is unchanged;
+this acquired source is tracked separately.

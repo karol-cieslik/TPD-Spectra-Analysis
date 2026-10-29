@@ -114,7 +114,7 @@ D=conditional/deferred; F=later submission/review. No percentage readiness is in
 | 42 | Reproduce the original analysis assumptions before comparing reported parameters. | P | Published heating program and approximate D2 peak confirmed. Kinetic-energy reproduction has not been completed. |
 | 43 | Prespecify baseline, fit interval, fixed prefactor/order and comparison criterion. | P | No smoothing/baseline processing used for input/peak check; full trace rejected by specified ramp screen. Suitable energy-fit design still required. |
 | 44 | Compare predicted spectra/residuals and parameters, accounting for digitization, approximation and methodological differences. | P | 92.06 K sampled peak agrees with rounded ~92 K article description; no experimental energy/parameter-fit validation claimed. |
-| 45 | Examine sensitivity to baseline, fit window, prefactor and heating-rate assumptions. | G | No completed experimental window/baseline/prefactor/heating-rate sensitivity assessment. [R8] |
+| 45 | Examine sensitivity to baseline, fit window, prefactor and heating-rate assumptions. | P | PTCDA deposited-data study evaluates 73 traces with three starting prefactors and both baseline hypotheses (438 fits); window/heating-rate sensitivity and commensurate energy comparison remain unfinished. See validation/experimental/ptcda_au111/. |
 | 46 | Explain disagreement rather than tuning settings until the published energy is matched. | P | Full-trace 4.17103 K mismatch recorded rather than relaxing tolerance to force a kinetic result. |
 | 47 | Add one challenging case if it tests a retained claim, such as overlapping populations or a coverage series. | D | Second challenging experimental case is deferred until the first is complete; add only for a retained publication claim. |
 | 48 | Obtain an independent scientific reading of what the case does and does not validate. | H | Independent reading of the completed experimental result remains future human work. [R4] |
@@ -210,3 +210,26 @@ and confidence coverage remain unvalidated. See validation/joss_postfix/.
 Next scientific task: acquire/evaluate a suitable full-peak experimental energy
 comparison. Existing deposited D2 input/peak reproduction remains a deliberately
 limited negative-ramp-screening example, not an energy-validation result.
+
+## Deposited PTCDA/Au(111) model challenge — 29 October 2026
+
+Latest saved source fa534d7 passed both scientific CI and the Windows build.
+Acquired unchanged CC-BY-4.0 experimental TPD ZIP from Jülich DATA,
+DOI 10.26165/JUELICH-DATA/HQXCXC, linked by Ruiz et al. (2023),
+DOI 10.1038/s42004-023-00925-2; deposited SHA-256 matches. Inventoried all
+95 files, with 73 passing frozen pre-fit engineering screens in 550–740 K.
+Completed 438 first-order conditional fits (three starting prefactors, two
+baseline hypotheses): all optimizer-success, 201 prefactor-bound flags,
+NRMSE 0.03023–0.16638, maximum baseline-dependent energy shift 2.9891 eV.
+Archive, exclusions, settings and every result are retained in
+validation/experimental/ptcda_au111/. Acquisition/provenance and baseline/start
+sensitivity advance checkpoints 36–46. This does not complete energy validation:
+the article's 1.74 ± 0.10 eV is a zero-coverage complete-analysis intercept;
+archive coverage labels remain unmapped and the fitted constant-E quantity is
+different. Coordinate units are inferred and explicitly documented. No
+experimental-fit or manuscript claims were upgraded to external validation.
+
+Next scientific step: establish trace-to-coverage mapping and a commensurate
+coverage-dependent analysis, or obtain an isolated constant-energy reference.
+Do not repeat the 438 fits; use the retained archive and outputs. Human Windows
+visual acceptance and independent scientific review also remain open.

@@ -2,3 +2,5 @@
 examples/beta_collection/*.csv -text
 examples/synthetic_two_peak_demo*.csv -text
 validation/experimental/rodare_4644/*.csv text eol=lf
+
+validation/experimental/ptcda_au111/*.csv text eol=lf

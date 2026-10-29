@@ -103,3 +103,13 @@ retains 1200 complete ranking replicates with 2400 model-fit records. To reprodu
 into a new directory: `python -m scripts.joss_postfix_assessment --output output/postfix-new`.
 This combined two-candidate run supplies parameter and ranking evidence; no
 repeat of the unchanged numerical-reference matrix was necessary.
+
+## External experimental model challenge
+
+See [PTCDA/Au(111) records](../validation/experimental/ptcda_au111/README.md):
+original licensed deposited ZIP, checksum/provenance, all 95 inventory entries,
+pre-fit protocol and 438 full conditional fits on 73 screened traces. Baseline
+sensitivity and optimizer-bound flags prevent an energy-validation claim. The
+published zero-coverage complete-analysis estimate is a different quantity from
+a constant-energy fit to an unidentified coverage trace. See the README for
+unresolved coverage, coordinate-unit and methodological limitations.

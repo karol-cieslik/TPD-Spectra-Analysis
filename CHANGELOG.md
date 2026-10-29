@@ -1,3 +1,28 @@
+## Unreleased — JOSS preparation and scientific-output correction
+
+- Improve positive-order single-state kinetic initialization by comparing the
+  supplied start with a peak-informed start before the existing bounded fit.
+  Earlier starts could settle on a nearly flat, baseline-dominated solution.
+  This can change energies, prefactors and downstream conditional Monte Carlo
+  rankings for affected data. The seed is numerical, not a physical order
+  assignment. Preserve historical outputs; explicitly rerun affected studies
+  with the recorded new commit if updated results are needed.
+- Add explicit Python import units (ms/s/min and Celsius/kelvin), keeping the
+  legacy ms/Celsius defaults. Generic headers still do not establish units.
+- Screen CLI kinetic reconstruction against measured temperature, with a
+  configurable 2 K engineering threshold and exported discrepancy metrics.
+  This is not calibration or a new GUI unit-selection feature.
+- Package offline scientific Help for ordinary wheel installations. Preserve
+  retained scientific CSV bytes across platforms and stop Windows packaging
+  immediately if build-identity preparation fails.
+- Retain independent numerical checks, conditional Monte Carlo assessments,
+  literature comparisons including model-limit/source-correspondence findings,
+  a working manuscript and a focused review package. These are bounded
+  assessments, not general experimental accuracy or external adoption.
+- Independent human scientific review, clean-machine Windows acceptance,
+  actual research-use evidence and author/submission eligibility confirmation
+  remain open. Merging this work does not publish a release or submit a paper.
+
 ## 0.11.0b4 — beta feedback (development candidate, unreleased)
 
 - Fit up to three independent Polanyi–Wigner populations simultaneously on one

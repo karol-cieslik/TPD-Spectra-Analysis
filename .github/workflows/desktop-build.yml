@@ -75,6 +75,8 @@ jobs:
         shell: pwsh
         run: |
           python scripts/prepare_windows_beta.py
+          if ($LASTEXITCODE -ne 0) { throw "Build identity preparation failed" }
+          if (-not (Test-Path output/windows-version.txt)) { throw "Windows version resource was not generated" }
           python -m pip freeze | Set-Content -Encoding utf8 build-dependencies.txt
       - name: Validate desktop entrypoint without a display
         run: |

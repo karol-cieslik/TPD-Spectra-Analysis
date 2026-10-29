@@ -186,6 +186,41 @@ def fit_polanyi_wigner(temperature_c, signal, beta_k_s: float, *,
     scale0 = span / max(rate_peak, np.finfo(float).tiny)
     initial[2] = np.log10(np.clip(scale0, 1e-30, 1e30))
 
+    # A peak outside the observations leaves a flat objective: scale can vanish
+    # while a baseline alone satisfies ftol. Compare the supplied start with a
+    # peak-informed start, profiling the linear scale/offset for initialization.
+    # This is a numerical seed, not a first-order physical interpretation.
+    peak_kelvin = float(temp[np.argmax(sig)] + 273.15)
+    peak_energy = K_B_EV * peak_kelvin * (
+        np.log(initial_prefactor_s_inv * peak_kelvin / beta_k_s) - 3.64)
+    seed_candidates = []
+    for seed_energy in (initial_energy_ev, float(np.clip(peak_energy, .050001, 7.999999))):
+        if cancelled is not None and cancelled():
+            raise InterruptedError('Kinetic fit cancelled')
+        try:
+            _, seed_rate = simulate_tpd(temp, beta_k_s, seed_energy, initial_prefactor_s_inv, order0)
+            peak_rate = float(np.max(seed_rate))
+            if not np.isfinite(peak_rate) or peak_rate <= 0:
+                continue
+            shape = seed_rate / peak_rate
+            centered_shape = shape - shape.mean() if fit_baseline else shape
+            centered_signal = sig - sig.mean() if fit_baseline else sig
+            amplitude = max(0., float(centered_shape @ centered_signal) /
+                            max(float(centered_shape @ centered_shape), np.finfo(float).tiny))
+            offset = float(np.clip(np.mean(sig-amplitude*shape), lower[3], upper[3])) if fit_baseline else 0.
+            amplitude = max(0., float(shape @ (sig-offset)) / max(float(shape @ shape), np.finfo(float).tiny))
+            seed = initial.copy()
+            seed[0] = seed_energy
+            seed[2] = np.log10(np.clip(amplitude / peak_rate, 1e-30, 1e30))
+            if fit_baseline:
+                seed[3] = offset
+            score = float(np.sum(((offset + 10.**seed[2]*seed_rate - sig)/span)**2))
+            seed_candidates.append((score, seed))
+        except (ValueError, RuntimeError, FloatingPointError):
+            continue
+    if seed_candidates:
+        initial = min(seed_candidates, key=lambda item: item[0])[1]
+
     def unpack(p):
         i = 3
         baseline = p[i] if fit_baseline else 0.0

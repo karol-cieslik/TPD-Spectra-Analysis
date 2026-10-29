@@ -1,0 +1,11 @@
+{
+  "type": "AI-assisted visual review, not independent human scientific acceptance",
+  "existing_extraction": "Reused unchanged; existing source overlay inspected",
+  "plot": "comparison.png",
+  "findings": [
+    "Rounded peak/trailing shape differs from abrupt-depletion model",
+    "Source gaps retained; intensity and logarithmic residuals labelled separately",
+    "Pixel/threshold scenarios do not represent instrument uncertainty or physical confidence coverage"
+  ],
+  "human_review": "pending"
+}

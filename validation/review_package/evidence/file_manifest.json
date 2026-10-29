@@ -1,0 +1,38 @@
+{
+  "D2_fixture_provenance.json": {
+    "bytes": 1023,
+    "sha256": "abaddf5446143b055057839d5dd0fee60f0aed1ba2450efcec9a793bcb0e3ab8"
+  },
+  "D2_measured_GUI_ms_degC.csv": {
+    "bytes": 15130,
+    "sha256": "92d937e5f621673123e02b015aa68ab5d21c554f660e12dee71c6c6160d8c03f"
+  },
+  "headless_checks.json": {
+    "bytes": 935,
+    "sha256": "225f53658360092ec36d8467bcbe68a28721e0d4596764fbe4ce9436bf530e2f"
+  },
+  "presentation_helper_notes.txt": {
+    "bytes": 3128,
+    "sha256": "e00d020805af0abb2faa425061ae4f286a9c672640c6c79d881fc78c2f91bc9c"
+  },
+  "retained_mismatch_export/explorer_analysis.json": {
+    "bytes": 1194,
+    "sha256": "a7e855464b2c264fae019200af9c4d33894e9c94197115d91d8746d83149254d"
+  },
+  "retained_mismatch_export/fit_overlay_and_residuals.png": {
+    "bytes": 213815,
+    "sha256": "1fda4fd16966c93f42ea6ed918339f5d02bb2aecbec1348763d5d0ff4aa7ea37"
+  },
+  "retained_mismatch_export/fit_overlay_and_residuals.svg": {
+    "bytes": 56394,
+    "sha256": "b208b5524f5e65fd1a70d2b1cafcadb8aa1352ff5c6765ea500c9c30a29f53f5"
+  },
+  "retained_mismatch_export/fitted_curves.csv": {
+    "bytes": 5525,
+    "sha256": "8fcdf1d1482f18c3c1525466659210c9af8135d779f4f85b3342dcb35c0678b3"
+  },
+  "retained_mismatch_export/model_comparison.csv": {
+    "bytes": 1148,
+    "sha256": "fd82bc02ecae9050e2a06cba2578acaff8d6e6f072a8fa9126fa6932c0e47e6b"
+  }
+}

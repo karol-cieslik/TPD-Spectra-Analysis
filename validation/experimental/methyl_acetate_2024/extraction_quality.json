@@ -1,0 +1,25 @@
+{
+  "spectrum": {
+    "total_columns": 213,
+    "recovered": 101,
+    "missing": 112,
+    "peak_K": 125.66820276497695,
+    "normalization_height_px": 134.5,
+    "pixel_halfwidth_K": 0.09216589861751152,
+    "axis_placement_allowance_K": 0.2764976958525346,
+    "maximum_signal_bound": 0.055762081784386616,
+    "unused_x_tick_130_error_K": 0.0921658986175089,
+    "unused_x_tick_140_error_K": 0.04608294930875445
+  },
+  "transformed": {
+    "total_columns": 171,
+    "recovered": 92,
+    "missing": 79,
+    "axis_x_allowance_1000_per_K": 0.0035433070866141727,
+    "axis_y_allowance_log_units": 0.01308139534883721,
+    "unused_x_tick_8_1_error": -0.0007874015748026153,
+    "unused_y_tick_9_error": -0.0029069767441853855
+  },
+  "interpretation": "Columns, not independent instrument samples; engineering pixel bounds, no statistical CI; no interpolation. Fig6C input already includes authors coverage correction and may include dotted fitted line fragments.",
+  "baseline": "Graphical lower edge is the display origin, not a measured background."
+}

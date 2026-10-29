@@ -1,0 +1,45 @@
+{
+  "CO": {
+    "points": 328,
+    "peak_temperature_K": 28.96736364583151,
+    "peak_signal_ML_per_K": 0.33193558940060336,
+    "source_CSV_peak_temperature_K": 38.1546,
+    "source_CSV_peak_signal_ML_per_K": 0.0964597129676977,
+    "peak_difference_K": -9.18723635416849,
+    "peak_height_ratio": 3.441183673351397,
+    "NRMSE_against_CSV_22_60K": 0.9249250405143538,
+    "reference_range": "Raw CSV interpolation on a strictly increasing 22\u201361 K subset; compare digitized 22\u201360 K values only.",
+    "x_tick_errors_K": [
+      -0.011080783604285216
+    ],
+    "y_tick_errors_ML_per_K": [
+      -0.00021568232211248428,
+      -0.00043136464422496856
+    ],
+    "source_label": "PDF vector vertices, not instrument samples",
+    "axis_reading_allowance_pdf_pt": 0.25,
+    "axis_reading_allowance_K": 0.18980403405397794,
+    "correspondence": "Substantial unresolved source-to-figure discrepancy"
+  },
+  "Ar": {
+    "points": 191,
+    "peak_temperature_K": 29.718228149279597,
+    "peak_signal_ML_per_K": 0.4184050269200531,
+    "source_CSV_peak_temperature_K": 29.7772,
+    "source_CSV_peak_signal_ML_per_K": 0.418495072463768,
+    "peak_difference_K": -0.05897185072040401,
+    "peak_height_ratio": 0.9997848348770637,
+    "NRMSE_against_CSV_22_60K": 0.005888600184100205,
+    "reference_range": "Raw CSV interpolation on a strictly increasing 22\u201361 K subset; compare digitized 22\u201360 K values only.",
+    "x_tick_errors_K": [
+      0.010648141348553963
+    ],
+    "y_tick_errors_ML_per_K": [
+      0.0004392301876642024
+    ],
+    "source_label": "PDF vector vertices, not instrument samples",
+    "axis_reading_allowance_pdf_pt": 0.25,
+    "axis_reading_allowance_K": 0.18799477139538112,
+    "correspondence": "Close figure-to-deposited-data correspondence in tested interval"
+  }
+}

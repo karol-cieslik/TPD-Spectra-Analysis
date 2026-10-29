@@ -1,3 +1,6 @@
 # Preserve generated CSV bytes across platforms; adjacent metadata records SHA256.
 examples/beta_collection/*.csv -text
 examples/synthetic_two_peak_demo*.csv -text
+# Retained scientific records include both LF and CRLF originals. Do not
+# normalize their blobs: it changes hashes and can dirty a fresh checkout.
+validation/**/*.csv -text

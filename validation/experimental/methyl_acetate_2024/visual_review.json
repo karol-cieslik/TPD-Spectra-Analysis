@@ -1,0 +1,11 @@
+{
+  "type": "AI-assisted enlarged-image visual QA; not independent human review",
+  "selected_trace": "Fig4B labelled 50 Lm royal-blue hue; pure-blue 20 Lm excluded by R-G discriminator",
+  "axes": "Pixel tick stems independently checked; unused tick errors recorded",
+  "limitations": [
+    "112/213 spectrum columns missing; substantial overlap and gaps",
+    "Fig6C transformed symbols overlap dotted fit/error bars; reconstruction only",
+    "No raw acquisition identity or measured background verified"
+  ],
+  "human_review": "pending"
+}

@@ -32,4 +32,4 @@ exclude = ["tests*", "scripts*", "input*", "output*", "images*"]
 version = {attr = "tpd_spectra.__version__"}
 
 [tool.setuptools.package-data]
-tpd_spectra = ["assets/*.png", "assets/*.ico", "assets/*.svg"]
+tpd_spectra = ["assets/*.png", "assets/*.ico", "assets/*.svg", "assets/*.json"]

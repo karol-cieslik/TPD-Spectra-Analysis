@@ -15,6 +15,7 @@ from .kinetics import fit_polanyi_wigner, fit_two_state_polanyi_wigner
 import numpy as np
 from . import __version__
 from .identity import build_identity
+from .ramp import checked_linear_ramp
 import importlib.metadata
 
 
@@ -33,6 +34,7 @@ CONFIG_KEYS = {
     'kinetic_order': 'kinetic_order', 'kinetic_initial_energy': 'kinetic_initial_energy',
     'kinetic_initial_prefactor': 'kinetic_initial_prefactor',
     'kinetic_no_baseline': 'kinetic_no_baseline', 'kinetic_model': 'kinetic_model',
+    'kinetic_ramp_tolerance_K': 'kinetic_ramp_tolerance_K',
 }
 
 
@@ -88,11 +90,14 @@ def main(argv=None) -> int:
                         help='initial prefactor guess in s^-1 (default: 1e13)')
     parser.add_argument('--kinetic-no-baseline', action='store_true',
                         help='fix kinetic-fit additive signal baseline at zero')
+    parser.add_argument('--kinetic-ramp-tolerance-K', type=float, default=2.,
+                        help='maximum measured/reconstructed ramp mismatch in K (default 2; engineering screen, not calibration)')
     parser.set_defaults(**config_defaults)
     args = parser.parse_args(argv)
     # Validate key numeric settings early, before touching the input files.
     if not all(np.isfinite(value) for value in [*args.leading_edge, *args.redhead_region,
-            args.prefactor, args.kinetic_initial_energy, args.kinetic_initial_prefactor, args.max_time_min]):
+            args.prefactor, args.kinetic_initial_energy, args.kinetic_initial_prefactor, args.max_time_min,
+            args.kinetic_ramp_tolerance_K]):
         parser.error('numeric settings must be finite')
     if args.window < 1:
         parser.error('--window must be >= 1')
@@ -100,6 +105,8 @@ def main(argv=None) -> int:
         parser.error('--prefactor must be positive')
     if args.kinetic_initial_energy <= 0 or args.kinetic_initial_prefactor <= 0:
         parser.error('kinetic initial energy and prefactor must be positive')
+    if args.kinetic_ramp_tolerance_K <= 0:
+        parser.error('--kinetic-ramp-tolerance-K must be positive')
     if args.kinetic_model != 'single' and not args.kinetic_fit:
         parser.error('--kinetic-model two-state/compare requires --kinetic-fit')
     if args.leading_edge[0] >= args.leading_edge[1] or args.redhead_region[0] >= args.redhead_region[1]:
@@ -111,6 +118,7 @@ def main(argv=None) -> int:
         'kinetic_order': args.kinetic_order, 'kinetic_initial_energy': args.kinetic_initial_energy,
         'kinetic_initial_prefactor': args.kinetic_initial_prefactor,
         'kinetic_no_baseline': args.kinetic_no_baseline, 'kinetic_model': args.kinetic_model,
+        'kinetic_ramp_tolerance_K': args.kinetic_ramp_tolerance_K,
     }
     if args.save_config:
         save_path = Path(args.save_config)
@@ -164,8 +172,9 @@ def main(argv=None) -> int:
                     # coordinate. The measured channel contains jitter/reversals,
                     # so use the fitted beta and acquisition time for the model
                     # coordinate; plots remain against measured temperature.
-                    kinetic_temp = (float(spec.temperature_clean_c[0]) +
-                        result['heating_rate_K_s'] * (spec.time_min - spec.time_min[0]) * 60.0)
+                    kinetic_temp, ramp_check = checked_linear_ramp(
+                        spec.time_min, spec.temperature_clean_c, result['heating_rate_K_s'],
+                        tolerance_K=args.kinetic_ramp_tolerance_K)
                     kfit, prediction = fit_polanyi_wigner(
                         kinetic_temp, sig, result['heating_rate_K_s'],
                         reaction_order=order, fit_reaction_order=order_fit,
@@ -176,6 +185,9 @@ def main(argv=None) -> int:
                         'file_name': file.name, **kfit.as_dict(),
                         'reaction_order_setting': args.kinetic_order,
                         'heating_rate_K_s': result['heating_rate_K_s'],
+                        'ramp_max_abs_deviation_K': ramp_check['max_abs_deviation_K'],
+                        'ramp_rms_deviation_K': ramp_check['rms_deviation_K'],
+                        'ramp_tolerance_K': ramp_check['tolerance_K'],
                         'signal_used': f'{args.filter} smoothed, window={args.window}; kinetic temperature coordinate from fitted linear ramp and acquisition time',
                         'model': 'single-state Polanyi-Wigner; linear heating ramp; signal scale and baseline nuisance parameters'})
                     kfig, kax = plt.subplots(figsize=(9, 5), constrained_layout=True)

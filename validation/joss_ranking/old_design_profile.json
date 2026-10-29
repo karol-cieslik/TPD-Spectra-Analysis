@@ -1,0 +1,22 @@
+[
+  {
+    "model": "first",
+    "points": 81,
+    "multistart": true,
+    "max_nfev": 100,
+    "returncode": 0,
+    "result": "[{\"name\": \"first\", \"error\": null, \"energy\": 1.4647391439974444}]\n",
+    "stderr": "",
+    "elapsed_seconds": 1.5720159989996318
+  },
+  {
+    "model": "second",
+    "points": 81,
+    "multistart": true,
+    "max_nfev": 100,
+    "returncode": 0,
+    "result": "[{\"name\": \"second\", \"error\": null, \"energy\": 1.6293380100082486}]\n",
+    "stderr": "",
+    "elapsed_seconds": 3.150645505999819
+  }
+]

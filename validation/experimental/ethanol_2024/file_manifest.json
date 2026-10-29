@@ -1,0 +1,50 @@
+{
+  "validation/experimental/ethanol_2024/README.md": {
+    "bytes": 6033,
+    "sha256": "e93abca80c42e59b6a663f93360649a9da9e54a42d52fc0e0f68543e691d2a50"
+  },
+  "validation/experimental/ethanol_2024/comparison.png": {
+    "bytes": 178242,
+    "sha256": "3f18f9922b2f19e195ae00bd4dd4a0bbfdac853189865135302b723e70091b22"
+  },
+  "validation/experimental/ethanol_2024/digitized.csv": {
+    "bytes": 17980,
+    "sha256": "68f5bc55539a8e1bac7b844f6012f52a9b3329bf27eabd3836068ea81354f1cc"
+  },
+  "validation/experimental/ethanol_2024/extraction_check.png": {
+    "bytes": 166956,
+    "sha256": "b474c9c54412009ef3a7eff70e6969f7ca0d5a28ff22083273bdac1f9f1156c7"
+  },
+  "validation/experimental/ethanol_2024/extraction_quality.json": {
+    "bytes": 1621,
+    "sha256": "283242e23cc7a6ff901e96c75c1c57a3232b30b1ebab7d1c4528ba8a092e5d92"
+  },
+  "validation/experimental/ethanol_2024/predictions.csv": {
+    "bytes": 403523,
+    "sha256": "d90413f64a6696a78d85ab0ecdb12646689c5783fd7e120c6a75b4bc810a9cc0"
+  },
+  "validation/experimental/ethanol_2024/protocol.json": {
+    "bytes": 2374,
+    "sha256": "4fdf82ca40905eb7bb81cd9dad0150d72dc94c1f5135b39e12a2a3c7ce05be08"
+  },
+  "validation/experimental/ethanol_2024/provenance.json": {
+    "bytes": 1490,
+    "sha256": "d66e8f16c11e9f4056fdbd5ff267729f97e6a74a8c40e8d476e59dc17b730e8a"
+  },
+  "validation/experimental/ethanol_2024/results.json": {
+    "bytes": 28076,
+    "sha256": "8730627bbab0cc920da428b20c416b8a67d9277290cdd1e942f6c1f0799c1241"
+  },
+  "validation/experimental/ethanol_2024/source_figure7.jpg": {
+    "bytes": 107128,
+    "sha256": "2209fec95c9cf0cef9b04644564bf9ff5db85a97cb9da521513274b9efe1ba13"
+  },
+  "validation/experimental/ethanol_2024/summary.json": {
+    "bytes": 3773,
+    "sha256": "99d0caf059ecbcfd1a2fbe095cd9efdc3c750d4722267d9ee0959769379558ac"
+  },
+  "validation/experimental/ethanol_2024/visual_review.json": {
+    "bytes": 686,
+    "sha256": "81dd6acab7d75e877fe13e3c3194532460356dad2925b36fc3aad939fe5c7555"
+  }
+}

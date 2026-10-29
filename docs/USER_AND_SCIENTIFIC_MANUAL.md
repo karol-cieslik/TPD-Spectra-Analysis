@@ -49,7 +49,7 @@ Requirements: Python 3.10+, NumPy, pandas, SciPy, Matplotlib; Tkinter must be pr
 ```bash
 git clone https://github.com/karol-cieslik/TPD-Spectra-Analysis.git
 cd TPD-Spectra-Analysis
-git checkout fix/beta-feedback-14-17
+git checkout main
 python -m pip install -e .
 python run_tpd_spectra_gui.py
 ```
@@ -270,3 +270,27 @@ Show and Include are independent. Run full analysis opens review with import rep
 The leading-edge intercept is exported separately; a physical prefactor is unavailable for arbitrary-unit detector signal. The legacy prefactor field is empty/NaN to prevent interpretation as a calibrated rate constant. Kinetic information criteria now count estimated noise variance. Prior rankings can therefore change.
 
 The [Explorer guide](EXPLORER_MONTE_CARLO.md) covers four-order comparison and explicitly experimental seeded Monte Carlo. Conditional refit percentile ranges are not coverage-validated confidence limits. See [method status](METHOD_STATUS.md) for the current scientific scope.
+
+
+## Explicit units and constant-ramp screening
+
+The Python importer accepts `load_spectrum(path, time_unit="s", temperature_unit="K")`.
+Time units are ms/s/min and temperatures degC/K. Defaults remain ms/degC for
+existing files and GUI/CLI callers; a generic column name is not evidence of
+its units. Conversion and declared source units are recorded in the import report.
+The GUI does not yet expose these explicit-unit arguments. Prepare a traceable
+converted import copy or use the Python API for other source units.
+
+CLI kinetic fitting compares measured/cleaned temperatures with its anchored
+constant-ramp coordinate. `--kinetic-ramp-tolerance-K` defaults to 2 K and must
+be positive and finite. Fits exceeding the threshold are withheld with a warning.
+Accepted fits export maximum/RMS deviation and the chosen tolerance. Two kelvin
+is an engineering screen, not experimental uncertainty; justify the tolerance
+for each experiment. Do not raise it just to force a fit to nonlinear ramps.
+
+Source and Windows portable installs remain the documented full desktop routes.
+Python wheels contain the computational modules and offline scientific Help;
+repository-level example/tutorial sidecars are not all included in a wheel.
+
+Publication preparation records, assessment protocols and the working manuscript
+are maintained separately in the source repository.

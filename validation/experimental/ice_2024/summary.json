@@ -1,0 +1,29 @@
+{
+  "completed_full_peak_fits": 6,
+  "completed_independent_leading_edge_fits": 2,
+  "withheld_intervals": [
+    {
+      "species": "Ar",
+      "method": "full_peak",
+      "interval": "primary",
+      "status": "withheld_input_screen",
+      "reason": "Nonfinite data or non-increasing raw temperatures; no sorting or repairs applied"
+    },
+    {
+      "species": "Ar",
+      "method": "independent_leading_edge",
+      "status": "withheld_input_screen",
+      "reason": "Raw temperatures are not strictly increasing"
+    }
+  ],
+  "full_peak_result": "All six fits hit the 0.05 eV lower energy bound (~580.23 K); NRMSE 0.2191-0.3243. These do not reproduce the published energy estimates.",
+  "CO_leading_edge_energy_K": {
+    "True": 718.7382588295325,
+    "False": 1069.8729462785411
+  },
+  "reference_CO_K": 1040,
+  "reference_CO_reported_uncertainty_K": 104,
+  "full_peak_validation_passed": false,
+  "interpretation": "Different interval/model hypotheses are compared. One baseline-fixed independent leading-edge fit lies in the published band, while baseline sensitivity and poor full-peak fits prevent an application energy-validation claim.",
+  "source_correspondence_update": "Subsequent vector digitization agrees closely for Ar, but CO figure/CSV peaks differ by 9.187 K; do not interpret deposited-CO fits as a trace-matched reproduction pending source clarification."
+}

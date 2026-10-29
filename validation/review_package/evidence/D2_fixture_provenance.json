@@ -1,0 +1,21 @@
+{
+  "source": "validation/experimental/rodare_4644/H2_D2_D2_source_units.csv",
+  "source_sha256": "9eba6e09297c47ba8e2a6027eeb29a327390746841c9541c4c8e0b531994a99b",
+  "derived_sha256": "92d937e5f621673123e02b015aa68ab5d21c554f660e12dee71c6c6160d8c03f",
+  "dataset_doi": "10.14278/rodare.4644",
+  "licence": "CC-BY-4.0",
+  "attribution": "Alexandra Becker, Holger Lippold, Jing Liu, Michael Hirscher and Cornelius Fischer",
+  "conversions": [
+    "Measured relative time seconds multiplied by 1000 to ms",
+    "Measured temperature K minus 273.15 to degC",
+    "Signal preserved, molecules/s"
+  ],
+  "measured_time": true,
+  "new_time_channel_fabricated": false,
+  "rows": 289,
+  "peak_K": 92.05999999999997,
+  "peak_degC": -181.09,
+  "maximum_import_temperature_cleaning_change_degC": 0.0,
+  "signal_import_max_difference_relative_to_peak": 1.0126049058682479e-16,
+  "scope": "GUI import/export usability fixture. Not an energy validation. Full source ramp failed earlier screen; do not force a kinetic full-trace fit."
+}

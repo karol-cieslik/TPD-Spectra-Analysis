@@ -65,13 +65,22 @@ def _numeric_column(df: pd.DataFrame, requested: str | None, alternatives: Itera
 def load_spectrum(path: str | Path, *, skiprows: int = 29,
                   time_column: str | None = None, signal_column: str | None = None,
                   temperature_column: str | None = None,
-                  delimiter: str = ';', decimal: str = ',') -> Spectrum:
+                  delimiter: str = ';', decimal: str = ',',
+                  time_unit: str = 'ms', temperature_unit: str = 'degC') -> Spectrum:
     """Load the legacy instrument CSV schema or a compatible delimited file.
 
     The legacy format has 29 metadata rows and columns `ms`, `DHTA+`, and
     `Temperatura`. Required channels are detected by name; empty trailing
     columns and the human-readable Time column are ignored.
+
+    Units are explicit API inputs, not guessed from numerical magnitudes.
+    Defaults preserve the legacy contract even for generic column names.
+    Supported time units are ms, s and min; temperatures are degC or K.
+    Import reports retain source units and conversions to the internal units.
     """
+    time_factors = {'ms': 1.0, 's': 1000.0, 'min': 60000.0}
+    if time_unit not in time_factors or temperature_unit not in {'degC', 'K'}:
+        raise ValueError('Supported source units: time ms/s/min; temperature degC/K')
     path = Path(path)
     if not path.is_file():
         raise FileNotFoundError(path)
@@ -94,9 +103,9 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
             tempcol = _numeric_column(candidate, temperature_column, ('Temperatura', 'Temperature', 'temperature', 'Temp', 'temp',
                                                                       'Temperature (°C)', 'Temperature_C', 'Temp_C'), 'temperature')
             parsed = pd.DataFrame({
-                'time_ms': pd.to_numeric(candidate[tcol], errors='coerce'),
+                'time_ms': pd.to_numeric(candidate[tcol], errors='coerce') * time_factors[time_unit],
                 'signal': pd.to_numeric(candidate[scol], errors='coerce'),
-                'temperature_c': pd.to_numeric(candidate[tempcol], errors='coerce'),
+                'temperature_c': pd.to_numeric(candidate[tempcol], errors='coerce') - (273.15 if temperature_unit == 'K' else 0.0),
             }).replace([np.inf, -np.inf], np.nan)
             invalid = parsed.isna().any(axis=1)
             rejected = [{"data_record": int(i) + 1, "reason": "missing, nonnumeric or nonfinite required channel"}
@@ -114,7 +123,10 @@ def load_spectrum(path: str | Path, *, skiprows: int = 29,
             report = {"schema_version": 1, "metadata_rows_skipped": rows, "delimiter": sep,
                       "decimal_mark": decimal_mark, "columns": {"time": tcol, "temperature": tempcol, "signal": scol},
                       "unit_contract": {"time": "ms", "temperature": "degC", "signal": "arbitrary units"},
-                      "unit_note": "Legacy import contract; generic headers do not prove units. Confirm source units before analysis.",
+                      "source_units": {"time": time_unit, "temperature": temperature_unit},
+                      "unit_conversion": {"time_to_ms_factor": time_factors[time_unit],
+                                          "temperature_to_degC_offset": -273.15 if temperature_unit == 'K' else 0.0},
+                      "unit_note": "Declared source units converted to the legacy internal contract; generic headers do not prove units. Confirm source units before analysis.",
                       "original_data_records": len(candidate), "accepted_records": len(parsed),
                       "rejected_records": rejected, "sorted_by_time": sorted_rows,
                       "accepted_original_records": [int(i) + 1 for i in parsed.index],

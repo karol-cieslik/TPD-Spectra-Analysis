@@ -1,0 +1,33 @@
+{
+  "protocol": {
+    "stage": "Additional diagnostic declared after full-peak and independent nonlinear fit results",
+    "species": "CO",
+    "interval_K": [
+      20,
+      28
+    ],
+    "method": "Existing application leading_edge_fit, unaltered supplied signal; default positive-signal mask",
+    "selection": "Published upper cutoff with the same frozen 20 K lower bound; no interval tuning",
+    "interpretation": "Log-signal OLS differs from nonlinear signal-space least squares and can be biased by selecting only positive noisy observations; regression confidence interval excludes model and baseline uncertainty"
+  },
+  "result": {
+    "slope": -1336.5000133509216,
+    "intercept": 42.9124058296496,
+    "r_squared": 0.8109368822331493,
+    "n_points": 26,
+    "energy_ev": 0.11517066019906372,
+    "prefactor_s_inv": null,
+    "beta_k_s": 0.2,
+    "lower_c": -253.14999999999998,
+    "upper_c": -245.14999999999998,
+    "residual_rmse": 0.7011932062378777,
+    "slope_stderr": 131.72652277249802,
+    "energy_ci95_lower_ev": 0.09174270067237338,
+    "energy_ci95_upper_ev": 0.13859861972575405
+  },
+  "energy_K": 1336.5000133509216,
+  "selected_input_points": 78,
+  "positive_signal_points": 26,
+  "independent_numpy_OLS_energy_K": 1336.5000133509207,
+  "absolute_OLS_difference_K": 9.094947017729282e-13
+}

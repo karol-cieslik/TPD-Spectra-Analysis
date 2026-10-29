@@ -1,0 +1,1 @@
+Superseded exploratory extraction: the initial mask admitted both the 20 Lm blue and 50 Lm royal-blue hues. These fits are not admitted as results for the 50 Lm trace. Retained for transparency; do not use for validation. A hue-difference discriminator was added, extraction reviewed, and a new protocol declared before corrected-input fitting.

@@ -1,0 +1,19 @@
+{
+  "archive_files": 95,
+  "selected_files": 73,
+  "excluded_files": 22,
+  "fits": 438,
+  "optimizer_success": 438,
+  "prefactor_near_upper_bound_fits": 201,
+  "NRMSE_range": [
+    0.030226364743432613,
+    0.16637680079806205
+  ],
+  "conditional_energy_range_eV": [
+    0.6283849580706726,
+    4.356290848563745
+  ],
+  "max_baseline_energy_difference_eV": 2.98913911347219,
+  "energy_reference_validation_completed": false,
+  "reason": "Published zero-coverage complete-analysis energy is not commensurate with constant-E fits to unmapped coverage traces. Many results are bound-limited; optimization success is insufficient."
+}

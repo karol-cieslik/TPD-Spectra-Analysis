@@ -1,0 +1,13 @@
+{
+  "review_type": "AI-assisted visual inspection; not independent human review",
+  "source": "Figure 7 top-right black experimental marks; red simulation excluded by dark achromatic threshold",
+  "overlay": "extraction_check.png",
+  "comparison": "comparison.png",
+  "findings": [
+    "18 overlay markers checked against source; no legend/frame tracking observed",
+    "Gaps near steep portions retained; missingness can affect fitted shape",
+    "Final comparison uses dense simulated lines, not interpolation of experimental gaps; residuals are points",
+    "Axes and units visually checked; original raw spectra and measured ramp unavailable"
+  ],
+  "human_acceptance": "pending"
+}

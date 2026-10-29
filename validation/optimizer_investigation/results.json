@@ -1,0 +1,58 @@
+[
+  {
+    "start": [
+      1.0,
+      10000000000000.0
+    ],
+    "energy": 0.8985719323825863,
+    "nu": 9377654527094.875,
+    "rmse": 0.26430331242657407,
+    "aicc": 715.6619336097657,
+    "success": true,
+    "message": "`ftol` termination condition is satisfied.",
+    "scale": 3.1621107757183206e-08,
+    "baseline": 40.30055609073261
+  },
+  {
+    "start": [
+      0.8,
+      10000000000.0
+    ],
+    "energy": 0.9936500129402666,
+    "nu": 1376237317070.5735,
+    "rmse": 0.26430331243972227,
+    "aicc": 715.6619336178247,
+    "success": true,
+    "message": "`ftol` termination condition is satisfied.",
+    "scale": 6.273011158417248e-06,
+    "baseline": 40.3005553143208
+  },
+  {
+    "start": [
+      1.4,
+      10000000000000.0
+    ],
+    "energy": 1.4647391439974444,
+    "nu": 40633598168752.27,
+    "rmse": 0.2643033124255906,
+    "aicc": 715.6619336091628,
+    "success": true,
+    "message": "`ftol` termination condition is satisfied.",
+    "scale": 2.2097244910023585e-20,
+    "baseline": 40.300556434066806
+  },
+  {
+    "start": [
+      1.1,
+      1000000000000.0
+    ],
+    "energy": 1.094635376947084,
+    "nu": 849614846976.0486,
+    "rmse": 0.01273470282535328,
+    "aicc": 224.35374741166595,
+    "success": true,
+    "message": "`ftol` termination condition is satisfied.",
+    "scale": 10090.876943169947,
+    "baseline": 1.956710763896239
+  }
+]

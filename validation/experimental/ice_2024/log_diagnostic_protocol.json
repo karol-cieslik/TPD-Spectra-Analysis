@@ -1,0 +1,11 @@
+{
+  "stage": "Additional diagnostic declared after full-peak and independent nonlinear fit results",
+  "species": "CO",
+  "interval_K": [
+    20,
+    28
+  ],
+  "method": "Existing application leading_edge_fit, unaltered supplied signal; default positive-signal mask",
+  "selection": "Published upper cutoff with the same frozen 20 K lower bound; no interval tuning",
+  "interpretation": "Log-signal OLS differs from nonlinear signal-space least squares and can be biased by selecting only positive noisy observations; regression confidence interval excludes model and baseline uncertainty"
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "model": "first",
+    "initial_energy": 1.1,
+    "initial_nu": 1000000000000.0,
+    "returncode": 0,
+    "result": "[{\"name\": \"first\", \"error\": null, \"energy\": 1.0947792042032043}]\n",
+    "stderr": "",
+    "seconds": 1.1908677379997243
+  },
+  {
+    "model": "second",
+    "initial_energy": 1.1,
+    "initial_nu": 1000000000000.0,
+    "returncode": 0,
+    "result": "[{\"name\": \"second\", \"error\": null, \"energy\": 1.6350717564603539}]\n",
+    "stderr": "",
+    "seconds": 1.5225678589999916
+  },
+  {
+    "model": "second",
+    "initial_energy": 1.0,
+    "initial_nu": 10000000000000.0,
+    "returncode": 0,
+    "result": "[{\"name\": \"second\", \"error\": null, \"energy\": 1.6350684069050776}]\n",
+    "stderr": "",
+    "seconds": 1.6993173220002973
+  },
+  {
+    "model": "second",
+    "initial_energy": 0.8,
+    "initial_nu": 10000000000.0,
+    "returncode": 0,
+    "result": "[{\"name\": \"second\", \"error\": null, \"energy\": 1.635076508032479}]\n",
+    "stderr": "",
+    "seconds": 1.5949840489997769
+  },
+  {
+    "model": "second",
+    "initial_energy": 1.4,
+    "initial_nu": 10000000000000.0,
+    "returncode": 0,
+    "result": "[{\"name\": \"second\", \"error\": null, \"energy\": 3.1814034512635927}]\n",
+    "stderr": "",
+    "seconds": 1.1697787230000358
+  }
+]

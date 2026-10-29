@@ -1,0 +1,114 @@
+{
+  "accepted_records": 11,
+  "superseded_pilot_not_validation": true,
+  "leading_edge": [
+    {
+      "case": "leading_primary_graphical_zero",
+      "method": "production_leading_edge",
+      "window": "primary",
+      "baseline": "graphical_zero",
+      "subtracted_offset": 0.0,
+      "energy_kJ_mol": 38.86057330789657,
+      "difference_from_reference_kJ_mol": -3.9394266921034244,
+      "apparent_energy_K": 4673.852670051704,
+      "r_squared": 0.9932723357604546,
+      "n_points": 13,
+      "slope": -4673.852670051704,
+      "intercept": 37.38392555552074,
+      "independent_OLS_difference_kJ_mol": 6.892264536872972e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "leading_primary_preedge_median",
+      "method": "production_leading_edge",
+      "window": "primary",
+      "baseline": "preedge_median",
+      "subtracted_offset": 0.03345724907065,
+      "energy_kJ_mol": 42.221407648962185,
+      "difference_from_reference_kJ_mol": -0.5785923510378126,
+      "apparent_energy_K": 5078.068131160176,
+      "r_squared": 0.994607937336131,
+      "n_points": 13,
+      "slope": -5078.068131160176,
+      "intercept": 40.60602412352481,
+      "independent_OLS_difference_kJ_mol": 7.318590178329032e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "leading_sensitivity_graphical_zero",
+      "method": "production_leading_edge",
+      "window": "sensitivity",
+      "baseline": "graphical_zero",
+      "subtracted_offset": 0.0,
+      "energy_kJ_mol": 37.81420574698456,
+      "difference_from_reference_kJ_mol": -4.985794253015435,
+      "apparent_energy_K": 4548.00357926049,
+      "r_squared": 0.9957091560318428,
+      "n_points": 16,
+      "slope": -4548.00357926049,
+      "intercept": 36.35140079227603,
+      "independent_OLS_difference_kJ_mol": -5.613287612504791e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "leading_sensitivity_preedge_median",
+      "method": "production_leading_edge",
+      "window": "sensitivity",
+      "baseline": "preedge_median",
+      "subtracted_offset": 0.03345724907065,
+      "energy_kJ_mol": 40.289324795462356,
+      "difference_from_reference_kJ_mol": -2.510675204537641,
+      "apparent_energy_K": 4845.691976232057,
+      "r_squared": 0.9953284609894024,
+      "n_points": 16,
+      "slope": -4845.691976232057,
+      "intercept": 38.7031921098408,
+      "independent_OLS_difference_kJ_mol": -5.897504706808832e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    }
+  ],
+  "whole_peak": [
+    {
+      "case": "whole_peak_baseline0",
+      "energy_kJ_mol": 12.649086020161297,
+      "NRMSE": 0.16805551571842375,
+      "success": true,
+      "warnings": [
+        "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+        "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+        "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+        "Large residual: numerical completion does not establish zero-order model adequacy."
+      ]
+    },
+    {
+      "case": "whole_peak_baseline1",
+      "energy_kJ_mol": 18.32299474089669,
+      "NRMSE": 0.13266906490939018,
+      "success": true,
+      "warnings": [
+        "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+        "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+        "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model."
+      ]
+    }
+  ],
+  "transformed_plot_reconstruction": {
+    "case": "transformed_plot_reconstruction",
+    "method": "already_corrected_ordinate_not_raw_spectrum",
+    "energy_kJ_mol": 42.63076188277626,
+    "difference_from_reference_kJ_mol": -0.16923811722373472,
+    "apparent_energy_K": 5127.3021289077105,
+    "r_squared": 0.9989286269091682,
+    "n_points": 92,
+    "slope": -5127.3021289077105,
+    "intercept": 50.46129744707922,
+    "independent_OLS_difference_kJ_mol": -6.394884621840902e-14,
+    "nonpositive_omitted": 0,
+    "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+  },
+  "conclusion": "Baseline/window-sensitive correspondence; whole-peak mismatch; transformed plot reconstruction not independent validation."
+}

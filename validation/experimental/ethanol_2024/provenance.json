@@ -1,0 +1,40 @@
+{
+  "paper_doi": "10.1039/D4CP01934B",
+  "authors": "Jessica Perrero, Julie Vitorino, Emanuele Congiu, Piero Ugliengo, Albert Rimola, Fran\u00e7ois Dulieu",
+  "year": 2024,
+  "title": "Binding energies of ethanol and ethylamine on interstellar water ices: synergy between theory and experiments",
+  "source_url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/3b09/11221575/e44dbf214cee/d4cp01934b-f7.jpg",
+  "full_text": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11221575/",
+  "licence": "CC-BY-NC-3.0",
+  "licence_url": "https://creativecommons.org/licenses/by-nc/3.0/",
+  "source_sha256": "2209fec95c9cf0cef9b04644564bf9ff5db85a97cb9da521513274b9efe1ba13",
+  "trace": "Figure 7 top-right: experimental black symbols, 0.7 ML ethanol on gold",
+  "beta_K_s": 0.15,
+  "reference_prefactor_s_inv": 3.31e+18,
+  "reference_dominant_energy_K": 6450,
+  "reference_is_not_single_energy_ground_truth": true,
+  "x_anchors": [
+    [
+      416.5,
+      90
+    ],
+    [
+      747.5,
+      170
+    ]
+  ],
+  "y_anchors": [
+    [
+      225,
+      0
+    ],
+    [
+      5,
+      0.018
+    ]
+  ],
+  "missing_data": "No black mark or vertical black extent >14 pixels: blank; no interpolation",
+  "source_time": "Not available; no measured time reconstructed",
+  "source_fig4": "Same nominal coverage shown but not used as quantitative independent reference",
+  "extraction_method": "Per-column median of dark near-achromatic pixels; legend and frame excluded; threshold variants 85/110/135; no red-model tracking"
+}

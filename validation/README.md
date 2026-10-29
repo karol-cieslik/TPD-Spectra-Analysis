@@ -34,3 +34,84 @@ The main CSV includes `contact_author`, `contact_email`, `contact_role`, `contac
 Suggested sequence: complete the digitization and independent validation first; then send one personalized professional message to the identified author, explain specifically which published spectrum and figure were used, identify the article citation, provide a link to the software and validation protocol, invite bug reports/usability comments, and avoid implying endorsement or collaboration without the author's agreement. If you want the original numerical data, request them explicitly and ask about permission for public redistribution.
 
 Use `outreach_status` to track `not_contacted`, `sent`, `replied`, `declined`, or `bounced`. Do not publish private email responses or third-party confidential datasets in this public GitHub repository.
+
+## Acquired external numerical input case
+
+A separate deposited CC-BY-4.0 dataset now supports a limited experimental
+input/conversion/peak and negative ramp-screening check. See
+[the RODARE case](experimental/rodare_4644/README.md). It is outside the 26
+figure-digitization leads above and does not change their not_started status.
+It is not a completed desorption-energy validation or external-adoption claim.
+
+### PTCDA/Au(111) deposited-data model challenge
+
+[Records and limitations](experimental/ptcda_au111/README.md) retain the original
+CC-BY-4.0 archive (95 files), frozen screens and 438 conditional first-order fits
+on 73 selected traces. Frequent prefactor-bound flags and baseline-dependent
+energies make this a model challenge, not reproduction of the published
+zero-coverage energy. The existing 26-entry literature catalog is unchanged;
+this acquired source is tracked separately.
+
+### Deposited pure-Ar and CO energy comparison
+
+[Source and outcomes](experimental/ice_2024/README.md): explicit deposited units,
+checksum provenance, fixed protocols, six bound-limited full-peak fits, withheld
+Ar intervals, and baseline-sensitive leading-edge results. An independent
+nonlinear CO estimate lies within the published band only for one baseline
+hypothesis; this does not validate Studio's full-peak estimates. All results are
+retained. The existing literature catalog remains unchanged.
+
+### Diagnosis and next experimental studies
+
+[Findings and next studies](experimental/FINDINGS_AND_NEXT_STUDIES.md) separates
+observed failures from possible causes, links original readable data, and fixes
+a small next panel: two independent studies plus an optional discriminating
+series. [Study plan](experimental/next_study_plan.csv) explicitly distinguishes
+leads from acquired evidence. No additional validation pass is claimed.
+
+### Three-paper figure digitization
+
+[Four curves from three papers](digitized/README.md) retain figure-derived CSVs,
+source images/path coordinates, licences, axis calibration, missing segments and
+QA overlays. Two papers extend the collection; the existing pure-ice study is
+also checked independently against its published figures. No kinetic fits were
+performed. The [CO correspondence correction](digitized/SOURCE_CORRESPONDENCE_UPDATE.md)
+qualifies earlier deposited-data interpretations while preserving all originals.
+
+### Three additional candidate studies
+
+[Additional-study screening](experimental/additional_studies_2026_10_29/README.md)
+records nine molecular-system targets from three more papers, published energy
+references, source hashes, rights/access limits and a comparison sequence.
+These are candidates, not nine completed validation datasets. No new fits.
+
+### Ethanol/Au conditional comparison
+
+[Completed comparison](experimental/ethanol_2024/README.md): 20 declared fits to
+figure-derived experimental marks. Fixed literature-prefactor energy is 6435 K
+versus dominant published 6450 K; free-prefactor fitting gives 7613 K with a
+fitted baseline. Extraction gaps, residuals and model differences remain explicit.
+Source-derived materials carry CC-BY-NC-3.0, separately from software code.
+
+### Methyl-acetate/HOPG comparison
+
+[Completed leading-edge assessment](experimental/methyl_acetate_2024/README.md)
+gives 42.22 kJ/mol with the declared offset versus published 42.8 +/- 0.7;
+other baseline/window settings give 37.81–40.29. Whole-peak mismatch and
+substantial extraction gaps remain explicit. The separate 42.63 reconstruction
+uses an already corrected published ordinate and is not independent validation.
+
+### Pure MeSH and manuscript evidence audit
+
+[Pure-MeSH assessment](experimental/mesh_2025/README.md) reuses the existing
+preprint extraction: 12 records, method-sensitive leading edges and whole-peak
+residuals, no robust reproduction of the TST-conditioned reference.
+[Claim–evidence audit](../docs/JOSS_CLAIM_EVIDENCE_AUDIT.md) consolidates these
+results with ethanol, methyl acetate and earlier numerical/negative cases.
+
+### Focused review package
+
+[Review entry point](review_package/README.md) provides three selected cases,
+three questions, a response template and a measured-coordinate Windows import
+fixture. Headless export/helper checks preserve warnings/settings without
+refitting; Windows GUI and independent scientific acceptance remain pending.

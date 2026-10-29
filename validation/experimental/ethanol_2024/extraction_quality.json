@@ -1,0 +1,91 @@
+{
+  "columns": 324,
+  "recovered_columns": 292,
+  "missing_columns": 32,
+  "peak_temperature_K": 142.0845921450151,
+  "peak_rate_ML_s": 0.017099999999999997,
+  "temperature_pixel_halfwidth_K": 0.12084592145015106,
+  "additional_axis_placement_allowance_K": 0.36253776435045315,
+  "signal_axis_placement_allowance_ML_s": 0.0001227272727272727,
+  "maximum_signal_pixel_threshold_bound": 0.0006545454545454545,
+  "unused_tick_checks": {
+    "x_110_K_error": -0.060422960725077246,
+    "x_150_K_error": 0.060422960725077246,
+    "y_001_ML_s_error": -1.8181818181819964e-05
+  },
+  "limitation": "Raster centerlines of black symbols, not recovered instrument samples. Pixel bounds are engineering allowances, not confidence intervals.",
+  "visual_markers": [
+    {
+      "x": 420.0,
+      "y": 220.0
+    },
+    {
+      "x": 437.0,
+      "y": 220.5
+    },
+    {
+      "x": 454.0,
+      "y": 220.0
+    },
+    {
+      "x": 471.0,
+      "y": 220.5
+    },
+    {
+      "x": 488.0,
+      "y": 220.0
+    },
+    {
+      "x": 506.0,
+      "y": 219.5
+    },
+    {
+      "x": 523.0,
+      "y": 220.5
+    },
+    {
+      "x": 540.0,
+      "y": 220.0
+    },
+    {
+      "x": 557.0,
+      "y": 219.5
+    },
+    {
+      "x": 574.0,
+      "y": 215.5
+    },
+    {
+      "x": 592.0,
+      "y": 191.5
+    },
+    {
+      "x": 623.0,
+      "y": 30.5
+    },
+    {
+      "x": 655.0,
+      "y": 208.0
+    },
+    {
+      "x": 673.0,
+      "y": 218.5
+    },
+    {
+      "x": 692.0,
+      "y": 217.5
+    },
+    {
+      "x": 709.0,
+      "y": 218.5
+    },
+    {
+      "x": 726.0,
+      "y": 220.0
+    },
+    {
+      "x": 743.0,
+      "y": 218.5
+    }
+  ]
+}

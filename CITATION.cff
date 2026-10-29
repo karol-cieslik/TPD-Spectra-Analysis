@@ -4,7 +4,8 @@ title: "TPD Spectra Studio"
 abstract: >-
   Python tools for reproducible thermal desorption spectroscopy analysis,
   including classical Redhead and leading-edge estimates, numerical
-  Polanyi-Wigner fitting, model comparison, and global multi-heating-rate fitting.
+  Polanyi-Wigner fitting, exploratory model comparison, conditional Monte Carlo
+  refitting, and reproducible analysis exports.
 type: software
 version: 0.11.0b5
 repository-code: "https://github.com/karol-cieslik/TPD-Spectra-Analysis"

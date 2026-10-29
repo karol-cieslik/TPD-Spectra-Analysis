@@ -1,0 +1,101 @@
+{
+  "paper_doi": "10.1051/0004-6361/202346948",
+  "title": "Comprehensive laboratory constraints on thermal desorption of interstellar ice analogues",
+  "authors": "F. Kruczkiewicz; F. Dulieu; A. V. Ivlev; P. Caselli; B. M. Giuliano; C. Ceccarelli; P. Theule",
+  "source_url": "https://cylira.cyu.fr/medias/fichier/aa46948-23_1728555086911-pdf?ID_FICHE=8719&INLINE=FALSE",
+  "page": 9,
+  "figures": [
+    "2b",
+    "3a"
+  ],
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "method": "PDF_vector_path_vertices",
+  "beta_K_s": 0.2,
+  "y_unit": "ML K^-1",
+  "traces": {
+    "CO": {
+      "figure": "2b",
+      "x_anchors": [
+        [
+          114.27739715576172,
+          50
+        ],
+        [
+          180.13479614257812,
+          100
+        ]
+      ],
+      "x_check_ticks": [
+        [
+          245.97760009765625,
+          150
+        ]
+      ],
+      "y_anchors": [
+        [
+          331.1206359863281,
+          0
+        ],
+        [
+          238.76803588867188,
+          0.3
+        ]
+      ],
+      "y_check_ticks": [
+        [
+          300.40283203125,
+          0.1
+        ],
+        [
+          269.6850280761719,
+          0.2
+        ]
+      ]
+    },
+    "Ar": {
+      "figure": "3a",
+      "x_anchors": [
+        [
+          381.369873046875,
+          50
+        ],
+        [
+          447.861083984375,
+          100
+        ]
+      ],
+      "x_check_ticks": [
+        [
+          514.366455078125,
+          150
+        ]
+      ],
+      "y_anchors": [
+        [
+          204.03842163085938,
+          0
+        ],
+        [
+          106.91970825195312,
+          0.4
+        ]
+      ],
+      "y_check_ticks": [
+        [
+          155.37242126464844,
+          0.2
+        ]
+      ]
+    }
+  },
+  "limitations": "PDF path vertices are plotted coordinates, not instrument samples. Curve-to-deposited-CSV agreement must be checked independently.",
+  "retrieved_date": "2026-10-29",
+  "source_pdf_sha256": "72ee2445453e31b22e7377e051fac339909368e6a1bb97c500fe18b8a19d83fb",
+  "source_kind": "published-figure-derived experimental curve, not raw acquisition data",
+  "changes": "Figure extraction/crop and coordinate digitization; original authors did not perform or endorse this derived analysis.",
+  "source_file_hashes": {
+    "source_paths.json": "62c7490a371fac99ee80ec97db8232a5328c4d771436f2aa83c7e4e051583d65",
+    "source_context.png": "68f9a692bc586a2e75d997380bf38cf081bc8317087e9a2aa915bad92b9882dc"
+  }
+}

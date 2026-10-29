@@ -1,0 +1,28 @@
+{
+  "dataset_doi": "10.14278/rodare.4644",
+  "article_doi": "10.1038/s41467-026-75930-9",
+  "creators": [
+    "Alexandra Becker",
+    "Holger Lippold",
+    "Jing Liu",
+    "Michael Hirscher",
+    "Cornelius Fischer"
+  ],
+  "license": "CC-BY-4.0",
+  "source_url": "https://rodare.hzdr.de/record/4644",
+  "workbook": "TDS data - single binary ternary systems.xlsx",
+  "workbook_md5": "f4a72acceee3c0bd22df0bcdb077538c",
+  "workbook_sha256": "ac756b1cb8334af2fe38303705b15a9485784027569be29c46223f6e1f0678c6",
+  "sheet": "H2 D2",
+  "signal_column_original": "D signal cal. (molecules / s)",
+  "source_time_unit": "s",
+  "source_temperature_unit": "K",
+  "measured_time": true,
+  "source_points": 289,
+  "published_heating_rate_K_s": 0.1,
+  "published_comparison": "D2 maximum approximately 92 K; Nature Communications article Figure 2a discussion",
+  "changes": "Selected measured relative time, measured temperature and calibrated D signal; renamed headers only. No smoothing, baseline subtraction or digitization.",
+  "csv_sha256": "9eba6e09297c47ba8e2a6027eeb29a327390746841c9541c4c8e0b531994a99b",
+  "evidence_scope": "Experimental import/unit/peak-position and ramp-screening case; not kinetic-energy or mechanism validation.",
+  "access_date": "2026-10-28"
+}

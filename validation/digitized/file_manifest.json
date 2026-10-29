@@ -1,0 +1,101 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 5131,
+      "sha256": "a3b227c8171fcae816429c07aeef48874ae250047f001dd9419430da2853ed9a"
+    },
+    "SOURCE_CORRESPONDENCE_UPDATE.md": {
+      "bytes": 2225,
+      "sha256": "82bf4da27e05d12a72ec522f57fbf9a719b76e779a28382e223089ec61a517ab"
+    },
+    "extraction_summary.json": {
+      "bytes": 696,
+      "sha256": "ca67ea5877857e5716909c37bc1a40e0d34f43ee2e8aecfba3ee307282edc745"
+    },
+    "ice_2024/Ar_digitized.csv": {
+      "bytes": 9816,
+      "sha256": "3d827cd4302f1ee19e210224c1e2df13f3401962c967fca31c41f7a04066ae2a"
+    },
+    "ice_2024/CO_digitized.csv": {
+      "bytes": 16786,
+      "sha256": "49b57077b5a91b284ee50714bca41ad14f3e6c83a4322b3f794b4de276c4f3eb"
+    },
+    "ice_2024/README.md": {
+      "bytes": 1679,
+      "sha256": "21dcdff31522125610844ce55bbe16a427cfec22731f834f18d25e4cca0a82bc"
+    },
+    "ice_2024/extraction_check.png": {
+      "bytes": 164459,
+      "sha256": "b21cc07b1dbde350468f397be2e7ca15ffd4245dde2ecba035e06a58a9845285"
+    },
+    "ice_2024/provenance.json": {
+      "bytes": 2491,
+      "sha256": "e62c3360d07eb754de7c9f3d63b79a404da7f1237a34b4f1006e518d0bca73a4"
+    },
+    "ice_2024/quality.json": {
+      "bytes": 1807,
+      "sha256": "540b67b2534f7c37ba1904ae4b97f50c02c736c7f334df518c567988f09638bd"
+    },
+    "ice_2024/source_context.png": {
+      "bytes": 208009,
+      "sha256": "68f9a692bc586a2e75d997380bf38cf081bc8317087e9a2aa915bad92b9882dc"
+    },
+    "ice_2024/source_paths.json": {
+      "bytes": 37008,
+      "sha256": "62c7490a371fac99ee80ec97db8232a5328c4d771436f2aa83c7e4e051583d65"
+    },
+    "mesh_2025/README.md": {
+      "bytes": 1922,
+      "sha256": "1f2e555f095449a1c37d463f5912bec9403d8a0372aa344f5f865d742181d45e"
+    },
+    "mesh_2025/digitized.csv": {
+      "bytes": 46156,
+      "sha256": "f20c5e8d76ae8c9e84388887276bc3cddb145ac7f720b18b04907531e583a5c7"
+    },
+    "mesh_2025/extraction_check.png": {
+      "bytes": 98558,
+      "sha256": "6f943c629e9bf0f2b37f517f3fabf7ac9fb4616d0e22858b0fdcc3f131305a14"
+    },
+    "mesh_2025/provenance.json": {
+      "bytes": 2077,
+      "sha256": "7bf185f78aee6b1e68a05834a59cc844c172da697a2e9eac060b26062344963a"
+    },
+    "mesh_2025/quality.json": {
+      "bytes": 2394,
+      "sha256": "dd652f68a8b3ee1edd57f1cc41342f9b8a7fa1258bbfff148931fea40af0e1bb"
+    },
+    "mesh_2025/source_figure.png": {
+      "bytes": 81056,
+      "sha256": "90fceed0bca64cf6ff27b234b65f20b084cbb692065d70fd4b233ae74d4e673f"
+    },
+    "visual_review.json": {
+      "bytes": 927,
+      "sha256": "f0e50ace0f5620dcce501fec0d9a1b24a493d6ca07de655a2657b956322d827e"
+    },
+    "water_2018/README.md": {
+      "bytes": 1615,
+      "sha256": "daeac95434b2cecf67f532b28cd27fe9cf7408b9b202bf5b34ce46082bacd38d"
+    },
+    "water_2018/digitized.csv": {
+      "bytes": 34728,
+      "sha256": "ff73a85ea866b21586b01380c54dc97ab0cb3c90492ec2adeafb1ffa58a2727b"
+    },
+    "water_2018/extraction_check.png": {
+      "bytes": 361357,
+      "sha256": "7ad085ab33bc34851010ba5967949b36650baa3feb0b8ab85b6a0ac436eba41c"
+    },
+    "water_2018/provenance.json": {
+      "bytes": 1848,
+      "sha256": "0091d3d3c838f2a641d793f4d056da5fab160e534d01170ad082259a9be67120"
+    },
+    "water_2018/quality.json": {
+      "bytes": 2195,
+      "sha256": "6b1dd08bd023f19cc37dbc30b9316adeb5988a61474308919da096fceff6eba2"
+    },
+    "water_2018/source_figure.jpeg": {
+      "bytes": 221829,
+      "sha256": "0d829ddd79032e795dd081f7da91c1e897b5218a0b329ecfe92488f898f796ea"
+    }
+  },
+  "note": "Original-source licences apply to figures and figure-derived coordinates. Hashes identify the delivered snapshot."
+}

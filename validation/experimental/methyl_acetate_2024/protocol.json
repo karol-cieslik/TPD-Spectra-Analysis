@@ -1,0 +1,48 @@
+{
+  "declared_utc": "2026-10-29T07:13:39.878030+00:00",
+  "declaration": "Corrected-input declaration after an invalid colour-selection pilot and enlarged-axis QA, before corrected-input fitting. Exploratory energies were already seen. Not blinded or preregistered; windows and models unchanged.",
+  "hashes": {
+    "spectrum.csv": "aeae2664777957a5dc9d3bd3fb27973f590a66039ff3ed237c25a2ac7b5f1fa6",
+    "published_transformed.csv": "1105877fa786d697f9785dbe30b4360c9a7c7e7e27abfe62bac086cac6371ca4"
+  },
+  "beta_K_s": 0.5,
+  "leading_windows_K": {
+    "primary": [
+      120,
+      124
+    ],
+    "sensitivity": [
+      121,
+      125
+    ]
+  },
+  "baseline_cases": [
+    "graphical_zero",
+    "preedge_median"
+  ],
+  "preedge_median_window_K": [
+    112,
+    116
+  ],
+  "full_peak_window_K": [
+    112,
+    145
+  ],
+  "full_peak_baseline_cases": [
+    false,
+    true
+  ],
+  "full_peak_max_nfev": 150,
+  "reaction_order_approximation": 0,
+  "reference_order": 0.02,
+  "reference_kJ_mol": 42.8,
+  "reference_error_kJ_mol": 0.7,
+  "transformed_check": "Fig6C corrected ordinate, use all recovered finite columns; T=1000/x, signal=exp(z); not raw-spectrum validation",
+  "pixel_cases": "Primary window, graphical-zero baseline, T shifted +/-1.5 pixel and signal shifted +/- extraction bound; no probability/coverage meaning",
+  "input_screen": "Strictly increasing spectrum T; >=5 positive pairs per leading edge; >=30 pairs whole peak; no gap filling or smoothing",
+  "comparison": "Uncorrected ln(signal) slope approximates n=0; published corrected ln I - n ln theta uses n=0.02. Reference uncertainty is descriptive, not a pass criterion.",
+  "stopping_rule": "One pass of four leading-edge cases, four primary engineering corners, two whole-peak diagnostics and one transformed-plot reconstruction. Preserve all outputs/failures; do not tune windows to published energy.",
+  "weights": "Uniform per recovered raster column; correlated source pixels. No independent-sample CI or MC interpretation.",
+  "full_peak_role": "Stress test of a single ideal zero-order state against a two-phase/broadened experimental profile; not same estimand as rising-edge reference.",
+  "extraction_script_sha256": "4d971d2742b3b5a42af466eefc2f5adab2ee159e7e2b2005fbb9115630dfed4b"
+}

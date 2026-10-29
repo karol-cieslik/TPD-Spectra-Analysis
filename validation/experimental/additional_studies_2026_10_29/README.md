@@ -38,3 +38,7 @@ Recommended first comparison: ethanol/gold, then an admitted pure-ice bulk leadi
 [Ethanol/Au assessment](../ethanol_2024/README.md) now contains an extraction and
 20 conditional fits. The screening CSV above preserves its original candidate
 status as recorded before analysis. It is not the current result register.
+
+[Methyl-acetate assessment](../methyl_acetate_2024/README.md) is also complete:
+baseline/window-sensitive spectrum leading edges, whole-peak model-limit
+diagnostics and a separately labelled transformed-plot reconstruction.

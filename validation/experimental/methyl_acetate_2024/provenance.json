@@ -1,0 +1,62 @@
+{
+  "doi": "10.1039/D4RA04466E",
+  "authors": "Jack E. Fulker and Wendy A. Brown",
+  "year": 2024,
+  "licence": "CC-BY-3.0",
+  "licence_url": "https://creativecommons.org/licenses/by/3.0/",
+  "paper_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11537193/",
+  "source_manifest": "../additional_studies_2026_10_29/source_manifest.json",
+  "sources": {
+    "source_figure4.jpg": {
+      "sha256": "1d090271e7638b6841303739df218f224a583cc987fb55df833deffc7a2b3ea0",
+      "source_figure": 4
+    },
+    "source_figure6.jpg": {
+      "sha256": "c60385160698733ff2afdca2e6c1e8ca9c90b82e30781568b337d9b5eca0b962",
+      "source_figure": 6
+    }
+  },
+  "spectrum": "Fig 4B: explicitly labelled 50 Lm methyl acetate/HOPG, dosed at 28 K",
+  "reference": "Fig 6C: paper identifies 50 Lm; acquisition identity between figures not verified from raw records",
+  "beta_K_s": 0.5,
+  "beta_reported_uncertainty_K_s": 0.01,
+  "reference_kJ_mol": 42.8,
+  "reference_reported_error_kJ_mol": 0.7,
+  "reference_order": 0.02,
+  "reference_order_reported_error": 0.04,
+  "coverage_correction": "Published transformed ordinate ln I - n ln theta_rel; raw coverage correction is not reconstructed",
+  "spectrum_anchors_x": [
+    [
+      282,
+      110
+    ],
+    [
+      499,
+      150
+    ]
+  ],
+  "spectrum_y": "No numeric ordinate ticks; normalize selected curve to its visible height above graphical bottom y=350; no measured baseline subtraction",
+  "transformed_anchors_x": [
+    [
+      604,
+      8.0
+    ],
+    [
+      731,
+      8.3
+    ]
+  ],
+  "transformed_anchors_y": [
+    [
+      414,
+      7
+    ],
+    [
+      70,
+      10
+    ]
+  ],
+  "measured_time": "Unavailable; no fabricated time column",
+  "trace_identity": "Explicit Fig4B legend, royal-blue 50 Lm swatch. Fig6A unlabeled colour order is not assumed.",
+  "axis_verification": "Tick stems inspected at enlarged source resolution; independent unused ticks checked"
+}

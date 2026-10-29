@@ -92,3 +92,11 @@ figure-derived experimental marks. Fixed literature-prefactor energy is 6435 K
 versus dominant published 6450 K; free-prefactor fitting gives 7613 K with a
 fitted baseline. Extraction gaps, residuals and model differences remain explicit.
 Source-derived materials carry CC-BY-NC-3.0, separately from software code.
+
+### Methyl-acetate/HOPG comparison
+
+[Completed leading-edge assessment](experimental/methyl_acetate_2024/README.md)
+gives 42.22 kJ/mol with the declared offset versus published 42.8 +/- 0.7;
+other baseline/window settings give 37.81–40.29. Whole-peak mismatch and
+substantial extraction gaps remain explicit. The separate 42.63 reconstruction
+uses an already corrected published ordinate and is not independent validation.

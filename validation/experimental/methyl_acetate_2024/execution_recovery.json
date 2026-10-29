@@ -1,0 +1,17 @@
+{
+  "event": "Initial assessment wrapper failed before writing results",
+  "cause": "Wrapper used FitResult.activation_energy_eV instead of existing FitResult.energy_ev for leading-edge results",
+  "production_code_changed": false,
+  "already_computed_whole_peak_console_values_kJ_mol": [
+    24.679696977316556,
+    38.51201036437016
+  ],
+  "recovery": "Correct wrapper field access and recompute because complete fit records were not saved. Protocol inputs, windows and settings unchanged; no tuning to published result.",
+  "scope": "This implementation correction is a deviation from literal one-pass execution, not a new scientific protocol.",
+  "additional_extraction_QA_corrections": [
+    "Initial colour mask included 20 Lm blue as well as 50 Lm royal blue; R-G hue discriminator added",
+    "Initial transformed-axis anchors were corrected by enlarged tick-stem inspection; spectrum right tick corrected 500->499 px"
+  ],
+  "superseded_pilot": "superseded_colour_selection/",
+  "accepted_run": "Corrected-input protocol/results in parent directory, same temperature windows and model cases; exploratory energies already known"
+}

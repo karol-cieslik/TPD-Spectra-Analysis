@@ -356,3 +356,24 @@ fits complete without exceptions or identified bound hits; no MC or GUI tests
 were performed. AI-assisted visual checks complete; independent human scientific
 review remains pending. Next: review this extraction/interpretation, then one
 commensurate case from another study, rather than expand the literature list.
+
+
+## 29 October 2026 — methyl-acetate comparison completed
+
+`validation/experimental/methyl_acetate_2024/` adds the labelled 50 Lm Fig4B
+spectrum and a separate Fig6C corrected-ordinate reconstruction. Initial hue
+selection and axis errors were found by enlarged-image QA; the invalid pilot
+is retained but excluded. Corrected-input settings retain the original windows,
+after exploratory energies were known; no blinded/preregistered claim.
+
+Primary leading-edge energies are 38.86 without offset and 42.22 kJ/mol after
+the declared pre-edge median, versus published 42.8 +/- 0.7. Alternate window
+gives 37.81/40.29. Missingness is substantial (112/213 columns); baseline and
+nonzero-order correction differ from the published analysis. Whole-peak
+zero-order fits give 12.65/18.32 kJ/mol with NRMSE .1681/.1327: completed
+optimizations, not accurate physical energies. Fig6C reconstruction is 42.63,
+not independent raw-spectrum validation. All 11 accepted assessment records,
+residuals, sources, licences and superseded pilot are retained. No production
+code change, old dataset rerun or MC. Human scientific review remains open.
+Next useful publication task: consolidate claim/evidence limits across ethanol,
+methyl acetate and earlier negative cases before expanding the dataset list.

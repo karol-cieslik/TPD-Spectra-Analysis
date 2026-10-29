@@ -1,0 +1,319 @@
+{
+  "protocol_sha256": "bced6fa0afda25cfed6012d6708a2685a8c93e2a8b0c18dac53da6320304eba0",
+  "protocol": {
+    "declared_utc": "2026-10-29T07:10:42.852003+00:00",
+    "declaration": "After literature/extraction QA, before any methyl-acetate energy fitting; not blinded or independent preregistration",
+    "hashes": {
+      "spectrum.csv": "81a0759a30f019e669769d499f438a31300a6d7e033b501c5cbaf37539c19f8c",
+      "published_transformed.csv": "d44b0bc33601d19a91b1a4d1e01cfa9674aa2ce11b40a3b98ec8e5a5f009c8a0"
+    },
+    "beta_K_s": 0.5,
+    "leading_windows_K": {
+      "primary": [
+        120,
+        124
+      ],
+      "sensitivity": [
+        121,
+        125
+      ]
+    },
+    "baseline_cases": [
+      "graphical_zero",
+      "preedge_median"
+    ],
+    "preedge_median_window_K": [
+      112,
+      116
+    ],
+    "full_peak_window_K": [
+      112,
+      145
+    ],
+    "full_peak_baseline_cases": [
+      false,
+      true
+    ],
+    "full_peak_max_nfev": 150,
+    "reaction_order_approximation": 0,
+    "reference_order": 0.02,
+    "reference_kJ_mol": 42.8,
+    "reference_error_kJ_mol": 0.7,
+    "transformed_check": "Fig6C corrected ordinate, use all recovered finite columns; T=1000/x, signal=exp(z); not raw-spectrum validation",
+    "pixel_cases": "Primary window, graphical-zero baseline, T shifted +/-1.5 pixel and signal shifted +/- extraction bound; no probability/coverage meaning",
+    "input_screen": "Strictly increasing spectrum T; >=5 positive pairs per leading edge; >=30 pairs whole peak; no gap filling or smoothing",
+    "comparison": "Uncorrected ln(signal) slope approximates n=0; published corrected ln I - n ln theta uses n=0.02. Reference uncertainty is descriptive, not a pass criterion.",
+    "stopping_rule": "One pass of four leading-edge cases, four primary engineering corners, two whole-peak diagnostics and one transformed-plot reconstruction. Preserve all outputs/failures; do not tune windows to published energy.",
+    "weights": "Uniform per recovered raster column; correlated source pixels. No independent-sample CI or MC interpretation.",
+    "full_peak_role": "Stress test of a single ideal zero-order state against a two-phase/broadened experimental profile; not same estimand as rising-edge reference."
+  },
+  "preedge_median_normalized": 0.0373134328358,
+  "records": [
+    {
+      "case": "leading_primary_graphical_zero",
+      "method": "production_leading_edge",
+      "window": "primary",
+      "baseline": "graphical_zero",
+      "subtracted_offset": 0.0,
+      "energy_kJ_mol": 29.376410174304226,
+      "difference_from_reference_kJ_mol": -13.423589825695771,
+      "apparent_energy_K": 3533.170034365034,
+      "r_squared": 0.9971455139707879,
+      "n_points": 13,
+      "slope": -3533.1700343650336,
+      "intercept": 27.599730833617834,
+      "independent_OLS_difference_kJ_mol": -1.5631940186722204e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "leading_primary_preedge_median",
+      "method": "production_leading_edge",
+      "window": "primary",
+      "baseline": "preedge_median",
+      "subtracted_offset": 0.0373134328358,
+      "energy_kJ_mol": 35.140136163641294,
+      "difference_from_reference_kJ_mol": -7.659863836358703,
+      "apparent_energy_K": 4226.386932923641,
+      "r_squared": 0.998141999488081,
+      "n_points": 13,
+      "slope": -4226.386932923641,
+      "intercept": 33.12209640387317,
+      "independent_OLS_difference_kJ_mol": -2.0605739337042905e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "leading_sensitivity_graphical_zero",
+      "method": "production_leading_edge",
+      "window": "sensitivity",
+      "baseline": "graphical_zero",
+      "subtracted_offset": 0.0,
+      "energy_kJ_mol": 49.41083175746645,
+      "difference_from_reference_kJ_mol": 6.61083175746645,
+      "apparent_energy_K": 5942.757100091024,
+      "r_squared": 0.9120138761025653,
+      "n_points": 11,
+      "slope": -5942.757100091025,
+      "intercept": 47.39141012351535,
+      "independent_OLS_difference_kJ_mol": 3.268496584496461e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "leading_sensitivity_preedge_median",
+      "method": "production_leading_edge",
+      "window": "sensitivity",
+      "baseline": "preedge_median",
+      "subtracted_offset": 0.0373134328358,
+      "energy_kJ_mol": 55.22699981358527,
+      "difference_from_reference_kJ_mol": 12.426999813585276,
+      "apparent_energy_K": 6642.281329524782,
+      "r_squared": 0.9247826073069365,
+      "n_points": 11,
+      "slope": -6642.2813295247815,
+      "intercept": 52.966676838263496,
+      "independent_OLS_difference_kJ_mol": 3.694822225952521e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "whole_peak_baseline0",
+      "method": "production_zero_order_whole_peak",
+      "energy_kJ_mol": 24.679696977316556,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.25578703450777385,
+        "prefactor_s_inv": 1001627103.975476,
+        "signal_scale": 10.897886731846892,
+        "baseline": 0.0,
+        "rmse_signal": 0.13731585231185386,
+        "normalized_rmse": 0.1415409554599172,
+        "r_squared": 0.4795115319744433,
+        "n_points": 117,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -160.03073394499998,
+        "temperature_max_C": -128.28761467899997,
+        "aic": -456.6003346021976,
+        "aicc": -456.2431917450548,
+        "bic": -445.5516388630066,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 2,
+          "n_parameters": 3,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -144.61788990799997,
+              -143.883944954
+            ],
+            "conditional_prefactor_range_s_inv": [
+              930796938.1601499,
+              1077847180.504672
+            ],
+            "conditional_signal_scale_range": [
+              10.127241527469259,
+              11.727175154066162
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 115,
+            "energy_evaluations": 4044,
+            "max_energy_evaluations_per_boundary": 150,
+            "mean_model_parameter_count_for_information_criteria": 3,
+            "edge_height_to_residual_sigma": 7.331782865873231,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "case": "whole_peak_baseline1",
+      "method": "production_zero_order_whole_peak",
+      "energy_kJ_mol": 38.51201036437016,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.3991488604211375,
+        "prefactor_s_inv": 762979298257256.6,
+        "signal_scale": 7.570696160445314,
+        "baseline": 0.0965115015347745,
+        "rmse_signal": 0.11091107025888598,
+        "normalized_rmse": 0.11432371857454911,
+        "r_squared": 0.6604376346421146,
+        "n_points": 117,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -160.03073394499998,
+        "temperature_max_C": -128.28761467899997,
+        "aic": -504.57221682213026,
+        "aicc": -504.03167628158974,
+        "bic": -490.76134714814145,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 4,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -145.53532110099997,
+              -144.61788990799997
+            ],
+            "conditional_prefactor_range_s_inv": [
+              665009938078980.8,
+              875381518734539.0
+            ],
+            "conditional_signal_scale_range": [
+              6.598590808914646,
+              8.686012212842217
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 115,
+            "energy_evaluations": 4040,
+            "max_energy_evaluations_per_boundary": 150,
+            "mean_model_parameter_count_for_information_criteria": 4,
+            "edge_height_to_residual_sigma": 8.82821390236539,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "case": "pixel_T-1_signal-1",
+      "method": "leading_pixel_sensitivity",
+      "energy_kJ_mol": 30.75078843885758,
+      "difference_from_reference_kJ_mol": -12.049211561142418,
+      "apparent_energy_K": 3698.4697449624177,
+      "r_squared": 0.9974849366078209,
+      "n_points": 13,
+      "slope": -3698.4697449624173,
+      "intercept": 28.977966389860402,
+      "independent_OLS_difference_kJ_mol": -6.394884621840902e-14,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "pixel_T-1_signal1",
+      "method": "leading_pixel_sensitivity",
+      "energy_kJ_mol": 27.880485342185146,
+      "difference_from_reference_kJ_mol": -14.919514657814851,
+      "apparent_energy_K": 3353.251631839159,
+      "r_squared": 0.996788851382271,
+      "n_points": 13,
+      "slope": -3353.2516318391586,
+      "intercept": 26.23036176909322,
+      "independent_OLS_difference_kJ_mol": -5.3290705182007514e-14,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "pixel_T1_signal-1",
+      "method": "leading_pixel_sensitivity",
+      "energy_kJ_mol": 31.03061588464864,
+      "difference_from_reference_kJ_mol": -11.769384115351357,
+      "apparent_energy_K": 3732.125250873303,
+      "r_squared": 0.9974868148971052,
+      "n_points": 13,
+      "slope": -3732.125250873303,
+      "intercept": 29.116424375132166,
+      "independent_OLS_difference_kJ_mol": -6.608047442568932e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "pixel_T1_signal1",
+      "method": "leading_pixel_sensitivity",
+      "energy_kJ_mol": 28.134203226129546,
+      "difference_from_reference_kJ_mol": -14.66579677387045,
+      "apparent_energy_K": 3383.7668792576123,
+      "r_squared": 0.9967914195922583,
+      "n_points": 13,
+      "slope": -3383.7668792576123,
+      "intercept": 26.35590560590855,
+      "independent_OLS_difference_kJ_mol": -5.968558980384842e-13,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    },
+    {
+      "case": "transformed_plot_reconstruction",
+      "method": "already_corrected_ordinate_not_raw_spectrum",
+      "energy_kJ_mol": 40.323660283503855,
+      "difference_from_reference_kJ_mol": -2.476339716496142,
+      "apparent_energy_K": 4849.8215862403495,
+      "r_squared": 0.9989286269088803,
+      "n_points": 92,
+      "slope": -4849.8215862403495,
+      "intercept": 48.56712243576115,
+      "independent_OLS_difference_kJ_mol": 6.394884621840902e-14,
+      "nonpositive_omitted": 0,
+      "statistical_CI_interpretation": "Not used: correlated raster columns and systematic extraction/model uncertainty"
+    }
+  ],
+  "code_sha256": {
+    "scripts/experimental_methyl_acetate_check.py": "79da39feff09d0585481032f4d554585e046daac1cd3306cc0164bac3389a9c1",
+    "tpd_spectra/analysis.py": "d45ad417f7663ec29cb8b4b406ef6a6f171ba8006fc97e068fa44988a4a40974",
+    "tpd_spectra/kinetics.py": "2c2c2e0aebc6885b6795927b3ad0e5f7c3b103a48b78900144c8fb0802947c42",
+    "tpd_spectra/zero_order.py": "c0bbbce125a1444f0f43e284cae2a7d9e3c24aecbde5aa661efec33ac7ac3e48"
+  }
+}

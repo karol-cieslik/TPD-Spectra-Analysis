@@ -1,0 +1,115 @@
+{
+  "completed_model_fits": 20,
+  "main_and_window_cases": 16,
+  "pixel_sensitivity_cases": 4,
+  "exceptions": 0,
+  "optimizer_successes": 20,
+  "best_per_setting": [
+    {
+      "window": "primary",
+      "method": "fixed_prefactor",
+      "baseline_fitted": false,
+      "energy_K": 6435.472524864769,
+      "energy_kJ_mol": 53.50749573813482,
+      "relative_difference_percent": -0.22523217263923367,
+      "prefactor_s_inv": 3.31e+18,
+      "NRMSE": 0.04627892657063369,
+      "R_squared": 0.9275935859846199,
+      "n_points": 195
+    },
+    {
+      "window": "primary",
+      "method": "production_free_prefactor",
+      "baseline_fitted": false,
+      "energy_K": 6764.796692636157,
+      "energy_kJ_mol": 56.24564922032416,
+      "relative_difference_percent": 4.880568878079949,
+      "prefactor_s_inv": 3.556857951026519e+19,
+      "NRMSE": 0.045910721991300314,
+      "R_squared": 0.9287411629704185,
+      "n_points": 195
+    },
+    {
+      "window": "primary",
+      "method": "fixed_prefactor",
+      "baseline_fitted": true,
+      "energy_K": 6434.5391871381835,
+      "energy_kJ_mol": 53.49973553649701,
+      "relative_difference_percent": -0.2397025249894047,
+      "prefactor_s_inv": 3.31e+18,
+      "NRMSE": 0.03646642819537769,
+      "R_squared": 0.9550430396719772,
+      "n_points": 195
+    },
+    {
+      "window": "primary",
+      "method": "production_free_prefactor",
+      "baseline_fitted": true,
+      "energy_K": 7612.904020872472,
+      "energy_kJ_mol": 63.29720589712609,
+      "relative_difference_percent": 18.02951970344917,
+      "prefactor_s_inv": 1.6094771815955361e+22,
+      "NRMSE": 0.031231099061457764,
+      "R_squared": 0.9670249835476955,
+      "n_points": 195
+    },
+    {
+      "window": "sensitivity",
+      "method": "fixed_prefactor",
+      "baseline_fitted": false,
+      "energy_K": 6435.477530603639,
+      "energy_kJ_mol": 53.50753735816353,
+      "relative_difference_percent": -0.22515456428466862,
+      "prefactor_s_inv": 3.31e+18,
+      "NRMSE": 0.05579412663457583,
+      "R_squared": 0.9298580535011476,
+      "n_points": 115
+    },
+    {
+      "window": "sensitivity",
+      "method": "production_free_prefactor",
+      "baseline_fitted": false,
+      "energy_K": 6767.296062520614,
+      "energy_kJ_mol": 56.26643013779743,
+      "relative_difference_percent": 4.919318798769212,
+      "prefactor_s_inv": 3.621420590529371e+19,
+      "NRMSE": 0.055266473356490944,
+      "R_squared": 0.9311784656212604,
+      "n_points": 115
+    },
+    {
+      "window": "sensitivity",
+      "method": "fixed_prefactor",
+      "baseline_fitted": true,
+      "energy_K": 6434.432217246963,
+      "energy_kJ_mol": 53.49884613933519,
+      "relative_difference_percent": -0.24136097291530545,
+      "prefactor_s_inv": 3.31e+18,
+      "NRMSE": 0.047092929524988746,
+      "R_squared": 0.9500296649594089,
+      "n_points": 115
+    },
+    {
+      "window": "sensitivity",
+      "method": "production_free_prefactor",
+      "baseline_fitted": true,
+      "energy_K": 7873.776937869053,
+      "energy_kJ_mol": 65.46622401358253,
+      "relative_difference_percent": 22.074061052233375,
+      "prefactor_s_inv": 1.0536930822296288e+23,
+      "NRMSE": 0.03791189588524289,
+      "R_squared": 0.9676144071097457,
+      "n_points": 115
+    }
+  ],
+  "pixel_corner_energy_range_K": [
+    6416.991307938816,
+    6452.068142804591
+  ],
+  "independent_numerical_check": {
+    "max_rate_difference_relative_to_peak": 3.195266327749662e-06,
+    "tolerance": 2e-05,
+    "passed": true
+  },
+  "conclusion": "Close conditional fixed-prefactor correspondence; free-prefactor/baseline dependence and residual structure remain. Not independent recovery of all published parameters, physical uncertainty coverage or general accuracy validation."
+}

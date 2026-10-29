@@ -10,6 +10,12 @@ deposited input, not yet a replication of the paper's CO trace. Ar matches its
 published curve closely. Read this correction before attributing the CO
 literature disagreement to a physical or software cause.
 
+**Subsequent positive conditional comparison:** [ethanol on gold](ethanol_2024/README.md)
+closely reproduces the dominant literature energy when its prefactor is fixed
+(6435 versus 6450 K). Free-prefactor results depend on baseline/window and reach
+7613 K for the primary free-baseline case. This advances experimental comparison
+without establishing general accuracy or a unique parameter interpretation.
+
 ## Established observations
 
 - Six completed ideal zero-order full-peak fits to deposited Ar/CO data reached

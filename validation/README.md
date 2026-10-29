@@ -84,3 +84,11 @@ qualifies earlier deposited-data interpretations while preserving all originals.
 records nine molecular-system targets from three more papers, published energy
 references, source hashes, rights/access limits and a comparison sequence.
 These are candidates, not nine completed validation datasets. No new fits.
+
+### Ethanol/Au conditional comparison
+
+[Completed comparison](experimental/ethanol_2024/README.md): 20 declared fits to
+figure-derived experimental marks. Fixed literature-prefactor energy is 6435 K
+versus dominant published 6450 K; free-prefactor fitting gives 7613 K with a
+fitted baseline. Extraction gaps, residuals and model differences remain explicit.
+Source-derived materials carry CC-BY-NC-3.0, separately from software code.

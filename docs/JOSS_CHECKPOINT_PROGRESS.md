@@ -336,3 +336,23 @@ distributions. Fig. 6C methyl acetate is 42.8 +/- 0.7 kJ/mol, distinct from Tabl
 Next admission work: permissions, exact experimental-curve extraction and QA,
 then frozen fit protocols and matched-estimand comparisons. These candidates
 expand source screening; they do not close experimental-accuracy checkpoints.
+
+
+## 29 October 2026 — ethanol conditional comparison completed
+
+`validation/experimental/ethanol_2024/` retains Fig. 7 experimental-only raster
+extraction, 32 unrecovered columns, frozen protocol, 20 completed fits, full
+predictions/diagnostics and source licences. No existing fits were repeated.
+At the published 3.31e18 s^-1 prefactor, production simulation plus an assessment
+profile gives 6434.54 K (free baseline), versus the dominant published 6450 K
+population. Production free-prefactor fitting instead gives 7612.90 K and
+1.61e22 s^-1 with smaller residuals. Baseline/window dependence and structured
+residuals remain. This is conditional correspondence, not independent population
+recovery or general accuracy. The production fitter has no fixed-prefactor option.
+
+Four engineering pixel scenarios span 6416.99–6452.07 K, not a confidence interval.
+Independent quadrature agrees with production rate to 3.20e-6 of peak. All 20
+fits complete without exceptions or identified bound hits; no MC or GUI tests
+were performed. AI-assisted visual checks complete; independent human scientific
+review remains pending. Next: review this extraction/interpretation, then one
+commensurate case from another study, rather than expand the literature list.

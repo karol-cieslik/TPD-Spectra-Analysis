@@ -1,0 +1,54 @@
+{
+  "declared_utc": "2026-10-29T06:59:12.742359+00:00",
+  "status": "Declared after literature and extraction QA, before any ethanol kinetic fit; not blinded or independently preregistered",
+  "data_sha256": "68f5bc55539a8e1bac7b844f6012f52a9b3329bf27eabd3836068ea81354f1cc",
+  "extraction_script_sha256": "3546bc4abbde04064c4566c8745fe77fdc3cc1310cdd96ca0ebb8f80e8176ef6",
+  "beta_K_s": 0.15,
+  "reaction_order": 1,
+  "windows_K": {
+    "primary": [
+      110,
+      165
+    ],
+    "sensitivity": [
+      120,
+      155
+    ]
+  },
+  "baseline_cases": [
+    false,
+    true
+  ],
+  "fixed_prefactor_s_inv": 3.31e+18,
+  "fixed_energy_search_eV": [
+    0.05,
+    1.5
+  ],
+  "fixed_profile_grid_points": 101,
+  "initial_energy_eV": 1.0,
+  "free_prefactor_starts_s_inv": [
+    1000000000000.0,
+    1e+18,
+    1e+24
+  ],
+  "free_max_nfev": 200,
+  "energy_reference_K": 6450,
+  "reference_role": "Dominant energy in published population mixture; not single-energy ground truth or statistical acceptance band",
+  "pixel_sensitivity": "Primary window, fixed prefactor, free baseline: 4 corners of T offset +/-1.5 px and signal +/- extraction bounds; engineering scenarios, not probabilistic coverage",
+  "screen": ">=30 finite pairs; strictly increasing T; no interpolation; missing columns omitted from fits but retained in source CSV",
+  "weights": "Uniform weight per recovered raster column; columns and symbol pixels are correlated; no statistical parameter CI or MC",
+  "reported_metrics": [
+    "energy_K",
+    "energy_kJ_mol",
+    "prefactor",
+    "NRMSE",
+    "R_squared",
+    "residuals",
+    "numerical completion",
+    "boundary diagnostics"
+  ],
+  "stopping_rule": "Run declared cases once; retain all failures. Do not tune windows or models to recover reference. No MC or multistate fitting in this comparison.",
+  "fixed_method": "Assessment harness profiles nonnegative scale and optional bounded baseline, optimizes energy using production simulate_tpd; production fitter has no fixed-prefactor argument.",
+  "free_method": "Production fit_polanyi_wigner; energy, prefactor, positive scale and optional baseline optimized; order fixed at one.",
+  "independent_check": "Analytic first-order survival with independent adaptive quadrature, evaluated only at completed primary fixed-prefactor/free-baseline result; same model, not independent experimental validation"
+}

@@ -32,3 +32,9 @@ Fig. 1a contains pure H2O, CO, CO2, CH3OH and NH3 on KBr at 1 K/min. Table 4 giv
 Recommended first comparison: ethanol/gold, then an admitted pure-ice bulk leading edge, then ester multilayers. Ethylamine and ester submonolayers broaden the challenge set but do not establish single-energy accuracy. Nine systems from three papers are not nine independent studies. The earlier 2024 CO source-to-figure discrepancy remains unresolved and is not repaired by these additions.
 
 `source_manifest.json` records source URLs, licences, download hashes and access failures. No new result is claimed in the manuscript. Human scientific acceptance remains open.
+
+## Subsequent completed comparison
+
+[Ethanol/Au assessment](../ethanol_2024/README.md) now contains an extraction and
+20 conditional fits. The screening CSV above preserves its original candidate
+status as recorded before analysis. It is not the current result register.

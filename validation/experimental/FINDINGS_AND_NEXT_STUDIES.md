@@ -4,6 +4,12 @@ Recorded 29 October 2026, after the pure-ice assessment. This is an interpretati
 and work plan, not a declaration that any new validation has passed. Existing
 inputs and outputs remain unchanged. No production numerical code is changed.
 
+**Subsequent source check:** [the figure-to-CSV correction](../digitized/SOURCE_CORRESPONDENCE_UPDATE.md)
+finds an unresolved CO correspondence discrepancy. Earlier results describe the
+deposited input, not yet a replication of the paper's CO trace. Ar matches its
+published curve closely. Read this correction before attributing the CO
+literature disagreement to a physical or software cause.
+
 ## Established observations
 
 - Six completed ideal zero-order full-peak fits to deposited Ar/CO data reached

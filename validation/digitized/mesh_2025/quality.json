@@ -1,0 +1,102 @@
+{
+  "present_points": 908,
+  "missing_columns": 16,
+  "full_columns": 924,
+  "peak_temperature_K": 106.17868675995695,
+  "peak_signal": 1.8664850136239781,
+  "x_check_tick_errors_K": [
+    0.021528525296020007,
+    0.043057050592040014,
+    0.06458557588806002,
+    -0.021528525296020007
+  ],
+  "temperature_pixel_halfwidth_K": 0.05382131324004291,
+  "additional_axis_placement_allowance_K": 0.16146393972012874,
+  "maximum_signal_pixel_threshold_bound": 0.177111716621269,
+  "source_missing": "Blank fields mark invisible/ambiguous source columns; no interpolation or baseline filling",
+  "uncertainty_interpretation": "Stroke half-width plus one pixel, or threshold-center shift, whichever larger; add axis placement uncertainty separately. Not statistical or physical uncertainty.",
+  "visual_check_markers": [
+    {
+      "x_px": 170,
+      "y_px": 765.0,
+      "temperature_K": 60.32292787944026
+    },
+    {
+      "x_px": 235,
+      "y_px": 765.0,
+      "temperature_K": 67.31969860064585
+    },
+    {
+      "x_px": 300,
+      "y_px": 765.0,
+      "temperature_K": 74.31646932185146
+    },
+    {
+      "x_px": 364,
+      "y_px": 765.0,
+      "temperature_K": 81.20559741657696
+    },
+    {
+      "x_px": 429,
+      "y_px": 765.0,
+      "temperature_K": 88.20236813778256
+    },
+    {
+      "x_px": 494,
+      "y_px": 764.5,
+      "temperature_K": 95.19913885898816
+    },
+    {
+      "x_px": 559,
+      "y_px": 745.0,
+      "temperature_K": 102.19590958019376
+    },
+    {
+      "x_px": 639,
+      "y_px": 763.0,
+      "temperature_K": 110.80731969860065
+    },
+    {
+      "x_px": 704,
+      "y_px": 764.5,
+      "temperature_K": 117.80409041980624
+    },
+    {
+      "x_px": 769,
+      "y_px": 764.5,
+      "temperature_K": 124.80086114101184
+    },
+    {
+      "x_px": 834,
+      "y_px": 765.0,
+      "temperature_K": 131.79763186221743
+    },
+    {
+      "x_px": 899,
+      "y_px": 765.0,
+      "temperature_K": 138.79440258342305
+    },
+    {
+      "x_px": 963,
+      "y_px": 765.0,
+      "temperature_K": 145.68353067814854
+    },
+    {
+      "x_px": 1028,
+      "y_px": 765.0,
+      "temperature_K": 152.68030139935416
+    },
+    {
+      "x_px": 1093,
+      "y_px": 765.0,
+      "temperature_K": 159.67707212055973
+    }
+  ],
+  "independent_numeric_reference_available": false,
+  "y_check_tick_errors": [
+    -0.006811989100817595,
+    0.0,
+    0.013623978201634301,
+    0.0
+  ]
+}

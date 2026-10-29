@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-29",
+  "review_type": "AI-assisted visual inspection of all three retained extraction_check.png files",
+  "independent_human_review_completed": false,
+  "findings": {
+    "water_2018": "Centerline follows the purple trace in the inspected overlay; steep/occluded columns remain blank; exposure unassigned and amplitude normalized.",
+    "mesh_2025": "Centerline follows the light-pink 11 +/- 2.1 ML curve; missing falling-edge columns remain blank; source version explicitly identified as preprint v1.",
+    "ice_2024": "Vector overlays follow both printed curves. Ar matches independent deposited data closely; CO correspondence discrepancy confirmed in the plotted comparison."
+  },
+  "not_claimed": [
+    "Independent manual coordinate replication",
+    "Instrument uncertainty calibration",
+    "Kinetic energy validation",
+    "Original acquisition samples",
+    "2071 independent measurements"
+  ]
+}

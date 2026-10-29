@@ -126,12 +126,13 @@ and no kinetic-energy fit is forced. This demonstrates a limited experimental
 input/peak check and a negative screening example; it does not validate
 desorption energies or constitute outside adoption of this software.
 
-A further assessment uses deposited pure-Ar and CO spectra with published
-zero-order leading-edge estimates [@kruczkiewicz2024]. Full-peak depletion fits
-reach an energy bound with substantial residuals, while CO leading-edge
-estimates depend strongly on baseline and residual weighting. These retained
-negative results delimit the models tested; experimental energy accuracy is
-not established.
+A further assessment uses deposited pure-Ar and CO spectra associated with
+published zero-order leading-edge estimates [@kruczkiewicz2024]. Full-peak
+fits reach an energy bound with substantial residuals. Subsequent figure
+extraction closely matches the deposited Ar curve but reveals an unresolved
+CO source-to-figure discrepancy. Deposited-CO fit results therefore cannot yet
+constitute a trace-matched reproduction of the published analysis. Experimental
+energy accuracy is not established.
 
 **Submission evidence still required:** document completed use in an actual
 research workflow, obtain independent scientific and clean-Windows acceptance,

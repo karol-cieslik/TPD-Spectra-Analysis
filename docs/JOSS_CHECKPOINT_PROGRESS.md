@@ -289,3 +289,31 @@ no extra acquisitions or new validation passes are claimed. Do not count MC
 refits as independent data. The manuscript claim/evidence audit remains the
 next publication checkpoint; targeted acquisition can proceed with frozen
 admission and stopping rules, without repeating completed assessments.
+
+## Figure digitization from three papers — 29 October 2026
+
+Completed four figure-derived experimental traces: purple D2O/Fe3O4 from Zaki
+et al. (2018), light-pink 11 ± 2.1 ML pure MeSH from Narayanan et al. (2025,
+preprint v1 explicitly identified), and pure Ar/CO from Kruczkiewicz et al.
+(2024). Two papers extend the collection; the previously acquired ice paper is
+used for independent source-to-figure QA. Total 2071 recovered coordinates,
+with 68 water and 16 MeSH raster columns blank. These are not independent
+experimental samples or raw instrument data. Sources, licences, calibration,
+source hashes, extraction code and QA overlays are retained in
+validation/digitized/. No digitization or prior kinetic fits were repeated on
+resuming this work; only documentation and verification remained.
+
+The new vector check confirms Ar correspondence (peak difference -0.059 K,
+NRMSE 0.00589) but reveals CO correspondence uncertainty (28.967 K published
+figure versus 38.155 K deposited CSV; height ratio 3.441). This updates the
+previous diagnosis: original deposited-CO fits are preserved, but cannot yet
+stand as trace-matched reproduction or justify attribution of the literature
+disagreement mainly to model mismatch. Paper and assessment notes now carry
+this correction. No source error or physical cause is asserted without evidence.
+
+Advances trace extraction/provenance/uncertainty checkpoints 36–44 and handling
+of disagreements (46). Positive experimental energy validation and independent
+human scientific review remain open. Next: freeze suitable analysis settings
+for the new digitized cases, with gaps/uncertainty respected, and finish the
+manuscript claim/evidence audit. Do not refit historical datasets simply to
+recover a published number.

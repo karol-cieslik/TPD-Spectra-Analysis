@@ -1,0 +1,94 @@
+{
+  "paper_doi": "10.3847/1538-4357/adc7b6",
+  "title": "Thermal Desorption Kinetics, Binding Energies, and Entrapment of Methyl Mercaptan Ices",
+  "authors": "Suchitra Narayanan; Elettra L. Piacentino; Karin I. Oberg; Mahesh Rajappan",
+  "source_url": "https://arxiv.org/pdf/2504.01102",
+  "source_version": "arXiv:2504.01102v1, draft 3 April 2025, not the publisher PDF",
+  "page": 5,
+  "figure": "2",
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "license_evidence": "Source arXiv HTML states License: CC BY 4.0",
+  "image": "source_figure.png",
+  "method": "raster_color_centerline",
+  "trace": "light-pink pure MeSH, legend column density 11 +/- 2.1 ML",
+  "beta_K_s": 0.03333333333333333,
+  "x_anchors": [
+    [
+      167.0,
+      60
+    ],
+    [
+      1096.0,
+      160
+    ]
+  ],
+  "x_check_ticks": [
+    [
+      353.0,
+      80
+    ],
+    [
+      539.0,
+      100
+    ],
+    [
+      725.0,
+      120
+    ],
+    [
+      910.0,
+      140
+    ]
+  ],
+  "y_anchors": [
+    [
+      765.5,
+      0
+    ],
+    [
+      31.5,
+      20
+    ]
+  ],
+  "y_check_ticks": [
+    [
+      674.0,
+      2.5
+    ],
+    [
+      582.0,
+      5
+    ],
+    [
+      398.0,
+      10
+    ],
+    [
+      215.0,
+      15
+    ]
+  ],
+  "roi": [
+    170,
+    670,
+    1093,
+    769
+  ],
+  "rgb_target": [
+    223,
+    150,
+    167
+  ],
+  "rgb_tolerance": 18,
+  "max_column_span_px": 12,
+  "y_unit": "10^15 molecules K^-1",
+  "limitations": "Digitized from explicitly identified preprint version. Color occlusion remains missing; raster uncertainty is not instrument uncertainty.",
+  "retrieved_date": "2026-10-29",
+  "source_pdf_sha256": "de252018bee5c4b1e63a846102b2b1c219dce14064db792c3b43ae55f62d1845",
+  "source_kind": "published-figure-derived experimental curve, not raw acquisition data",
+  "changes": "Figure extraction/crop and coordinate digitization; original authors did not perform or endorse this derived analysis.",
+  "source_file_hashes": {
+    "source_figure.png": "90fceed0bca64cf6ff27b234b65f20b084cbb692065d70fd4b233ae74d4e673f"
+  }
+}

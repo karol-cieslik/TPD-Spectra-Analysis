@@ -68,3 +68,12 @@ observed failures from possible causes, links original readable data, and fixes
 a small next panel: two independent studies plus an optional discriminating
 series. [Study plan](experimental/next_study_plan.csv) explicitly distinguishes
 leads from acquired evidence. No additional validation pass is claimed.
+
+### Three-paper figure digitization
+
+[Four curves from three papers](digitized/README.md) retain figure-derived CSVs,
+source images/path coordinates, licences, axis calibration, missing segments and
+QA overlays. Two papers extend the collection; the existing pure-ice study is
+also checked independently against its published figures. No kinetic fits were
+performed. The [CO correspondence correction](digitized/SOURCE_CORRESPONDENCE_UPDATE.md)
+qualifies earlier deposited-data interpretations while preserving all originals.

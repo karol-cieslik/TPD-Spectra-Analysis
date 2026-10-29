@@ -1,5 +1,12 @@
 # Deposited pure-ice energy comparison: Ar and CO
 
+**Source correspondence update (29 October 2026):**
+[Independent figure extraction](../../digitized/SOURCE_CORRESPONDENCE_UPDATE.md)
+matches the Ar source closely but reveals a substantial CO figure-to-CSV
+discrepancy. The earlier CO calculations below remain results for the deposited
+CSV; they cannot yet count as reproduction of the published CO trace.
+
+
 ## Sources and scope
 
 Kruczkiewicz, Dulieu, Ivlev, Caselli, Giuliano, Ceccarelli and Theulé (2024),

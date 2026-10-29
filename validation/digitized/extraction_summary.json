@@ -1,0 +1,33 @@
+{
+  "papers": 3,
+  "traces": 4,
+  "cases": [
+    {
+      "case": "water_2018",
+      "doi": "10.1039/C8CP02333F",
+      "traces": 1,
+      "points": 644,
+      "peak_K": 255.49936788874842
+    },
+    {
+      "case": "mesh_2025",
+      "doi": "10.3847/1538-4357/adc7b6",
+      "traces": 1,
+      "points": 908,
+      "peak_K": 106.17868675995695
+    },
+    {
+      "case": "ice_2024",
+      "doi": "10.1051/0004-6361/202346948",
+      "traces": 2,
+      "points": 519
+    }
+  ],
+  "kinetic_fits_performed": false,
+  "software": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "matplotlib": "3.10.8"
+  },
+  "script_sha256": "dce2c95be423fe517fb99ae3d34f5e583b815b51ada2f4ef996e58902250717e"
+}

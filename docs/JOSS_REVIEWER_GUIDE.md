@@ -129,3 +129,16 @@ fits and a separately declared application log-regression diagnostic. The
 comparison figure shows the full-peak mismatch rather than hiding it. This is
 explicitly negative/sensitivity evidence; the draft does not claim experimental
 energy accuracy from these outcomes.
+
+## Three-paper figure extraction and source correction
+
+[Digitized spectra](../validation/digitized/README.md) provide four curves from
+Zaki et al. (2018), Narayanan et al. (2025; explicitly preprint v1 source), and
+Kruczkiewicz et al. (2024). Sources, licences, calibration, absent columns and
+engineering extraction bounds are retained. QA is AI-assisted; independent
+human coordinate verification and energy validation are not claimed.
+
+The [new source-correspondence check](../validation/digitized/SOURCE_CORRESPONDENCE_UPDATE.md)
+finds a close Ar match but substantial CO figure/CSV disagreement. This means
+the earlier deposited-CO calculation is not yet a trace-matched replication of
+the paper. The draft now records this limit; prior inputs/results remain intact.

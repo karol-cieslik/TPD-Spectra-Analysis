@@ -39,5 +39,12 @@
   "assessment_script_sha256": "84e48c7b655959bfbf1d8a6736401bb8735901ba95ea3661ad0d7c2d758192c6",
   "python": "3.12.14",
   "numpy": "2.3.5",
-  "scipy": "1.17.0"
+  "scipy": "1.17.0",
+  "figure_correspondence_followup": {
+    "date": "2026-10-29",
+    "record": "validation/digitized/SOURCE_CORRESPONDENCE_UPDATE.md",
+    "Ar": "Close match; peak difference -0.059 K",
+    "CO": "Unresolved correspondence; published figure peak 28.967 K versus deposited CSV peak 38.155 K",
+    "prior_fits": "Preserved unchanged; CO not established as a trace-matched replication"
+  }
 }

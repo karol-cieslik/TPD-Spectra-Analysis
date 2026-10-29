@@ -1,0 +1,56 @@
+{
+  "paper_doi": "10.1039/C8CP02333F",
+  "title": "Water adsorption on the Fe3O4(111) surface: dissociation and network formation",
+  "authors": "Eman Zaki; Francesca Mirabella; Francisco Ivars-Barcelo; Jan Seifert; Spencer Carey; Shamil Shaikhutdinov; Hans-Joachim Freund; Xiaoke Li; Joachim Paier; Joachim Sauer",
+  "source_url": "https://pure.mpg.de/rest/items/item_2615581_6/component/file_2615988/content",
+  "page": 3,
+  "figure": "1a",
+  "license": "CC-BY-3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0/",
+  "image": "source_figure.jpeg",
+  "method": "raster_color_centerline",
+  "trace": "purple D2O trace; exact exposure is not explicitly color-keyed and remains unassigned",
+  "beta_K_s": 3.0,
+  "x_anchors": [
+    [
+      55.5,
+      100
+    ],
+    [
+      846.5,
+      500
+    ]
+  ],
+  "x_check_ticks": [
+    [
+      253.25,
+      200
+    ],
+    [
+      451.0,
+      300
+    ],
+    [
+      648.75,
+      400
+    ]
+  ],
+  "roi": [
+    132,
+    330,
+    843,
+    585
+  ],
+  "color_rule": "R-G>20, B-G>20, abs(R-B)<80, R>70, B>70",
+  "baseline_y_px": 582.0,
+  "y_unit": "dimensionless signal normalized to visible purple-curve peak; source has arbitrary units without numeric y ticks",
+  "max_column_span_px": 12,
+  "limitations": "Overlapped or color-invisible parts are missing, never filled; no calibrated amplitude or exposure assigned.",
+  "retrieved_date": "2026-10-29",
+  "source_pdf_sha256": "73cc4e1309ee581e1c60ff3f488b482d9825633d2598d4ca1bb7e0540a7f6abf",
+  "source_kind": "published-figure-derived experimental curve, not raw acquisition data",
+  "changes": "Figure extraction/crop and coordinate digitization; original authors did not perform or endorse this derived analysis.",
+  "source_file_hashes": {
+    "source_figure.jpeg": "0d829ddd79032e795dd081f7da91c1e897b5218a0b329ecfe92488f898f796ea"
+  }
+}

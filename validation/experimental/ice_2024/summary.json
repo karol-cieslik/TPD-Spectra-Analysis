@@ -24,5 +24,6 @@
   "reference_CO_K": 1040,
   "reference_CO_reported_uncertainty_K": 104,
   "full_peak_validation_passed": false,
-  "interpretation": "Different interval/model hypotheses are compared. One baseline-fixed independent leading-edge fit lies in the published band, while baseline sensitivity and poor full-peak fits prevent an application energy-validation claim."
+  "interpretation": "Different interval/model hypotheses are compared. One baseline-fixed independent leading-edge fit lies in the published band, while baseline sensitivity and poor full-peak fits prevent an application energy-validation claim.",
+  "source_correspondence_update": "Subsequent vector digitization agrees closely for Ar, but CO figure/CSV peaks differ by 9.187 K; do not interpret deposited-CO fits as a trace-matched reproduction pending source clarification."
 }

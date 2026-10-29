@@ -84,3 +84,12 @@ scientific explanation requires independent review; do not label the mismatch
 an optimizer defect or repair the program merely to match the literature value.
 The immediate publication task is to audit manuscript claims against these
 limits. General experimental energy accuracy must remain unclaimed.
+
+## Directly inspectable original CSV files
+
+The same unchanged source bytes are also available as
+[Ar CSV](raw/4_Ar_pure.csv) and [CO CSV](raw/2_CO_pure.csv), in addition to the
+retained gzip originals. Their SHA-256 hashes match `provenance.json`. Git is
+configured to preserve their original line endings. They use semicolons and
+include source units in comment headers. For diagnosis and the next planned
+studies, see [findings and follow-up](../FINDINGS_AND_NEXT_STUDIES.md).

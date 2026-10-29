@@ -60,3 +60,11 @@ Ar intervals, and baseline-sensitive leading-edge results. An independent
 nonlinear CO estimate lies within the published band only for one baseline
 hypothesis; this does not validate Studio's full-peak estimates. All results are
 retained. The existing literature catalog remains unchanged.
+
+### Diagnosis and next experimental studies
+
+[Findings and next studies](experimental/FINDINGS_AND_NEXT_STUDIES.md) separates
+observed failures from possible causes, links original readable data, and fixes
+a small next panel: two independent studies plus an optional discriminating
+series. [Study plan](experimental/next_study_plan.csv) explicitly distinguishes
+leads from acquired evidence. No additional validation pass is claimed.

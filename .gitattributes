@@ -5,3 +5,4 @@ validation/experimental/rodare_4644/*.csv text eol=lf
 
 validation/experimental/ptcda_au111/*.csv text eol=lf
 validation/experimental/ice_2024/*.csv text eol=lf
+validation/experimental/ice_2024/raw/*.csv -text

@@ -1,0 +1,4 @@
+priority,target,purpose,independent_studies_target,lead_doi,status,blocking_checks
+1,Isolated first-order full peak,Assess positive-order energy recovery on a commensurate external reference,1,10.1021/acs.jpcb.7b05102,lead_only_not_acquired,raw data or licensed digitization; exact trace; beta; units; compatible energy/prefactor conventions
+2,Resolved zero-order depletion edge,Test full-peak exhaustion model under suitable measurement conditions,1,,source_to_identify,resolved edge and post-edge samples; metadata; response; reuse rights
+3,Heating-rate or coverage series,Discriminate kinetics from response or parameter tradeoffs,1,,optional_after_first_two,same characterized system; multiple rates or coverages; response/calibration documentation

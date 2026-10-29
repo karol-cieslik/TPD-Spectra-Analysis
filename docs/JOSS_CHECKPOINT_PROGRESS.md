@@ -271,3 +271,21 @@ result. Next publication task: complete the manuscript claim/evidence audit
 against retained positive and negative results; independent scientific review
 and positive experimental accuracy evidence remain open. Do not rerun the
 completed PTCDA or pure-ice assessments without a changed hypothesis or input.
+
+## Diagnosis and targeted data-expansion plan — 29 October 2026
+
+Verified that the branch already contains the exact Ar/CO compressed originals,
+fit records, log diagnostic, figure, and PTCDA source archive. Added directly
+inspectable original Ar/CO CSV copies, preserving source bytes and line endings.
+validation/experimental/FINDINGS_AND_NEXT_STUDIES.md separates observed model
+mismatch/baseline sensitivity from unproven instrument and physical explanations.
+The existing zero-order core has bound/large-residual warnings; visibility in
+GUI/exports requires inspection, not an invented missing-feature claim.
+
+Recommended scope is two new independent studies: isolated first-order and
+resolved zero-order depletion. A third rate/coverage series is optional and must
+test a retained claim. next_study_plan.csv records unstarted/lead-only status;
+no extra acquisitions or new validation passes are claimed. Do not count MC
+refits as independent data. The manuscript claim/evidence audit remains the
+next publication checkpoint; targeted acquisition can proceed with frozen
+admission and stopping rules, without repeating completed assessments.

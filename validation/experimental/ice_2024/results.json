@@ -1,0 +1,498 @@
+{
+  "protocol": {
+    "date": "2026-10-29",
+    "frozen_before_first_fit": true,
+    "source_commit": "f0ae5b93eede726d00cd2731981da29b234087d4",
+    "beta_K_s": 0.2,
+    "reaction_order": 0,
+    "primary_interval_K": [
+      20,
+      60
+    ],
+    "sensitivity_interval_K": [
+      22,
+      55
+    ],
+    "baseline_cases": [
+      true,
+      false
+    ],
+    "leading_edge_intervals_K": {
+      "Ar": [
+        20,
+        27
+      ],
+      "CO": [
+        20,
+        28
+      ]
+    },
+    "reference_energy_K": {
+      "Ar": 933,
+      "CO": 1040
+    },
+    "reference_reported_uncertainty_K": {
+      "Ar": 96,
+      "CO": 104
+    },
+    "preprocessing": "None beyond interval selection and K to Celsius conversion. Original ML/K signals retained; all selected T must be strictly increasing. No measured time supplied; no measured-ramp check claimed.",
+    "selection": "Pure Ar and CO because paper states zero order, gives leading-edge cutoffs and energy estimates; both retained regardless of outcome",
+    "full_peak_method": "Existing fit_polanyi_wigner fixed zero order depletion profile; max_nfev=200 per boundary, all original selected samples",
+    "independent_leading_edge_method": "Bounded scalar energy optimization with least-squares positive amplitude and optional constant offset; no depletion cutoff inside the leading-edge interval",
+    "comparison": "Report differences versus published values and quoted uncertainty bands descriptively; not a significance test. Full-peak and leading-edge interval fits need not agree. Do not tune intervals or bounds to recover references.",
+    "limits": "Paper supplies leading-edge fit cutoff but not every baseline/window choice; exact published-analysis reproduction is not claimed. Prefactor not directly compared due normalized population and free signal scale."
+  },
+  "records": [
+    {
+      "species": "Ar",
+      "method": "full_peak",
+      "interval": "primary",
+      "status": "withheld_input_screen",
+      "reason": "Nonfinite data or non-increasing raw temperatures; no sorting or repairs applied"
+    },
+    {
+      "species": "Ar",
+      "method": "full_peak",
+      "interval": "sensitivity",
+      "baseline": true,
+      "energy_K": 580.2259060775041,
+      "difference_from_reference_K": -352.7740939224959,
+      "within_reported_band": false,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.05,
+        "prefactor_s_inv": 15883824.52398682,
+        "signal_scale": 4.411050006237683,
+        "baseline": 0.06499851507888456,
+        "rmse_signal": 0.09162261857352652,
+        "normalized_rmse": 0.21909958181501435,
+        "r_squared": 0.4682366750092096,
+        "n_points": 152,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -250.98319999999998,
+        "temperature_max_C": -218.26899999999998,
+        "aic": -716.5834414780251,
+        "aicc": -716.1724825739154,
+        "bic": -701.4640388737937,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 4,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+            "Zero-order energy lies at a fit bound; inspect model adequacy.",
+            "Large residual: numerical completion does not establish zero-order model adequacy."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -242.10789999999997,
+              -241.8293
+            ],
+            "conditional_prefactor_range_s_inv": [
+              14492189.242562199,
+              17409093.773619503
+            ],
+            "conditional_signal_scale_range": [
+              4.024583081503118,
+              4.834628025684203
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 150,
+            "energy_evaluations": 6147,
+            "max_energy_evaluations_per_boundary": 200,
+            "mean_model_parameter_count_for_information_criteria": 4,
+            "edge_height_to_residual_sigma": 5.755104660471995,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "species": "Ar",
+      "method": "full_peak",
+      "interval": "sensitivity",
+      "baseline": false,
+      "energy_K": 580.2259060775041,
+      "difference_from_reference_K": -352.7740939224959,
+      "within_reported_band": false,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.05,
+        "prefactor_s_inv": 15883824.52398682,
+        "signal_scale": 5.35546025034381,
+        "baseline": 0.0,
+        "rmse_signal": 0.11067071482550841,
+        "normalized_rmse": 0.2646497962506804,
+        "r_squared": 0.224148843261462,
+        "n_points": 152,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -250.98319999999998,
+        "temperature_max_C": -218.26899999999998,
+        "aic": -661.1635899748802,
+        "aicc": -660.8914811313427,
+        "bic": -649.068067891495,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 2,
+          "n_parameters": 3,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+            "Zero-order energy lies at a fit bound; inspect model adequacy.",
+            "Large residual: numerical completion does not establish zero-order model adequacy."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -242.10789999999997,
+              -241.8293
+            ],
+            "conditional_prefactor_range_s_inv": [
+              14492189.242562199,
+              17409093.773619503
+            ],
+            "conditional_signal_scale_range": [
+              4.886250368215565,
+              5.8697267498977395
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 150,
+            "energy_evaluations": 7021,
+            "max_energy_evaluations_per_boundary": 200,
+            "mean_model_parameter_count_for_information_criteria": 3,
+            "edge_height_to_residual_sigma": 5.804172432586862,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "species": "Ar",
+      "method": "independent_leading_edge",
+      "status": "withheld_input_screen",
+      "reason": "Raw temperatures are not strictly increasing"
+    },
+    {
+      "species": "CO",
+      "method": "full_peak",
+      "interval": "primary",
+      "baseline": true,
+      "energy_K": 580.2259060775041,
+      "difference_from_reference_K": -459.7740939224959,
+      "within_reported_band": false,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.05,
+        "prefactor_s_inv": 147289.95958265042,
+        "signal_scale": 1.6675074742219647,
+        "baseline": 0.01678977024840094,
+        "rmse_signal": 0.024051176592844503,
+        "normalized_rmse": 0.2461215664206689,
+        "r_squared": 0.4763571171659925,
+        "n_points": 391,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -253.13799999999998,
+        "temperature_max_C": -213.16299999999998,
+        "aic": -2904.960804182862,
+        "aicc": -2904.804960027018,
+        "bic": -2885.117266382935,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 4,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+            "Zero-order energy lies at a fit bound; inspect model adequacy.",
+            "Large residual: numerical completion does not establish zero-order model adequacy."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -232.94539999999998,
+              -232.84299999999996
+            ],
+            "conditional_prefactor_range_s_inv": [
+              144267.29999668166,
+              150375.9493271018
+            ],
+            "conditional_signal_scale_range": [
+              1.6332871684664778,
+              1.702444756972439
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 389,
+            "energy_evaluations": 15820,
+            "max_energy_evaluations_per_boundary": 200,
+            "mean_model_parameter_count_for_information_criteria": 4,
+            "edge_height_to_residual_sigma": 5.4853971526542225,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "species": "CO",
+      "method": "full_peak",
+      "interval": "primary",
+      "baseline": false,
+      "energy_K": 580.2259060775041,
+      "difference_from_reference_K": -459.7740939224959,
+      "within_reported_band": false,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.05,
+        "prefactor_s_inv": 141315.02053496212,
+        "signal_scale": 2.0638645784300973,
+        "baseline": 0.0,
+        "rmse_signal": 0.028763060479250004,
+        "normalized_rmse": 0.2943394254695877,
+        "r_squared": 0.25108463660394253,
+        "n_points": 391,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -253.13799999999998,
+        "temperature_max_C": -213.16299999999998,
+        "aic": -2767.0547298096153,
+        "aicc": -2766.95110286661,
+        "bic": -2751.179899569674,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 2,
+          "n_parameters": 3,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+            "Zero-order energy lies at a fit bound; inspect model adequacy.",
+            "Large residual: numerical completion does not establish zero-order model adequacy."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -232.84299999999996,
+              -232.74039999999997
+            ],
+            "conditional_prefactor_range_s_inv": [
+              138423.15638579294,
+              144267.29999668166
+            ],
+            "conditional_signal_scale_range": [
+              2.0216297476208305,
+              2.106981757223997
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 389,
+            "energy_evaluations": 17069,
+            "max_energy_evaluations_per_boundary": 200,
+            "mean_model_parameter_count_for_information_criteria": 3,
+            "edge_height_to_residual_sigma": 5.657457376357006,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "species": "CO",
+      "method": "full_peak",
+      "interval": "sensitivity",
+      "baseline": true,
+      "energy_K": 580.2259060775041,
+      "difference_from_reference_K": -459.7740939224959,
+      "within_reported_band": false,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.05,
+        "prefactor_s_inv": 147290.26257134564,
+        "signal_scale": 1.5686719577405628,
+        "baseline": 0.021031180264426925,
+        "rmse_signal": 0.025000391516148385,
+        "normalized_rmse": 0.25583511464944586,
+        "r_squared": 0.46786968095811743,
+        "n_points": 322,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -251.08799999999997,
+        "temperature_max_C": -218.1854,
+        "aic": -2365.628283072364,
+        "aicc": -2365.4384096546423,
+        "bic": -2346.755525344642,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 4,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+            "Zero-order energy lies at a fit bound; inspect model adequacy.",
+            "Large residual: numerical completion does not establish zero-order model adequacy."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -232.94539999999998,
+              -232.84299999999996
+            ],
+            "conditional_prefactor_range_s_inv": [
+              144267.5906147229,
+              150376.2650772513
+            ],
+            "conditional_signal_scale_range": [
+              1.5364798721741044,
+              1.6015385268403797
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 320,
+            "energy_evaluations": 12947,
+            "max_energy_evaluations_per_boundary": 200,
+            "mean_model_parameter_count_for_information_criteria": 4,
+            "edge_height_to_residual_sigma": 4.958854336918223,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "species": "CO",
+      "method": "full_peak",
+      "interval": "sensitivity",
+      "baseline": false,
+      "energy_K": 580.2259060775041,
+      "difference_from_reference_K": -459.7740939224959,
+      "within_reported_band": false,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.05,
+        "prefactor_s_inv": 141315.29943991275,
+        "signal_scale": 2.063860530625382,
+        "baseline": 0.0,
+        "rmse_signal": 0.031694764270660945,
+        "normalized_rmse": 0.32434026666078936,
+        "r_squared": 0.14473748771621908,
+        "n_points": 322,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -251.08799999999997,
+        "temperature_max_C": -218.1854,
+        "aic": -2214.832832197063,
+        "aicc": -2214.706649231763,
+        "bic": -2199.734626014885,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 2,
+          "n_parameters": 3,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+            "Zero-order energy lies at a fit bound; inspect model adequacy.",
+            "Large residual: numerical completion does not establish zero-order model adequacy."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -232.84299999999996,
+              -232.74039999999997
+            ],
+            "conditional_prefactor_range_s_inv": [
+              138423.42393534235,
+              144267.5906147229
+            ],
+            "conditional_signal_scale_range": [
+              2.021625700164558,
+              2.1069777108228105
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 320,
+            "energy_evaluations": 14449,
+            "max_energy_evaluations_per_boundary": 200,
+            "mean_model_parameter_count_for_information_criteria": 3,
+            "edge_height_to_residual_sigma": 5.129898662066117,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "species": "CO",
+      "method": "independent_leading_edge",
+      "baseline": true,
+      "energy_K": 718.7382588295325,
+      "difference_from_reference_K": -321.26174117046753,
+      "within_reported_band": false,
+      "result": {
+        "energy_eV": 0.061936071045880406,
+        "energy_K": 718.7382588295325,
+        "success": true,
+        "amplitude_ML_per_K": 0.0055516011345608084,
+        "baseline_ML_per_K": -0.0006657890547998481,
+        "rmse_ML_per_K": 0.000255896671744531,
+        "NRMSE": 0.04162146317745908,
+        "n_points": 78
+      }
+    },
+    {
+      "species": "CO",
+      "method": "independent_leading_edge",
+      "baseline": false,
+      "energy_K": 1069.8729462785411,
+      "difference_from_reference_K": 29.87294627854112,
+      "within_reported_band": true,
+      "result": {
+        "energy_eV": 0.09219451726235334,
+        "energy_K": 1069.8729462785411,
+        "success": true,
+        "amplitude_ML_per_K": 0.005257089639634635,
+        "baseline_ML_per_K": 0.0,
+        "rmse_ML_per_K": 0.0005764724763959289,
+        "NRMSE": 0.09376295434231097,
+        "n_points": 78
+      }
+    }
+  ]
+}

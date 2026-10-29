@@ -1,0 +1,43 @@
+{
+  "dataset_doi": "10.5281/zenodo.10912815",
+  "article_doi": "10.1051/0004-6361/202346948",
+  "article_title": "Comprehensive laboratory constraints on thermal desorption of interstellar ice analogues",
+  "authors": [
+    "F. Kruczkiewicz",
+    "F. Dulieu",
+    "A. V. Ivlev",
+    "P. Caselli",
+    "B. M. Giuliano",
+    "C. Ceccarelli",
+    "P. Theul\u00e9"
+  ],
+  "dataset_creator": "Franciele Kruczkiewicz",
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "archive_url": "https://zenodo.org/api/records/10912815/files/Files_csv_table2.zip/content",
+  "archive_md5": "b34951fedd9bbaabfb6589606f0f0bbd",
+  "archive_checksum_verified": true,
+  "files": {
+    "Ar": {
+      "member": "Files_csv_table2/0_Pure species/4_Ar_pure.csv",
+      "bytes": 7758,
+      "sha256": "97660786d675a20fb467a01bec788a5a5567a3f7c313ded5444a4a1487796460"
+    },
+    "CO": {
+      "member": "Files_csv_table2/0_Pure species/2_CO_pure.csv",
+      "bytes": 14604,
+      "sha256": "f5a9225676b55328201222dc2459a5c6d6768df0c28d91f5c4805f11f185346b"
+    }
+  },
+  "units": "Header: K; ML/K; repository notes confirm",
+  "time_axis": "Not supplied; no measured time manufactured",
+  "publication_mapping": "Chemical identity from pure-species folder and header; Ar filename prefix 4 differs from Table 2 experiment 3, so filename number is not used as identity proof. CO filename prefix 2 matches experiment 2.",
+  "source_reference_version": "Final published article, Table 3 and section 4.2.1, printed page 8; values/cutoffs also confirmed against arXiv:2404.02695v1",
+  "changes": "Two unmodified CSV members compressed with gzip; interval selection and derived fit outputs; no digitization.",
+  "published_pdf_url": "https://cylira.cyu.fr/medias/fichier/aa46948-23_1728555086911-pdf?ID_FICHE=8719&INLINE=FALSE",
+  "published_pdf_sha256": "72ee2445453e31b22e7377e051fac339909368e6a1bb97c500fe18b8a19d83fb",
+  "assessment_script_sha256": "84e48c7b655959bfbf1d8a6736401bb8735901ba95ea3661ad0d7c2d758192c6",
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "scipy": "1.17.0"
+}

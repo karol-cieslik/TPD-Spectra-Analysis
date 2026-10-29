@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-29",
+  "frozen_before_first_fit": true,
+  "source_commit": "f0ae5b93eede726d00cd2731981da29b234087d4",
+  "beta_K_s": 0.2,
+  "reaction_order": 0,
+  "primary_interval_K": [
+    20,
+    60
+  ],
+  "sensitivity_interval_K": [
+    22,
+    55
+  ],
+  "baseline_cases": [
+    true,
+    false
+  ],
+  "leading_edge_intervals_K": {
+    "Ar": [
+      20,
+      27
+    ],
+    "CO": [
+      20,
+      28
+    ]
+  },
+  "reference_energy_K": {
+    "Ar": 933,
+    "CO": 1040
+  },
+  "reference_reported_uncertainty_K": {
+    "Ar": 96,
+    "CO": 104
+  },
+  "preprocessing": "None beyond interval selection and K to Celsius conversion. Original ML/K signals retained; all selected T must be strictly increasing. No measured time supplied; no measured-ramp check claimed.",
+  "selection": "Pure Ar and CO because paper states zero order, gives leading-edge cutoffs and energy estimates; both retained regardless of outcome",
+  "full_peak_method": "Existing fit_polanyi_wigner fixed zero order depletion profile; max_nfev=200 per boundary, all original selected samples",
+  "independent_leading_edge_method": "Bounded scalar energy optimization with least-squares positive amplitude and optional constant offset; no depletion cutoff inside the leading-edge interval",
+  "comparison": "Report differences versus published values and quoted uncertainty bands descriptively; not a significance test. Full-peak and leading-edge interval fits need not agree. Do not tune intervals or bounds to recover references.",
+  "limits": "Paper supplies leading-edge fit cutoff but not every baseline/window choice; exact published-analysis reproduction is not claimed. Prefactor not directly compared due normalized population and free signal scale."
+}

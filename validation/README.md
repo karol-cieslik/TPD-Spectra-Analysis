@@ -51,3 +51,12 @@ on 73 selected traces. Frequent prefactor-bound flags and baseline-dependent
 energies make this a model challenge, not reproduction of the published
 zero-coverage energy. The existing 26-entry literature catalog is unchanged;
 this acquired source is tracked separately.
+
+### Deposited pure-Ar and CO energy comparison
+
+[Source and outcomes](experimental/ice_2024/README.md): explicit deposited units,
+checksum provenance, fixed protocols, six bound-limited full-peak fits, withheld
+Ar intervals, and baseline-sensitive leading-edge results. An independent
+nonlinear CO estimate lies within the published band only for one baseline
+hypothesis; this does not validate Studio's full-peak estimates. All results are
+retained. The existing literature catalog remains unchanged.

@@ -248,3 +248,26 @@ energy reproduction remains partial, not completed. This closes the source
 mapping investigation with a documented metadata blocker; next scientific
 checkpoint is a commensurate isolated constant-energy reference. Do not repeat
 PTCDA fits unless the missing source calibration/mapping becomes available.
+
+## Accessible pure-ice reference and comparison — 29 October 2026
+
+Acquired checksum-verified CC-BY-4.0 data from Zenodo 10912815, linked to
+Kruczkiewicz et al. A&A 686 A236 (2024), DOI 10.1051/0004-6361/202346948.
+Verified the final article's Table 3 and leading-edge cutoffs. Original Ar/CO
+CSV units and chemical headers are explicit. Pre-fit protocol retains primary
+and sensitivity windows and baseline cases. Six completed full-peak fits hit
+0.05 eV with NRMSE 0.2191–0.3243; two Ar interval/method combinations were
+withheld for non-increasing temperatures. Independent CO nonlinear leading-edge
+results are 1069.87 K (zero baseline) and 718.74 K (free baseline), versus
+1040 ± 104 K published. An explicitly later application log-regression check
+gives 1336.50 K using 26/78 positive points, matching independent NumPy OLS
+numerically. All outcomes are retained without interval/bound tuning.
+
+See validation/experimental/ice_2024/ for inputs, exclusions, protocols,
+results and comparison figure. This advances acquisition, comparable-source
+inspection and negative/sensitivity comparisons (36–46), not a positive
+experimental energy-accuracy gate. Manuscript now cites and states the negative
+result. Next publication task: complete the manuscript claim/evidence audit
+against retained positive and negative results; independent scientific review
+and positive experimental accuracy evidence remain open. Do not rerun the
+completed PTCDA or pure-ice assessments without a changed hypothesis or input.

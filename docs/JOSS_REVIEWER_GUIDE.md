@@ -119,3 +119,13 @@ records the completed follow-up: primary method verified, raw coverage identity
 unresolved, four detector scales, and unchanged frozen data windows. These
 explicit limits prevent treating constant-energy fits as reproduction of a
 coverage-dependent zero-coverage intercept.
+
+## Pure-ice external reference comparison
+
+[Ar/CO records](../validation/experimental/ice_2024/README.md) include original
+CC-BY CSVs, verified published references, pre-fit protocol, six bound-limited
+full-peak results, withheld inputs, baseline-sensitive independent leading-edge
+fits and a separately declared application log-regression diagnostic. The
+comparison figure shows the full-peak mismatch rather than hiding it. This is
+explicitly negative/sensitivity evidence; the draft does not claim experimental
+energy accuracy from these outcomes.

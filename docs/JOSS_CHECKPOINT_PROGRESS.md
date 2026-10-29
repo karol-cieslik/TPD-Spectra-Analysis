@@ -428,3 +428,20 @@ fresh directory without calling a fitter. Production code unchanged.
 Next external gate: obtain an actual independent scientific response and execute
 the bounded Windows exercise on a recorded build. Do not replace these gates
 with additional automated fits or mark the response template completed.
+
+
+## 29 October 2026 — pinned clean-Windows acceptance handoff
+
+PR #23 is merged as 4dcbd3a; its final source 4fbcc159 has successful scientific
+and Windows CI. Existing experimental and post-fix ranking assessments are
+already complete at their stated bounded scope; none was rerun.
+
+`validation/review_package/PINNED_WINDOWS_TASK.md` pins Windows run 40869536465,
+artifact 12894894418, GitHub-recorded archive digest, expiry, exact source and
+fixture hash. It specifies a no-installed-Python exercise, identity checks,
+retained outputs and PASS/FAIL/PARTIAL rules. The existing checklist now uses
+that pinned task instead of a moving branch. Artifact metadata and CI status
+were inspected; no archive download, Windows execution or human acceptance
+is claimed. Result remains NOT RUN. Independent scientific review, genuine
+research use, author/disclosure confirmation and history eligibility remain
+open. Next action is human execution of this exact task, not more fits.

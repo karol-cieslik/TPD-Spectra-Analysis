@@ -1,15 +1,15 @@
 {
   "README.md": {
-    "bytes": 6052,
-    "sha256": "698f7d4c0fe2ec4b9dae11da377f9ecce8b8be21609cc1e3cc785fb49701b2ec"
+    "bytes": 6186,
+    "sha256": "5d53b096855d7da469e9cc6b9ca83646a1ce83877f68a3b63133a196ba38aac0"
   },
   "REVIEW_RESPONSE.md": {
     "bytes": 1239,
     "sha256": "07be7f926e97ccf12eb1b6c0a4a9ed5c98c03c15f0b1ee938c49aca96fb28aa3"
   },
   "WINDOWS_ACCEPTANCE.md": {
-    "bytes": 4402,
-    "sha256": "6812f1342bc81c0e0282cc3527787f53515476b915f6c11236f4b1875a42551b"
+    "bytes": 4353,
+    "sha256": "5390bffa091a411f4ddf9e6abf3f5afd4f062987d9308983b181ef7a3e4cd655"
   },
   "evidence/D2_fixture_provenance.json": {
     "bytes": 1023,
@@ -50,5 +50,9 @@
   "evidence/retained_mismatch_export/model_comparison.csv": {
     "bytes": 1148,
     "sha256": "fd82bc02ecae9050e2a06cba2578acaff8d6e6f072a8fa9126fa6932c0e47e6b"
+  },
+  "PINNED_WINDOWS_TASK.md": {
+    "bytes": 5048,
+    "sha256": "8bb18cdc79f6e9120f0c784e617a3fd77968a77808950d5ca4353d39c9762e3a"
   }
 }

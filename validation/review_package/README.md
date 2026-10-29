@@ -30,7 +30,7 @@ Use [REVIEW_RESPONSE.md](REVIEW_RESPONSE.md) for answers. A recorded disagreemen
 
 This verifies the headless Explorer export path and presentation helpers, not the Windows GUI or its native PDF report. Connecting lines in the exported figure are plotting guides between recovered coordinates, not recovered missing measurements. Export metadata identifies the retained source result and reviewed scientific-code base; the local package identity reports an unrecorded source checkout.
 
-The [Windows acceptance checklist](WINDOWS_ACCEPTANCE.md) provides one short measured-data import → apparent fit → save → report → reopen exercise. Its [D2 CSV](evidence/D2_measured_GUI_ms_degC.csv) uses measured time and temperature with explicit unit conversion, not an invented ramp. It is a usability fixture, not an energy reference. Keep the Windows checklist unmarked until actually executed on the recorded build.
+Start with the [exact-build Windows task](PINNED_WINDOWS_TASK.md), which pins the available CI artifact and download/identity checks. The [Windows acceptance checklist](WINDOWS_ACCEPTANCE.md) provides one short measured-data import → apparent fit → save → report → reopen exercise. Its [D2 CSV](evidence/D2_measured_GUI_ms_degC.csv) uses measured time and temperature with explicit unit conversion, not an invented ramp. It is a usability fixture, not an energy reference. Keep the Windows checklist unmarked until actually executed on the recorded build.
 
 ## Attribution and reproduction
 

@@ -233,3 +233,18 @@ Next scientific step: establish trace-to-coverage mapping and a commensurate
 coverage-dependent analysis, or obtain an isolated constant-energy reference.
 Do not repeat the 438 fits; use the retained archive and outputs. Human Windows
 visual acceptance and independent scientific review also remain open.
+
+## PTCDA coverage-mapping investigation — 29 October 2026
+
+Completed primary article/supplement review and header-aware audit of all 95
+raw files. The article's saturation-integral calibration and supplement's equal
+remaining-coverage complete analysis are verified, but raw filenames could not
+be assigned to coverage labels or a unique saturation reference. Four detector
+scales occur. No guessed assignment or complete-analysis reproduction was run.
+See validation/experimental/ptcda_au111/COVERAGE_MAPPING_REVIEW.md and the
+reproducible metadata audit. All original 550–740 K arrays match exactly despite
+variable header length; the 438 retained fits remain unchanged. Experimental
+energy reproduction remains partial, not completed. This closes the source
+mapping investigation with a documented metadata blocker; next scientific
+checkpoint is a commensurate isolated constant-energy reference. Do not repeat
+PTCDA fits unless the missing source calibration/mapping becomes available.

@@ -83,3 +83,12 @@ any fitted value to 1.74 eV establishes a quantitative comparison to the publish
 zero-coverage intercept. Heating-rate and fit-window sensitivity, source-trace
 coverage assignments, calibrated units, and an independent domain review remain
 unfinished. Do not tune these settings to recover the published number.
+
+## Coverage mapping follow-up
+
+[The completed investigation](COVERAGE_MAPPING_REVIEW.md) found no verified
+raw-filename-to-coverage or saturation-reference mapping in the inspected
+primary sources. All 95 headers and their detector scales are indexed in
+`metadata_inventory.csv`. Header-aware parsing preserves every frozen fit
+window exactly, so no prior fits were repeated. This source remains a model
+challenge; a comparable energy reference is still required.

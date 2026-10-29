@@ -1,0 +1,31 @@
+{
+  "review_date": "2026-10-29",
+  "article_doi": "10.1038/s42004-023-00925-2",
+  "main_text_source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10317958/fullTextXML",
+  "main_text_sha256": "73952ea0b7ad8f2d19b02d2590fbddc18ed8298a928125b013e26b68b29aa1c8",
+  "supplement_url": "https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs42004-023-00925-2/MediaObjects/42004_2023_925_MOESM2_ESM.pdf",
+  "supplement_sha256": "dc34b0d36a03226145edb983a9af1dfe53a8b90ba24803c835a87e35a536cab1",
+  "supplement_pages": 35,
+  "supplement_methods_pages": [
+    7,
+    8
+  ],
+  "supplement_method_equation": 4,
+  "paper_reference_method": "King 1975, DOI 10.1016/0039-6028(75)90302-7",
+  "verified": {
+    "monolayer_reference": "Integral of saturated alpha3 trace, dark blue in Figure 1a inset, defines 1 ML",
+    "coverage_series_method": "At the same remaining coverage across different initial coverages, regress logarithmic normalized desorption rate against inverse temperature; negative slope times kB yields energy",
+    "published_energy_intercept_eV": 1.74,
+    "published_reported_uncertainty_eV": 0.1
+  },
+  "not_located": [
+    "Raw filename corresponding to saturated alpha3 reference",
+    "Mapping from raw filenames to initial coverages and Figure 1a curve labels",
+    "Cross-acquisition response/gain calibration beyond raw detector-scale notation",
+    "Published baseline, integration limits, coverage grid and regression exclusions sufficient for exact reproduction"
+  ],
+  "scope": "Main article text, full supplement text extraction and visual methods page, deposited metadata from previous acquisition, all 95 raw headers; absence is limited to these inspected materials",
+  "decision": "Do not assign ML labels or run a purported reproduction using guessed reference and processing. Retain PTCDA as a conditional model challenge; pursue a commensurate independent reference for software validation.",
+  "no_refits": true,
+  "no_author_contact": true
+}

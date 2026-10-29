@@ -113,3 +113,9 @@ sensitivity and optimizer-bound flags prevent an energy-validation claim. The
 published zero-coverage complete-analysis estimate is a different quantity from
 a constant-energy fit to an unidentified coverage trace. See the README for
 unresolved coverage, coordinate-unit and methodological limitations.
+
+The [coverage-mapping review](../validation/experimental/ptcda_au111/COVERAGE_MAPPING_REVIEW.md)
+records the completed follow-up: primary method verified, raw coverage identity
+unresolved, four detector scales, and unchanged frozen data windows. These
+explicit limits prevent treating constant-energy fits as reproduction of a
+coverage-dependent zero-coverage intercept.

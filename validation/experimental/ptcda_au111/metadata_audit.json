@@ -1,0 +1,19 @@
+{
+  "files": 95,
+  "explicit_coverage_assignments": 0,
+  "explicit_published_curve_assignments": 0,
+  "verified_saturation_references": 0,
+  "header_line_counts": {
+    "1": 19,
+    "3": 76
+  },
+  "detector_scales": [
+    "E-10",
+    "E-11",
+    "E-12",
+    "E-13"
+  ],
+  "all_frozen_windows_identical": true,
+  "status": "blocked_by_missing_trace_reference_and_calibration",
+  "interpretation": "No coverage was assigned from area, filename order, peak position or date. Complete analysis was not run. Retained 438 fits are unchanged."
+}

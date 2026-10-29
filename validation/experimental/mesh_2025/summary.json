@@ -1,0 +1,62 @@
+{
+  "assessment_records": 12,
+  "failed_records": 0,
+  "leading": [
+    {
+      "case": "leading_primary_zero",
+      "energy_K": 4849.257761186234,
+      "R2": 0.9905238002613003,
+      "points": 37
+    },
+    {
+      "case": "leading_primary_preedge_median",
+      "energy_K": 5014.366067788892,
+      "R2": 0.98900062078094,
+      "points": 37
+    },
+    {
+      "case": "leading_sensitivity_zero",
+      "energy_K": 5212.268999228058,
+      "R2": 0.9951602337859045,
+      "points": 37
+    },
+    {
+      "case": "leading_sensitivity_preedge_median",
+      "energy_K": 5491.675547623749,
+      "R2": 0.9947860287009753,
+      "points": 37
+    }
+  ],
+  "whole_peak": [
+    {
+      "case": "full_peak_primary_baseline0",
+      "energy_K": 2516.9058639479495,
+      "NRMSE": 0.12117015394792324,
+      "success": true
+    },
+    {
+      "case": "full_peak_primary_baseline1",
+      "energy_K": 2647.703362551945,
+      "NRMSE": 0.11986780829919287,
+      "success": true
+    },
+    {
+      "case": "full_peak_sensitivity_baseline0",
+      "energy_K": 2496.4914652898156,
+      "NRMSE": 0.1517966200734897,
+      "success": true
+    },
+    {
+      "case": "full_peak_sensitivity_baseline1",
+      "energy_K": 2716.9028877053142,
+      "NRMSE": 0.14880347401467908,
+      "success": true
+    }
+  ],
+  "pixel_scenario_range_K": [
+    4160.787077443629,
+    5987.733324000319
+  ],
+  "independent_OLS_max_difference_K": 2.8194335754960775e-11,
+  "interpretation": "Method-sensitive apparent energy; not robust reproduction of TST-conditioned reference. Numerical completion is not physical adequacy."
+}

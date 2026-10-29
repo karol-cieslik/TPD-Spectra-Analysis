@@ -14,10 +14,12 @@ python -m pytest -q
 ```
 
 The upstream baseline was d85be6bbaeb6b58fce12bf9b7ff2e47c5fd123ac.
-The completed revised headless suite recorded 324 passed and 38 display-dependent
-skips; a subsequently added CLI ramp-rejection integration test passed with
-all eight ramp tests. GUI skips do not establish Windows acceptance.
-The full XML record is validation/joss_checkpoint_tests.xml.
+The earlier revised headless suite recorded 324 passed and 38 display-dependent
+skips in validation/joss_checkpoint_tests.xml. The later optimizer-fix full suite
+recorded **328 passed, 38 skipped, zero failures/errors**, retained in
+validation/optimizer_fix_full_tests.xml. These are completed historical checks;
+they were not rerun for the subsequent documentation/data-only assessments.
+GUI skips do not establish Windows acceptance or current-head CI status.
 
 ## Read existing results before rerunning experiments
 
@@ -142,3 +144,11 @@ The [new source-correspondence check](../validation/digitized/SOURCE_CORRESPONDE
 finds a close Ar match but substantial CO figure/CSV disagreement. This means
 the earlier deposited-CO calculation is not yet a trace-matched replication of
 the paper. The draft now records this limit; prior inputs/results remain intact.
+
+## Consolidated claim–evidence review
+
+See [the manuscript evidence audit](JOSS_CLAIM_EVIDENCE_AUDIT.md). It distinguishes
+conditional literature agreement, transformed-plot reconstruction and model-limit
+findings. Ethanol, methyl acetate and pure MeSH have completed bounded assessments;
+none establishes general accuracy, independent adoption or physical confidence
+coverage. All three case directories retain protocols, residuals and limitations.

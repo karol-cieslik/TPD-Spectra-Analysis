@@ -1,0 +1,58 @@
+{
+  "declared_utc": "2026-10-29T07:23:29.487075+00:00",
+  "declaration": "After primary-source method review and existing figure QA, before any MeSH fits in this assessment; not blinded or independent preregistration",
+  "source_csv": "validation/digitized/mesh_2025/digitized.csv",
+  "source_sha256_observed_bytes": "f20c5e8d76ae8c9e84388887276bc3cddb145ac7f720b18b04907531e583a5c7",
+  "source_sha256_canonical_lf": "ce2d91900aa8c52cd5dd341226d9d7b63a9cbfea26305c07992270b7da9de3d8",
+  "source_normalization": "Line endings only for hash portability; numeric data unchanged; existing CSV not rewritten",
+  "source_version": "arXiv:2504.01102v1, draft PDF; not publisher final layout",
+  "paper_doi": "10.3847/1538-4357/adc7b6",
+  "source_licence": "CC-BY-4.0",
+  "beta_K_s": 0.03333333333333333,
+  "leading_windows_K": {
+    "primary": [
+      100,
+      104
+    ],
+    "sensitivity": [
+      99,
+      103
+    ]
+  },
+  "baseline_cases": [
+    "zero",
+    "preedge_median"
+  ],
+  "preedge_window_K": [
+    80,
+    90
+  ],
+  "full_peak_windows_K": {
+    "primary": [
+      90,
+      120
+    ],
+    "sensitivity": [
+      95,
+      115
+    ]
+  },
+  "full_peak_baseline_cases": [
+    false,
+    true
+  ],
+  "full_peak_max_nfev": 150,
+  "reaction_order": 0,
+  "reference_TST_energy_K": 4610,
+  "reference_reported_uncertainty_K": 110,
+  "reference_TST_prefactor_ML_s": 5.2e+17,
+  "nominal_initial_coverage_ML": 11,
+  "coverage_reported_uncertainty_ML": 2.1,
+  "reference_role": "TST-conditioned multi-experiment recommendation; not identical estimand to unconstrained single-trace apparent leading-edge or ideal whole-peak energy",
+  "absolute_TST_comparison": "Withheld: numerical y axis in 10^15 molecules/K does not alone establish surface-area/ML conversion, full processing and original calibration; no absolute nuisance amplitude is invented",
+  "source_temperature_accuracy": "Paper reports about 2 K absolute and +/-0.1 K relative; pixel allowance is not the experimental temperature uncertainty",
+  "pixel_sensitivity": "Four primary zero-baseline corners: T +/- existing 1.5px axis allowance; signal +/- existing stroke/threshold bounds; selected columns retained by shifting interval too; nonpositive points counted and excluded by production routine",
+  "input_screen": "At least five positive finite leading pairs; at least30 finite full-peak pairs, strictly increasing T; no smoothing, sorting, gap interpolation or reconstructed time",
+  "weights": "Uniform per recovered raster column; correlated pixels; no statistical CI/MC interpretation",
+  "stopping_rule": "4 leading-edge, 4 whole-peak, 4 engineering perturbation cases; retain exceptions/rejections. No interval tuning, extra curves or MC to improve agreement."
+}

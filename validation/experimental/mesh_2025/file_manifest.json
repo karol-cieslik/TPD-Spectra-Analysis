@@ -1,0 +1,34 @@
+{
+  "README.md": {
+    "bytes": 5825,
+    "sha256": "ae176bb802013f8b3196a406401caca939018e09fd4491e9df7f81bf3ca29f6b"
+  },
+  "checkpoint.json": {
+    "bytes": 20431,
+    "sha256": "dda979bcc32549cedc5dd90335ab54c9ed47b87a34f6da3ca3d846c3cf5be739"
+  },
+  "comparison.png": {
+    "bytes": 211058,
+    "sha256": "efa119e0d215db6ae7aca08cd25bc075828deaac02f3ca836cb1984324786df8"
+  },
+  "predictions.csv": {
+    "bytes": 124748,
+    "sha256": "9d577a5e420271d358bc425cbdfcf17f2e2ed7111d8548c98f6281e1c2fb87de"
+  },
+  "protocol.json": {
+    "bytes": 2734,
+    "sha256": "afba98d1a040ef35c8376ca0e3e203afefe336e1f25f75e74269708242d0d9ac"
+  },
+  "results.json": {
+    "bytes": 23863,
+    "sha256": "421cdcb1b789433cbf7a2e28bc076b0ef3a599d6b09534e03b56b89d908081de"
+  },
+  "summary.json": {
+    "bytes": 1599,
+    "sha256": "ff1a7ba6fcd4274c4fcbb05b1adda0373e2534b07b9b6b2ef01a5b98d1610038"
+  },
+  "visual_review.json": {
+    "bytes": 505,
+    "sha256": "6285439506ec28b81ba60ba428d9c5ca57eb9aa360b95db4e762d3e89a5a9481"
+  }
+}

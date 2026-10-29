@@ -377,3 +377,27 @@ residuals, sources, licences and superseded pilot are retained. No production
 code change, old dataset rerun or MC. Human scientific review remains open.
 Next useful publication task: consolidate claim/evidence limits across ethanol,
 methyl acetate and earlier negative cases before expanding the dataset list.
+
+
+## 29 October 2026 — manuscript evidence consolidation and next paper
+
+Completed `docs/JOSS_CLAIM_EVIDENCE_AUDIT.md`, mapping numerical, Monte Carlo
+and experimental evidence to allowed claims and remaining gates. The manuscript
+now cites ethanol and methyl-acetate studies, includes favourable and alternative
+results, and retains adoption/human-review/history gaps. Prior fits were not rerun.
+
+Then assessed the already-digitized pure-MeSH curve from arXiv:2504.01102v1,
+without repeating extraction. `validation/experimental/mesh_2025/` retains 12
+declared cases: four leading edges (4849–5492 K), four whole-peak zero-order
+fits (2496–2717 K; NRMSE .1199–.1518), and four engineering pixel scenarios
+(4161–5988 K, not a confidence interval). All cases complete; independent OLS
+agrees with production to 2.82e-11 K. Structured whole-peak residuals and
+method/window dependence remain; 4610 +/- 110 K is a TST-conditioned literature
+recommendation, not an identical estimand. Absolute-prefactor reproduction is
+withheld without verified conversion/calibration. No source error or physical
+cause is inferred. Production code unchanged; no MC or GUI acceptance claimed.
+
+The audit and manuscript now include MeSH as method-limit evidence. Three-paper
+assessment batch complete at this bounded level. Remaining high-value gates:
+independent human scientific/Windows acceptance, actual research-use evidence,
+author/disclosure confirmation and public-development-history eligibility.

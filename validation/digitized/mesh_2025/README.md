@@ -23,3 +23,10 @@ This supplies a potential zero-order depletion-shape case, not a completed
 energy validation. The figure is an experimental coverage series; one selected
 curve is extracted here. No kinetic fit was run. Source PNG is retained unchanged;
 coordinate extraction and annotations are derived changes.
+
+## Subsequent analysis
+
+The [bounded kinetic assessment](../../experimental/mesh_2025/README.md) is now
+complete and reuses this CSV unchanged. It finds method/window sensitivity and
+whole-peak model mismatch; the historical extraction status above is preserved.
+No general experimental-accuracy validation is claimed.

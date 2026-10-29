@@ -132,7 +132,20 @@ fits reach an energy bound with substantial residuals. Subsequent figure
 extraction closely matches the deposited Ar curve but reveals an unresolved
 CO source-to-figure discrepancy. Deposited-CO fit results therefore cannot yet
 constitute a trace-matched reproduction of the published analysis. Experimental
-energy accuracy is not established.
+energy accuracy is not established by those cases.
+
+Figure-derived assessments further distinguish conditional agreement from
+parameter recovery. For ethanol on gold [@perrero2024], fixing the literature
+prefactor gives 6435 K versus a dominant reported population at 6450 K;
+optimizing the prefactor and baseline gives 7613 K with smaller residuals.
+For multilayer methyl acetate [@fulker2024], the primary leading-edge estimate
+is 42.22 kJ/mol versus 42.8 ± 0.7 kJ/mol, while baseline/window alternatives
+give 37.81–40.29 kJ/mol. Extraction gaps, differing estimands and structured
+whole-peak residuals preclude a general experimental-accuracy claim.
+An additional pure-methyl-mercaptan figure assessment [@narayanan2025] gives
+apparent leading-edge energies of 4849–5492 K across declared settings, compared
+with the paper's TST-conditioned recommendation of 4610 ± 110 K. These are
+different estimands; ideal whole-peak fits also retain structured residuals.
 
 **Submission evidence still required:** document completed use in an actual
 research workflow, obtain independent scientific and clean-Windows acceptance,

@@ -100,3 +100,11 @@ gives 42.22 kJ/mol with the declared offset versus published 42.8 +/- 0.7;
 other baseline/window settings give 37.81–40.29. Whole-peak mismatch and
 substantial extraction gaps remain explicit. The separate 42.63 reconstruction
 uses an already corrected published ordinate and is not independent validation.
+
+### Pure MeSH and manuscript evidence audit
+
+[Pure-MeSH assessment](experimental/mesh_2025/README.md) reuses the existing
+preprint extraction: 12 records, method-sensitive leading edges and whole-peak
+residuals, no robust reproduction of the TST-conditioned reference.
+[Claim–evidence audit](../docs/JOSS_CLAIM_EVIDENCE_AUDIT.md) consolidates these
+results with ethanol, methyl acetate and earlier numerical/negative cases.

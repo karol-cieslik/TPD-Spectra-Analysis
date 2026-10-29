@@ -1,0 +1,536 @@
+{
+  "protocol_sha256": "afba98d1a040ef35c8376ca0e3e203afefe336e1f25f75e74269708242d0d9ac",
+  "protocol": {
+    "declared_utc": "2026-10-29T07:23:29.487075+00:00",
+    "declaration": "After primary-source method review and existing figure QA, before any MeSH fits in this assessment; not blinded or independent preregistration",
+    "source_csv": "validation/digitized/mesh_2025/digitized.csv",
+    "source_sha256_observed_bytes": "f20c5e8d76ae8c9e84388887276bc3cddb145ac7f720b18b04907531e583a5c7",
+    "source_sha256_canonical_lf": "ce2d91900aa8c52cd5dd341226d9d7b63a9cbfea26305c07992270b7da9de3d8",
+    "source_normalization": "Line endings only for hash portability; numeric data unchanged; existing CSV not rewritten",
+    "source_version": "arXiv:2504.01102v1, draft PDF; not publisher final layout",
+    "paper_doi": "10.3847/1538-4357/adc7b6",
+    "source_licence": "CC-BY-4.0",
+    "beta_K_s": 0.03333333333333333,
+    "leading_windows_K": {
+      "primary": [
+        100,
+        104
+      ],
+      "sensitivity": [
+        99,
+        103
+      ]
+    },
+    "baseline_cases": [
+      "zero",
+      "preedge_median"
+    ],
+    "preedge_window_K": [
+      80,
+      90
+    ],
+    "full_peak_windows_K": {
+      "primary": [
+        90,
+        120
+      ],
+      "sensitivity": [
+        95,
+        115
+      ]
+    },
+    "full_peak_baseline_cases": [
+      false,
+      true
+    ],
+    "full_peak_max_nfev": 150,
+    "reaction_order": 0,
+    "reference_TST_energy_K": 4610,
+    "reference_reported_uncertainty_K": 110,
+    "reference_TST_prefactor_ML_s": 5.2e+17,
+    "nominal_initial_coverage_ML": 11,
+    "coverage_reported_uncertainty_ML": 2.1,
+    "reference_role": "TST-conditioned multi-experiment recommendation; not identical estimand to unconstrained single-trace apparent leading-edge or ideal whole-peak energy",
+    "absolute_TST_comparison": "Withheld: numerical y axis in 10^15 molecules/K does not alone establish surface-area/ML conversion, full processing and original calibration; no absolute nuisance amplitude is invented",
+    "source_temperature_accuracy": "Paper reports about 2 K absolute and +/-0.1 K relative; pixel allowance is not the experimental temperature uncertainty",
+    "pixel_sensitivity": "Four primary zero-baseline corners: T +/- existing 1.5px axis allowance; signal +/- existing stroke/threshold bounds; selected columns retained by shifting interval too; nonpositive points counted and excluded by production routine",
+    "input_screen": "At least five positive finite leading pairs; at least30 finite full-peak pairs, strictly increasing T; no smoothing, sorting, gap interpolation or reconstructed time",
+    "weights": "Uniform per recovered raster column; correlated pixels; no statistical CI/MC interpretation",
+    "stopping_rule": "4 leading-edge, 4 whole-peak, 4 engineering perturbation cases; retain exceptions/rejections. No interval tuning, extra curves or MC to improve agreement."
+  },
+  "preedge_median_figure_units": 0.0136239782,
+  "records": [
+    {
+      "case": "leading_primary_zero",
+      "energy_K": 4849.257761186234,
+      "energy_kJ_mol": 40.31897238116824,
+      "difference_from_TST_reference_K": 239.25776118623435,
+      "independent_OLS_difference_K": 0.0,
+      "nonpositive_omitted": 0,
+      "result": {
+        "slope": -4849.257761186234,
+        "intercept": 46.81980139932935,
+        "r_squared": 0.9905238002613003,
+        "n_points": 37,
+        "energy_ev": 0.417876702021858,
+        "prefactor_s_inv": null,
+        "beta_k_s": 0.03333333333333333,
+        "lower_c": -173.14999999999998,
+        "upper_c": -169.14999999999998,
+        "residual_rmse": 0.05243032146702242,
+        "slope_stderr": 80.17258612742246,
+        "energy_ci95_lower_ev": 0.4038512163428479,
+        "energy_ci95_upper_ev": 0.4319021877008681
+      },
+      "method": "production_leading_edge",
+      "window": "primary",
+      "baseline": "zero"
+    },
+    {
+      "case": "leading_primary_preedge_median",
+      "energy_K": 5014.366067788892,
+      "energy_kJ_mol": 41.69175922436247,
+      "difference_from_TST_reference_K": 404.366067788892,
+      "independent_OLS_difference_K": 9.094947017729282e-13,
+      "nonpositive_omitted": 0,
+      "result": {
+        "slope": -5014.366067788892,
+        "intercept": 48.405277319254886,
+        "r_squared": 0.98900062078094,
+        "n_points": 37,
+        "energy_ev": 0.43210463504529345,
+        "prefactor_s_inv": null,
+        "beta_k_s": 0.03333333333333333,
+        "lower_c": -173.14999999999998,
+        "upper_c": -169.14999999999998,
+        "residual_rmse": 0.05845537446150706,
+        "slope_stderr": 89.38565342525371,
+        "energy_ci95_lower_ev": 0.41646740463298865,
+        "energy_ci95_upper_ev": 0.44774186545759825
+      },
+      "method": "production_leading_edge",
+      "window": "primary",
+      "baseline": "preedge_median"
+    },
+    {
+      "case": "leading_sensitivity_zero",
+      "energy_K": 5212.268999228058,
+      "energy_kJ_mol": 43.3372157498362,
+      "difference_from_TST_reference_K": 602.2689992280584,
+      "independent_OLS_difference_K": 2.637534635141492e-11,
+      "nonpositive_omitted": 0,
+      "result": {
+        "slope": -5212.268999228058,
+        "intercept": 50.41139238988557,
+        "r_squared": 0.9951602337859045,
+        "n_points": 37,
+        "energy_ev": 0.4491585901829611,
+        "prefactor_s_inv": null,
+        "beta_k_s": 0.03333333333333333,
+        "lower_c": -174.14999999999998,
+        "upper_c": -170.14999999999998,
+        "residual_rmse": 0.04095512080430995,
+        "slope_stderr": 61.44102947290958,
+        "energy_ci95_lower_ev": 0.43841002486156405,
+        "energy_ci95_upper_ev": 0.4599071555043581
+      },
+      "method": "production_leading_edge",
+      "window": "sensitivity",
+      "baseline": "zero"
+    },
+    {
+      "case": "leading_sensitivity_preedge_median",
+      "energy_K": 5491.675547623749,
+      "energy_kJ_mol": 45.66033105173914,
+      "difference_from_TST_reference_K": 881.6755476237486,
+      "independent_OLS_difference_K": 2.8194335754960775e-11,
+      "nonpositive_omitted": 0,
+      "result": {
+        "slope": -5491.675547623749,
+        "intercept": 53.12248777117342,
+        "r_squared": 0.9947860287009753,
+        "n_points": 37,
+        "energy_ev": 0.47323598361447466,
+        "prefactor_s_inv": null,
+        "beta_k_s": 0.03333333333333333,
+        "lower_c": -174.14999999999998,
+        "upper_c": -170.14999999999998,
+        "residual_rmse": 0.04479608454395162,
+        "slope_stderr": 67.2032580220405,
+        "energy_ci95_lower_ev": 0.46147936731332545,
+        "energy_ci95_upper_ev": 0.48499259991562393
+      },
+      "method": "production_leading_edge",
+      "window": "sensitivity",
+      "baseline": "preedge_median"
+    },
+    {
+      "case": "full_peak_primary_baseline0",
+      "method": "production_zero_order_full_peak",
+      "window": "primary",
+      "baseline_fitted": false,
+      "energy_K": 2516.9058639479495,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.21689016619086912,
+        "prefactor_s_inv": 100844753.27366108,
+        "signal_scale": 301.3866848535884,
+        "baseline": 0.0,
+        "rmse_signal": 0.2245114569519945,
+        "normalized_rmse": 0.12117015394792324,
+        "r_squared": 0.8290422549108446,
+        "n_points": 263,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -183.11770721,
+        "temperature_max_C": -153.19305709999998,
+        "aic": -777.7538119917331,
+        "aicc": -777.5987732320432,
+        "bic": -763.465195863022,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 2,
+          "n_parameters": 3,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -165.35667379999998,
+              -164.71081809999998
+            ],
+            "conditional_prefactor_range_s_inv": [
+              93484839.90641397,
+              108784100.96231875
+            ],
+            "conditional_signal_scale_range": [
+              279.39069776891904,
+              325.1143811601211
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 261,
+            "energy_evaluations": 8302,
+            "max_energy_evaluations_per_boundary": 150,
+            "mean_model_parameter_count_for_information_criteria": 3,
+            "edge_height_to_residual_sigma": 9.739725056371613,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "case": "full_peak_primary_baseline1",
+      "method": "production_zero_order_full_peak",
+      "window": "primary",
+      "baseline_fitted": true,
+      "energy_K": 2647.703362551945,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.22816142254412508,
+        "prefactor_s_inv": 353878663.43927974,
+        "signal_scale": 285.0384081302419,
+        "baseline": 0.04336786027973795,
+        "rmse_signal": 0.22209839144431834,
+        "normalized_rmse": 0.11986780829919287,
+        "r_squared": 0.8326974383053171,
+        "n_points": 263,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -183.11770721,
+        "temperature_max_C": -153.19305709999998,
+        "aic": -781.4378998513479,
+        "aicc": -781.2044368163284,
+        "bic": -763.5771296904591,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 4,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -165.35667379999998,
+              -164.71081809999998
+            ],
+            "conditional_prefactor_range_s_inv": [
+              326894422.0563949,
+              383090380.22057986
+            ],
+            "conditional_signal_scale_range": [
+              263.3034294411426,
+              308.56754992469195
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 261,
+            "energy_evaluations": 9153,
+            "max_energy_evaluations_per_boundary": 150,
+            "mean_model_parameter_count_for_information_criteria": 4,
+            "edge_height_to_residual_sigma": 9.691837671986274,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "case": "full_peak_sensitivity_baseline0",
+      "method": "production_zero_order_full_peak",
+      "window": "sensitivity",
+      "baseline_fitted": false,
+      "energy_K": 2496.4914652898156,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.21513098942503484,
+        "prefactor_s_inv": 85142594.04471788,
+        "signal_scale": 294.4645734532228,
+        "baseline": 0.0,
+        "rmse_signal": 0.2791899688575903,
+        "normalized_rmse": 0.1517966200734897,
+        "r_squared": 0.7901780535928176,
+        "n_points": 169,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -178.05850376999996,
+        "temperature_max_C": -158.25226049999998,
+        "aic": -423.2416388721475,
+        "aicc": -422.9977364331231,
+        "bic": -410.7220440124552,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 2,
+          "n_parameters": 3,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model.",
+            "Large residual: numerical completion does not establish zero-order model adequacy."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -165.35667379999998,
+              -164.71081809999998
+            ],
+            "conditional_prefactor_range_s_inv": [
+              78810887.27453044,
+              91982993.35739611
+            ],
+            "conditional_signal_scale_range": [
+              272.56644650239383,
+              318.1220070615951
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 167,
+            "energy_evaluations": 4570,
+            "max_energy_evaluations_per_boundary": 150,
+            "mean_model_parameter_count_for_information_criteria": 3,
+            "edge_height_to_residual_sigma": 7.782847957502299,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "case": "full_peak_sensitivity_baseline1",
+      "method": "production_zero_order_full_peak",
+      "window": "sensitivity",
+      "baseline_fitted": true,
+      "energy_K": 2716.9028877053142,
+      "result": {
+        "reaction_order": 0.0,
+        "reaction_order_fitted": false,
+        "activation_energy_eV": 0.23412457624241292,
+        "prefactor_s_inv": 701497522.7214644,
+        "signal_scale": 267.3296587383881,
+        "baseline": 0.08374226124747293,
+        "rmse_signal": 0.2736848637074164,
+        "normalized_rmse": 0.14880347401467908,
+        "r_squared": 0.7983710682228946,
+        "n_points": 169,
+        "success": true,
+        "message": "Zero-order depletion profile completed; prefactor and scale are representative, not unique.",
+        "temperature_min_C": -178.05850376999996,
+        "temperature_max_C": -158.25226049999998,
+        "aic": -427.9729528320252,
+        "aicc": -427.604854672516,
+        "bic": -412.32345925740987,
+        "jacobian_condition_number": null,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 4,
+          "jacobian_condition_number": null,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": [
+            "Zero-order prefactor and signal scale are representative values, not a unique fitted pair. See conditional ranges at fixed energy and normalized initial coverage one.",
+            "Depletion and parameter brackets reflect sample spacing and fixed fitted energy; they are not confidence intervals.",
+            "Zero-order information criteria count the searched depletion boundary as one parameter; the usual AICc approximation is heuristic for this nonregular edge model."
+          ],
+          "zero_order_profile": {
+            "depletion_bracket_c": [
+              -165.35667379999998,
+              -164.71081809999998
+            ],
+            "conditional_prefactor_range_s_inv": [
+              645689692.8344798,
+              762128898.5179774
+            ],
+            "conditional_signal_scale_range": [
+              246.06217362918983,
+              290.4353212325888
+            ],
+            "representative_rule": "Geometric midpoint of compatible prefactors, within parameter bounds.",
+            "condition": "Fixed fitted energy; normalized initial coverage 1 at interval start; point-sampled ideal zero-order model. Not confidence intervals.",
+            "boundary_convention": "Depletion occurs after the last occupied sample and at or before the next sample; physical prefactor lower bound inclusive, upper bound exclusive.",
+            "boundaries_evaluated": 167,
+            "energy_evaluations": 5591,
+            "max_energy_evaluations_per_boundary": 150,
+            "mean_model_parameter_count_for_information_criteria": 4,
+            "edge_height_to_residual_sigma": 7.661981771385265,
+            "fit_status": "Numerical profile search completed; review residuals and assumptions."
+          },
+          "jacobian_note": "Within a fixed occupied sample set, prefactor and scale occur only as their product; local derivatives cannot identify both."
+        }
+      }
+    },
+    {
+      "case": "pixel_T-1_signal-1",
+      "energy_K": 5949.947080934464,
+      "energy_kJ_mol": 49.47061258441446,
+      "difference_from_TST_reference_K": 1339.9470809344639,
+      "independent_OLS_difference_K": 0.0,
+      "nonpositive_omitted": 0,
+      "result": {
+        "slope": -5949.947080934464,
+        "intercept": 57.450840021040854,
+        "r_squared": 0.9795445315029978,
+        "n_points": 37,
+        "energy_ev": 0.5127267688854017,
+        "prefactor_s_inv": null,
+        "beta_k_s": 0.03333333333333333,
+        "lower_c": -173.3114639397201,
+        "upper_c": -169.3114639397201,
+        "residual_rmse": 0.09534655948289189,
+        "slope_stderr": 145.33549832778837,
+        "energy_ci95_lower_ev": 0.4873016073818367,
+        "energy_ci95_upper_ev": 0.5381519303889667
+      },
+      "method": "leading_pixel_sensitivity",
+      "temperature_sign": -1,
+      "signal_sign": -1
+    },
+    {
+      "case": "pixel_T-1_signal1",
+      "energy_K": 4160.787077443629,
+      "energy_kJ_mol": 34.59470861749653,
+      "difference_from_TST_reference_K": -449.21292255637127,
+      "independent_OLS_difference_K": 0.0,
+      "nonpositive_omitted": 0,
+      "result": {
+        "slope": -4160.787077443629,
+        "intercept": 40.327914924546086,
+        "r_squared": 0.9938374482599126,
+        "n_points": 37,
+        "energy_ev": 0.3585488887915881,
+        "prefactor_s_inv": null,
+        "beta_k_s": 0.03333333333333333,
+        "lower_c": -173.3114639397201,
+        "upper_c": -169.3114639397201,
+        "residual_rmse": 0.03633267740911426,
+        "slope_stderr": 55.381419166822376,
+        "energy_ci95_lower_ev": 0.3488603987611805,
+        "energy_ci95_upper_ev": 0.36823737882199564
+      },
+      "method": "leading_pixel_sensitivity",
+      "temperature_sign": -1,
+      "signal_sign": 1
+    },
+    {
+      "case": "pixel_T1_signal-1",
+      "energy_K": 5987.733324000319,
+      "energy_kJ_mol": 49.78478488986593,
+      "difference_from_TST_reference_K": 1377.733324000319,
+      "independent_OLS_difference_K": 0.0,
+      "nonpositive_omitted": 0,
+      "result": {
+        "slope": -5987.733324000319,
+        "intercept": 57.63600449822361,
+        "r_squared": 0.9795361256764885,
+        "n_points": 37,
+        "energy_ev": 0.5159829353776306,
+        "prefactor_s_inv": null,
+        "beta_k_s": 0.03333333333333333,
+        "lower_c": -172.98853606027984,
+        "upper_c": -168.98853606027984,
+        "residual_rmse": 0.09536614799334399,
+        "slope_stderr": 146.28915419035124,
+        "energy_ci95_lower_ev": 0.4903909402057364,
+        "energy_ci95_upper_ev": 0.5415749305495249
+      },
+      "method": "leading_pixel_sensitivity",
+      "temperature_sign": 1,
+      "signal_sign": -1
+    },
+    {
+      "case": "pixel_T1_signal1",
+      "energy_K": 4187.219931825,
+      "energy_kJ_mol": 34.8144835971415,
+      "difference_from_TST_reference_K": -422.78006817500045,
+      "independent_OLS_difference_K": 0.0,
+      "nonpositive_omitted": 0,
+      "result": {
+        "slope": -4187.219931825,
+        "intercept": 40.45748826592361,
+        "r_squared": 0.9938331939273444,
+        "n_points": 37,
+        "energy_ev": 0.36082669594432837,
+        "prefactor_s_inv": null,
+        "beta_k_s": 0.03333333333333333,
+        "lower_c": -172.98853606027984,
+        "upper_c": -168.98853606027984,
+        "residual_rmse": 0.03634521642147055,
+        "slope_stderr": 55.75260279500103,
+        "energy_ci95_lower_ev": 0.35107327061729676,
+        "energy_ci95_upper_ev": 0.37058012127136
+      },
+      "method": "leading_pixel_sensitivity",
+      "temperature_sign": 1,
+      "signal_sign": 1
+    }
+  ],
+  "code_sha256": {
+    "scripts/experimental_mesh_check.py": "1b03d0ee9b1d695b91a0e469389f6d98386b3ee9bd6e2d06252148aa7287cd00",
+    "tpd_spectra/analysis.py": "d45ad417f7663ec29cb8b4b406ef6a6f171ba8006fc97e068fa44988a4a40974",
+    "tpd_spectra/kinetics.py": "2c2c2e0aebc6885b6795927b3ad0e5f7c3b103a48b78900144c8fb0802947c42",
+    "tpd_spectra/zero_order.py": "c0bbbce125a1444f0f43e284cae2a7d9e3c24aecbde5aa661efec33ac7ac3e48"
+  },
+  "software": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+  }
+}

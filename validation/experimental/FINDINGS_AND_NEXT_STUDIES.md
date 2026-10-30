@@ -26,6 +26,13 @@ coverage-dependent-barrier model being outside the software's single-state
 constant-energy hypothesis. Treat this as a useful order-discrimination/model
 challenge, not a clean energy-accuracy pass.
 
+**Fractional-order literature candidate:** [2-propanol/HOPG](fractional_2propanol_hopg/README.md)
+reports a monolayer order of 1.23 ± 0.03 and an amorphous multilayer order near
+zero, with coverage-series TPD traces and a stated 0.5 K/s ramp. The published
+article is CC BY 3.0, but its figure/PDF image endpoint could not be retrieved
+in this assessment. This is a screened, promising digitization target, not a
+completed software fit or an experimental validation result.
+
 ## Established observations
 
 - Six completed ideal zero-order full-peak fits to deposited Ar/CO data reached
@@ -87,6 +94,12 @@ This is a practical scope choice, not a statistical sample-size calculation.
    rates or coverages, with response/calibration metadata. This helps distinguish
    kinetic changes from measurement response. A series from one study remains
    one experimental source, not several independent studies.
+
+The Ayling et al. 2-propanol/HOPG series is a targeted fractional-order
+candidate for a later digitization pass. Its reported fractional order is
+derived from a coverage-series regression, while a whole-trace Polanyi–Wigner
+fit would be a distinct estimator; compare them as a model check and do not
+expect exact parameter equivalence.
 
 The 73 PTCDA spectra and 438 conditional fits do not equal 438 independent
 experiments or 438 confirmations. Increasing Monte Carlo replicates estimates

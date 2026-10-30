@@ -1,0 +1,48 @@
+{
+  "status": "screened_candidate_not_digitized",
+  "source": {
+    "title": "Desorption and crystallisation of binary 2-propanol and water ices adsorbed on graphite",
+    "authors": [
+      "Sean A. Ayling",
+      "Daren J. Burke",
+      "Tara L. Salter",
+      "Wendy A. Brown"
+    ],
+    "journal": "RSC Advances",
+    "year": 2017,
+    "volume": 7,
+    "pages": "51621-51631",
+    "doi": "10.1039/C7RA10410C",
+    "license": "Creative Commons Attribution 3.0 Unported",
+    "figure": "Fig. 2A",
+    "figure_coverage_range_Lm": "1-10",
+    "reported_monolayer_order": 1.23,
+    "reported_monolayer_order_uncertainty": 0.03,
+    "reported_amorphous_multilayer_order": "approximately 0",
+    "substrate_temperature_K": 26,
+    "heating_rate_K_s": 0.5,
+    "signal_fragment_amu": 45,
+    "order_estimator": "Mean slope of ln(I(T)) versus ln(relative integrated coverage) at a range of fixed temperatures; reported errors are twice the standard error of the mean."
+  },
+  "access_and_analysis": {
+    "article_text_reviewed": true,
+    "figure_pixels_retrieved": false,
+    "digitized_data_created": false,
+    "production_fit_run": false,
+    "reason_not_run": "Publisher PDF and figure-image endpoints were inaccessible in this assessment; no trace pixels could be inspected or digitized.",
+    "data_redistributed": false
+  },
+  "admission_requirements": [
+    "Retrieve and inspect Fig. 2A under the stated CC BY 3.0 licence.",
+    "Digitize each identifiable 1-10 Lm monolayer trace and record axis calibration, overlap decisions and digitization uncertainty.",
+    "Freeze baseline handling, fitting interval, energy bounds and candidate-order set before fitting.",
+    "Use the reported 0.5 K/s ramp; do not invent measured time from temperature.",
+    "Compare production free-order and candidate fixed-order fits with the reported 1.23 +/- 0.03 order, noting the paper's distinct log-log coverage-slope estimator.",
+    "Retain failures and test sensitivity to plausible digitization perturbations."
+  ],
+  "limitations": [
+    "The reported fractional order is not itself an independent software test.",
+    "The monolayer coverage-series order and whole-trace fitted order are distinct estimands.",
+    "The higher-coverage multilayer traces include amorphous-to-crystalline changes and are not a clean single-state zero-order case."
+  ]
+}

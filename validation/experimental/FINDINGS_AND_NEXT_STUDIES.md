@@ -16,6 +16,16 @@ closely reproduces the dominant literature energy when its prefactor is fixed
 7613 K for the primary free-baseline case. This advances experimental comparison
 without establishing general accuracy or a unique parameter interpretation.
 
+**Subsequent second-order case:** [O₂/Pt(111)](oxygen_pt111_2014/README.md)
+uses an author-published coverage series. Across the 14 source spectra with
+leading-edge estimates, the fitted fixed second-order model beats fixed first
+order by AICc and NRMSE. Free-order estimates are 2.35–2.73. Whole-window
+constant-energy results drift increasingly below the source's leading-edge
+energies with coverage, consistent with the paper's explicitly
+coverage-dependent-barrier model being outside the software's single-state
+constant-energy hypothesis. Treat this as a useful order-discrimination/model
+challenge, not a clean energy-accuracy pass.
+
 ## Established observations
 
 - Six completed ideal zero-order full-peak fits to deposited Ar/CO data reached

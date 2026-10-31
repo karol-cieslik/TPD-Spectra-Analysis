@@ -54,13 +54,14 @@ def test_import_preview_allows_column_and_unit_correction_and_reports_rejected_r
     seconds[10] = seconds[9]  # duplicate timestamp is explicitly rejected
     frame = pd.DataFrame({"Clock": seconds, "Detector": np.linspace(1, 2, 60),
                           "Sample": 300. + np.arange(60) * .5})
+    frame["Clock"] = frame["Clock"].astype(object)
     frame.loc[len(frame)] = ["invalid", 2.0, 400.0]
     path = tmp_path / "custom.txt"
     frame.to_csv(path, sep="\t", index=False)
 
     app = TpdSpectraApp(root)
     dialog = ImportPreviewDialog(app, [path], app._load_previewed_spectra)
-    assert dialog.records[0]["status"] == "Needs unit choice"
+    assert dialog.records[0]["status"] == "Needs mapping/unit"
     for name, column in (("time", "Clock"), ("signal", "Detector"), ("temperature", "Sample")):
         dialog.column_vars[name].set(column)
     dialog.time_unit.set("s")

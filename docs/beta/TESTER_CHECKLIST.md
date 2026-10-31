@@ -6,10 +6,10 @@ no need to complete every item or produce a formal review.
 Use the revised [worked examples](WORKED_EXAMPLES.html) for exact button names
 and settings, or the **Workflow quick start** tabs in the program. A separate
 [short feedback form](FEEDBACK_FORM.md) is available if you prefer written
-questions. Use the current 0.11.0b5 package from main and record its exact
-source commit from `VERSION.json`. Results, Help and five tutorials are included.
+questions. Use a fresh Windows desktop build for current `main`, not an earlier 0.11.0b5 package; record its exact source commit from `VERSION.json`. Results, Help and five tutorials are included.
 
 - [ ] Extract the whole package and launch on Windows without Python.
+- [ ] Import CSV, TSV and TXT samples; check the detected layout, correct a channel mapping, confirm source units, and review accepted/rejected row counts.
 - [ ] Check that the default demo has a selected first-peak region and retains its
   raw trace in Modeling, including during simulation and cancellation.
 - [ ] Find About, the developer contact, Quick Start and feedback actions.

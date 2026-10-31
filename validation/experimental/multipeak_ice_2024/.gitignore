@@ -1,0 +1,5 @@
+# Evidence is retained in the archive; extracted working copies are ignored.
+*
+!README.md
+!evidence.tar.gz
+!.gitignore

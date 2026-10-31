@@ -445,3 +445,24 @@ were inspected; no archive download, Windows execution or human acceptance
 is claimed. Result remains NOT RUN. Independent scientific review, genuine
 research use, author/disclosure confirmation and history eligibility remain
 open. Next action is human execution of this exact task, not more fits.
+
+## 29 October 2026 — experimental order and overlapping-peak challenge
+
+Added `validation/experimental/multipeak_ice_2024/` with three new traces
+from the previously used Kruczkiewicz et al. deposited collection. Compared
+fixed orders 0/1/2 and exploratory two-state fits at two frozen starts.
+18 attempts include five quarantined CO12 source-correspondence pilot fits;
+17 returned numerically successful fits, one rejected incompatible zero-order
+bounds, no timeouts. All predicted curves and residuals are retained.
+
+NH3 whole-curve ranking favours n=1 despite the source's n=0 leading-edge
+analysis; this is not correct-order recovery. Overlapping CH3OH fits fail to
+resolve the measured shape. Follow-up separated CO18 fits miss the low-T peak
+at both two-state starts; 25–170 K selection and nine adjacent duplicate means
+were declared before fitting, preserving the raw source and rejected screen.
+The CO12 apparent fit improvement is excluded from positive validation claims.
+No historical fit was repeated, no production method changed, no experimental
+mechanism or unique energy recovery claimed. Independent arithmetic verification
+of 17 saved predictions passes; Windows/human/research-use/history gates remain
+open. Next technical work is diagnosis of the retained multipeak failures,
+with source/model compatibility checked before any additional optimization.

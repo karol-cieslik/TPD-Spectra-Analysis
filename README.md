@@ -22,10 +22,7 @@ Built for surface-science researchers who need transparent fitting methods, repr
 
 ## Try the beta — 0.11.0b5 candidate
 
-The current research beta is on `main`, including merged PR #19, PR #20 and
-PR #21. It includes readable Results with parameter provenance, 40-topic offline
-scientific Help, five guided exercises, Monte Carlo progress/cancellation and
-constrained overlapping-component fitting.
+The current research beta source is on `main`, including merged PRs #19–21 and #32. It includes readable Results with parameter provenance, 41-topic offline scientific Help, five guided exercises, Monte Carlo progress/cancellation, constrained overlapping-component fitting, and a reviewed CSV/TSV/TXT import preview.
 
 Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain),
 choose the latest **successful main** run, and download
@@ -35,10 +32,7 @@ Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for file
 checksums. Actions downloads expire; no tagged prerelease has been published.
 The executable is unsigned; follow your institution's software policy.
 
-Automated Windows and frozen-package checks have passed. Human visual/DPI
-acceptance and independent installation on Windows 10/11 without Python remain
-outstanding. Complete those checks on the exact package before colleague
-distribution. This beta does not claim independent experimental validation.
+Use the latest successful Windows build for `main`; confirm its commit in `VERSION.json`. Older 0.11.0b5 artifacts predate PR #32 and lack the import preview. Automated build checks cover packaging and regression tests, while human visual/DPI acceptance and installation on Windows 10/11 without Python remain outstanding. Complete those checks on the exact package before colleague distribution. This beta does not claim independent experimental validation.
 
 Start with [the five-minute walkthrough](START_HERE.md) and the
 [full worked Quick Start](docs/beta/WORKED_EXAMPLES.html) (offline HTML), then explore the

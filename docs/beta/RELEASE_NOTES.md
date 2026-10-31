@@ -1,16 +1,12 @@
 # TPD Spectra Studio 0.11.0b5 — research beta notes
 
-Current source: `main`, including merged PRs #19, #20 and #21. This is an
-informal research beta, not a stable release or experimental validation.
-See [START_HERE](../../START_HERE.md) for download and extraction instructions.
-`VERSION.json` records the exact source commit; `SHA256SUMS.txt` records package
-file hashes. Historical b4 artifacts lack the Results/Help improvements.
+Current source: `main`. Use a fresh Windows desktop build for the current main commit; `VERSION.json` records its source commit and `SHA256SUMS.txt` records package file hashes. Earlier 0.11.0b5 packages predate PR #32 and do not include the delimited-text import preview. This remains an informal research beta, not a stable release or experimental validation. See [START_HERE](../../START_HERE.md) for download and extraction instructions.
 
 ## Included in b5
 
 - Structured Results tabs distinguish fitted, assumed and calculated quantities
   and retain submitted settings and scientific cautions.
-- Searchable offline scientific Help contains 40 topics, with field-level help.
+- Searchable offline scientific Help contains 41 topics, with field-level help.
 - Five guided in-app exercises and an offline HTML worked guide accompany the
   brief five-page Quick Start PDF.
 - Windows executable version metadata and portable commit identity agree.
@@ -23,6 +19,7 @@ outstanding. Run those checks on the exact downloaded ZIP before sharing it.
 
 ## Changes
 
+- The import preview supports CSV, TSV and TXT, with per-file channel mapping, source-unit confirmation, and accepted/rejected row counts before data enter the workspace. Reviewed import choices are carried into saved analysis runs.
 - The default demo opens with a prepared region; raw spectra remain visible
   across stages, missing regions, calculations, failures and cancellation.
 - Monte Carlo progress, elapsed/estimated remaining time, Cancel and fit/failure

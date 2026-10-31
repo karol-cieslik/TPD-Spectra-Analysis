@@ -62,18 +62,19 @@ def test_help_browser_is_searchable_reusable_and_read_only(root):
     dialog = app.open_scientific_help('mc_seed')
     root.update()
     assert dialog is not None
+    topic_count = len(load_help_catalog()['topics'])
     assert dialog._current_id() == 'mc_seed'
     assert '42' in dialog.detail.get('1.0', 'end')
-    assert dialog.count.get() == '40 / 40 topics'
+    assert dialog.count.get() == f'{topic_count} / {topic_count} topics'
     dialog.query.set('energy')
     root.update()
-    assert ' / 40 topics' in dialog.count.get()
-    assert dialog.count.get() != '40 / 40 topics'
+    assert f' / {topic_count} topics' in dialog.count.get()
+    assert dialog.count.get() != f'{topic_count} / {topic_count} topics'
     assert app.open_scientific_help('prefactor') is dialog
     assert dialog._current_id() == 'prefactor'
     assert dialog.query.get() == ''
     dialog.query.set('not-an-existing-scientific-topic')
-    assert dialog.count.get() == '0 / 40 topics'
+    assert dialog.count.get() == f'0 / {topic_count} topics'
     assert 'No matching topics' in dialog.detail.get('1.0', 'end')
     dialog.select_topic('mc_seed')
     assert dialog._current_id() == 'mc_seed'

@@ -96,7 +96,7 @@ The desktop uses an original spectrum icon and a shared navy/teal identity.
 
 ## ✨ Features
 
-- 📂 **Flexible CSV import** — individual files or folders; legacy instrument exports and common delimited formats.
+- 📂 **Delimited-text import** — CSV, TSV, and TXT files; import preview confirms detected columns, source units, and accepted/rejected rows.
 - 📈 **Interactive comparison** — multiple traces, overlay or small multiples, temperature/time axes, zoom and normalization.
 - 🎯 **Fit-window selection** — drag temperature intervals on the plot or enter exact boundaries.
 - 🧮 **Classical analysis** — heating-rate regression, leading-edge apparent energies and first-order Redhead estimates.
@@ -145,7 +145,7 @@ tpd-spectra path/to/spectrum.csv --output results --kinetic-fit --kinetic-order 
 
 ## 📦 Inputs and outputs
 
-Legacy CSV columns include `ms` (elapsed time in milliseconds), `DHTA+` (detector signal), and `Temperatura` (temperature in °C). Other common time, signal and temperature column names are recognized; delimiter and decimal conventions vary by instrument. **Check the units and channel assignment** before interpreting results.
+Legacy CSV columns include `ms` (elapsed time in milliseconds), `DHTA+` (detector signal), and `Temperatura` (temperature in °C). Other common channel names are recognized. Import preview exposes the detected separator, decimal mark, channel mapping and row counts; verify source units before analysis. The CLI offers the same explicit mapping and unit options.
 
 | Output | Purpose |
 | --- | --- |

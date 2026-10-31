@@ -34,6 +34,21 @@
       "caution": "A clean import does not establish that the instrument temperature calibration is correct."
     },
     {
+      "id": "import_preview",
+      "group": "Data preparation",
+      "title": "Delimited-text import preview",
+      "symbol": "",
+      "unit": "source columns, units, and row counts",
+      "role": "workflow",
+      "context": [
+        "preparation"
+      ],
+      "short": "Review detected columns and units, then check accepted and rejected rows before importing.",
+      "detail": "The importer accepts CSV, TSV, and TXT delimited text. It can suggest channel names, separator, decimal mark, and skipped metadata rows. Confirm the source time unit (ms, s, or min) and temperature unit (degC or K), especially when headers are generic. Column mappings can be changed in the preview. Rejected or duplicate-time rows are excluded and listed with reasons; the source file is not rewritten.",
+      "example": "A header with Time, Signal, and Temperature needs explicit unit choices; Time (s) and Temperature (K) provide unit-bearing suggestions that should still be checked against the instrument export.",
+      "caution": "A successful parse does not verify physical units, detector calibration, or whether the temperature channel is the sample temperature."
+    },
+    {
       "id": "heating_rate",
       "group": "Physical inputs",
       "title": "Heating rate",

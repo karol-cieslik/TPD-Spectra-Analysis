@@ -60,6 +60,15 @@ def review_text(settings, rows):
                         f"{spec.time_min[-1]:.3g} min elapsed",
                         f"  Temperature corrections: {spec.points_temperature_corrected}; "
                         f"leading-edge positive points: {edge.sum()}; peak-search points: {peak.sum()}"])
+        report = getattr(spec, "import_report", {})
+        if report:
+            units = report.get("source_units", {})
+            content.append(
+                f"  Import: {report.get('accepted_records', len(signal))}/"
+                f"{report.get('original_data_records', len(signal))} rows accepted; "
+                f"{len(report.get('rejected_records', []))} rejected; "
+                f"time {units.get('time', 'unknown')}, temperature {units.get('temperature', 'unknown')}"
+            )
         if edge.sum() < 5:
             content.append("  WARNING: leading-edge estimate will be unavailable (fewer than 5 positive points).")
     content.extend(["", "PROCESSING AND METHODS",
@@ -83,7 +92,7 @@ def review_text(settings, rows):
                         "Uses a fitted linear temperature ramp. A converged fit does not establish a unique mechanism."])
     content.extend(["", "OUTPUTS", "Parameter and batch tables; diagnostic plots; warnings/errors where present; "
                     "input hashes, reviewed settings, run status and streamed run log.",
-                    "Each saved run uses a new folder. Source CSV files are never modified.",
+                    "Each saved run uses a new folder. Source spectrum files are never modified.",
                     "A computed preview analyzes only the selected input and is stored temporarily."])
     return "\n".join(content)
 
@@ -178,7 +187,10 @@ class ReviewDialog(tk.Toplevel):
             settings = json.loads(json.dumps(self.settings))
             settings["output_path"] = self.destination.get()
             if preview:
-                settings["input_files"] = [self.selection.get()]
+                selected_path = self.selection.get()
+                settings["input_files"] = [selected_path]
+                settings["input_import_options_by_path"] = {
+                    selected_path: settings.get("input_import_options_by_path", {}).get(selected_path, {})}
             if self.on_start(settings, preview):
                 self.destroy()
         except Exception as exc:

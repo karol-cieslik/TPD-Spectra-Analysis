@@ -104,6 +104,33 @@ def test_mixed_batch_preserves_success_but_reports_partial_failure(tmp_path):
     assert "bad.csv" in (plan.output / "analysis_errors.csv").read_text()
 
 
+def test_reviewed_import_choices_are_saved_for_the_child_process(tmp_path):
+    settings = settings_for(tmp_path / "reviewed")
+    source = str(DEMO.resolve())
+    settings["input_import_options_by_path"] = {source: {
+        "skiprows": 0, "delimiter": "\t", "decimal": ".",
+        "time_column": "Elapsed", "signal_column": "Detector",
+        "temperature_column": "Sample", "time_unit": "s", "temperature_unit": "K",
+    }}
+    plan = RunPlan.create(settings, build_cli_arguments(settings))
+    child = tmp_path / "verify_import_options.py"
+    child.write_text(
+        "import json, sys\nfrom pathlib import Path\n"
+        "args = sys.argv[1:]\n"
+        "options = Path(args[args.index('--import-options-file') + 1])\n"
+        "assert json.loads(options.read_text())\n"
+        "output = Path(args[args.index('--output') + 1])\n"
+        "(output / 'analysis_project.json').write_text(json.dumps({'failed_files': []}))\n",
+        encoding="utf-8")
+    messages = queue.Queue()
+    execute(plan, messages, threading.Event(),
+            command_prefix=[sys.executable, "-u", str(child)])
+    assert drain(messages)[-1] == ("finished", "completed")
+    saved = json.loads((plan.output / "import_options.json").read_text(encoding="utf-8"))
+    assert saved[source]["time_unit"] == "s"
+    assert saved[source]["temperature_unit"] == "K"
+
+
 def test_cancel_stops_child_and_records_partial_output(tmp_path):
     script = tmp_path / "slow.py"
     script.write_text("import time\nprint('ready', flush=True)\ntime.sleep(60)\n")

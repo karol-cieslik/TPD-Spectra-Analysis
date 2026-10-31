@@ -262,8 +262,8 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.result_text.configure(yscrollcommand=notes_scroll.set)
         self.refresh_method()
 
-    def _load_paths(self, paths):
-        super()._load_paths(paths)
+    def _load_paths(self, paths, preloaded=None):
+        super()._load_paths(paths, preloaded=preloaded)
         for row in self.spectra.values():
             dataset = self.project.add_dataset(row["path"], row["spec"])
             # Seed only the actual shipped demo, never an arbitrary imported spectrum.

@@ -12,16 +12,16 @@ from tpd_spectra.scientific_help import CATALOG_RESOURCE, load_help_catalog, top
 DEMO = Path(__file__).resolve().parents[1] / 'examples/synthetic_two_peak_demo.csv'
 
 
-def test_catalog_contains_all_40_scientific_topics():
+def test_catalog_contains_all_41_scientific_topics():
     catalog = load_help_catalog()
     topics = catalog['topics']
-    assert len(topics) == 40
+    assert len(topics) == 41
     ids = [topic['id'] for topic in topics]
     assert len(set(ids)) == len(ids)
     assert {'mc_seed', 'mc_replicates', 'heating_rate', 'reaction_order',
             'prefactor', 'fixed_zero_order', 'simultaneous_components',
             'identifiability', 'stale_result', 'feedback_privacy'} <= set(ids)
-    assert len(set(topic['group'] for topic in topics)) == 6
+    assert len(set(topic['group'] for topic in topics)) == 7
     assert CATALOG_RESOURCE == 'docs/beta/SCIENTIFIC_HELP_TOPICS.json'
     seed = next(item for item in topics if item['id'] == 'mc_seed')
     assert 'random' in (seed['title'] + ' ' + seed['detail']).lower()

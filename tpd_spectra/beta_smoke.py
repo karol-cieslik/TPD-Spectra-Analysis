@@ -26,7 +26,7 @@ def main(output):
     assert resource('docs/MULTICOMPONENT_FITTING.md').is_file()
     assert 'first result' in resource('docs/beta/WORKED_EXAMPLES.html').read_text(encoding='utf-8').lower()
     help_catalog=load_help_catalog()
-    assert len(help_catalog['topics'])==40
+    assert len(help_catalog['topics'])==41
     assert next(t for t in help_catalog['topics'] if t['id']=='mc_seed')['short']
     root=tk.Tk()
     app=WorkflowApp(root)
@@ -140,7 +140,7 @@ def main(output):
         assert not errors,errors
         record={'identity':build_identity(),'examples_imported':len(catalog),
             'frozen_executable':bool(getattr(sys,'frozen',False)),
-            'scientific_help_40_topics_and_keyboard_browser_passed':True,
+            'scientific_help_41_topics_and_keyboard_browser_passed':True,
             'resource_lookup_from_unrelated_cwd':Path.cwd().resolve()!=resource('START_HERE.md').parent,
             'redhead_reference_passed':True,
             'offline_feedback_copy_zip_passed':True,'external_drafts_opened':False,

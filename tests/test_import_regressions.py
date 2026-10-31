@@ -9,6 +9,7 @@ from scipy.integrate import trapezoid
 from scipy.signal import find_peaks
 
 from tpd_spectra.analysis import clean_temperature, heating_rate, load_spectrum, redhead_energy
+from tpd_spectra.importer import inspect_spectrum_file, supported_spectrum_files
 
 EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 
@@ -35,6 +36,53 @@ def test_header_layout_and_decimal_are_validated_before_accepting(tmp_path, sep,
 def test_explicit_column_typo_is_not_silently_ignored():
     with pytest.raises(ValueError, match="Requested signal column"):
         load_spectrum(EXAMPLES / "synthetic_two_peak_demo.csv", signal_column="missing")
+
+
+def test_preview_detects_tsv_layout_but_requires_units_for_generic_headers(tmp_path):
+    path = tmp_path / "ramp.txt"
+    frame = pd.DataFrame({"Clock": np.arange(60), "Detector": np.linspace(1, 2, 60),
+                          "Sample": 300 + np.arange(60) * .5})
+    path.write_text(frame.to_csv(index=False, sep="\t"), encoding="utf-8")
+    preview = inspect_spectrum_file(path)
+    assert preview.delimiter == "\t"
+    assert preview.decimal_mark == "."
+    assert preview.metadata_rows_skipped == 0
+    assert preview.data_records == 60
+    assert preview.suggested_columns == {"time": None, "signal": None, "temperature": None}
+    assert preview.suggested_units == {"time": None, "temperature": None}
+    assert list(preview.frame.columns) == ["Clock", "Detector", "Sample"]
+    spectrum = load_spectrum(path, skiprows=0, delimiter="\t", decimal=".",
+                             time_column="Clock", signal_column="Detector",
+                             temperature_column="Sample", time_unit="s", temperature_unit="K")
+    np.testing.assert_allclose(spectrum.time_min, np.arange(60) / 60.)
+    np.testing.assert_allclose(spectrum.temperature_c, 26.85 + np.arange(60) * .5)
+    assert spectrum.import_report["source_units"] == {"time": "s", "temperature": "K"}
+
+
+def test_preview_suggests_units_from_unit_bearing_headers_and_legacy_contract(tmp_path):
+    generic = tmp_path / "annotated.csv"
+    pd.DataFrame({"Time_ms": np.arange(5) * 1000, "Signal": np.arange(5),
+                  "Temperature (K)": np.arange(5) + 300}).to_csv(generic, index=False)
+    preview = inspect_spectrum_file(generic)
+    assert preview.suggested_units == {"time": "ms", "temperature": "K"}
+    assert not preview.legacy_schema
+
+    legacy = tmp_path / "legacy.csv"
+    legacy.write_text("metadata\n" * 29 + pd.DataFrame(
+        {"ms": np.arange(5) * 1000, "DHTA+": np.arange(5),
+         "Temperatura": np.arange(5) + 100}).to_csv(index=False, sep=";", decimal=","), encoding="utf-8")
+    legacy_preview = inspect_spectrum_file(legacy)
+    assert legacy_preview.legacy_schema
+    assert legacy_preview.suggested_units == {"time": "ms", "temperature": "degC"}
+
+
+def test_folder_discovery_finds_csv_tsv_txt_case_insensitively(tmp_path):
+    paths = [tmp_path / "a.csv", tmp_path / "nested" / "b.TSV",
+             tmp_path / "nested" / "c.txt", tmp_path / "ignored.xlsx"]
+    for path in paths:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("fixture", encoding="utf-8")
+    assert supported_spectrum_files(tmp_path) == [paths[0], paths[1], paths[2]]
 
 
 @pytest.mark.parametrize("step", [.2, 1.5, 2., 5.])

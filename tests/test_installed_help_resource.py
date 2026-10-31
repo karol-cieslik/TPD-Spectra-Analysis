@@ -11,4 +11,4 @@ def test_offline_help_without_repository_sidecar(monkeypatch):
     payload=scientific_help.load_help_catalog()
     original=json.loads((Path(__file__).parents[1]/scientific_help.CATALOG_RESOURCE).read_text(encoding='utf-8'))
     assert payload==original
-    assert len(payload['topics'])==40
+    assert len(payload['topics'])==41

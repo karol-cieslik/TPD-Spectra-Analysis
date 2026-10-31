@@ -1,0 +1,63 @@
+{
+  "status": "literature_verified_figure_not_digitized",
+  "source": {
+    "title": "The adsorption and desorption of ethanol ices from a model grain surface",
+    "authors": [
+      "D. J. Burke",
+      "A. J. Wolff",
+      "J. L. Edridge",
+      "W. A. Brown"
+    ],
+    "journal": "The Journal of Chemical Physics",
+    "year": 2008,
+    "volume": 128,
+    "article": "104702",
+    "doi": "10.1063/1.2888556",
+    "figure": "Fig. 5",
+    "surface": "HOPG",
+    "dosing_temperature_K": 98,
+    "heating_rate_K_s": 0.5,
+    "heating_rate_uncertainty_K_s": 0.01,
+    "orders": {
+      "monolayer_alpha": {
+        "n": 0.98,
+        "uncertainty": 0.13,
+        "fixed_temperature_K": 151
+      },
+      "bilayer_beta": {
+        "n": 1.52,
+        "uncertainty": 0.21
+      },
+      "multilayer_gamma": {
+        "n": 0.08,
+        "uncertainty": 0.07,
+        "energy_kJ_mol": 56.3,
+        "energy_uncertainty_kJ_mol": 1.7
+      },
+      "crystalline_delta": {
+        "n": null,
+        "onset_exposure_L": 50
+      }
+    },
+    "order_estimator": "Fixed-temperature log-intensity versus log-relative-coverage regression; differs from the software whole-trace fitter.",
+    "license_status": "Copyright not evaluated in the repository copy; do not redistribute extracted graph data until reuse terms are verified."
+  },
+  "access_and_analysis": {
+    "article_text_reviewed": true,
+    "figure_pixels_retrieved": false,
+    "digitized_data_created": false,
+    "production_fit_run": false,
+    "reason_not_run": "Article PDF and figure-image endpoints returned 403; no graph pixels inspected."
+  },
+  "limitations": [
+    "Multi-regime source contains peak overlap and crystallization.",
+    "The reported orders are not direct whole-trace software fits.",
+    "No statistical comparison is possible until digitization uncertainty and reuse rights are resolved."
+  ],
+  "admission_requirements": [
+    "Obtain an authorized high-resolution Fig. 5 image or data.",
+    "Digitize isolated \u03b1 (0.5-2 L) first and retain trace-level uncertainty.",
+    "Check whether \u03b3 can be isolated without inventing deconvolution.",
+    "Freeze fit windows/baseline/model set before fitting; retain model mismatch and failures."
+  ]
+}

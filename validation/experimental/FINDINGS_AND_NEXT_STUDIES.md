@@ -2,7 +2,8 @@
 
 Recorded 29 October 2026, after the pure-ice assessment. This is an interpretation
 and work plan, not a declaration that any new validation has passed. Existing
-inputs and outputs remain unchanged. No production numerical code is changed.
+experimental inputs remain unchanged. The production/default fitting path is unchanged;
+new profiling and sloped-baseline logic is research-only.
 
 **Subsequent source check:** [the figure-to-CSV correction](../digitized/SOURCE_CORRESPONDENCE_UPDATE.md)
 finds an unresolved CO correspondence discrepancy. Earlier results describe the
@@ -15,6 +16,41 @@ closely reproduces the dominant literature energy when its prefactor is fixed
 (6435 versus 6450 K). Free-prefactor results depend on baseline/window and reach
 7613 K for the primary free-baseline case. This advances experimental comparison
 without establishing general accuracy or a unique parameter interpretation.
+
+**Subsequent second-order case:** [O₂/Pt(111)](oxygen_pt111_2014/README.md)
+uses an author-published coverage series. Across the 14 source spectra with
+leading-edge estimates, the fitted fixed second-order model beats fixed first
+order by AICc and NRMSE. Free-order estimates are 2.35–2.73. Whole-window
+constant-energy results drift increasingly below the source's leading-edge
+energies with coverage, consistent with the paper's explicitly
+coverage-dependent-barrier model being outside the software's single-state
+constant-energy hypothesis. Treat this as a useful order-discrimination/model
+challenge, not a clean energy-accuracy pass.
+
+**Figure-derived fractional-order challenge:** [2-propanol/HOPG](fractional_2propanol_hopg/README.md)
+reports monolayer order 1.23 ± 0.03. Digitized 1/2/5/10 Lm traces from Fig. 2A
+give a declared-window reconstruction of 1.14 ± 0.05; the source interval is
+unspecified and ±1-pixel baseline sensitivity is 1.111–1.165. Separate
+single-trace fits favor fixed n=1.23 over n=1 by NRMSE on all four traces, and
+three free-order fits hit the upper bound. This is figure-derived challenge
+evidence, not raw-data or energy validation; see the linked protocol/results.
+
+**Expanded experimental review and algorithm research:** [assessment](EXPERIMENTAL_VALIDATION_AND_ALGORITHM_ASSESSMENT.md)
+consolidates the completed positive and negative comparisons, limits on current
+claims, the newly reviewed methanol/HOPG fractional-order benchmark, and a
+ranked algorithm roadmap. [Methanol/HOPG admission record](methanol_hopg_2005/README.md)
+documents its published order values and explains why its scan quality and
+label conflict still prevent reliable trace admission. A first variable
+projection prototype was compared with the current fitter across multiple
+starts and a difficult D₂O trace; it reproduces the same optima but is slower.
+A conditional E–ν profile and synthetic baseline-drift checks now document a
+parameter ridge and the risk of unmodeled sloped backgrounds. The experimental
+baseline sensitivity result is small on one ethanol/Au trace and does not show
+which background is physically correct. Further literature screening added
+ethanol/HOPG (near-first, greater-than-first and near-zero classes),
+coronene/ovalene (islanding) and O₂/Ag(111) (directly imaged island perimeter)
+as separate candidate families; none is admitted as a digitized fit. See the
+[checkpoint roadmap](ROADMAP_CHECKPOINTS.md) and assessment.
 
 ## Established observations
 
@@ -77,6 +113,11 @@ This is a practical scope choice, not a statistical sample-size calculation.
    rates or coverages, with response/calibration metadata. This helps distinguish
    kinetic changes from measurement response. A series from one study remains
    one experimental source, not several independent studies.
+
+The Ayling et al. 2-propanol/HOPG series is now retained as a bounded
+figure-derived comparison. Its reported order comes from a coverage-series
+regression, while a whole-trace Polanyi–Wigner fit is a distinct estimator;
+compare them as a model check and do not expect exact parameter equivalence.
 
 The 73 PTCDA spectra and 438 conditional fits do not equal 438 independent
 experiments or 438 confirmations. Increasing Monte Carlo replicates estimates

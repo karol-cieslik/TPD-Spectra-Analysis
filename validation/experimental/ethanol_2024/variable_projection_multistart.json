@@ -1,0 +1,167 @@
+{
+  "dataset": "ethanol/Au(111) digitized primary window 110\u2013165 K",
+  "beta_K_s": 0.15,
+  "n_points": 195,
+  "reaction_order": 1,
+  "starts": [
+    {
+      "E_eV": 0.35,
+      "nu_s-1": 1000000000000.0
+    },
+    {
+      "E_eV": 0.6,
+      "nu_s-1": 1e+16
+    },
+    {
+      "E_eV": 0.8,
+      "nu_s-1": 1e+18
+    },
+    {
+      "E_eV": 1.0,
+      "nu_s-1": 10000000000000.0
+    },
+    {
+      "E_eV": 1.2,
+      "nu_s-1": 1e+24
+    },
+    {
+      "E_eV": 2.0,
+      "nu_s-1": 1e+28
+    }
+  ],
+  "records": [
+    {
+      "method": "current",
+      "success": true,
+      "E_eV": 0.6560277353946109,
+      "nu_s-1": 1.6092643097156457e+22,
+      "NRMSE": 0.03123109906304111,
+      "jacobian_condition_number": 10639.070932127082,
+      "start_E_eV": 0.35,
+      "start_nu_s_1": 1000000000000.0,
+      "wall_seconds": 1.1016085780001958
+    },
+    {
+      "method": "variable_projection",
+      "success": true,
+      "E_eV": 0.6560295203592924,
+      "nu_s-1": 1.609505625691831e+22,
+      "NRMSE": 0.03123109906143084,
+      "nfev_best_seed": 19,
+      "start_E_eV": 0.35,
+      "start_nu_s_1": 1000000000000.0,
+      "wall_seconds": 4.911833978999994
+    },
+    {
+      "method": "current",
+      "success": true,
+      "E_eV": 0.6560287109243339,
+      "nu_s-1": 1.60939614130841e+22,
+      "NRMSE": 0.03123109906173866,
+      "jacobian_condition_number": 10639.094112591434,
+      "start_E_eV": 0.6,
+      "start_nu_s_1": 1e+16,
+      "wall_seconds": 1.380786826000076
+    },
+    {
+      "method": "variable_projection",
+      "success": true,
+      "E_eV": 0.6560295203592924,
+      "nu_s-1": 1.609505625691831e+22,
+      "NRMSE": 0.03123109906143084,
+      "nfev_best_seed": 19,
+      "start_E_eV": 0.6,
+      "start_nu_s_1": 1e+16,
+      "wall_seconds": 2.950412343999915
+    },
+    {
+      "method": "current",
+      "success": true,
+      "E_eV": 0.6560293104058312,
+      "nu_s-1": 1.6094771815955361e+22,
+      "NRMSE": 0.031231099061457764,
+      "jacobian_condition_number": 10639.097688270558,
+      "start_E_eV": 0.8,
+      "start_nu_s_1": 1e+18,
+      "wall_seconds": 0.9432242660000156
+    },
+    {
+      "method": "variable_projection",
+      "success": true,
+      "E_eV": 0.6560295203592924,
+      "nu_s-1": 1.609505625691831e+22,
+      "NRMSE": 0.03123109906143084,
+      "nfev_best_seed": 19,
+      "start_E_eV": 0.8,
+      "start_nu_s_1": 1e+18,
+      "wall_seconds": 3.2775574730001154
+    },
+    {
+      "method": "current",
+      "success": true,
+      "E_eV": 0.6560291648034219,
+      "nu_s-1": 1.6094574750745764e+22,
+      "NRMSE": 0.031231099061500206,
+      "jacobian_condition_number": 10639.079781705657,
+      "start_E_eV": 1.0,
+      "start_nu_s_1": 10000000000000.0,
+      "wall_seconds": 1.2879247710000072
+    },
+    {
+      "method": "variable_projection",
+      "success": true,
+      "E_eV": 0.6560295203592924,
+      "nu_s-1": 1.609505625691831e+22,
+      "NRMSE": 0.03123109906143084,
+      "nfev_best_seed": 19,
+      "start_E_eV": 1.0,
+      "start_nu_s_1": 10000000000000.0,
+      "wall_seconds": 3.1064536090000274
+    },
+    {
+      "method": "current",
+      "success": true,
+      "E_eV": 0.6560364196200391,
+      "nu_s-1": 1.610438701032392e+22,
+      "NRMSE": 0.031231099089375,
+      "jacobian_condition_number": 10639.212653751212,
+      "start_E_eV": 1.2,
+      "start_nu_s_1": 1e+24,
+      "wall_seconds": 0.8334080980000635
+    },
+    {
+      "method": "variable_projection",
+      "success": true,
+      "E_eV": 0.6560295203592924,
+      "nu_s-1": 1.609505625691831e+22,
+      "NRMSE": 0.03123109906143084,
+      "nfev_best_seed": 19,
+      "start_E_eV": 1.2,
+      "start_nu_s_1": 1e+24,
+      "wall_seconds": 3.233649081000067
+    },
+    {
+      "method": "current",
+      "success": true,
+      "E_eV": 0.6560336807401712,
+      "nu_s-1": 1.6100682615780503e+22,
+      "NRMSE": 0.031231099071801355,
+      "jacobian_condition_number": 10639.16957195788,
+      "start_E_eV": 2.0,
+      "start_nu_s_1": 1e+28,
+      "wall_seconds": 1.0004833730001792
+    },
+    {
+      "method": "variable_projection",
+      "success": true,
+      "E_eV": 0.6560295203592924,
+      "nu_s-1": 1.609505625691831e+22,
+      "NRMSE": 0.03123109906143084,
+      "nfev_best_seed": 19,
+      "start_E_eV": 2.0,
+      "start_nu_s_1": 1e+28,
+      "wall_seconds": 3.344137344000046
+    }
+  ],
+  "scope": "Within-dataset optimizer stress comparison; same observed trace, not six independent experimental validations. No uncertainty coverage claim."
+}

@@ -1,0 +1,34 @@
+{
+  "dataset": "ethanol/Au(111), digitized 110\u2013165 K window",
+  "beta_K_s": 0.15,
+  "order_fixed": 1,
+  "baseline": "profiled bounded constant offset",
+  "energy_grid_eV": [
+    0.6,
+    0.72,
+    49
+  ],
+  "log10_prefactor_profile_bounds": [
+    18,
+    27
+  ],
+  "best_grid_point": {
+    "energy_eV": 0.655,
+    "log10_prefactor": 22.169362453247942,
+    "prefactor_s-1": 1.476938641690994e+22,
+    "signal_scale": 0.7535891609633091,
+    "baseline": 0.0006462387334991433,
+    "baseline_slope_per_normalized_T": 0.0,
+    "rss": 5.350949675406146e-05,
+    "delta_rss": 0.0,
+    "normalized_rmse": 0.03123161499216537
+  },
+  "descriptive_1pct_RSS_band_eV": [
+    0.64,
+    0.6725
+  ],
+  "band_note": "Exploratory grid description only; not a confidence interval. Digitization pixels are correlated and no pointwise variance is calibrated.",
+  "wall_seconds": 17.43254349400013,
+  "n_points": 195,
+  "records_csv": "energy_prefactor_profile.csv"
+}

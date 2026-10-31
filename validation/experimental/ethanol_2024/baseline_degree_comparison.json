@@ -1,0 +1,29 @@
+{
+  "dataset": "ethanol/Au(111), digitized 110\u2013165 K primary window",
+  "beta_K_s": 0.15,
+  "order_fixed": 1,
+  "n_points": 195,
+  "results": [
+    {
+      "baseline_degree": 0,
+      "success": true,
+      "E_eV": 0.6560295203592924,
+      "nu_s-1": 1.609505625691831e+22,
+      "baseline_at_mean_T": 0.0006474511102304243,
+      "slope_per_normalized_T": 0.0,
+      "NRMSE": 0.03123109906143084,
+      "wall_seconds": 2.975471921999997
+    },
+    {
+      "baseline_degree": 1,
+      "success": true,
+      "E_eV": 0.655629420065551,
+      "nu_s-1": 1.5622110867309044e+22,
+      "baseline_at_mean_T": 0.0006483805297576425,
+      "slope_per_normalized_T": 0.00031089735049100024,
+      "NRMSE": 0.03070491841222569,
+      "wall_seconds": 2.5742697470000167
+    }
+  ],
+  "interpretation": "One figure-derived experimental trace; descriptive baseline sensitivity, not independent validation. Lower residual does not establish that the sloped baseline is physically correct."
+}

@@ -1,0 +1,33 @@
+{
+  "known_model": {
+    "E_eV": 0.65,
+    "nu_s-1": 1e+22,
+    "order": 1.23,
+    "beta_K_s": 0.5,
+    "scale": 0.73,
+    "baseline": 0.04,
+    "linear_drift_peak_to_peak": 0.002
+  },
+  "drift_fraction_signal_range": 0.042770525253163244,
+  "results": [
+    {
+      "baseline_degree": 0,
+      "E_eV": 0.6414277164432799,
+      "nu_s-1": 4.921107670650634e+21,
+      "baseline_at_mean_T": 0.03988399540814537,
+      "slope_per_normalized_T": 0.0,
+      "NRMSE": 0.011704135605326514,
+      "nfev": 7
+    },
+    {
+      "baseline_degree": 1,
+      "E_eV": 0.65,
+      "nu_s-1": 1e+22,
+      "baseline_at_mean_T": 0.039999999999999994,
+      "slope_per_normalized_T": 0.0020000000000000087,
+      "NRMSE": 1.991548541070103e-16,
+      "nfev": 1
+    }
+  ],
+  "interpretation": "Exact synthetic test only. Sloped baseline recovers the generating curve, while a constant-only baseline biases the fitted energy. It does not establish that a linear baseline is physically appropriate for experimental traces."
+}

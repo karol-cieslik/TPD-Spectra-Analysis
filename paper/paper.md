@@ -147,27 +147,96 @@ apparent leading-edge energies of 4849–5492 K across declared settings, compar
 with the paper's TST-conditioned recommendation of 4610 ± 110 K. These are
 different estimands; ideal whole-peak fits also retain structured residuals.
 
-A further coverage-series assessment compared fixed first- and second-order
-models with published O₂/Pt(111) spectra [@miller2014]. Fixed second order had
-lower AICc and NRMSE on all 14 analyzed traces, while fitted energies departed
-from the source’s leading-edge estimates under the source’s coverage-dependent
-barrier model. This is order-discrimination evidence under a restricted
-single-energy model, not energy validation. Research-only algorithm checks also
-compared variable projection with the existing fitter on an ethanol/Au trace
-and a multi-population D₂O/Fe₃O₄ trace. They reproduced the current optima but
-were slower; the prototype was not adopted as the default. An E–ν profile
-showed a conditional parameter ridge, and a linear-baseline option was
-sensitivity-checked on one figure-derived trace. These diagnostics do not
-establish calibrated uncertainty or a physically correct background. Results,
-reproduction scripts and scope limits are recorded under
-`validation/experimental/` and indexed in `validation/publication_data/`.
+A coverage-series stress test analyzed 14 author-published O₂/Pt(111)
+spectra [@miller2014]. Under the source's baseline and fitting window, fixed
+second-order fits had lower AICc than fixed first-order fits for all 14 traces;
+free-order estimates ranged from 2.35 to 2.73. Yet fixed-second-order
+whole-window energies were 1.07–1.67 eV and lay below the same source's
+leading-edge estimates (about 1.80–1.91 eV), with the whole-window values
+falling overall as source exposure increased. This is order-discrimination and
+model-challenge evidence: the paper describes coverage-dependent barriers,
+whereas the Studio fit assumes one constant energy per trace. The source's
+leading-edge estimates are not independent ground truth, and exposure in L is
+not treated as calibrated surface coverage. The source workbooks are not
+redistributed because no explicit reuse licence was identified; reproduction
+requires a local checkout of the authors' supporting-information repository.
+This result does not establish energy accuracy, mechanism identification or
+general order-discrimination performance.
 
-Fractional-order sources have also been screened, including methanol, ethanol
-and 2-propanol on HOPG and island-mediated systems. Their reported orders are
-literature context only: no new Studio fit is claimed for those candidate
-figures until numeric traces pass source, rights and digitization review.
-The publication-data catalog separates tracked figure-derived or public inputs
-from external-only references and inaccessible candidates.
+## Experimental comparison and interpretation
+
+The literature cases are deliberately heterogeneous: they test numerical input
+handling, isolated and mixed populations, nominal zero- and first-order
+descriptions, leading-edge estimates, and failures of ideal full-peak models.
+They are not a balanced sample of all adsorbate--surface systems, nor do the
+authors' reported kinetic orders become independently known ground truth.
+
+| Input and source | Model or comparison | Selected result | Interpretation and limit |
+| --- | --- | --- | --- |
+| D2 on AgY zeolite [@beckerdata2026; @beckerarticle2026] | Measured-temperature import and ramp screen | Sampled peak 92.06 K versus approximately 92 K in the article; full-trace ramp screen rejects | Input/peak check only; no kinetic energy is estimated |
+| Pure Ar/CO in ice-related experiments [@kruczkiewicz2024] | Published zero-order leading edge versus ideal full-peak fits | Full-peak energies encounter a bound and substantial residuals | Ar source trace agrees with its figure; CO source-to-figure correspondence remains unresolved |
+| Ethanol on Au, 0.7 ML [@perrero2024] | Assumed first-order single-state fit versus published dominant component | 6434.54 K with literature-fixed prefactor; 7612.90 K when prefactor and baseline are free, versus reported dominant 6450 K | Matched assumptions yield close correspondence; lower residuals with a free prefactor do not establish unique recovery of a multistate system |
+| Multilayer methyl acetate on HOPG [@fulker2024] | Approximate leading edge versus published coverage-corrected analysis | 42.22 kJ/mol versus 42.8 ± 0.7 kJ/mol; alternative windows/baselines 37.81–40.29 kJ/mol | Figure gaps, different estimands and whole-peak mismatch prevent an experimental-accuracy claim |
+| Pure methyl mercaptan ice [@narayanan2025] | Apparent leading edges and ideal zero-order full-peak fits versus TST-conditioned reference | 4849–5492 K leading edge and 2496–2717 K whole peak, versus 4610 ± 110 K | Distinct estimands, structured residuals and uncalibrated graphical input prevent physical parameter recovery |
+| O₂/Pt(111) coverage series [@miller2014] | Fixed first- versus second-order fits on 14 author-published spectra; same-source leading-edge comparison | Fixed second order has lower AICc on all 14; free-order estimates 2.35–2.73; whole-window fixed-second-order energies are 1.07–1.67 eV and below source leading-edge estimates | Order-discrimination and model-challenge evidence only: constant-energy fits do not reproduce the paper's coverage-dependent barrier model; same-source estimates are not independent ground truth; source workbooks are not redistributed because no explicit reuse licence was identified |
+
+The source-specific protocols, transformation histories, fit settings, original
+and corrected extraction versions, residuals and reuse restrictions are retained
+under `validation/experimental/`. In particular, the fixed-prefactor ethanol
+profile is an assessment harness, not a fixed-prefactor control in the present
+production fitting API; methyl-acetate results from the superseded colour
+selection are excluded. Figure-derived coordinates are correlated graphical
+observations rather than original, independently sampled instrument records.
+The PTCDA/Au(111) deposited series additionally contains 73 screened traces
+and 438 conditional first-order fits; its sensitivity to baseline, starts and
+bounds is supporting diagnostic evidence, **not** 438 independent experimental
+validations or reproduction of a published zero-coverage energy.
+
+## Discussion: what the comparisons establish
+
+These cases separate **implementation agreement** from **physical model
+adequacy**. Independent quadrature checks address whether the forward numerical
+solver agrees with an independently calculated reference under specified
+kinetics. Agreement with a literature energy after fixing a prefactor tests a
+particular hypothesis conditional on its constraints. Neither establishes that
+the inverse problem can identify reaction order, energy distributions,
+prefactors or microscopic mechanisms from an arbitrary experimental trace.
+
+The ethanol example exposes an energy--prefactor tradeoff: a fitted curve can
+improve slightly while the inferred energy moves away from a literature
+component estimate. Baseline and selected temperature window similarly shift
+methyl-acetate and methyl-mercaptan leading-edge slopes. Consequently a small
+energy difference, high regression R-squared or converged optimizer cannot
+alone serve as a validation criterion. The published quantities also require
+matching kinetic-order, coverage, prefactor and signal-calibration conventions
+before a numerical difference has physical meaning.
+
+The O₂/Pt(111) series adds a useful example of this distinction: the candidate
+second-order law is consistently preferred to first order by AICc, while the
+constant-energy whole-window model does not match the same source's
+leading-edge estimates under its documented coverage-dependent barriers. The
+ranking is conditional on the compared models and preprocessing; it does not
+validate the fitted energies or establish a universal order classifier.
+
+Whole-peak model failure is scientifically informative when retained. For the
+pure Ar/CO and methyl-mercaptan cases, the idealized exhaustion shape misses
+features of the observed traces. A broad trailing tail may be consistent with
+several causes, including heterogeneous states, overlapping contributions or
+instrument response; these datasets do not isolate which explanation applies.
+Likewise a first-order multicomponent fit may give exchangeable assignments
+when peaks coincide. A ranking among prescribed models is therefore a
+conditional comparison of those models under their objective and preprocessing,
+not a measured probability of a desorption mechanism or a universal method of
+recovering fractional orders.
+
+Parametric Monte Carlo quantifies sensitivity to *simulated iid Gaussian noise
+about a chosen fitted reference*. Increasing refit counts does not correct an
+incorrect reference model, temperature-program mismatch, image extraction
+bias, correlated noise or missing identifiability. Such contributions should be
+tested separately or reported as limitations. The present assessments support
+an inspectable workflow that records these constraints; they do not establish
+general experimental energy accuracy, reliable discrimination of all orders,
+or demonstrated use by an independent research group.
 
 **Submission evidence still required:** document completed use in an actual
 research workflow, obtain independent scientific and clean-Windows acceptance,

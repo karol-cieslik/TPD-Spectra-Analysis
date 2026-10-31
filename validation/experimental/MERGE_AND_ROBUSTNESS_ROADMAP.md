@@ -1,8 +1,7 @@
 # Merge and robustness roadmap for TPD Spectra Studio
 
-**Current state (31 October 2026):** PR #27 is open against `main`; its latest
-published head is `d251f18`. The local tree is synchronized with that remote
-snapshot. The PR includes the O₂/Pt(111) challenge, literature assessments,
+**Current state (31 October 2026):** PR #27 is open against `main`; the remote head recorded at the start of this checkpoint was
+`e3e640f7a214e2190511b27aea8d67ae1b8c3b48`. The PR includes the O₂/Pt(111) challenge, literature assessments,
 research-only variable projection/profile diagnostics, and the fractional-order
 candidate ledger. This roadmap does not authorize merging by itself.
 
@@ -60,3 +59,22 @@ figure-derived data with correlated pixel uncertainty, not raw instrument
 samples. Keep raw public/reuse-permitted data unchanged; place processed arrays,
 QA overlays, and protocols beside them. For restricted data, keep a script and
 instructions to acquire it from its source, not a copied workbook.
+
+
+## Progress record — 31 October 2026
+
+| Gate | Result | Evidence / remaining condition |
+|---|---|---|
+| 0. Snapshot | Passed | PR #27 remains open; remote head at start of this checkpoint was `e3e640f7a214e2190511b27aea8d67ae1b8c3b48`; local tree was clean and matched the remote tree. The branch diff is 41 files, limited to the O₂/Pt(111) study, fitting research prototypes, validation records/catalog and manuscript updates. |
+| 1. Scientific scope | Passed with boundary | Variable projection, E–ν profiling and sloped baseline are isolated research prototypes; no `tpd_spectra` production path imports them. The default fitter is unchanged. |
+| 2. Provenance and rights | Passed for catalog labeling | The central manifest has 14 entries and every canonical path exists. Candidate figures with unavailable pixels remain `not_ready`; external O₂/Pt(111) workbooks are not copied because reuse permission is not recorded. |
+| 3. Reproducibility | Partial | GitHub “Kinetics Explorer scientific tests” workflow run 127 passed. Local compile checks and `git diff --check` passed. Full local pytest could not start because this runtime has no `pytest` module. The Windows desktop build run 80 was still `in_progress` at review time. |
+| 4. Data readiness | Passed for inventory, not universal coverage | Tracked datasets are discoverable through `validation/publication_data/README.md` and `dataset_manifest.csv`. Four fractional-order leads still have no admitted numeric arrays; uniform empirical coverage is not achieved. |
+| 5. Manuscript audit | Partial | `paper.md` now records the bounded O₂/Pt(111), variable-projection and profile/baseline findings; citation rendering with Pandoc and `paper.bib` succeeded. Human author/citation review and full submission checks remain. |
+| 6. Independent review | Open | No independent surface-science review or clean-machine Windows acceptance is recorded. |
+| 7. Merge | Blocked | Wait for Windows build completion and resolve/review any findings; obtain independent scientific and clean-machine acceptance. Do not merge until these blocking conditions are addressed or explicitly documented as accepted by the maintainers. |
+| 8. Release | Not started | Requires post-merge package, clean-install, GUI/CLI/Python workflow, provenance and release checks. |
+
+A merge decision cannot be inferred from “mergeable” metadata alone: that field
+only means GitHub sees no merge conflict. The human review and Windows acceptance
+requirements remain actual project gates.

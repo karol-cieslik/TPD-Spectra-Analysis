@@ -9,7 +9,7 @@ Software version and exact commit/build identifier:
 Executable SHA256 (if packaged):
 Result folder / evidence location:
 
-Use the reviewed publication branch. Record the actual build; do not imply an older packaged beta contains the current branch's safeguards. If testing source, install its requirements/editable package in an isolated environment and launch `tpd-spectra-gui` (the workflow GUI entry point). The source checkout is `publication/joss-checkpoints-2026-10-28`; record `git rev-parse HEAD` on the tested checkout. A clean Windows machine without installed Python is a **separate portable-EXE gate** and remains open unless tested that way.
+Use [the pinned Windows task](PINNED_WINDOWS_TASK.md) for the exact CI artifact, source commit, archive digest, separate fixture and evidence capture. Record the actual build; the version string alone is insufficient. A source test may use commit `4fbcc159136a31ce5053c0f074b4c6826da51a06` in an isolated environment, launched with `tpd-spectra-gui`, but does not complete the clean-Windows portable-EXE gate. Do not substitute the moving publication branch or an older beta package.
 
 ## Import and inspect
 

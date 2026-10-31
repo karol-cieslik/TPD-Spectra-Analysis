@@ -130,4 +130,61 @@ def main() -> None:
             "exposure_L": exposure_l,
             "n_points": int(temperature_k.size),
             "temperature_min_K": float(temperature_k.min()),
-            "temperature_max_K": 
+            "temperature_max_K": float(temperature_k.max()),
+            "sampled_peak_temperature_K": float(temperature_k[np.argmax(signal)]),
+            "source_leading_edge_energy_eV": reference_ev,
+            "source_leading_edge_95pct_low_eV": low_ev,
+            "source_leading_edge_95pct_high_eV": high_ev,
+            "fits": fits,
+            "delta_eV_fixed_second_order_minus_source_leading_edge":
+                float(fits[1]["activation_energy_eV"] - reference_ev),
+        })
+    payload = {
+        "case_name": "O2/Pt(111) second-order coverage-series stress test",
+        "scope": "Published experimental source data; fixed-parameter single-state fits, not a reproduction of the source's coverage-dependent barrier model.",
+        "source": {
+            "article_doi": SOURCE_DOI,
+            "supporting_information_repository": SOURCE_REPOSITORY,
+            "source_commit_tested": SOURCE_COMMIT,
+            "data_origin": "author-published xls/tpdN.xls measurements",
+            "license_status": "No explicit data licence identified in the source repository; data are not copied into this repository.",
+        },
+        "software_commit": SOFTWARE_COMMIT,
+        "protocol": {
+            "baseline": "subtract mean signal for 400 < T < 500 K, following the source SI",
+            "fit_window_K": FIT_RANGE_K,
+            "heating_rate_K_s": BETA_K_S,
+            "orders": [1.0, 2.0, "free in [0.2, 3.0]"],
+            "initial_energy_eV": INITIAL_ENERGY_EV,
+            "initial_prefactor": INITIAL_PREFACTOR_S_INV,
+            "fit_baseline": False,
+            "max_nfev": MAX_NFEV,
+            "coverage_scaling": "The production fitter uses normalized initial coverage 1 with signal scale free; source exposure is not substituted for calibrated surface coverage.",
+        },
+        "interpretation": [
+            "AICc, NRMSE and convergence are conditional on the selected single-state, constant-energy model and digitized/source processing.",
+            "The free fitted order is phenomenological and does not prove a microscopic mechanism.",
+            "The reference is a same-source leading-edge estimate, not an independent measurement; whole-peak and leading-edge estimands differ.",
+            "The paper reports coverage-dependent barriers, so a single fixed-energy second-order fit is deliberately a restricted stress test.",
+        ],
+        "cases": cases,
+    }
+    output = Path(__file__).resolve().parents[1] / "validation" / "experimental" / "oxygen_pt111_2014" / "results.json"
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {output}")
+    print("index exposure_L fixed2_E_eV ref_LE_E_eV delta_eV fixed2_NRMSE free_n")
+    for case in cases:
+        fixed2 = case["fits"][1]
+        free = case["fits"][2]
+        print(
+            f"{case['source_spectrum_index']:2d} {case['exposure_L']:>8g} "
+            f"{fixed2['activation_energy_eV']:.4f} "
+            f"{case['source_leading_edge_energy_eV']:.3f} "
+            f"{case['delta_eV_fixed_second_order_minus_source_leading_edge']:+.4f} "
+            f"{fixed2['normalized_rmse']:.5f} {free['reaction_order']:.3f}"
+        )
+
+
+if __name__ == "__main__":
+    main()

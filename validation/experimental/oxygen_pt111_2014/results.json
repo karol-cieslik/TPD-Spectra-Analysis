@@ -117,4 +117,608 @@
           "success": true,
           "jacobian_condition_number": 128.18909507574148,
           "n_points": 149
-   
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.4665361003023083,
+          "activation_energy_eV": 1.7318611173328082,
+          "prefactor_numeric_s_inv_convention": 17863508174.795876,
+          "normalized_rmse": 0.020035472899805902,
+          "aicc": -6215.692655768895,
+          "success": true,
+          "jacobian_condition_number": 299.72845580319273,
+          "n_points": 149
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.36531556191683134
+    },
+    {
+      "source_spectrum_index": 4,
+      "source_workbook": "tpd5.xls",
+      "source_workbook_sha256": "d847fbaef510a7c30f5098e60153652bc229cb2f5f9b11529bf26c7f2cee720d",
+      "exposure_L": 1.25,
+      "n_points": 150,
+      "temperature_min_K": 502.454,
+      "temperature_max_K": 996.844,
+      "sampled_peak_temperature_K": 763.65,
+      "source_leading_edge_energy_eV": 1.911,
+      "source_leading_edge_95pct_low_eV": 1.809,
+      "source_leading_edge_95pct_high_eV": 2.014,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.9401966119025176,
+          "prefactor_numeric_s_inv_convention": 55142.39189421391,
+          "normalized_rmse": 0.07531230922659568,
+          "aicc": -5811.952231844329,
+          "success": true,
+          "jacobian_condition_number": 118.73501172598219,
+          "n_points": 150
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.4234736844850748,
+          "prefactor_numeric_s_inv_convention": 165101345.78657007,
+          "normalized_rmse": 0.028724369320955706,
+          "aicc": -6101.12154869978,
+          "success": true,
+          "jacobian_condition_number": 125.1571149251509,
+          "n_points": 150
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.449709607438533,
+          "activation_energy_eV": 1.614234834442404,
+          "prefactor_numeric_s_inv_convention": 3817700182.111765,
+          "normalized_rmse": 0.024150798553076048,
+          "aicc": -6151.009270644345,
+          "success": true,
+          "jacobian_condition_number": 292.24753861637527,
+          "n_points": 150
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.4875263155149252
+    },
+    {
+      "source_spectrum_index": 5,
+      "source_workbook": "tpd6.xls",
+      "source_workbook_sha256": "4322f79ec184992794d18bf551333eaf4da5936ec6893bd8fc06632dfd9df403",
+      "exposure_L": 1.5,
+      "n_points": 153,
+      "temperature_min_K": 501.712,
+      "temperature_max_K": 998.908,
+      "sampled_peak_temperature_K": 713.918,
+      "source_leading_edge_energy_eV": 1.847,
+      "source_leading_edge_95pct_low_eV": 1.764,
+      "source_leading_edge_95pct_high_eV": 1.93,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.8408108164968692,
+          "prefactor_numeric_s_inv_convention": 14885.869535358042,
+          "normalized_rmse": 0.08396343501782866,
+          "aicc": -5829.557849623559,
+          "success": true,
+          "jacobian_condition_number": 112.86200965708493,
+          "n_points": 153
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.276329968662963,
+          "prefactor_numeric_s_inv_convention": 24867465.50501004,
+          "normalized_rmse": 0.03819409705952,
+          "aicc": -6070.594181274802,
+          "success": true,
+          "jacobian_condition_number": 119.77938796064572,
+          "n_points": 153
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.6125388671534964,
+          "activation_energy_eV": 1.507957318409542,
+          "prefactor_numeric_s_inv_convention": 1255045312.3309255,
+          "normalized_rmse": 0.03214594550830179,
+          "aicc": -6121.209049778376,
+          "success": true,
+          "jacobian_condition_number": 288.1658390148103,
+          "n_points": 153
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.570670031337037
+    },
+    {
+      "source_spectrum_index": 6,
+      "source_workbook": "tpd7.xls",
+      "source_workbook_sha256": "418cbae08bd02e22393bb1fc3dcbeef7cb86cdd8d120d3a1cc905c356176acf9",
+      "exposure_L": 1.75,
+      "n_points": 154,
+      "temperature_min_K": 502.994,
+      "temperature_max_K": 997.806,
+      "sampled_peak_temperature_K": 712.194,
+      "source_leading_edge_energy_eV": 1.84,
+      "source_leading_edge_95pct_low_eV": 1.76,
+      "source_leading_edge_95pct_high_eV": 1.919,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.7867441891183146,
+          "prefactor_numeric_s_inv_convention": 6947.323871778577,
+          "normalized_rmse": 0.08841014405272744,
+          "aicc": -5822.705928200998,
+          "success": true,
+          "jacobian_condition_number": 109.55709457201716,
+          "n_points": 154
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.1966064060241324,
+          "prefactor_numeric_s_inv_convention": 8284075.407628718,
+          "normalized_rmse": 0.04176370660193693,
+          "aicc": -6053.693304983438,
+          "success": true,
+          "jacobian_condition_number": 116.37528355260721,
+          "n_points": 154
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.660602027717463,
+          "activation_energy_eV": 1.4295750863605488,
+          "prefactor_numeric_s_inv_convention": 451942944.5896914,
+          "normalized_rmse": 0.03516302505821656,
+          "aicc": -6104.542394666028,
+          "success": true,
+          "jacobian_condition_number": 282.62261659642587,
+          "n_points": 154
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.6433935939758677
+    },
+    {
+      "source_spectrum_index": 7,
+      "source_workbook": "tpd8.xls",
+      "source_workbook_sha256": "9ca43bfcbcd78b1f55de5d7c57c63bc46be6f23062f8a47634f7fcb32213628b",
+      "exposure_L": 2.0,
+      "n_points": 155,
+      "temperature_min_K": 502.374,
+      "temperature_max_K": 999.168,
+      "sampled_peak_temperature_K": 716.522,
+      "source_leading_edge_energy_eV": 1.885,
+      "source_leading_edge_95pct_low_eV": 1.802,
+      "source_leading_edge_95pct_high_eV": 1.968,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.764837133232806,
+          "prefactor_numeric_s_inv_convention": 5163.001428062771,
+          "normalized_rmse": 0.08790120702061753,
+          "aicc": -5835.924657756218,
+          "success": true,
+          "jacobian_condition_number": 108.10045687515594,
+          "n_points": 155
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.1670868880312173,
+          "prefactor_numeric_s_inv_convention": 5658132.93225312,
+          "normalized_rmse": 0.041000472931211666,
+          "aicc": -6072.339937543943,
+          "success": true,
+          "jacobian_condition_number": 115.06508177746501,
+          "n_points": 155
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.686351530915217,
+          "activation_energy_eV": 1.4034398208871988,
+          "prefactor_numeric_s_inv_convention": 335774017.15885246,
+          "normalized_rmse": 0.03387477290850242,
+          "aicc": -6129.386957761421,
+          "success": true,
+          "jacobian_condition_number": 281.68848099766916,
+          "n_points": 155
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.7179131119687827
+    },
+    {
+      "source_spectrum_index": 8,
+      "source_workbook": "tpd9.xls",
+      "source_workbook_sha256": "ebeca85aa7090f2636b33c3f7cbce486249b6480149325fd19a3a6d639f4f125",
+      "exposure_L": 2.25,
+      "n_points": 156,
+      "temperature_min_K": 502.192,
+      "temperature_max_K": 998.006,
+      "sampled_peak_temperature_K": 699.796,
+      "source_leading_edge_energy_eV": 1.858,
+      "source_leading_edge_95pct_low_eV": 1.735,
+      "source_leading_edge_95pct_high_eV": 1.982,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.7421701792740882,
+          "prefactor_numeric_s_inv_convention": 3773.5118304094262,
+          "normalized_rmse": 0.09099519442431428,
+          "aicc": -5841.303597143547,
+          "success": true,
+          "jacobian_condition_number": 106.4046337955298,
+          "n_points": 156
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.1313359799409717,
+          "prefactor_numeric_s_inv_convention": 3473992.3944230713,
+          "normalized_rmse": 0.044404544420787166,
+          "aicc": -6065.152639883976,
+          "success": true,
+          "jacobian_condition_number": 113.62912633983086,
+          "n_points": 156
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.729846393867299,
+          "activation_energy_eV": 1.3735771406497765,
+          "prefactor_numeric_s_inv_convention": 235904526.60053438,
+          "normalized_rmse": 0.03702264473103235,
+          "aicc": -6119.742906643933,
+          "success": true,
+          "jacobian_condition_number": 280.3806824648534,
+          "n_points": 156
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.7266640200590284
+    },
+    {
+      "source_spectrum_index": 9,
+      "source_workbook": "tpd10.xls",
+      "source_workbook_sha256": "3be55b8b2f3b784cd88de9cafe846c51cae101ee1532ce0a434daf1ef656f801",
+      "exposure_L": 2.5,
+      "n_points": 156,
+      "temperature_min_K": 500.87,
+      "temperature_max_K": 997.864,
+      "sampled_peak_temperature_K": 715.478,
+      "source_leading_edge_energy_eV": 1.861,
+      "source_leading_edge_95pct_low_eV": 1.77,
+      "source_leading_edge_95pct_high_eV": 1.951,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.7346138415654456,
+          "prefactor_numeric_s_inv_convention": 3370.7458041160085,
+          "normalized_rmse": 0.08647165355477575,
+          "aicc": -5838.698909055397,
+          "success": true,
+          "jacobian_condition_number": 105.74296196329117,
+          "n_points": 156
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.1211643586893165,
+          "prefactor_numeric_s_inv_convention": 3001885.1086246134,
+          "normalized_rmse": 0.04117982050843978,
+          "aicc": -6070.1618226424125,
+          "success": true,
+          "jacobian_condition_number": 112.86390625887947,
+          "n_points": 156
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.702453017863988,
+          "activation_energy_eV": 1.3530504303268809,
+          "prefactor_numeric_s_inv_convention": 171339238.83384144,
+          "normalized_rmse": 0.03418592304897293,
+          "aicc": -6126.100653079178,
+          "success": true,
+          "jacobian_condition_number": 277.9356812807626,
+          "n_points": 156
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.7398356413106835
+    },
+    {
+      "source_spectrum_index": 10,
+      "source_workbook": "tpd11.xls",
+      "source_workbook_sha256": "89dbfd5092a439865946d36b4b566c1484e2960e11b2922eb73df50c92d8109d",
+      "exposure_L": 2.75,
+      "n_points": 156,
+      "temperature_min_K": 500.77,
+      "temperature_max_K": 998.766,
+      "sampled_peak_temperature_K": 710.11,
+      "source_leading_edge_energy_eV": 1.873,
+      "source_leading_edge_95pct_low_eV": 1.772,
+      "source_leading_edge_95pct_high_eV": 1.975,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.7466280282989372,
+          "prefactor_numeric_s_inv_convention": 4284.892460016673,
+          "normalized_rmse": 0.08592754740937299,
+          "aicc": -5838.632354552679,
+          "success": true,
+          "jacobian_condition_number": 107.90332651560686,
+          "n_points": 156
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.1339411479168178,
+          "prefactor_numeric_s_inv_convention": 3874222.7842221325,
+          "normalized_rmse": 0.03886729825538137,
+          "aicc": -6086.157939540649,
+          "success": true,
+          "jacobian_condition_number": 114.50847372801233,
+          "n_points": 156
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.641942687759477,
+          "activation_energy_eV": 1.3472149179044108,
+          "prefactor_numeric_s_inv_convention": 160311828.73098618,
+          "normalized_rmse": 0.032204636540186356,
+          "aicc": -6142.692194158248,
+          "success": true,
+          "jacobian_condition_number": 278.0387038194307,
+          "n_points": 156
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.7390588520831822
+    },
+    {
+      "source_spectrum_index": 11,
+      "source_workbook": "tpd12.xls",
+      "source_workbook_sha256": "10ee8efd352bd29ecaac33b6d857ca636d72ede33380a85781a65c1940e701dd",
+      "exposure_L": 3.0,
+      "n_points": 154,
+      "temperature_min_K": 502.412,
+      "temperature_max_K": 998.506,
+      "sampled_peak_temperature_K": 734.206,
+      "source_leading_edge_energy_eV": 1.804,
+      "source_leading_edge_95pct_low_eV": 1.723,
+      "source_leading_edge_95pct_high_eV": 1.885,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.8095530138402625,
+          "prefactor_numeric_s_inv_convention": 9079.513758956997,
+          "normalized_rmse": 0.08156460325970138,
+          "aicc": -5839.286763654211,
+          "success": true,
+          "jacobian_condition_number": 110.40974929020946,
+          "n_points": 154
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.228095362921205,
+          "prefactor_numeric_s_inv_convention": 11672283.77402242,
+          "normalized_rmse": 0.03547790584641496,
+          "aicc": -6095.692221292306,
+          "success": true,
+          "jacobian_condition_number": 116.78049468830373,
+          "n_points": 154
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.6087918458831063,
+          "activation_energy_eV": 1.449264769423826,
+          "prefactor_numeric_s_inv_convention": 499641750.08729917,
+          "normalized_rmse": 0.029121563194484855,
+          "aicc": -6154.364090852623,
+          "success": true,
+          "jacobian_condition_number": 281.222995212499,
+          "n_points": 154
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.575904637078795
+    },
+    {
+      "source_spectrum_index": 12,
+      "source_workbook": "tpd13.xls",
+      "source_workbook_sha256": "872d9046a1a1393771e5adf1fcdfc1f5b9b81e572a9f19e488ccfd672251cb74",
+      "exposure_L": 3.5,
+      "n_points": 156,
+      "temperature_min_K": 502.194,
+      "temperature_max_K": 996.384,
+      "sampled_peak_temperature_K": 712.396,
+      "source_leading_edge_energy_eV": 1.875,
+      "source_leading_edge_95pct_low_eV": 1.788,
+      "source_leading_edge_95pct_high_eV": 1.963,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.790131258880572,
+          "prefactor_numeric_s_inv_convention": 7590.738300576097,
+          "normalized_rmse": 0.08584818987407773,
+          "aicc": -5827.79406838699,
+          "success": true,
+          "jacobian_condition_number": 110.89487625544315,
+          "n_points": 156
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.2056300082856668,
+          "prefactor_numeric_s_inv_convention": 10002159.175386384,
+          "normalized_rmse": 0.03760697436039874,
+          "aicc": -6085.316054417223,
+          "success": true,
+          "jacobian_condition_number": 117.96356582284537,
+          "n_points": 156
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.6559065467616394,
+          "activation_energy_eV": 1.4388787973108035,
+          "prefactor_numeric_s_inv_convention": 548521270.369497,
+          "normalized_rmse": 0.030269731311376523,
+          "aicc": -6150.89783285112,
+          "success": true,
+          "jacobian_condition_number": 287.79105633960967,
+          "n_points": 156
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.6693699917143332
+    },
+    {
+      "source_spectrum_index": 13,
+      "source_workbook": "tpd14.xls",
+      "source_workbook_sha256": "31a99514dce95d1c31653947fe3460e07cca58b4e72881b763c0cb22008ed4c1",
+      "exposure_L": 4.0,
+      "n_points": 156,
+      "temperature_min_K": 503.074,
+      "temperature_max_K": 990.656,
+      "sampled_peak_temperature_K": 711.674,
+      "source_leading_edge_energy_eV": 1.858,
+      "source_leading_edge_95pct_low_eV": 1.809,
+      "source_leading_edge_95pct_high_eV": 1.907,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.7202884139837387,
+          "prefactor_numeric_s_inv_convention": 2865.899132988231,
+          "normalized_rmse": 0.08735312673416537,
+          "aicc": -5783.17665123444,
+          "success": true,
+          "jacobian_condition_number": 105.54855702592043,
+          "n_points": 156
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.09849682679577,
+          "prefactor_numeric_s_inv_convention": 2314721.0302094533,
+          "normalized_rmse": 0.04319615413067484,
+          "aicc": -6002.889349075003,
+          "success": true,
+          "jacobian_condition_number": 112.67493554293057,
+          "n_points": 156
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.635940025321126,
+          "activation_energy_eV": 1.3035986216751254,
+          "prefactor_numeric_s_inv_convention": 85171192.67752834,
+          "normalized_rmse": 0.03759405486924327,
+          "aicc": -6044.092779408972,
+          "success": true,
+          "jacobian_condition_number": 277.36095542614345,
+          "n_points": 156
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.7595031732042301
+    },
+    {
+      "source_spectrum_index": 14,
+      "source_workbook": "tpd15.xls",
+      "source_workbook_sha256": "57fe86e2a9d5fef40e8d4f74b542f9e4a1b8088b47dad36db5df86473071a30a",
+      "exposure_L": 4.5,
+      "n_points": 156,
+      "temperature_min_K": 500.87,
+      "temperature_max_K": 988.872,
+      "sampled_peak_temperature_K": 706.666,
+      "source_leading_edge_energy_eV": 1.904,
+      "source_leading_edge_95pct_low_eV": 1.815,
+      "source_leading_edge_95pct_high_eV": 1.993,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.7049483505806162,
+          "prefactor_numeric_s_inv_convention": 2313.7472525806797,
+          "normalized_rmse": 0.0883592047460218,
+          "aicc": -5773.601490275256,
+          "success": true,
+          "jacobian_condition_number": 104.64842635365791,
+          "n_points": 156
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.077870183722023,
+          "prefactor_numeric_s_inv_convention": 1758355.4121853171,
+          "normalized_rmse": 0.04295878278274336,
+          "aicc": -5998.606300109436,
+          "success": true,
+          "jacobian_condition_number": 112.05294011711536,
+          "n_points": 156
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.670254818813797,
+          "activation_energy_eV": 1.2894563893217872,
+          "prefactor_numeric_s_inv_convention": 73776198.47349112,
+          "normalized_rmse": 0.03661141742107774,
+          "aicc": -6046.354064318987,
+          "success": true,
+          "jacobian_condition_number": 276.25729142881045,
+          "n_points": 156
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.8261298162779769
+    },
+    {
+      "source_spectrum_index": 15,
+      "source_workbook": "tpd16.xls",
+      "source_workbook_sha256": "a505fa714600da443b43bda9c839b244cd40748dbb094ab3ff03c05770e88c68",
+      "exposure_L": 5.0,
+      "n_points": 156,
+      "temperature_min_K": 502.454,
+      "temperature_max_K": 990.054,
+      "sampled_peak_temperature_K": 702.08,
+      "source_leading_edge_energy_eV": 1.875,
+      "source_leading_edge_95pct_low_eV": 1.797,
+      "source_leading_edge_95pct_high_eV": 1.952,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 0.6984097763018065,
+          "prefactor_numeric_s_inv_convention": 2135.455065578616,
+          "normalized_rmse": 0.09017419110161293,
+          "aicc": -5770.6644559201295,
+          "success": true,
+          "jacobian_condition_number": 104.37953483745899,
+          "n_points": 156
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.0654547336325717,
+          "prefactor_numeric_s_inv_convention": 1495767.9209441547,
+          "normalized_rmse": 0.04510810978817799,
+          "aicc": -5986.780992868788,
+          "success": true,
+          "jacobian_condition_number": 111.65725500095532,
+          "n_points": 156
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.6616164367293247,
+          "activation_energy_eV": 1.2718165739427127,
+          "prefactor_numeric_s_inv_convention": 57989432.803850405,
+          "normalized_rmse": 0.039099178151813435,
+          "aicc": -6029.249600926917,
+          "success": true,
+          "jacobian_condition_number": 275.7239470323839,
+          "n_points": 156
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.8095452663674283
+    }
+  ]
+}

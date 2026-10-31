@@ -1,0 +1,70 @@
+{
+  "status": "figure_digitization_and_bounded_analysis_complete",
+  "source": {
+    "title": "Desorption and crystallisation of binary 2-propanol and water ices adsorbed on graphite",
+    "authors": ["Sean A. Ayling", "Daren J. Burke", "Tara L. Salter", "Wendy A. Brown"],
+    "journal": "RSC Advances",
+    "year": 2017,
+    "volume": 7,
+    "pages": "51621-51631",
+    "doi": "10.1039/C7RA10410C",
+    "figure": "Fig. 2A",
+    "selected_traces_Lm": [1, 2, 5, 10],
+    "article_license": "CC BY 3.0 Unported, stated in the published article",
+    "institutional_record": "University of Sussex Figshare item 23450411, file IPA_published.pdf, file ID 41159684; item metadata lists CC BY 4.0"
+  },
+  "source_references": {
+    "reported_initial_temperature_K": 26.0,
+    "reported_heating_rate_K_s": 0.5,
+    "reported_order": 1.23,
+    "reported_order_uncertainty_2sem": 0.03,
+    "reported_monolayer_energy_kJ_mol": 46.6,
+    "reported_monolayer_energy_uncertainty_kJ_mol": 3.7,
+    "reported_log10_prefactor_s_inv": 12.9,
+    "reported_log10_prefactor_uncertainty": 0.3,
+    "reported_order_method": "Mean gradient of ln(I(T)) versus ln(relative integrated TPD coverage), evaluated at a range of fixed temperatures; errors are twice SEM."
+  },
+  "digitization": {
+    "input": "source_figure.png, the figure raster embedded in the published PDF",
+    "input_dimensions_px": [982, 1064],
+    "x_axis_pixel_left": 76.0,
+    "x_axis_temperature_left_K": 120.0,
+    "x_axis_pixel_right": 954.0,
+    "x_axis_temperature_right_K": 170.0,
+    "x_axis_uncertainty_estimate_px": 2.0,
+    "zero_signal_axis_pixel": 472.5,
+    "y_axis_calibration": "No numeric y ticks; use trace height above the shared x-axis as common arbitrary signal units.",
+    "trace_reading_uncertainty_estimate_px": 1.0,
+    "selected_colors_by_exposure": {"1": "black", "2": "green", "5": "red", "10": "blue"},
+    "colored_legend_masked_pixel_x": [720, 870]
+  },
+  "analysis_protocol": {
+    "estimator": "At each fixed T, OLS slope of ln(trace signal) against ln(full-window integrated trace signal); average slopes across fixed T.",
+    "fixed_temperature_window_K": [137.0, 145.0],
+    "fixed_temperature_step_K": 0.5,
+    "minimum_signal_pixel_units_for_log_fit": 3.0,
+    "integration_window_K": [120.0, 170.0],
+    "production_fitter": "Run the existing single-trace Polanyi-Wigner fitter separately for each digitized curve.",
+    "production_fitter_window_K": [130.0, 155.0],
+    "production_fitter_sample_step_K": 0.2,
+    "production_fitter_heating_rate_K_s": 0.5,
+    "production_fitter_orders": [1.0, 1.23, "free in [0.2, 3.0]"],
+    "production_fitter_initial_energy_eV": 0.482976,
+    "production_fitter_initial_prefactor_s_inv": 7943282347242.822,
+    "production_fitter_baseline": false,
+    "production_fitter_max_nfev": 300,
+    "exposure_handling": "Use integrated plotted curve area only for the source-style coverage-series slope. Do not treat deposition exposure Lm as calibrated coverage inside the application fitter.",
+    "fit_interpretation": "Independent single-trace model challenges are not estimates of the source's coverage-series order. Do not report fitted parameters as validated kinetic measurements."
+  },
+  "exclusions": [
+    "Do not include Fig. 2B high-dose traces in the monolayer fit; the paper assigns amorphous and crystalline multilayer phases there.",
+    "Do not describe this as raw-data validation or an independent energy validation.",
+    "Do not tune the fixed-temperature window or fit range after seeing the primary result."
+  ],
+  "completed_outputs": [
+    "source_figure.png",
+    "digitized_monolayer.csv",
+    "results.json"
+  ],
+  "primary_result_summary": "The frozen 137-145 K source-style reconstruction is 1.14 +/- 0.05 (2 SEM over temperature slopes), compared with the paper's 1.23 +/- 0.03. The source fixed-temperature interval is unspecified; treat the difference as a bounded digitization/method challenge, not an independent validation."
+}

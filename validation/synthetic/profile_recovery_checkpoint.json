@@ -1,0 +1,58 @@
+{
+  "cases": [
+    {
+      "name": "near-first fractional order",
+      "known": {
+        "order": 1.23,
+        "E_eV": 0.65,
+        "nu_s-1": 1e+22,
+        "scale": 0.73,
+        "baseline": 0.04
+      },
+      "recovered_profile_grid": {
+        "energy_eV": 0.6499999999999999,
+        "log10_prefactor": 22.00000009190032,
+        "prefactor_s-1": 1.0000002116083257e+22,
+        "signal_scale": 0.7299999966068563,
+        "baseline": 0.04000000002593943,
+        "baseline_slope_per_normalized_T": 0.0,
+        "rss": 4.578831554848008e-16,
+        "delta_rss": 0.0,
+        "normalized_rmse": 3.713655895436273e-08
+      },
+      "E_error_eV": -1.1102230246251565e-16,
+      "log10_nu_error": 9.190031846628699e-08,
+      "NRMSE": 3.713655895436273e-08,
+      "grid_size": 41,
+      "interpretation": "Exact-model synthetic numerical recovery only; does not validate real-data uncertainty or model selection."
+    },
+    {
+      "name": "second order",
+      "known": {
+        "order": 2.0,
+        "E_eV": 0.7,
+        "nu_s-1": 1000000000000000.0,
+        "scale": 0.73,
+        "baseline": 0.04
+      },
+      "recovered_profile_grid": {
+        "energy_eV": 0.7,
+        "log10_prefactor": 15.000000863182118,
+        "prefactor_s-1": 1000001987552252.1,
+        "signal_scale": 0.7299999497551924,
+        "baseline": 0.040000000379280226,
+        "baseline_slope_per_normalized_T": 0.0,
+        "rss": 1.473433471955344e-14,
+        "delta_rss": 0.0,
+        "normalized_rmse": 3.0579831955456834e-07
+      },
+      "E_error_eV": 0.0,
+      "log10_nu_error": 8.631821177829124e-07,
+      "NRMSE": 3.0579831955456834e-07,
+      "grid_size": 41,
+      "interpretation": "Exact-model synthetic numerical recovery only; does not validate real-data uncertainty or model selection."
+    }
+  ],
+  "pointwise_noise": "none",
+  "statistical_intervals": "not computed"
+}

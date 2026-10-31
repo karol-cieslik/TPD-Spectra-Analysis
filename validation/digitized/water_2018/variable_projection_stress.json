@@ -1,0 +1,30 @@
+{
+  "dataset": "Zaki et al. (2018), D2O/Fe3O4(111), published-figure digitization",
+  "beta_K_s": 3.0,
+  "n_points": 644,
+  "reaction_order": 1,
+  "initial_E_eV": 0.5,
+  "initial_nu_s-1": 10000000000000.0,
+  "baseline_fitted": true,
+  "records": [
+    {
+      "method": "current",
+      "success": true,
+      "E_eV": 0.21123016322221821,
+      "nu_s-1": 1000.0000000001145,
+      "NRMSE": 0.10568493033443208,
+      "jacobian_condition_number": 269.94354533004355,
+      "wall_seconds": 2.8433042450001267
+    },
+    {
+      "method": "variable_projection",
+      "success": true,
+      "E_eV": 0.21123027681568277,
+      "nu_s-1": 1000.0000000000123,
+      "NRMSE": 0.10568493031912485,
+      "nfev_best_seed": 36,
+      "wall_seconds": 8.724378751999666
+    }
+  ],
+  "interpretation": "Stress-only optimizer comparison. The source trace is multi-population and has arbitrary ordinate, so this single-state fit is not experimental kinetic validation. Both fits hit the prefactor lower bound and retain substantial residuals."
+}

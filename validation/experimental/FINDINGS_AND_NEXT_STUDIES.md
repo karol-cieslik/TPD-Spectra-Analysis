@@ -2,7 +2,8 @@
 
 Recorded 29 October 2026, after the pure-ice assessment. This is an interpretation
 and work plan, not a declaration that any new validation has passed. Existing
-inputs and outputs remain unchanged. No production numerical code is changed.
+experimental inputs remain unchanged. The production/default fitting path is unchanged;
+new profiling and sloped-baseline logic is research-only.
 
 **Subsequent source check:** [the figure-to-CSV correction](../digitized/SOURCE_CORRESPONDENCE_UPDATE.md)
 finds an unresolved CO correspondence discrepancy. Earlier results describe the
@@ -27,18 +28,28 @@ constant-energy hypothesis. Treat this as a useful order-discrimination/model
 challenge, not a clean energy-accuracy pass.
 
 **Fractional-order literature candidate:** [2-propanol/HOPG](fractional_2propanol_hopg/README.md)
-reports a monolayer order of 1.23 ± 0.03 and an amorphous multilayer order near
-zero, with coverage-series TPD traces and a stated 0.5 K/s ramp. The published
-article is CC BY 3.0, but its figure/PDF image endpoint could not be retrieved
-in this assessment. This is a screened, promising digitization target, not a
-completed software fit or an experimental validation result.
+reports a monolayer order of 1.23 ± 0.03, approximately zero-order amorphous
+multilayer desorption, and a separate crystalline multilayer energy, with a
+stated 0.5 K/s ramp. The article is CC BY 3.0, but Fig. 2A could not be
+retrieved from the publisher/image endpoints. This remains a screened
+digitization target, not a completed software fit.
 
 **Expanded experimental review and algorithm research:** [assessment](EXPERIMENTAL_VALIDATION_AND_ALGORITHM_ASSESSMENT.md)
 consolidates the completed positive and negative comparisons, limits on current
 claims, the newly reviewed methanol/HOPG fractional-order benchmark, and a
 ranked algorithm roadmap. [Methanol/HOPG admission record](methanol_hopg_2005/README.md)
-documents its published order values and the figure-access/label-resolution
-steps required before it can count as a software test.
+documents its published order values and explains why its scan quality and
+label conflict still prevent reliable trace admission. A first variable
+projection prototype was compared with the current fitter across multiple
+starts and a difficult D₂O trace; it reproduces the same optima but is slower.
+A conditional E–ν profile and synthetic baseline-drift checks now document a
+parameter ridge and the risk of unmodeled sloped backgrounds. The experimental
+baseline sensitivity result is small on one ethanol/Au trace and does not show
+which background is physically correct. Further literature screening added
+ethanol/HOPG (near-first, greater-than-first and near-zero classes),
+coronene/ovalene (islanding) and O₂/Ag(111) (directly imaged island perimeter)
+as separate candidate families; none is admitted as a digitized fit. See the
+[checkpoint roadmap](ROADMAP_CHECKPOINTS.md) and assessment.
 
 ## Established observations
 

@@ -22,7 +22,24 @@
     "substrate_temperature_K": 26,
     "heating_rate_K_s": 0.5,
     "signal_fragment_amu": 45,
-    "order_estimator": "Mean slope of ln(I(T)) versus ln(relative integrated coverage) at a range of fixed temperatures; reported errors are twice the standard error of the mean."
+    "order_estimator": "Mean slope of ln(I(T)) versus ln(relative integrated coverage) at a range of fixed temperatures; reported errors are twice the standard error of the mean.",
+    "reported_monolayer_energy_kJ_mol": {
+      "value": 46.6,
+      "uncertainty": 3.7
+    },
+    "reported_monolayer_prefactor_log10_s-1": {
+      "value": 12.9,
+      "uncertainty": 0.3
+    },
+    "reported_amorphous_multilayer_energy_kJ_mol": {
+      "value": 50.4,
+      "uncertainty": 1.2
+    },
+    "reported_crystalline_multilayer_energy_kJ_mol": {
+      "value": 53.6,
+      "uncertainty": 2.0
+    },
+    "order_class_note": "Near-first-order fractional monolayer (n=1.23\u00b10.03) and approximately zero-order amorphous multilayer; crystalline multilayer has a separate reported energy."
   },
   "access_and_analysis": {
     "article_text_reviewed": true,
@@ -30,7 +47,8 @@
     "digitized_data_created": false,
     "production_fit_run": false,
     "reason_not_run": "Publisher PDF and figure-image endpoints were inaccessible in this assessment; no trace pixels could be inspected or digitized.",
-    "data_redistributed": false
+    "data_redistributed": false,
+    "figure_pixels_retrieved_note": "Search-indexed article text and Fig. 5 image were accessible; Fig. 2A digitization pixels were not retrieved from the publisher endpoints."
   },
   "admission_requirements": [
     "Retrieve and inspect Fig. 2A under the stated CC BY 3.0 licence.",

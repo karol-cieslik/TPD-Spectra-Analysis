@@ -3,10 +3,15 @@
 This is a screened external dataset, not a completed fit or a validation pass.
 Ayling et al. report a monolayer desorption order of 1.23 ± 0.03 for
 2-propanol on highly oriented pyrolytic graphite (HOPG), as well as an
-amorphous multilayer order near zero. Their Fig. 2 plots the 1–10 Lm monolayer
-coverage series; experiments were run at 26 K with a linear 0.5 K/s ramp. The
-authors interpret the fractional monolayer order as evidence of intermolecular
-interactions and island formation, so it is a useful non-integer-order case.
+amorphous multilayer order near zero. Their Table 2 gives monolayer
+Edes = 46.6 ± 3.7 kJ/mol and ν = 10^(12.9±0.3) s⁻¹; the amorphous multilayer
+has Edes = 50.4 ± 1.2 kJ/mol, while the crystalline multilayer has
+Edes = 53.6 ± 2.0 kJ/mol. Fig. 2 plots the 1–10 Lm monolayer coverage series;
+experiments were run at 26 K with a 0.5 K/s ramp. This is a valuable mixed
+order benchmark: the monolayer is mildly fractional, while the amorphous
+multilayer is approximately zero-order. The authors associate the observed
+behavior with islanding, interactions and coverage-dependent phase formation;
+the high-coverage traces are therefore not a clean one-state control.
 
 **Source:** S. A. Ayling, D. J. Burke, T. L. Salter and W. A. Brown, “Desorption
 and crystallisation of binary 2-propanol and water ices adsorbed on graphite,”
@@ -16,6 +21,9 @@ The article states a Creative Commons Attribution 3.0 Unported licence.
 ## Status and next step
 
 The article's text, kinetic table and experimental conditions were reviewed.
+The RSC search-indexed full text independently confirms the kinetic table and
+Fig. 2 trace assignments, but direct PDF and figure-image retrieval still
+returns access errors in this workspace.
 The publisher PDF and figure-image endpoints returned access errors in this
 assessment, and the ResearchGate figure image was also inaccessible. No plot
 pixels were read, no digitized curve was created, and no production fitter was

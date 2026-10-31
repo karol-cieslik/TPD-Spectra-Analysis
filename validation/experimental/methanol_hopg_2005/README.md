@@ -1,6 +1,6 @@
 # Methanol/HOPG: fractional-order coverage-series benchmark candidate
 
-**Status: source review complete; digitization and Studio fitting pending.**
+**Status: source review and visual page inspection complete; quantitative digitization and fitting pending.**
 
 ## Source and published values
 
@@ -30,10 +30,14 @@ dataset.
 
 ## Current admission limit
 
-The thesis PDF text and tables were accessible, but the browser PDF renderer
-failed to display the plotted pages in this session. No plot pixels were
-digitized, no trace arrays were created, and no production fitter was run. Do
-not count this candidate as a completed experimental software test.
+The source PDF is a low-quality scanned copy. Its plot lines are faded, with
+visible bleed-through and overlap; the 300 L trace label also conflicts with
+the Fig. 6.3 caption, which says 200 L. The page images are now accessible, but
+that does not make the graph sufficiently reliable for unattended color
+extraction. No numeric trace arrays or fits have been admitted. Do not count
+the published order values as a software result. A quantitative result requires
+an independently checked manual or semi-automatic trace extraction with
+uncertainty bounds and a frozen mapping for each trace.
 
 ## Frozen digitization and fitting plan
 

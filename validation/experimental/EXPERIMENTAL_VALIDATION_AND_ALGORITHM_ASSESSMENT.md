@@ -70,11 +70,12 @@ higher-temperature Peak C attributed to a phase change. The source reports
 [journal PDF hosted by UCL](https://www.chem.ucl.ac.uk/astrosurf/pubs/JChemPhys_122_044713-1.pdf).
 
 **Admission status:** the primary article and thesis text/table were inspected;
-the browser PDF renderer did not display the thesis plots in this session. No
-pixels were digitized and no Studio fit was run. Do not count the literature
-order numbers as software results. This is now the best next fractional-order
-benchmark because trace identities, ramp, multiple dose levels, reported order
-and peak assignments are all documented in a publicly accessible thesis.
+the scanned figure pages are now visually accessible, but the scan has faded
+lines and bleed-through, and one high-dose label conflicts with its caption.
+No numeric pixels or Studio fit have been admitted. Do not count the literature
+order numbers as software results. The study remains the best documented next
+fractional-order benchmark because trace identities, ramp, multiple dose
+levels, reported order and peak assignments are available in the thesis.
 
 One source detail needs visual resolution before data admission: the thesis
 figure's extracted curve labels include 300 L, while its Fig. 6.3 caption says
@@ -99,10 +100,13 @@ Other verified fractional-order leads:
 
 | System | Published evidence | Priority / caveat |
 |---|---|---|
-| Ethanol/HOPG, Burke et al. (2008), DOI [10.1063/1.2888556](https://doi.org/10.1063/1.2888556) | Coverage-series TPD; fractional-order multilayer peak; reported desorption energy 56.3 ± 1.7 kJ/mol. | High. Extract figures and check if a thesis/repository supplies an accessible copy. |
-| 2-propanol/HOPG, Ayling et al. (2017), DOI [10.1039/C7RA10410C](https://doi.org/10.1039/C7RA10410C) | CC BY 3.0; monolayer n = 1.23 ± 0.03; coverage traces at 0.5 K/s. | High. Figure endpoint was inaccessible in prior assessment; retain as fallback to methanol. |
+| Ethanol/HOPG, Burke et al. (2008), DOI [10.1063/1.2888556](https://doi.org/10.1063/1.2888556) | One coverage series includes near-first-order monolayer (n = 0.98 ± 0.13), greater-than-first-order bilayer (1.52 ± 0.21), and near-zero/fractional multilayer (0.08 ± 0.07); Fig. 5 also shows crystallization/overlap. | Strong mixed-regime candidate. Full-text PDF text is accessible from an alternate cached copy, but figure pixels were not inspected and reuse rights remain unresolved. See [candidate record](fractional_ethanol_hopg_2008/README.md). |
+| 2-propanol/HOPG, Ayling et al. (2017), DOI [10.1039/C7RA10410C](https://doi.org/10.1039/C7RA10410C) | CC BY 3.0; monolayer n = 1.23 ± 0.03 and amorphous multilayer near zero; coverage traces at 0.5 K/s. | Strong near-first/sub-first comparison. Publisher figure endpoint failed in the earlier attempt; seek a usable licensed copy. |
+| Coronene/ovalene on graphite, Zacharia et al. (2004), DOI [10.1103/PhysRevB.69.155406](https://doi.org/10.1103/PhysRevB.69.155406) | First-order benzene/naphthalene contrasted with fractional-order coronene/ovalene attributed to stable 2D islands. | Mechanistically distinct size-series candidate; inspect trace availability, ramp and reuse before admission. See [candidate record](fractional_pah_graphite/README.md). |
 | Water/Rh(111), Beniya et al. (2008), DOI [10.1063/1.2945873](https://doi.org/10.1063/1.2945873) | Apparent fractional-order spectra; later interpretation allows first-order desorption from coexisting phases with different sticking probabilities. | Model-discrimination challenge, not ground truth for a fractional Polanyi–Wigner law. |
 | O₂/Ag(111), Günther et al. (2014), DOI [10.1038/ncomms4853](https://doi.org/10.1038/ncomms4853) | Simultaneous LEEM/TPD; supplementary movies include TPD and LEEM-derived coverage; island-perimeter desorption model. | Mechanistic stress case; morphology/history produces non-mean-field kinetics, so a single fitted n is only descriptive. |
+
+| O₂/Ag(111), Günther et al. (2014), DOI [10.1038/ncomms4853](https://doi.org/10.1038/ncomms4853) | Coupled LEEM/TPD directly measures coverage/island perimeter; published morphology model includes a half-order small-island term. | Mechanistic challenge, not a single-state control. Prioritize supplementary arrays and reproduce morphology model before using a fitted effective order as a misspecification diagnostic. See [candidate record](fractional_o2_ag111/README.md). |
 
 ## Strengths shown by the tests
 
@@ -180,27 +184,119 @@ methods solve different inverse problems and should not be combined into one
 “automatic fit” button without model selection, identifiability and provenance
 controls.
 
+### Initial variable-projection comparison
+
+A research prototype is available in `tpd_spectra/variable_projection.py`.
+It profiles a nonnegative signal scale and bounded constant offset at each
+kinetic proposal, reducing the nonlinear parameter vector from four to two
+for fixed order (E and log ν). The implementation includes peak-informed
+initial seeds because a poor E–ν start can leave the simulated peak outside
+the measured window and produce a flat objective.
+
+On the existing digitized ethanol/Au(111) primary-window trace (195 samples,
+first-order model, 0.15 K/s), current and profiled fits agree to numerical
+precision: E differs by 2.1×10⁻⁷ eV, prefactor by 1.8×10⁻⁵ relative, and NRMSE
+by 2.7×10⁻¹⁴. On this runtime the current fitter took 0.82 s and the prototype
+2.47 s; these timings are environment-specific and the prototype pays for a
+larger deterministic seed grid. The current fit's Jacobian condition number
+was 1.06×10⁴, but the prototype does not yet provide a comparable full
+identifiability covariance diagnostic. This is numerical equivalence on one
+existing digitized trace, not new independent experimental validation, and
+shows no accuracy or speed gain yet. Reproduce with
+`python scripts/experimental_variable_projection_check.py`; saved metrics are
+in `ethanol_2024/variable_projection_comparison.json`.
+
+The prototype is intentionally not wired into the GUI or default fitting path.
+Its default profiles a constant offset; the optional linear baseline is
+research-only. Detector response remains outside this model.
+
+The six-start ethanol comparison found all six current-fitter runs converged
+to effectively the same solution; the profiled version also converged to the
+same solution from every start but took 2.9–4.9 s per run versus 0.8–1.4 s for
+the current fitter. A second optimizer-only check on the D₂O/Fe₃O₄(111)
+digitization produced the same fit from both implementations, but both hit the
+prefactor lower bound and retained NRMSE 0.106. That trace is a known
+multi-population challenge and is not a kinetic validation success. These two
+comparisons argue against replacing the default fitter with variable
+projection at this stage.
+
+A separate energy–prefactor profile has now been computed for the ethanol/Au
+trace. The best grid point is E = 0.655 eV, log₁₀ν = 22.17; the energy and
+prefactor move together along a shallow objective valley. An arbitrary 1% RSS
+description spans 0.640–0.673 eV on the chosen grid. This is **not** a
+confidence interval: pointwise variances are uncalibrated and digitization
+errors are correlated. The profile is a useful diagnostic of parameter
+tradeoff, not a statistical uncertainty claim. Files:
+`ethanol_2024/energy_prefactor_profile.csv`,
+`ethanol_2024/energy_prefactor_profile_summary.json`, and the profile plot.
+
+The profile routine recovered exact synthetic parameters for fixed n = 1.23
+and n = 2 traces with known E, ν, scale and constant baseline. A separate
+synthetic drift challenge showed that omitting a sloped background equal to
+4.3% of the signal range shifted E by 0.01 eV and raised NRMSE to 0.0117.
+Extending the research fitter to profile a linear baseline recovered that
+synthetic generating curve to numerical precision. This supports adding a
+linear background as an explicit sensitivity option for later experimental
+checks; it does not show that a sloped background is physically correct or
+that the experimental energy estimate improves. A sloped baseline can absorb
+real tails and must be constrained to predeclared fit windows and reviewed
+against residuals.
+
+On the existing ethanol/Au trace, the sloped-baseline variant changed the
+best-fit energy from 0.65603 to 0.65563 eV and lowered NRMSE from 0.03123 to
+0.03070 (about a 1.7% relative reduction). The fitted slope is small and the
+energy shift is also small. This is one trace-derived sensitivity result; a
+slightly lower residual does not identify the true detector background.
+Reproduce with `python scripts/experimental_baseline_degree_check.py` and see
+`ethanol_2024/baseline_degree_comparison.json`.
+
+The 2-propanol/HOPG source is also better characterized than a single
+“fractional-order” label suggests: the paper reports n = 1.23 ± 0.03 for the
+monolayer, approximately zero-order amorphous multilayer desorption, and a
+separate crystalline multilayer energy. Fig. 2A covers the 1–10 Lm monolayer
+series at 0.5 K/s; that panel remains un-digitized because its publisher and
+image endpoints returned access errors. The source's kinetic table provides
+reported values but cannot substitute for testing the fitter on the measured
+traces.
+
+Another high-value source is ethanol/HOPG. Burke et al. report a 0.98 ± 0.13
+monolayer order, 1.52 ± 0.21 bilayer order, and 0.08 ± 0.07 multilayer order;
+the series also contains a crystalline shoulder and overlapping peaks. The
+reported multilayer energy is 56.3 ± 1.7 kJ/mol. Its heating ramp is
+0.50 ± 0.01 K/s. Fig. 5 is a useful mixed-order challenge, but the available
+copy has unresolved copyright terms and the image endpoint is currently
+inaccessible. No digitization or fit has been performed; see
+`fractional_ethanol_hopg_2008/README.md`.
+
 ## Recommended work order
 
-1. **Complete one fractional experimental comparison:** digitize methanol/HOPG
-   thesis traces with uncertainty and run fixed n = 1, fixed n = 2, free order,
-   and an explicitly acknowledged overlapping-peak model. Preserve failures.
-2. **Add a first-order/positive-order clean reference** only if a source offers
-   a complete trace, compatible ramp, and sufficiently commensurate published
-   reference. Do not duplicate a merely similar chemical if no new inference is
-   gained.
-3. **Implement variable projection and profile diagnostics** before adding
-   new kinetic families. Measure whether they reduce runtime/condition numbers
-   and improve parameter recovery on existing benchmark data.
-4. **Prototype energy-distribution inversion separately** on synthetic known
+1. **Complete one fractional experimental comparison when a defensible plot is
+   available.** Prioritize 2-propanol/HOPG because its mixed order classes are
+   documented and the article is CC BY; seek an authorized Fig. 2A copy. Keep
+   methanol/HOPG as a fallback only if a cleaner copy is found. Do not fit the
+   current low-quality scan. Compare fixed n = 1, fixed n = 2, free order and
+   an overlap-aware model only where the trace supports them.
+2. **Treat ethanol/HOPG as a high-value, rights-limited stress candidate.** Its
+   same study spans near-first, greater-than-first and near-zero/fractional
+   orders with overlap and crystallization. Proceed to digitization only after
+   confirming lawful reuse of the graph data or obtaining authorized pixels.
+3. **Keep variable projection as a research diagnostic, not the default.** It
+   did not improve convergence on tested starts and was slower. Retain the code
+   for controlled comparisons, and do not invest in GUI integration unless a
+   later case shows a measurable benefit.
+4. **Extend profile diagnostic validation to noisy/correlated synthetic traces
+   and parameter-bound cases.** Report conditional objective landscapes until
+   uncertainty calibration accounts for correlated digitization and model
+   mismatch.
+5. **Prototype energy-distribution inversion separately** on synthetic known
    distributions plus at least one multi-rate experimental source. Include
    resolution limits, nonnegativity and regularization sensitivity.
-5. **Do not implement broad automatic decomposition yet.** First quantify
+6. **Do not implement broad automatic decomposition yet.** First quantify
    false component detection on single broad peaks, shoulders, noise, baseline
    drift and true known overlaps. Keep humans in the loop until that benchmark
    shows reliable component-count calibration.
 
-This sequencing prioritizes interpretable improvements over adding algorithm
-labels. The next concrete empirical gain is the methanol/HOPG figure-derived
-comparison; the highest-return code change afterward is nuisance-parameter
-profiling, followed by a separately validated site-energy-distribution method.
+This sequencing prioritizes usable experimental evidence over further code
+labels. The immediate gate is acquiring a clean, authorized coverage-series
+plot; variable projection currently offers no demonstrated improvement, while
+baseline and profile diagnostics remain research tools until broader validation.

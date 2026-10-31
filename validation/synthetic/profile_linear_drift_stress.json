@@ -1,0 +1,67 @@
+{
+  "known_model": {
+    "E_eV": 0.65,
+    "nu_s-1": 1e+22,
+    "order": 1.23,
+    "beta_K_s": 0.5,
+    "scale": 0.73,
+    "constant_baseline": 0.04
+  },
+  "profile_model": "fixed correct order; constant baseline only; prefactor and scale profiled",
+  "energy_grid_eV": [
+    0.6,
+    0.7,
+    21
+  ],
+  "drift_cases": [
+    {
+      "linear_drift_peak_to_peak": 0.0,
+      "drift_fraction_of_signal_range": 0.0,
+      "profile_E_eV": 0.6499999999999999,
+      "profile_log10_nu": 22.00000009190032,
+      "energy_error_eV": -1.1102230246251565e-16,
+      "NRMSE": 3.713655895436273e-08
+    },
+    {
+      "linear_drift_peak_to_peak": 0.0005,
+      "drift_fraction_of_signal_range": 0.01092927837015899,
+      "profile_E_eV": 0.6499999999999999,
+      "profile_log10_nu": 21.999165747330938,
+      "energy_error_eV": -1.1102230246251565e-16,
+      "NRMSE": 0.003046131429345552
+    },
+    {
+      "linear_drift_peak_to_peak": 0.001,
+      "drift_fraction_of_signal_range": 0.021698481338952882,
+      "profile_E_eV": 0.645,
+      "profile_log10_nu": 21.82068064766466,
+      "energy_error_eV": -0.0050000000000000044,
+      "NRMSE": 0.005942699409927445
+    },
+    {
+      "linear_drift_peak_to_peak": 0.002,
+      "drift_fraction_of_signal_range": 0.042770525253163244,
+      "profile_E_eV": 0.64,
+      "profile_log10_nu": 21.641325655244945,
+      "energy_error_eV": -0.010000000000000009,
+      "NRMSE": 0.011710269704007016
+    },
+    {
+      "linear_drift_peak_to_peak": 0.003,
+      "drift_fraction_of_signal_range": 0.06324287369210818,
+      "profile_E_eV": 0.635,
+      "profile_log10_nu": 21.461928764792404,
+      "energy_error_eV": -0.015000000000000013,
+      "NRMSE": 0.017310084165534336
+    },
+    {
+      "linear_drift_peak_to_peak": 0.005,
+      "drift_fraction_of_signal_range": 0.102488051970279,
+      "profile_E_eV": 0.63,
+      "profile_log10_nu": 21.280785285674597,
+      "energy_error_eV": -0.020000000000000018,
+      "NRMSE": 0.02802257791632177
+    }
+  ],
+  "interpretation": "Synthetic sensitivity only. A sloped background absent from the fit model biases the inferred energy; the magnitude depends on window and profile grid. No statistical interval or experimental accuracy claim."
+}

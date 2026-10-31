@@ -1,0 +1,32 @@
+{
+  "dataset": "ethanol on Au(111), 2024, digitized primary window 110-165 K",
+  "beta_K_s": 0.15,
+  "n_points": 195,
+  "current": {
+    "E_eV": 0.6560293104058312,
+    "nu_s-1": 1.6094771815955361e+22,
+    "scale": 0.7532574911739014,
+    "baseline": 0.0006474508507452937,
+    "NRMSE": 0.031231099061457764,
+    "jacobian_condition_number": 10639.097688270558,
+    "wall_seconds": 0.8545777340000313,
+    "nonlinear_parameter_count": 4
+  },
+  "variable_projection": {
+    "E_eV": 0.6560295203592924,
+    "nu_s-1": 1.609505625691831e+22,
+    "scale": 0.7532574017887181,
+    "baseline": 0.0006474511102304243,
+    "NRMSE": 0.03123109906143084,
+    "nfev_best_seed": 19,
+    "wall_seconds": 2.76357621499983,
+    "nonlinear_parameter_count": 2,
+    "seed_grid": "requested start plus first-order peak-informed estimates over nu=1e12..1e28"
+  },
+  "delta": {
+    "E_eV": 2.0995346117214098e-07,
+    "nu_relative": 1.7672879504049277e-05,
+    "NRMSE": -2.6922908347160046e-14
+  },
+  "interpretation": "Same single-state first-order model and source trace; a numerical optimizer comparison, not independent experimental validation. Runtime is environment-specific."
+}

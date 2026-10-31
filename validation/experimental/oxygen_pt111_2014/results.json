@@ -1,0 +1,120 @@
+{
+  "case_name": "O2/Pt(111) second-order coverage-series stress test",
+  "scope": "Published experimental source data; fixed-parameter single-state fits, not a reproduction of the source's coverage-dependent barrier model.",
+  "source": {
+    "article_doi": "10.1007/s11244-013-0166-3",
+    "supporting_information_repository": "https://github.com/KitchinHUB/kitchingroup-43",
+    "source_commit_tested": "f6283ff07df32f982542809b1ab3c2344b24f1d3",
+    "data_origin": "author-published xls/tpdN.xls measurements",
+    "license_status": "No explicit data licence identified in the source repository; data are not copied into this repository."
+  },
+  "software_commit": "4dcbd3ad56689a6a326ac99baed26c9ee2902fcb",
+  "protocol": {
+    "baseline": "subtract mean signal for 400 < T < 500 K, following the source SI",
+    "fit_window_K": [
+      500.0,
+      1000.0
+    ],
+    "heating_rate_K_s": 2.0,
+    "orders": [
+      1.0,
+      2.0,
+      "free in [0.2, 3.0]"
+    ],
+    "initial_energy_eV": 1.9,
+    "initial_prefactor": 1000000000000.0,
+    "fit_baseline": false,
+    "max_nfev": 300,
+    "coverage_scaling": "The production fitter uses normalized initial coverage 1 with signal scale free; source exposure is not substituted for calibrated surface coverage."
+  },
+  "interpretation": [
+    "AICc, NRMSE and convergence are conditional on the selected single-state, constant-energy model and digitized/source processing.",
+    "The free fitted order is phenomenological and does not prove a microscopic mechanism.",
+    "The reference is a same-source leading-edge estimate, not an independent measurement; whole-peak and leading-edge estimands differ.",
+    "The paper reports coverage-dependent barriers, so a single fixed-energy second-order fit is deliberately a restricted stress test."
+  ],
+  "cases": [
+    {
+      "source_spectrum_index": 2,
+      "source_workbook": "tpd3.xls",
+      "source_workbook_sha256": "d39cb6ea3c49d5be08fdbce6442a48ab8be9061986e30f16d03b796baf0f5e19",
+      "exposure_L": 0.75,
+      "n_points": 148,
+      "temperature_min_K": 502.612,
+      "temperature_max_K": 999.948,
+      "sampled_peak_temperature_K": 774.044,
+      "source_leading_edge_energy_eV": 1.905,
+      "source_leading_edge_95pct_low_eV": 1.64,
+      "source_leading_edge_95pct_high_eV": 2.17,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 1.1025459724614173,
+          "prefactor_numeric_s_inv_convention": 403048.2022551131,
+          "normalized_rmse": 0.06817129536707875,
+          "aicc": -5921.523194413804,
+          "success": true,
+          "jacobian_condition_number": 127.2918482064907,
+          "n_points": 148
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.6660507045024244,
+          "prefactor_numeric_s_inv_convention": 3064780194.0925765,
+          "normalized_rmse": 0.019015967195230528,
+          "aicc": -6299.439590763556,
+          "success": true,
+          "jacobian_condition_number": 132.19715590285384,
+          "n_points": 148
+        },
+        {
+          "candidate": "free_order",
+          "reaction_order": 2.3497793803196894,
+          "activation_energy_eV": 1.841466238945536,
+          "prefactor_numeric_s_inv_convention": 48765642238.14552,
+          "normalized_rmse": 0.014611820937353975,
+          "aicc": -6375.277428402794,
+          "success": true,
+          "jacobian_condition_number": 303.30197217237406,
+          "n_points": 148
+        }
+      ],
+      "delta_eV_fixed_second_order_minus_source_leading_edge": -0.2389492954975756
+    },
+    {
+      "source_spectrum_index": 3,
+      "source_workbook": "tpd4.xls",
+      "source_workbook_sha256": "480cf0bbd5e7ba01c195166c4b8f26a1933633a97a302618d54325cbd2873ce5",
+      "exposure_L": 1.0,
+      "n_points": 149,
+      "temperature_min_K": 501.952,
+      "temperature_max_K": 997.764,
+      "sampled_peak_temperature_K": 763.308,
+      "source_leading_edge_energy_eV": 1.884,
+      "source_leading_edge_95pct_low_eV": 1.769,
+      "source_leading_edge_95pct_high_eV": 1.998,
+      "fits": [
+        {
+          "candidate": "fixed_order_1",
+          "reaction_order": 1.0,
+          "activation_energy_eV": 1.0024753269269848,
+          "prefactor_numeric_s_inv_convention": 124211.69890838214,
+          "normalized_rmse": 0.07244512061300531,
+          "aicc": -5834.807617151459,
+          "success": true,
+          "jacobian_condition_number": 122.21784209825425,
+          "n_points": 149
+        },
+        {
+          "candidate": "fixed_order_2",
+          "reaction_order": 2.0,
+          "activation_energy_eV": 1.5186844380831686,
+          "prefactor_numeric_s_inv_convention": 563649467.1124812,
+          "normalized_rmse": 0.025432625756991293,
+          "aicc": -6146.752971097769,
+          "success": true,
+          "jacobian_condition_number": 128.18909507574148,
+          "n_points": 149
+   

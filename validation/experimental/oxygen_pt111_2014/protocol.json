@@ -1,0 +1,33 @@
+{
+  "case": "O2/Pt(111) second-order coverage-series stress test",
+  "source_article_doi": "10.1007/s11244-013-0166-3",
+  "source_data_repository": "https://github.com/KitchinHUB/kitchingroup-43",
+  "source_repository_commit": "f6283ff07df32f982542809b1ab3c2344b24f1d3",
+  "source_data_license": "No explicit data licence identified; do not redistribute the workbooks.",
+  "selected_spectra": "Source SI spectra 2–15 (Python indices 2 through 15; 0.75–5 L); exact workbook files and SHA-256 values are in results.json.",
+  "preprocessing": {
+    "source_baseline": "Subtract mean signal for 400 < T < 500 K.",
+    "fit_temperature_range_K": [500, 1000],
+    "temperature_conversion": "Input workbook is in K; subtract 273.15 for the fitter's Celsius input. No measured-time series is constructed.",
+    "heating_rate_K_per_s": 2.0,
+    "smoothing_or_interpolation": false
+  },
+  "models": [
+    "Fixed first-order single-state Polanyi–Wigner fit.",
+    "Fixed second-order single-state Polanyi–Wigner fit.",
+    "Free-order single-state fit over the production fitter bounds."
+  ],
+  "optimizer": {
+    "initial_energy_eV": 1.9,
+    "initial_prefactor_numeric": 1000000000000,
+    "fit_baseline": false,
+    "maximum_function_evaluations": 300,
+    "fitted_parameters": "Energy, prefactor and signal scale; free-order case also optimizes order."
+  },
+  "comparison": "Compare whole-window fits descriptively with same-source leading-edge estimates in the source SI; different estimands and not independent validation truth.",
+  "limits": [
+    "Source reports coverage-dependent barrier; constant-energy model is intentionally restricted.",
+    "Signal scale is free and normalized initial coverage is one in the production fitter; dose is not treated as measured coverage.",
+    "Fit statistics are conditional on this model, selected intervals and source processing."
+  ]
+}

@@ -1,0 +1,488 @@
+{
+  "case_name": "Ayling et al. 2-propanol/HOPG Figure 2A monolayer coverage series",
+  "scope": "Figure-derived, raster-digitized experimental challenge; not raw-data validation or an independent energy validation.",
+  "source": {
+    "article": "S. A. Ayling, D. J. Burke, T. L. Salter, and W. A. Brown, RSC Advances 7 (2017), 51621-51631.",
+    "doi": "10.1039/C7RA10410C",
+    "figure": "Fig. 2A; 1, 2, 5, and 10 Lm traces only",
+    "source_pdf_record": "University of Sussex Figshare item 23450411, file IPA_published.pdf (file ID 41159684)",
+    "source_pdf_sha256": "079056826b24d83a98a608a06715526ea2d360e512571f3271447f3ddffe7394",
+    "source_figure_sha256": "4c44adc3e07490412a091b77dd19490ed6cba8ca210d6ad5776b83da70de4f78",
+    "article_license": "CC BY 3.0 Unported stated in the published article; Sussex Figshare record labels deposited article CC BY 4.0.",
+    "data_origin": "Color/black trace pixels digitized from the published figure; no author raw data were available or used."
+  },
+  "software_commit": "1542cc6f2a635a575d60e1811b79d8493c7d25c0",
+  "digitization": {
+    "input_dimensions_px": [
+      982,
+      1064
+    ],
+    "x_axis_calibration": {
+      "pixel_left": 76.0,
+      "temperature_left_K": 120.0,
+      "pixel_right": 954.0,
+      "temperature_right_K": 170.0
+    },
+    "zero_signal_axis_pixel": 472.5,
+    "y_axis": "Rate of desorption / a.u.; no numerical y ticks. The raster pixel height is used as a common arbitrary signal scale.",
+    "trace_colors_by_exposure_Lm": {
+      "1": "black",
+      "2": "green",
+      "5": "red",
+      "10": "blue"
+    },
+    "figure_pixels_retrieved": true,
+    "digitized_traces_created": true,
+    "temperature_points_per_trace": 879,
+    "axis_temperature_uncertainty_estimate_K": 0.12,
+    "curve_reading_uncertainty_estimate_px": 1.0
+  },
+  "protocol": {
+    "heating_rate_K_s": 0.5,
+    "reported_initial_temperature_K": 26.0,
+    "order_estimator": {
+      "estimator": "OLS slope of ln(digitized signal at fixed T) vs ln(full-window integrated figure signal)",
+      "fixed_temperature_window_K": [
+        137.0,
+        145.0
+      ],
+      "fixed_temperature_step_K": 0.5,
+      "minimum_signal_for_log_fit_pixel_units": 3.0,
+      "used_temperatures_K": [
+        137.0,
+        137.5,
+        138.0,
+        138.5,
+        139.0,
+        139.5,
+        140.0,
+        140.5,
+        141.0,
+        141.5,
+        142.0,
+        142.5,
+        143.0,
+        143.5,
+        144.0,
+        144.5,
+        145.0
+      ],
+      "slope_by_temperature": [
+        1.2860684055415912,
+        1.1869630156237811,
+        1.202470874026779,
+        1.1205418081833582,
+        1.2124510763225964,
+        1.164843855075169,
+        1.1950232671471586,
+        1.2115971901847815,
+        1.209932518626439,
+        1.1811539575840075,
+        1.2492255109732198,
+        1.1390724531062495,
+        1.0868404547638184,
+        1.0147423193481109,
+        0.9887888048575053,
+        0.9445854249876684,
+        0.9643119898331298
+      ],
+      "mean_order": 1.1387419368344334,
+      "two_sem_across_temperature_slopes": 0.05011231246333237,
+      "uncertainty_interpretation": "Descriptive spread over correlated fixed-temperature slopes; the figure pixels and adjacent-temperature estimates are not independent samples, so this is not an independent-sample confidence interval.",
+      "integrated_areas_pixel_units_K": {
+        "1": 483.2004555808654,
+        "2": 759.3536446469247,
+        "5": 1769.8889521640092,
+        "10": 4741.187357630979
+      },
+      "area_ratios_relative_to_1_Lm": {
+        "1": 1.0,
+        "2": 1.5715085444902774,
+        "5": 3.662846199175016,
+        "10": 9.812050677666473
+      },
+      "baseline_sensitivity": [
+        {
+          "common_y_zero_shift_px": -1.0,
+          "mean_order": 1.1112344142251478,
+          "n_temperatures": 17
+        },
+        {
+          "common_y_zero_shift_px": 0.0,
+          "mean_order": 1.1387419368344334,
+          "n_temperatures": 17
+        },
+        {
+          "common_y_zero_shift_px": 1.0,
+          "mean_order": 1.1645567470203948,
+          "n_temperatures": 17
+        }
+      ],
+      "interpretation": "Figure-derived reconstruction of the paper's estimator; the paper does not report the fixed-temperature interval. The digitized result is conditional on our declared interval, pixel calibration and baseline."
+    },
+    "production_fitter_window_K": [
+      130.0,
+      155.0
+    ],
+    "production_fitter": "Application fit_polanyi_wigner applied separately to each single-color curve; each fit has normalized initial coverage and free signal scale.",
+    "production_fitter_candidates": [
+      "fixed_order_1",
+      "fixed_order_1.23",
+      "free_order in [0.2, 3.0]"
+    ],
+    "initial_energy_eV": 0.48297496598181733,
+    "initial_prefactor_s_inv": 7943282347242.821,
+    "fit_baseline": false,
+    "max_nfev": 300,
+    "sampling_step_K": 0.2,
+    "coverage_scaling": "Trace integrated areas are used only in the source-style log-log order reconstruction. Deposition exposure in Lm is not substituted for measured surface coverage in the production kinetic fitter."
+  },
+  "source_published_references": {
+    "monolayer_order": 1.23,
+    "monolayer_order_uncertainty_2sem": 0.03,
+    "monolayer_energy_kJ_mol": 46.6,
+    "monolayer_energy_uncertainty_kJ_mol": 3.7,
+    "prefactor_log10_s_inv": 12.9,
+    "prefactor_uncertainty_log10_s_inv": 0.3,
+    "paper_order_method": "Mean slope of ln I(T) versus ln relative integrated coverage over a range of fixed temperatures; twice SEM."
+  },
+  "figure_order_reconstruction": {
+    "estimator": "OLS slope of ln(digitized signal at fixed T) vs ln(full-window integrated figure signal)",
+    "fixed_temperature_window_K": [
+      137.0,
+      145.0
+    ],
+    "fixed_temperature_step_K": 0.5,
+    "minimum_signal_for_log_fit_pixel_units": 3.0,
+    "used_temperatures_K": [
+      137.0,
+      137.5,
+      138.0,
+      138.5,
+      139.0,
+      139.5,
+      140.0,
+      140.5,
+      141.0,
+      141.5,
+      142.0,
+      142.5,
+      143.0,
+      143.5,
+      144.0,
+      144.5,
+      145.0
+    ],
+    "slope_by_temperature": [
+      1.2860684055415912,
+      1.1869630156237811,
+      1.202470874026779,
+      1.1205418081833582,
+      1.2124510763225964,
+      1.164843855075169,
+      1.1950232671471586,
+      1.2115971901847815,
+      1.209932518626439,
+      1.1811539575840075,
+      1.2492255109732198,
+      1.1390724531062495,
+      1.0868404547638184,
+      1.0147423193481109,
+      0.9887888048575053,
+      0.9445854249876684,
+      0.9643119898331298
+    ],
+    "mean_order": 1.1387419368344334,
+    "two_sem_across_temperature_slopes": 0.05011231246333237,
+    "uncertainty_interpretation": "Descriptive spread over correlated fixed-temperature slopes; the figure pixels and adjacent-temperature estimates are not independent samples, so this is not an independent-sample confidence interval.",
+    "integrated_areas_pixel_units_K": {
+      "1": 483.2004555808654,
+      "2": 759.3536446469247,
+      "5": 1769.8889521640092,
+      "10": 4741.187357630979
+    },
+    "area_ratios_relative_to_1_Lm": {
+      "1": 1.0,
+      "2": 1.5715085444902774,
+      "5": 3.662846199175016,
+      "10": 9.812050677666473
+    },
+    "baseline_sensitivity": [
+      {
+        "common_y_zero_shift_px": -1.0,
+        "mean_order": 1.1112344142251478,
+        "n_temperatures": 17
+      },
+      {
+        "common_y_zero_shift_px": 0.0,
+        "mean_order": 1.1387419368344334,
+        "n_temperatures": 17
+      },
+      {
+        "common_y_zero_shift_px": 1.0,
+        "mean_order": 1.1645567470203948,
+        "n_temperatures": 17
+      }
+    ],
+    "interpretation": "Figure-derived reconstruction of the paper's estimator; the paper does not report the fixed-temperature interval. The digitized result is conditional on our declared interval, pixel calibration and baseline."
+  },
+  "single_trace_production_fits": {
+    "1": [
+      {
+        "candidate": "fixed_order_1",
+        "reaction_order": 1.0,
+        "activation_energy_eV": 0.2631485424428851,
+        "prefactor_s_inv_numeric_convention": 110725363.68735048,
+        "normalized_rmse": 0.11574114429213653,
+        "aicc": 276.07471415241156,
+        "success": true,
+        "jacobian_condition_number": 988.1759141754429,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 3,
+          "jacobian_condition_number": 988.1759141754429,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      },
+      {
+        "candidate": "fixed_order_1.23",
+        "reaction_order": 1.23,
+        "activation_energy_eV": 0.30183488969665717,
+        "prefactor_s_inv_numeric_convention": 2987910548.9997287,
+        "normalized_rmse": 0.09962005632195506,
+        "aicc": 238.2765613549422,
+        "success": true,
+        "jacobian_condition_number": 1001.4683392787659,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 3,
+          "jacobian_condition_number": 1001.4683392787659,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      },
+      {
+        "candidate": "free_order",
+        "reaction_order": 2.9999999999999782,
+        "activation_energy_eV": 0.5019481874182191,
+        "prefactor_s_inv_numeric_convention": 7.2918903171539e+16,
+        "normalized_rmse": 0.05762457810885637,
+        "aicc": 102.49757091538712,
+        "success": true,
+        "jacobian_condition_number": 2845.248470231168,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 4,
+          "n_parameters": 4,
+          "jacobian_condition_number": 2845.248470231168,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [
+            3
+          ],
+          "warnings": [
+            "One or more parameters lie near optimizer bounds; local intervals may be invalid."
+          ]
+        },
+        "n_points": 126
+      }
+    ],
+    "2": [
+      {
+        "candidate": "fixed_order_1",
+        "reaction_order": 1.0,
+        "activation_energy_eV": 0.2645097424428945,
+        "prefactor_s_inv_numeric_convention": 145249159.5670589,
+        "normalized_rmse": 0.12044881564975202,
+        "aicc": 428.58070982385254,
+        "success": true,
+        "jacobian_condition_number": 1006.5312365974402,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 3,
+          "jacobian_condition_number": 1006.5312365974402,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      },
+      {
+        "candidate": "fixed_order_1.23",
+        "reaction_order": 1.23,
+        "activation_energy_eV": 0.30921524299689546,
+        "prefactor_s_inv_numeric_convention": 6638035092.60138,
+        "normalized_rmse": 0.10177995592108355,
+        "aicc": 386.14095935252504,
+        "success": true,
+        "jacobian_condition_number": 1025.7243178301856,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 3,
+          "jacobian_condition_number": 1025.7243178301856,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      },
+      {
+        "candidate": "free_order",
+        "reaction_order": 2.9999999999999942,
+        "activation_energy_eV": 0.5416267252908096,
+        "prefactor_s_inv_numeric_convention": 2.678570952233375e+18,
+        "normalized_rmse": 0.04270334209819321,
+        "aicc": 169.43930842936078,
+        "success": true,
+        "jacobian_condition_number": 2913.81852259669,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 4,
+          "n_parameters": 4,
+          "jacobian_condition_number": 2913.81852259669,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [
+            3
+          ],
+          "warnings": [
+            "One or more parameters lie near optimizer bounds; local intervals may be invalid."
+          ]
+        },
+        "n_points": 126
+      }
+    ],
+    "5": [
+      {
+        "candidate": "fixed_order_1",
+        "reaction_order": 1.0,
+        "activation_energy_eV": 0.3169200978882318,
+        "prefactor_s_inv_numeric_convention": 16276306593.071522,
+        "normalized_rmse": 0.13151255740512027,
+        "aicc": 717.8451838361447,
+        "success": true,
+        "jacobian_condition_number": 1173.040470597152,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 3,
+          "jacobian_condition_number": 1173.040470597152,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      },
+      {
+        "candidate": "fixed_order_1.23",
+        "reaction_order": 1.23,
+        "activation_energy_eV": 0.36503966587240916,
+        "prefactor_s_inv_numeric_convention": 1006711228461.7896,
+        "normalized_rmse": 0.11081753745721949,
+        "aicc": 674.6984246026374,
+        "success": true,
+        "jacobian_condition_number": 1170.7955350316265,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 3,
+          "jacobian_condition_number": 1170.7955350316265,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      },
+      {
+        "candidate": "free_order",
+        "reaction_order": 2.9999999999999996,
+        "activation_energy_eV": 0.6547137030081893,
+        "prefactor_s_inv_numeric_convention": 5.7579439980089816e+22,
+        "normalized_rmse": 0.03668516384057234,
+        "aicc": 398.27866489621005,
+        "success": true,
+        "jacobian_condition_number": 3159.702532199027,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 4,
+          "n_parameters": 4,
+          "jacobian_condition_number": 3159.702532199027,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [
+            3
+          ],
+          "warnings": [
+            "One or more parameters lie near optimizer bounds; local intervals may be invalid."
+          ]
+        },
+        "n_points": 126
+      }
+    ],
+    "10": [
+      {
+        "candidate": "fixed_order_1",
+        "reaction_order": 1.0,
+        "activation_energy_eV": 0.3564917487680113,
+        "prefactor_s_inv_numeric_convention": 515348860737.6459,
+        "normalized_rmse": 0.10614817864741187,
+        "aicc": 936.3775196258872,
+        "success": true,
+        "jacobian_condition_number": 1288.0950096350132,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 3,
+          "jacobian_condition_number": 1288.0950096350132,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      },
+      {
+        "candidate": "fixed_order_1.23",
+        "reaction_order": 1.23,
+        "activation_energy_eV": 0.3998026100566325,
+        "prefactor_s_inv_numeric_convention": 21003230471384.977,
+        "normalized_rmse": 0.08823894034933306,
+        "aicc": 889.8110284058208,
+        "success": true,
+        "jacobian_condition_number": 1259.3087155697467,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 3,
+          "n_parameters": 3,
+          "jacobian_condition_number": 1259.3087155697467,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      },
+      {
+        "candidate": "free_order",
+        "reaction_order": 2.3925736541946634,
+        "activation_energy_eV": 0.5935990182034238,
+        "prefactor_s_inv_numeric_convention": 3.2931463823371056e+20,
+        "normalized_rmse": 0.05311538739186189,
+        "aicc": 764.0698618767134,
+        "success": true,
+        "jacobian_condition_number": 3056.613164695466,
+        "identifiability_diagnostics": {
+          "jacobian_rank": 4,
+          "n_parameters": 4,
+          "jacobian_condition_number": 3056.613164695466,
+          "near_lower_bound_indices": [],
+          "near_upper_bound_indices": [],
+          "warnings": []
+        },
+        "n_points": 126
+      }
+    ]
+  },
+  "limitations": [
+    "The source's fixed-temperature interval is not specified; the declared 137-145 K window is a reconstruction choice.",
+    "The figure has no numerical y-axis ticks, and pixel integration is not calibrated absolute coverage.",
+    "The source order is a coverage-series log-log slope; the software fits each normalized full trace separately. These fitted orders are not the same estimand.",
+    "The paper reports coverage-dependent monolayer barriers and islanding, so a single-state constant-energy model is a challenge hypothesis, not a faithful physical model.",
+    "Rasterized data, especially the low-dose 1 Lm trace, have finite pixel resolution and visible line-thickness uncertainty.",
+    "The reported 2 SEM is across adjacent fixed-temperature slopes from one figure and is descriptive, not a confidence interval from independent observations.",
+    "No raw author data are included; the source figure is redistributed with attribution under its stated open licence."
+  ]
+}

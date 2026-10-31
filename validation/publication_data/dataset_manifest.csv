@@ -1,0 +1,15 @@
+dataset_id,readiness,canonical_path,source_doi,figure_or_source,signal_status,rights_status,limitations
+ethanol_au_2024,ready,validation/experimental/ethanol_2024/digitized.csv,10.1039/D4CP01934B,Fig. 7,figure_digitized,CC-BY-NC-3.0,multiple populations; do not treat as single-state ground truth
+methyl_acetate_au_2024,ready,validation/experimental/methyl_acetate_2024/spectrum.csv,10.1039/D4RA04466E,study figures,figure_digitized,check study README,see extraction QA and protocol
+pure_ar_ice_2024,ready,validation/digitized/ice_2024/Ar_digitized.csv,10.1051/0004-6361/202346948,Figs. 2b/3a,figure_digitized,CC-BY-4.0,compare to source before use
+pure_co_ice_2024,ready_with_source_mismatch,validation/digitized/ice_2024/CO_digitized.csv,10.1051/0004-6361/202346948,Figs. 2b/3a,figure_digitized,CC-BY-4.0,unresolved discrepancy versus deposited CSV
+water_iron_oxide_2018,ready_for_stress,validation/digitized/water_2018/digitized.csv,10.1039/C8CP02333F,Fig. 1a,normalized_figure_digitization,CC-BY-3.0,multiple populations; normalized amplitude only
+methyl_mercaptan_ice_2025,ready_for_challenge,validation/digitized/mesh_2025/digitized.csv,10.3847/1538-4357/adc7b6,Fig. 2,figure_digitized,CC-BY-4.0_preprint_v1,energy distribution and source-model limitations
+oxygen_pt111_2014,reproduce_from_source,validation/experimental/oxygen_pt111_2014/,10.1007/s11244-013-0166-3,author SI workbook series,external_source_only,no_redistribution_license_identified; coverage-dependent barrier
+agy_zeolite_d2_2026,ready_for_input_check,validation/experimental/rodare_4644/H2_D2_D2_source_units.csv,10.14278/rodare.4644,RODARE deposited data,public_numeric_data,CC-BY-4.0,full-trace ramp screen rejects simple kinetic fit
+ptcda_au111,ready_for_conditional_stress,validation/experimental/ptcda_au111/,study dataset,73 spectra,source_records_and_conditional_fits,see study provenance,not 73 independent studies; component mapping non-unique
+methanol_hopg_2005,not_ready,validation/experimental/methanol_hopg_2005/,10.1063/1.1839554,thesis Figs. 6.2-6.5,no_trace_arrays,figure_reuse_and_quality_unresolved,fade bleed-through and 200/300 L label conflict
+propanol_hopg_2017,not_ready,validation/experimental/fractional_2propanol_hopg/,10.1039/C7RA10410C,Fig. 2A/B,no_trace_arrays,CC-BY-3.0_figure_pixels_not_acquired,source candidate only
+ethanol_hopg_2008,not_ready,validation/experimental/fractional_ethanol_hopg_2008/,10.1063/1.2888556,Fig. 5,no_trace_arrays,copyright_reuse_unresolved,text/source verified; figure pixels not digitized
+pah_graphite_2004,not_ready,validation/experimental/fractional_pah_graphite/,10.1103/PhysRevB.69.155406,coverage TPD figures,no_trace_arrays,review_pending,source lead only; do not infer unreported fractional order
+oxygen_ag111_2014,not_ready,validation/experimental/fractional_o2_ag111/,10.1038/ncomms4853,LEEM/TPD series,no_trace_arrays,supplement_review_pending,morphology model; not simple single-state control

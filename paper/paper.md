@@ -147,6 +147,28 @@ apparent leading-edge energies of 4849–5492 K across declared settings, compar
 with the paper's TST-conditioned recommendation of 4610 ± 110 K. These are
 different estimands; ideal whole-peak fits also retain structured residuals.
 
+A further coverage-series assessment compared fixed first- and second-order
+models with published O₂/Pt(111) spectra [@miller2014]. Fixed second order had
+lower AICc and NRMSE on all 14 analyzed traces, while fitted energies departed
+from the source’s leading-edge estimates under the source’s coverage-dependent
+barrier model. This is order-discrimination evidence under a restricted
+single-energy model, not energy validation. Research-only algorithm checks also
+compared variable projection with the existing fitter on an ethanol/Au trace
+and a multi-population D₂O/Fe₃O₄ trace. They reproduced the current optima but
+were slower; the prototype was not adopted as the default. An E–ν profile
+showed a conditional parameter ridge, and a linear-baseline option was
+sensitivity-checked on one figure-derived trace. These diagnostics do not
+establish calibrated uncertainty or a physically correct background. Results,
+reproduction scripts and scope limits are recorded under
+`validation/experimental/` and indexed in `validation/publication_data/`.
+
+Fractional-order sources have also been screened, including methanol, ethanol
+and 2-propanol on HOPG and island-mediated systems. Their reported orders are
+literature context only: no new Studio fit is claimed for those candidate
+figures until numeric traces pass source, rights and digitization review.
+The publication-data catalog separates tracked figure-derived or public inputs
+from external-only references and inaccessible candidates.
+
 **Submission evidence still required:** document completed use in an actual
 research workflow, obtain independent scientific and clean-Windows acceptance,
 and satisfy the public-development-history requirement. External adoption,

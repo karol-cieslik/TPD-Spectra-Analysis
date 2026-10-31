@@ -12,6 +12,8 @@ Do not submit the affiliation placeholder or the outstanding-evidence paragraphs
 Replace them with truthful completed evidence before submission.
 
 No fictional outside adoption, mechanistic conclusion, experimental energy
-validation or coverage-calibrated interval is asserted. The dataset example
-is intentionally limited to import/conversion/peak reproduction and rejection
-of an unsuitable full-trace constant-ramp reconstruction.
+validation or coverage-calibrated interval is asserted. The experimental
+results added to the living draft must remain aligned with their source-specific
+records and the central index at `validation/publication_data/README.md`. The
+dataset example is intentionally limited to import/conversion/peak reproduction
+and rejection of an unsuitable full-trace constant-ramp reconstruction.

@@ -28,7 +28,7 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 - Batch output with settings/provenance and warnings.
 - Numerical Jacobian rank, bounds, and conditioning warnings for the single-state fit.
 
-**Not in this beta's default outputs:** validated nonlinear confidence intervals, coverage-calibration studies, independent digitized literature benchmarks, nonlinear heating-ramp fitting, automated mechanistic assignment. These belong to separate research/development work.
+**Not in this beta's default outputs:** experimentally validated nonlinear confidence intervals, coverage-calibration studies, nonlinear heating-ramp fitting, or automated mechanistic assignment. Some optional workflows provide model-conditional uncertainty ranges described below; none is validated for general experimental coverage.
 
 ## 2. Installation and launching
 
@@ -172,6 +172,21 @@ Outputs may include R², RMSE, normalized RMSE, AIC/AICc/BIC, Jacobian condition
 
 The beta candidate includes singular-value-based **numerical identifiability warnings** for one-state fits. These are screening metrics, not confidence intervals and not proof of structural identifiability.
 
+### 6.7 Which reported parameters have uncertainty estimates?
+
+Uncertainty is method-specific; the program does **not** automatically calculate an uncertainty for every reported number. Fixed inputs and assumptions (for example, selected kinetic order, prefactor, coverage, heating rate, and component count) have no fitted uncertainty. Fit diagnostics such as a condition number are warnings, not parameter intervals.
+
+| Method or result | What the program reports | What is not covered |
+| --- | --- | --- |
+| Leading-edge estimate | A 95% OLS interval for apparent energy | Regression scatter only; excludes baseline, window, calibration, correlated-noise, and model uncertainty |
+| Redhead estimate | Energy plus sensitivity to prefactor divided/multiplied by ten | No statistical interval; prefactor is supplied |
+| Ordinary one-state, two-state, and global nonlinear fits | Point estimates and fit/identifiability diagnostics | No parameter confidence intervals in standard reports |
+| Zero-order fit | Profile-based energy estimate and conditional prefactor/scale brackets | Brackets are not statistical intervals; prefactor and scale are non-unique under normalized coverage |
+| Optional Explorer Monte Carlo | Conditional 2.5th–97.5th percentile refit ranges for estimated energy, log-prefactor and signal scale; fitted baseline when enabled; free order for the fractional-order model | Fixed order has no order interval. Zero-order prefactor/scale ranges are withheld. Ranges require enough successful refits (100 by default), assume the selected reference and iid Gaussian noise, and are not experimentally coverage-calibrated |
+| Simultaneous component fit | Conditional local-linear 95% intervals for fitted component energies and signal scales when diagnostics permit | Component order, prefactor and coverage are fixed. Shared baseline/drift terms do not get intervals. Intervals are withheld for diagnosed ambiguity and are not experimentally calibrated |
+
+The Explorer Monte Carlo extension estimates intervals for every **free parameter it refits** in eligible positive-order models. These are conditional simulated-refit ranges, not a universal uncertainty calculation. No available method propagates all statistical, structural, calibration, heating-rate, preprocessing and model-selection uncertainty into every output parameter.
+
 ## 7. Outputs and reproducibility
 
 A complete batch run may produce:
@@ -206,7 +221,7 @@ For a publishable study preserve: unchanged raw inputs, source/instrument metada
 
 **Verified in source and CI:** test suite covers file-import handling using synthetic public fixtures, selected kinetic integration and parameter-recovery cases, GUI structure/range logic, and identifiability diagnostics. The integrated beta build is checked through GitHub Actions; personal Windows acceptance testing is still necessary.
 
-**In a separate scientific research branch (not automatically part of this beta):** broader synthetic benchmark matrices, statistical interval coverage scripts, and an experimental nonlinear parametric-bootstrap API. Those results are not independent experimental validation and should not be cited as such until experiments, artifacts and interpretation are reviewed.
+**Present in this `main` source:** broader synthetic benchmark matrices, statistical interval-coverage scripts, and an opt-in experimental nonlinear parametric-bootstrap API. The bootstrap API remains disconnected from routine desktop reports; its intervals are conditional and are not independent experimental validation. The repository source includes `docs/NONLINEAR_BOOTSTRAP_UNCERTAINTY.md` and `validation/experimental/EXPERIMENTAL_VALIDATION_AND_ALGORITHM_ASSESSMENT.md` for researchers using these tools.
 
 A practical independent-validation dataset should span: zero-, first-, second- and non-integer order; overlapping states; multiple heating rates; baseline drift and noise; authentic instrument data. Record the originating DOI, figure, licensing status, extraction/digitization uncertainty, original axis units, preprocessing and reference method. Prefer raw author-provided data whenever obtainable.
 

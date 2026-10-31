@@ -83,7 +83,18 @@ def run_kinetics_monte_carlo(
         raise ValueError("Cannot estimate positive residual noise; supply noisy experimental data")
     rng = np.random.default_rng(seed)
     wins = Counter()
-    values = {name: {"energy_eV": [], "log10_prefactor": [], "order": []} for name in orders}
+    # Only collect intervals for parameters that are estimated by the model.
+    # Fixed orders are assumptions, and zero-order prefactor/scale are not
+    # separately identifiable under normalized coverage.
+    values = {}
+    for name in orders:
+        values[name] = {"energy_eV": []}
+        if name != "zero":
+            values[name].update(log10_prefactor=[], signal_scale=[])
+            if fit_baseline:
+                values[name]["baseline"] = []
+        if name == "fractional":
+            values[name]["order"] = []
     completed = 0
     failed_rankings = 0
     records = []
@@ -113,6 +124,8 @@ def run_kinetics_monte_carlo(
                             "log10_prefactor": float(np.log10(f.prefactor_s_inv)) if f and candidate.name != 'zero' else None,
                             "zero_order_profile": f.identifiability_diagnostics.get('zero_order_profile') if f and candidate.name == 'zero' else None,
                             "order": f.reaction_order if f else None,
+                            "signal_scale": getattr(f, "signal_scale", None) if f else None,
+                            "baseline": getattr(f, "baseline", None) if f else None,
                             "aicc": f.aicc if f else None,
                             "warnings": list(candidate.warnings)})
         for candidate in successful:
@@ -121,7 +134,12 @@ def run_kinetics_monte_carlo(
             record["energy_eV"].append(f.activation_energy_eV)
             if candidate.name != 'zero':
                 record["log10_prefactor"].append(float(np.log10(f.prefactor_s_inv)))
-            record["order"].append(f.reaction_order)
+                if hasattr(f, "signal_scale"):
+                    record["signal_scale"].append(f.signal_scale)
+                if fit_baseline and hasattr(f, "baseline"):
+                    record["baseline"].append(f.baseline)
+            if candidate.name == "fractional":
+                record["order"].append(f.reaction_order)
         completed += 1
         if progress is not None:
             progress(completed, replicates)
@@ -139,5 +157,5 @@ def run_kinetics_monte_carlo(
         replicate_records=records, minimum_successful_refits=minimum_successful_refits,
     )
     if 'zero' in orders:
-        result.interval_note += (' Zero-order prefactor percentiles are withheld: each refit has a conditional depletion bracket and a non-unique prefactor/scale pair. Brackets are retained per replicate and are not confidence intervals; edge-search AICc rankings are heuristic.')
+        result.interval_note += (' Ranges are included only for parameters estimated by each selected model: energy for every model, and for positive-order models prefactor and signal scale, optional fitted baseline, and free order when fractional order is selected. Fixed orders receive no interval. Zero-order prefactor/scale percentiles are withheld because that pair is non-unique; conditional depletion brackets are retained per replicate and are not confidence intervals. Edge-search AICc rankings are heuristic.')
     return result

@@ -283,7 +283,7 @@
         "analysis"
       ],
       "short": "Fits an apparent Arrhenius slope only on a suitable rising-edge interval.",
-      "detail": "The method uses a regression of log positive signal against inverse absolute temperature, assuming signal proportional to desorption rate and little coverage depletion in that interval. It estimates apparent activation energy, not an absolute prefactor. The clean first-order tutorial uses 90-110 °C.",
+      "detail": "The method uses a regression of log positive signal against inverse absolute temperature, assuming signal proportional to desorption rate and little coverage depletion in that interval. It estimates apparent activation energy, not an absolute prefactor. A slope-based 95% energy interval reflects regression scatter only. The clean first-order tutorial uses 90-110 °C.",
       "example": "The clean 1.2 eV first-order reference should give an estimate near its generating energy.",
       "caution": "Near the noise floor, logging small or nonpositive signals is unreliable; never fit the complete peak as a leading edge."
     },
@@ -314,7 +314,7 @@
         "analysis"
       ],
       "short": "Numerically fits a specified single-population kinetic model to the selected region.",
-      "detail": "The numerical engine integrates coverage depletion and optimizes allowed parameters, detector scale and optionally a constant baseline. Some values in the input panel are initial guesses, not fixed experimental facts. E and ν may be strongly correlated, and a low residual does not establish a unique mechanism.",
+      "detail": "The numerical engine integrates coverage depletion and optimizes allowed parameters, detector scale and optionally a constant baseline. Some values in the input panel are initial guesses, not fixed experimental facts. Standard fit reports provide point estimates and diagnostics, not parameter confidence intervals. Optional Explorer Monte Carlo gives conditional refit ranges for estimated free parameters after enough successful refits. E and ν may be strongly correlated, and a low residual does not establish a unique mechanism.",
       "example": "Use first-order fitting on a reasonably isolated synthetic first-order peak; inspect both residuals and warnings.",
       "caution": "The method does not automatically separate multiple overlapping desorption populations."
     },
@@ -346,7 +346,7 @@
         "modeling"
       ],
       "short": "Fit 1-3 independent Polanyi-Wigner populations together on the full dataset.",
-      "detail": "For each component you enter a label, fixed positive order, fixed prefactor, fixed initial normalized coverage, energy guess and energy bounds. The program jointly optimizes each energy and nonnegative detector scale plus optional shared baseline terms. A named navigation peak does not crop this full-spectrum calculation.",
+      "detail": "For each component you enter a label, fixed positive order, fixed prefactor, fixed initial normalized coverage, energy guess and energy bounds. The program jointly optimizes each energy and nonnegative detector scale plus optional shared baseline terms. Conditional local intervals may be reported for energy and scale; fixed kinetic inputs and shared baseline/drift terms do not receive intervals. A named navigation peak does not crop this full-spectrum calculation.",
       "example": "The clean three-state example has generating energies 1.18, 1.26 and 1.34 eV.",
       "caution": "Independence excludes exchange, readsorption and many interactions; components need not correspond to physically distinct adsorption states."
     },
@@ -498,7 +498,7 @@
         "results"
       ],
       "short": "Checks whether different parameter combinations may explain essentially the same spectrum.",
-      "detail": "Energy, prefactor, scale and overlapping component labels can correlate. In simultaneous fitting, the program screens local Jacobian conditioning, bounds, strong correlations, weak components and exchangeable labels; it may withhold component intervals. Passing local checks does not establish global identifiability.",
+      "detail": "Energy, prefactor, scale and overlapping component labels can correlate. Standard single-state fits show numerical diagnostics but no parameter intervals. Simultaneous component fits screen local Jacobian conditioning, bounds, strong correlations, weak components and exchangeable labels; they may withhold energy/scale intervals. Passing local checks does not establish global identifiability.",
       "example": "Two very similar components can trade labels without altering the fitted total curve.",
       "caution": "Do not force the program to print an interval when the model cannot support it."
     },
@@ -605,7 +605,7 @@
         "results"
       ],
       "short": "Percentile ranges of successful refits under the assumed reference/noise model.",
-      "detail": "The program may report the middle 95% of simulated-refit estimates, but it withholds ranges when fewer than 100 refits succeed. These are conditional refit ranges. They have not been experimentally calibrated for 95% frequentist coverage and do not include model, heating-rate or calibration uncertainty.",
+      "detail": "For positive-order candidates, the program reports conditional percentile ranges for estimated energy, log-prefactor, signal scale, optional fitted baseline and free fractional order. Fixed orders are assumptions, not interval estimates. Zero-order prefactor/scale percentiles are withheld because the pair is non-unique. Ranges are withheld when fewer than 100 refits succeed. They are conditional refit ranges, not experimentally calibrated for 95% frequentist coverage, and do not include model, heating-rate or calibration uncertainty.",
       "example": "A 20-replicate tutorial should finish without displaying a numerical parameter range.",
       "caution": "Do not label the displayed range a validated 95% confidence interval."
     },

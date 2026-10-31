@@ -17,13 +17,18 @@ def _trace():
 def test_reproducible_mc_counts_and_intervals():
     t, y = _trace()
     kwargs = dict(orders=("first",), replicates=3, seed=42,
-                  max_nfev=50, multistart=False)
+                  max_nfev=50, multistart=False,
+                  minimum_successful_refits=2)
     a = run_kinetics_monte_carlo(t, y, 1.0, **kwargs)
     b = run_kinetics_monte_carlo(t, y, 1.0, **kwargs)
     assert a.replicates_completed == 3
     assert a.winning_counts == b.winning_counts
     assert a.failed_rankings == b.failed_rankings
     assert a.parameter_intervals == b.parameter_intervals
+    # Fixed first order has no order interval; scale and enabled baseline are
+    # estimated on every refit and therefore receive conditional ranges.
+    assert set(a.parameter_intervals['first']) == {
+        'energy_eV', 'log10_prefactor', 'signal_scale', 'baseline'}
     assert sum(a.winning_counts.values()) + a.failed_rankings == 3
 
 

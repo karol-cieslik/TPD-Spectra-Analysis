@@ -102,6 +102,18 @@ confidence coverage nor probabilities of physical mechanisms. Correlated noise,
 calibration uncertainty and reference-model inadequacy are not resolved by
 increasing the replicate count.
 
+For positive-order candidates, these optional refit ranges cover the free
+parameters estimated in each replicate: energy, log-prefactor, signal scale,
+optional fitted baseline and, for the free-order model, reaction order. Fixed
+orders are assumptions rather than estimated values; zero-order prefactor and
+scale ranges are withheld because the pair is non-unique under normalized
+coverage. Standard single-state, two-state and global fit reports do not
+provide parameter intervals. Simultaneous component fits use a separate
+conditional local-linear approximation for fitted energies and signal scales,
+which can be withheld by identifiability and residual checks. No interval
+method is experimentally coverage-validated or propagated across every model
+and source of uncertainty.
+
 The Python importer now accepts explicit source time and temperature units,
 retaining the historical millisecond/Celsius defaults for existing callers.
 The command-line kinetic workflow measures discrepancy between observed

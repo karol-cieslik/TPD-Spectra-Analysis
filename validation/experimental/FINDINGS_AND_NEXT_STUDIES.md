@@ -33,6 +33,13 @@ article is CC BY 3.0, but its figure/PDF image endpoint could not be retrieved
 in this assessment. This is a screened, promising digitization target, not a
 completed software fit or an experimental validation result.
 
+**Expanded experimental review and algorithm research:** [assessment](EXPERIMENTAL_VALIDATION_AND_ALGORITHM_ASSESSMENT.md)
+consolidates the completed positive and negative comparisons, limits on current
+claims, the newly reviewed methanol/HOPG fractional-order benchmark, and a
+ranked algorithm roadmap. [Methanol/HOPG admission record](methanol_hopg_2005/README.md)
+documents its published order values and the figure-access/label-resolution
+steps required before it can count as a software test.
+
 ## Established observations
 
 - Six completed ideal zero-order full-peak fits to deposited Ar/CO data reached

@@ -41,3 +41,14 @@ The paper now carries the ethanol, methyl-acetate, methyl-mercaptan, O₂/Pt(111
 - `validation/experimental/rodare_4644/`, `ptcda_au111/`, `ice_2024/`
 - `validation/experimental/ethanol_2024/`, `methyl_acetate_2024/`, `mesh_2025/`, `oxygen_pt111_2014/`
 - `validation/digitized/` and `docs/JOSS_CHECKPOINT_PROGRESS.md`
+
+
+## Additional experimental order/multipeak challenge
+
+`validation/experimental/multipeak_ice_2024/` retains new NH3, overlapping
+CH3OH/water and separated CO/water comparisons, plus a quarantined CO12 pilot.
+Numerically successful fits can miss entire features or approximate a flat
+line. Two frozen two-state starts do not establish robust separation; fitting
+orders 0/1/2 to these data does not establish known-order discrimination.
+The package adds bounded failure and source-QA evidence; it does not upgrade
+general experimental accuracy or change the manuscript's physical claims.

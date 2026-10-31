@@ -357,8 +357,9 @@ def analyze_file(path: str | Path, *, leading_edge_c: tuple[float, float] = (130
                  redhead_region_c: tuple[float, float] = (230.0, 400.0),
                  prefactor_s_inv: float = 1e20, smoothing_window: int = 10,
                  smoothing_method: str = 'median', heating_region_c: tuple[float, float] = (125.0, 700.0),
-                 max_time_min: float | None = 10.0) -> dict:
-    spec = load_spectrum(path)
+                 max_time_min: float | None = 10.0,
+                 import_options: dict | None = None) -> dict:
+    spec = load_spectrum(path, **(import_options or {}))
     beta, beta_r2, beta_slope = heating_rate(spec.time_min, spec.temperature_clean_c,
         lower_c=heating_region_c[0], upper_c=heating_region_c[1], max_time_min=max_time_min)
     smooth = smooth_signal(spec.signal, smoothing_window, smoothing_method)

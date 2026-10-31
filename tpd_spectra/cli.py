@@ -11,6 +11,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from .analysis import analyze_file, load_spectrum, smooth_signal
+from .importer import SUPPORTED_SPECTRUM_SUFFIXES, supported_spectrum_files
 from .kinetics import fit_polanyi_wigner, fit_two_state_polanyi_wigner
 import numpy as np
 from . import __version__
@@ -35,6 +36,10 @@ CONFIG_KEYS = {
     'kinetic_initial_prefactor': 'kinetic_initial_prefactor',
     'kinetic_no_baseline': 'kinetic_no_baseline', 'kinetic_model': 'kinetic_model',
     'kinetic_ramp_tolerance_K': 'kinetic_ramp_tolerance_K',
+    'time_column': 'time_column', 'signal_column': 'signal_column',
+    'temperature_column': 'temperature_column', 'time_unit': 'time_unit',
+    'temperature_unit': 'temperature_unit', 'delimiter': 'delimiter',
+    'decimal': 'decimal', 'skiprows': 'skiprows',
 }
 
 
@@ -66,12 +71,21 @@ def main(argv=None) -> int:
         except (OSError, json.JSONDecodeError, ValueError) as exc:
             raise SystemExit(f'Invalid --config: {exc}')
 
-    parser = argparse.ArgumentParser(description='Batch analysis of TPD/TDS instrument CSV files')
-    parser.add_argument('input', nargs='+', default=['input'], help='one or more CSV files or directories (default: input/)')
+    parser = argparse.ArgumentParser(description='Batch analysis of TPD/TDS delimited-text spectra')
+    parser.add_argument('input', nargs='+', default=['input'], help='one or more CSV/TSV/TXT files or directories (default: input/)')
     parser.add_argument('--output', default='output', help='output directory (default: output/)')
     parser.add_argument('--config', help='load analysis parameters from a JSON file')
     parser.add_argument('--preset', choices=('standard', 'broad-peak', 'unsmoothed'), help='named parameter preset; explicit CLI flags override preset/config')
     parser.add_argument('--save-config', help='write effective analysis parameters to this JSON file')
+    parser.add_argument('--import-options-file', help='JSON mapping of resolved input paths to reviewed per-file column/unit choices')
+    parser.add_argument('--time-column', help='explicit source time column (when automatic header matching is insufficient)')
+    parser.add_argument('--signal-column', help='explicit source signal column (when automatic header matching is insufficient)')
+    parser.add_argument('--temperature-column', help='explicit source temperature column (when automatic header matching is insufficient)')
+    parser.add_argument('--time-unit', choices=('ms', 's', 'min'), default='ms', help='source time unit (default: ms)')
+    parser.add_argument('--temperature-unit', choices=('degC', 'K'), default='degC', help='source temperature unit (default: degC)')
+    parser.add_argument('--delimiter', choices=(';', ',', 'tab'), default=';', help='source field delimiter (default: semicolon; use tab for TSV)')
+    parser.add_argument('--decimal', choices=(',', '.'), default=',', help='source decimal mark (default: comma)')
+    parser.add_argument('--skiprows', type=int, default=29, help='metadata rows before the header (default: 29; use 0 for header-first files)')
     parser.add_argument('--leading-edge', nargs=2, type=float, metavar=('LOW_C','HIGH_C'), default=(130.,170.))
     parser.add_argument('--redhead-region', nargs=2, type=float, metavar=('LOW_C','HIGH_C'), default=(230.,400.))
     parser.add_argument('--prefactor', type=float, default=1e20, help='assumed first-order prefactor in s^-1 (default: 1e20)')
@@ -94,6 +108,15 @@ def main(argv=None) -> int:
                         help='maximum measured/reconstructed ramp mismatch in K (default 2; engineering screen, not calibration)')
     parser.set_defaults(**config_defaults)
     args = parser.parse_args(argv)
+    import_options_by_path = {}
+    if args.import_options_file:
+        try:
+            import_options_by_path = json.loads(Path(args.import_options_file).read_text(encoding='utf-8'))
+            if not isinstance(import_options_by_path, dict) or any(not isinstance(value, dict)
+                                                                    for value in import_options_by_path.values()):
+                raise ValueError('root and per-file entries must be JSON objects')
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            parser.error(f'Invalid --import-options-file: {exc}')
     # Validate key numeric settings early, before touching the input files.
     if not all(np.isfinite(value) for value in [*args.leading_edge, *args.redhead_region,
             args.prefactor, args.kinetic_initial_energy, args.kinetic_initial_prefactor, args.max_time_min,
@@ -101,6 +124,8 @@ def main(argv=None) -> int:
         parser.error('numeric settings must be finite')
     if args.window < 1:
         parser.error('--window must be >= 1')
+    if args.skiprows < 0:
+        parser.error('--skiprows must be non-negative')
     if args.prefactor <= 0:
         parser.error('--prefactor must be positive')
     if args.kinetic_initial_energy <= 0 or args.kinetic_initial_prefactor <= 0:
@@ -119,6 +144,12 @@ def main(argv=None) -> int:
         'kinetic_initial_prefactor': args.kinetic_initial_prefactor,
         'kinetic_no_baseline': args.kinetic_no_baseline, 'kinetic_model': args.kinetic_model,
         'kinetic_ramp_tolerance_K': args.kinetic_ramp_tolerance_K,
+        'time_column': args.time_column, 'signal_column': args.signal_column,
+        'temperature_column': args.temperature_column, 'time_unit': args.time_unit,
+        'temperature_unit': args.temperature_unit,
+        'delimiter': '\t' if args.delimiter == 'tab' else args.delimiter,
+        'decimal': args.decimal, 'skiprows': args.skiprows,
+        'input_import_options_by_path': import_options_by_path,
     }
     if args.save_config:
         save_path = Path(args.save_config)
@@ -129,33 +160,44 @@ def main(argv=None) -> int:
     missing_sources = []
     for source in sources:
         if source.is_file():
-            files.append(source)
+            if source.suffix.lower() in SUPPORTED_SPECTRUM_SUFFIXES:
+                files.append(source)
+            else:
+                parser.error(f'Unsupported input type {source.suffix or "(no extension)"!r}; use CSV, TSV, or TXT delimited text.')
         elif source.is_dir():
-            files.extend(sorted(source.rglob('*.csv')))
+            files.extend(supported_spectrum_files(source))
         else:
             missing_sources.append(str(source))
     if missing_sources:
         parser.error(f'Input path does not exist: {", ".join(missing_sources)}')
     if not files:
-        parser.error(f'No CSV files found at {", ".join(str(path) for path in sources)}')
-    if len({file.name.casefold() for file in files}) != len(files):
-        parser.error('Input filenames must be distinct within a batch; run duplicate names separately to avoid output collisions.')
+        parser.error(f'No CSV, TSV, or TXT files found at {", ".join(str(path) for path in sources)}')
+    if len({file.stem.casefold() for file in files}) != len(files):
+        parser.error('Input filenames must have distinct names (without extensions) within a batch to avoid output collisions.')
     outdir = Path(args.output); outdir.mkdir(parents=True, exist_ok=True)
     results, failures, warning_rows, kinetic_rows = [], [], [], []
     input_manifest = []
     diagnostic_dir = outdir / 'diagnostics'
     diagnostic_dir.mkdir(parents=True, exist_ok=True)
+    import_options = {key: getattr(args, key) for key in
+                      ('time_column', 'signal_column', 'temperature_column', 'time_unit', 'temperature_unit')}
+    import_options.update(skiprows=args.skiprows,
+                          delimiter='\t' if args.delimiter == 'tab' else args.delimiter,
+                          decimal=args.decimal)
     fig, ax = plt.subplots(figsize=(9, 5))
     for file_index, file in enumerate(files, 1):
         try:
+            per_file_options = import_options_by_path.get(str(file.resolve()), {})
+            file_import_options = {**import_options, **per_file_options}
             print(f'[{file_index}/{len(files)}] Loading and analyzing {file.name}', flush=True)
             input_manifest.append({'path': str(file.resolve()), 'name': file.name, 'size_bytes': file.stat().st_size, 'sha256': _sha256(file)})
             result = analyze_file(file, leading_edge_c=tuple(args.leading_edge),
                 redhead_region_c=tuple(args.redhead_region), prefactor_s_inv=args.prefactor,
                 smoothing_window=args.window, smoothing_method=args.filter,
-                max_time_min=None if args.max_time_min < 0 else args.max_time_min)
+                max_time_min=None if args.max_time_min < 0 else args.max_time_min,
+                import_options=file_import_options)
             results.append(result)
-            spec = load_spectrum(file)
+            spec = load_spectrum(file, **file_import_options)
             report = dict(spec.import_report, source_sha256=_sha256(file))
             (diagnostic_dir / f'{file.stem}_import.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
             if report['rejected_records'] or report['sorted_by_time'] or spec.points_temperature_corrected:

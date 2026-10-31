@@ -25,6 +25,8 @@ from .feedback import DiagnosticLog
 from .feedback_gui import open_feedback
 from .gui_review import ReviewDialog, ResultsDialog, text_panel
 from .run_session import RunPlan, execute, sha256
+from .import_preview_gui import ImportPreviewDialog
+from .importer import supported_spectrum_files
 from .branding import (NAVY, TEAL, TEAL_ACTIVE, BACKGROUND, INK, MUTED,
                        install_window_icons, brand_image, set_windows_app_identity)
 
@@ -36,7 +38,7 @@ BLUE = TEAL
 
 
 QUICK_START_STEPS = (
-    ("1  Import spectra", "Select Import CSV files or Add folder. For a first test, open "
+    ("1  Import spectra", "Select Import spectra or Add folder. CSV, TSV, and TXT delimited files are supported. For a first test, open "
      "examples/synthetic_two_peak_demo.csv from the extracted beta package. "
      "Time is in milliseconds; temperature is in °C; signal is in arbitrary units."),
     ("2  Explore the plot", "Show or hide traces, choose Overlay or Small multiples, "
@@ -107,7 +109,7 @@ def build_cli_arguments(settings: dict[str, object]) -> list[str]:
         raise ValueError("Input files must be provided as a list.")
     output_path = str(settings.get("output_path", "")).strip()
     if not input_paths or not input_paths[0]:
-        raise ValueError("Import one or more CSV spectra first.")
+        raise ValueError("Import one or more delimited-text spectra first.")
     missing = [path for path in input_paths if not Path(path).exists()]
     if missing:
         raise ValueError(f"Input path does not exist: {missing[0]}")
@@ -145,6 +147,8 @@ def build_cli_arguments(settings: dict[str, object]) -> list[str]:
             "--redhead-region", str(red_low), str(red_high), "--prefactor", str(prefactor),
             "--window", str(window), "--filter", method,
             "--max-time-min", str(number("max_time_min", "Heating-fit time limit"))]
+    if settings.get("input_import_options_by_path"):
+        args.extend(["--import-options-file", str(Path(output_path) / "import_options.json")])
     if bool(settings.get("kinetic_fit", False)):
         model, order = str(settings.get("kinetic_model", "single")), str(settings.get("kinetic_order", "1"))
         if model not in {"single", "two-state", "compare"} or order not in {"0", "1", "2", "fit"}:
@@ -163,7 +167,7 @@ def workflow_guidance(imported: int, visible: int, *, running: bool = False) -> 
     if running:
         return "Analyzing spectra… Review warnings and results when the run finishes."
     if imported == 0:
-        return "Step 1 of 4 · Import CSV spectra or add a folder to begin."
+        return "Step 1 of 4 · Import CSV, TSV, or TXT spectra, or add a folder to begin."
     if visible == 0:
         return "Step 2 of 4 · All plot traces are hidden. Select Show all to inspect; Include controls analysis."
     return (
@@ -296,7 +300,7 @@ class TpdSpectraApp:
         self.analysis_actions = ttk.Frame(toolbar)
         self.import_actions.grid(row=0, column=0, sticky="w")
         self.analysis_actions.grid(row=0, column=1, sticky="e")
-        self.import_button = ttk.Button(self.import_actions, text="Import CSV files…", command=self._import_files)
+        self.import_button = ttk.Button(self.import_actions, text="Import spectra…", command=self._import_files)
         self.import_button.pack(side="left")
         ttk.Button(self.import_actions, text="Add folder…", command=self._import_folder).pack(side="left", padx=(8, 0))
         ttk.Button(self.import_actions, text="Quick start", command=self._show_quick_start).pack(side="left", padx=(8, 0))
@@ -667,7 +671,7 @@ class TpdSpectraApp:
         self.axis.set_facecolor("#ffffff")
         self.axis.text(.5, .56, "Your spectra, ready to explore", transform=self.axis.transAxes,
                        ha="center", va="center", fontsize=17, color=INK, weight="bold")
-        self.axis.text(.5, .46, "Import CSV files or add a folder to begin.\nNew here? Quick start includes a synthetic-data walkthrough.",
+        self.axis.text(.5, .46, "Import CSV, TSV, or TXT files or add a folder to begin.\nNew here? Quick start includes a synthetic-data walkthrough.",
                        transform=self.axis.transAxes, ha="center", va="center", fontsize=10, color=MUTED, linespacing=1.8)
         self.axis.set_xticks([]); self.axis.set_yticks([])
         for edge in self.axis.spines.values(): edge.set_visible(False)
@@ -675,15 +679,27 @@ class TpdSpectraApp:
         self.canvas.draw_idle()
 
     def _import_files(self) -> None:
-        paths = filedialog.askopenfilenames(parent=self.root, title="Choose spectra to compare",
-                filetypes=(("CSV spectra", "*.csv"), ("All files", "*.*")))
+        paths = filedialog.askopenfilenames(parent=self.root, title="Choose delimited-text spectra",
+                filetypes=(("Delimited-text spectra", "*.csv *.tsv *.txt"),
+                           ("CSV files", "*.csv"), ("TSV files", "*.tsv"),
+                           ("Text files", "*.txt"), ("All files", "*.*")))
         if paths:
-            self._load_paths([Path(p) for p in paths])
+            self._preview_import_paths([Path(p) for p in paths])
 
     def _import_folder(self) -> None:
-        folder = filedialog.askdirectory(parent=self.root, title="Choose a folder containing CSV spectra")
+        folder = filedialog.askdirectory(parent=self.root, title="Choose a folder containing CSV, TSV, or TXT spectra")
         if folder:
-            self._load_paths(sorted(Path(folder).rglob("*.csv")))
+            paths = supported_spectrum_files(folder)
+            if paths:
+                self._preview_import_paths(paths)
+            else:
+                messagebox.showinfo("No spectra found", "This folder contains no .csv, .tsv, or .txt files.", parent=self.root)
+
+    def _preview_import_paths(self, paths: list[Path]) -> None:
+        ImportPreviewDialog(self, paths, self._load_previewed_spectra)
+
+    def _load_previewed_spectra(self, paths: list[Path], spectra: dict[str, object]) -> None:
+        self._load_paths(paths, preloaded=spectra)
 
     def _choose_output(self) -> None:
         folder = filedialog.askdirectory(parent=self.root, title="Choose where analysis results will be saved",
@@ -691,14 +707,14 @@ class TpdSpectraApp:
         if folder:
             self.output_path.set(folder)
 
-    def _load_paths(self, paths: list[Path]) -> None:
+    def _load_paths(self, paths: list[Path], preloaded: dict[str, object] | None = None) -> None:
         added, errors = 0, []
         for path in paths:
             key = str(path.resolve())
             if key in self.spectra:
                 continue
             try:
-                spec = load_spectrum(path)
+                spec = (preloaded or {}).get(key) or load_spectrum(path)
                 self.spectra[key] = {"path": path.resolve(), "spec": spec, "visible": True, "included": True, "sha256": sha256(path)}
                 self.file_table.insert("", "end", iid=key, values=("✓", "✓", path.name, f"{spec.signal.size:,}"))
                 added += 1
@@ -825,7 +841,27 @@ class TpdSpectraApp:
             self.status.set(f"PNG exported: {Path(path).name}")
 
     def _settings(self, input_files: list[Path], output_folder: Path) -> dict[str, object]:
-        return {"input_files": [str(path) for path in input_files], "output_path": str(output_folder),
+        normalized_files = {str(Path(path).resolve()) for path in input_files}
+        import_options = {}
+        for row in self.spectra.values():
+            path = str(Path(row["path"]).resolve())
+            if path not in normalized_files:
+                continue
+            report = row["spec"].import_report
+            columns = report["columns"]
+            import_options[path] = {
+                "skiprows": report["metadata_rows_skipped"],
+                "delimiter": report["delimiter"],
+                "decimal": report["decimal_mark"],
+                "time_column": columns["time"],
+                "signal_column": columns["signal"],
+                "temperature_column": columns["temperature"],
+                "time_unit": report["source_units"]["time"],
+                "temperature_unit": report["source_units"]["temperature"],
+            }
+        return {"input_files": [str(path) for path in input_files],
+                "input_import_options_by_path": import_options,
+                "output_path": str(output_folder),
                 "leading_low": self.leading_low.get(), "leading_high": self.leading_high.get(),
                 "redhead_low": self.peak_low.get(), "redhead_high": self.peak_high.get(),
                 "prefactor": self.prefactor.get(), "window": self.window.get(), "filter": self.filter_method.get(),

@@ -43,3 +43,35 @@ def test_gui_imports_the_shipped_demo_and_draws_it(root, monkeypatch, tmp_path):
     assert "1 visible of 1 imported" in app.status.get()
     app.figure.savefig(tmp_path / "demo.png")
     assert (tmp_path / "demo.png").stat().st_size > 1000
+
+
+def test_import_preview_allows_column_and_unit_correction_and_reports_rejected_rows(root, tmp_path):
+    import numpy as np
+    import pandas as pd
+    from tpd_spectra.import_preview_gui import ImportPreviewDialog
+
+    seconds = np.arange(60.)
+    seconds[10] = seconds[9]  # duplicate timestamp is explicitly rejected
+    frame = pd.DataFrame({"Clock": seconds, "Detector": np.linspace(1, 2, 60),
+                          "Sample": 300. + np.arange(60) * .5})
+    frame.loc[len(frame)] = ["invalid", 2.0, 400.0]
+    path = tmp_path / "custom.txt"
+    frame.to_csv(path, sep="\t", index=False)
+
+    app = TpdSpectraApp(root)
+    dialog = ImportPreviewDialog(app, [path], app._load_previewed_spectra)
+    assert dialog.records[0]["status"] == "Needs unit choice"
+    for name, column in (("time", "Clock"), ("signal", "Detector"), ("temperature", "Sample")):
+        dialog.column_vars[name].set(column)
+    dialog.time_unit.set("s")
+    dialog.temperature_unit.set("K")
+    dialog._settings_changed()
+    assert dialog.records[0]["status"] == "Ready with rejected rows"
+    assert "accepted: 59" in dialog.count_label.cget("text")
+    assert "rejected: 2" in dialog.count_label.cget("text")
+    dialog.import_button.invoke()
+    root.update()
+    assert len(app.spectra) == 1
+    imported = next(iter(app.spectra.values()))["spec"]
+    assert imported.signal.size == 59
+    assert len(imported.import_report["rejected_records"]) == 2

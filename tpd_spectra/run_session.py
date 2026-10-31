@@ -91,6 +91,10 @@ def execute(plan, messages, cancel, *, command_prefix=None):
             return
         plan.output.mkdir(exist_ok=False)
         created = True
+        import_options = json.loads(plan.settings_json).get("input_import_options_by_path", {})
+        if import_options:
+            (plan.output / "import_options.json").write_text(
+                json.dumps(import_options, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         write_record(plan, "running")
         prefix = command_prefix or ([sys.executable, "--tpd-cli"] if getattr(sys, "frozen", False)
                                     else [sys.executable, "-u", "-m", "tpd_spectra"])

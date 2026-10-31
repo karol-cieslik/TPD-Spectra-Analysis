@@ -17,7 +17,7 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 
 ### Features in the beta candidate
 
-- CSV import, multiple-trace overlay and small-multiple views; hide/remove traces.
+- CSV/TSV/TXT delimited-text import with preview, channel/unit confirmation and row checks; multiple-trace overlay and small-multiple views.
 - Smoothing/normalization **for visual comparison** and selection of leading-edge / peak-search intervals.
 - GUI temperature intervals set by sliders, exact numeric entry, or horizontal dragging (temperature-axis mode only).
 - Heating-rate regression, leading-edge apparent activation energy, first-order Redhead estimate, signal-quality diagnostics.
@@ -58,7 +58,9 @@ For tests, install `requirements-build.txt` and run `python -m pytest -q`. The c
 
 ## 3. Preparing and importing measurements
 
-### Expected CSV formats
+### Supported spectrum files
+
+The desktop and CLI accept **CSV, TSV, and TXT files when they contain delimited text**. The importer recognizes common comma, semicolon, and tab separators and decimal comma/dot layouts. Excel workbooks (`.xls`/`.xlsx`), PDFs, images, and instrument-specific binary files are not spectrum inputs. Portable `.tpd.json` files store a Studio project; they are reopened as projects, not imported as raw spectra.
 
 The original instrument exports contain a 29-row metadata block and typically use:
 
@@ -68,16 +70,19 @@ The original instrument exports contain a 29-row metadata block and typically us
 | Signal | `DHTA+` | Detector signal in instrument-dependent arbitrary units |
 | Temperature | `Temperatura` | Sample temperature in degrees Celsius |
 
-The importer also attempts conventional CSV headers (`Time`, `Signal`, `Temperature`, etc.), semicolon/comma/tab separators, and decimal comma/dot conventions. **Check the detected channels and units manually.** Time expressed in seconds but labeled `ms` can produce a wrong heating rate; detection does not substitute for instrument metadata.
+The importer also recognizes common headers such as `Time`, `Signal`, and `Temperature`. The **Import preview** shows detected columns, separator, decimal mark, skipped metadata rows, and the first data rows. Confirm or change the time, signal, and temperature column mapping. Units explicitly named in headers may be suggested; generic headers require you to choose source time units (`ms`, `s`, or `min`) and temperature units (`degC` or `K`). A suggestion is not instrument metadata: verify units against the instrument export before continuing.
 
-Before import, preserve the raw file, document detector channel and background correction, and verify whether the temperature represents the sample rather than a heater setpoint. Prefer one measurement per CSV with monotonically increasing nominal ramp temperature. Files with damaged columns or insufficient usable points may be rejected.
+The preview reports total, accepted, and rejected rows, any time sorting, and temperature points adjusted by the cleaning heuristic. Rejected rows are excluded and their row numbers/reasons remain in the import report. Correct the mapping or units in the preview and inspect the sample rows before adding the data to the workspace. The source file is never rewritten.
+
+Before import, preserve the raw file, document detector channel and background correction, and verify whether the temperature represents the sample rather than a heater setpoint. Prefer one measurement per file with monotonically increasing nominal ramp temperature. Files with damaged columns or insufficient usable points may be rejected.
 
 ### Loading spectra in the GUI
 
-1. Choose **Import CSV files** or **Add folder** on the toolbar.
-2. In **Spectra & view**, confirm the file list, point counts, and visibility checkmarks.
-3. Use **Show all**, **Hide all**, or **Remove** as appropriate; repeat imports should not intentionally duplicate the same path.
-4. Select overlay or small multiples, temperature or time on the horizontal axis, and optional smoothing/normalization.
+1. Choose **Import spectra** or **Add folder** on the toolbar. Folder import searches recursively for `.csv`, `.tsv`, and `.txt` files.
+2. Review each file's detected layout and channel/unit choices. Choose **Import ready files** only after the row counts and sample values look correct.
+3. In **Spectra & view**, confirm the file list, point counts, and visibility checkmarks.
+4. Use **Show all**, **Hide all**, or **Remove** as appropriate; repeat imports should not intentionally duplicate the same path.
+5. Select overlay or small multiples, temperature or time on the horizontal axis, and optional smoothing/normalization.
 
 The visual comparison settings are not all identical to the batch analysis settings. In particular, normalization is intended to compare shapes and must not be interpreted as changing measured detector calibration.
 
@@ -109,7 +114,7 @@ Shaded bands are *analysis-window guides*, not baseline estimates. After adjusti
 
 ## 5. Standard analysis workflow
 
-1. Import one or more CSV files and visually inspect the temperature ramp and signal shape.
+1. Import one or more delimited-text files and visually inspect the temperature ramp and signal shape.
 2. Select a plausible heating-rate fit region and time limit; exclude holds, ramps with changing slopes, or obvious temperature artifacts where possible.
 3. Set a leading-edge interval and peak-search interval.
 4. Choose a smoothing method/window conservatively. Smoothing can shift peak maxima, change fitted slopes and introduce artificial structures; record the chosen settings.
@@ -233,8 +238,11 @@ A practical independent-validation dataset should span: zero-, first-, second- a
 # Supported CLI options should always be confirmed for the checked-out version:
 tpd-spectra --help
 
-# Analyze a CSV and write results to a new folder:
+# Analyze a delimited-text spectrum and write results to a new folder:
 python -m tpd_spectra path/to/spectrum.csv --output tpd-results
+
+# Example with a generic tab-separated source in seconds and kelvin:
+tpd-spectra path/to/spectrum.tsv --output tpd-results --delimiter tab --decimal . --skiprows 0 --time-column Time --signal-column Signal --temperature-column Temperature --time-unit s --temperature-unit K
 
 # Explicitly request a first-order kinetic fit:
 python -m tpd_spectra path/to/spectrum.csv --output tpd-results --kinetic-fit --kinetic-order 1
@@ -289,12 +297,13 @@ The [Explorer guide](EXPLORER_MONTE_CARLO.md) covers four-order comparison and e
 
 ## Explicit units and constant-ramp screening
 
-The Python importer accepts `load_spectrum(path, time_unit="s", temperature_unit="K")`.
-Time units are ms/s/min and temperatures degC/K. Defaults remain ms/degC for
-existing files and GUI/CLI callers; a generic column name is not evidence of
-its units. Conversion and declared source units are recorded in the import report.
-The GUI does not yet expose these explicit-unit arguments. Prepare a traceable
-converted import copy or use the Python API for other source units.
+The Python importer accepts explicit `time_column`, `signal_column`,
+`temperature_column`, `time_unit`, and `temperature_unit` arguments.
+The GUI provides the same column/unit choices in Import preview. CLI batch
+users can pass `--time-column`, `--signal-column`, `--temperature-column`,
+`--time-unit`, `--temperature-unit`, `--delimiter`, `--decimal`, and
+`--skiprows`. Defaults remain ms/degC for backward compatibility; check the
+import report and source metadata. Do not rely on magnitude-based unit guesses.
 
 CLI kinetic fitting compares measured/cleaned temperatures with its anchored
 constant-ramp coordinate. `--kinetic-ramp-tolerance-K` defaults to 2 K and must

@@ -26,8 +26,10 @@ Bootstrap refits can be computationally expensive. The caller should run this aw
 
 ## Consolidation status
 
-This separate research API is retained from PR #2; it is not connected to the
-desktop workflow and is not interchangeable with Explorer Monte Carlo. Its
+This opt-in research API is present in `main`; it is not connected to the
+desktop workflow and is not interchangeable with Explorer Monte Carlo. It
+currently reports intervals only for energy and prefactor, unlike Explorer
+Monte Carlo's estimated free-parameter ranges. Its
 20-refit floor is an experimental operational rule, not evidence of interval
 coverage. Refits with diagnostic warnings are counted as unsuccessful. Fixed
 zero order is rejected here because its prefactor/scale pair is non-unique;

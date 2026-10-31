@@ -168,12 +168,12 @@ The GUI can independently export a comparison PNG at 300 dpi.
 | Polanyi–Wigner model | Numerically integrates depletion and fits selected kinetic parameters | Assumes a nominally constant heating rate and normalized coverage |
 | Simultaneous components (1–3) | Jointly fits component energies and nonnegative signal scales; allows fixed positive orders, prefactors and coverages | Independent-population model; component count is a hypothesis, not confirmed physical sites |
 | Fixed single-state zero order | Profiles the depletion edge and reports conditional prefactor/scale brackets | Brackets are not unique prefactors or statistical confidence intervals |
-| Parametric Monte Carlo | Refits iid Gaussian-noise realizations around a fitted reference | Conditional stability only, not microscopic MC, MCMC or mechanism probabilities |
+| Parametric Monte Carlo | Refits iid Gaussian-noise realizations around a fitted reference; can report ranges for estimated energy, prefactor, signal scale, optional baseline and free order | Conditional ranges only; fixed assumptions and zero-order non-unique prefactor/scale receive no intervals; not microscopic MC, MCMC or mechanism probabilities |
 | Identifiability warnings | Detects numerical ill-conditioning and fits near bounds | Does not establish unique mechanism or validated confidence intervals |
 
 All energies require absolute temperature in kelvin in the rate equations. Review residuals, baselines, intervals, heating-rate calibration and fitted-parameter correlation. A high R² alone does not establish the desorption mechanism.
 
-Read the [User and Scientific Methods Manual](docs/USER_AND_SCIENTIFIC_MANUAL.md) for equations, assumptions, interpretation and reproducibility details. Experimental uncertainty and numerical benchmark research remain in separate development work until independently evaluated.
+Read the [User and Scientific Methods Manual](docs/USER_AND_SCIENTIFIC_MANUAL.md) for equations, assumptions, interpretation and reproducibility details. Optional uncertainty and benchmark research is available in `main`, but the nonlinear ranges remain conditional and are not experimentally coverage-validated.
 
 ## 📚 Documentation
 

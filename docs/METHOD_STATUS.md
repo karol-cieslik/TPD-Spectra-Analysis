@@ -19,8 +19,8 @@ experimental and are outside this correction. See [the method description](ZERO_
 | First-order Redhead | Approximate energy with user-assumed prefactor, isolated peak and approximately linear ramp | Independent synthetic first-order reference. Sensitivity to a decade change in prefactor is exported. Not a zero/second-order method. |
 | Single-state kinetic fitting | Exploratory constant-ramp Polanyi–Wigner fit; normalized initial population 1; arbitrary-unit detector scale and optional constant baseline | Numerical and recovery tests, Jacobian/bounds diagnostics; no unique-mechanism guarantee or general experimental validation. |
 | Four-order Explorer | Experimental comparison of fixed 0/1/2 and fitted fractional order on the same selected observations | Independent separable coverage references at six orders and three ramps; synthetic fitter tests. Full-peak selection, baseline and initialization remain consequential. |
-| Explorer Monte Carlo | Experimental parametric refitting with seeded iid Gaussian noise around one fitted reference | Repeatability, cancellation and accounting tests. Conditional percentile ranges of successful refits only, withheld below 100 successes; this operational floor does not establish coverage. Not MCMC, Bayesian inference or a microscopic kinetic Monte Carlo lattice simulation. |
-| Two-state and global fits | Exploratory numerical APIs | Correlated parameters, model inadequacy and error-model assumptions remain unresolved. No general uncertainty validation. |
+| Explorer Monte Carlo | Experimental parametric refitting with seeded iid Gaussian noise around one fitted reference | Conditional percentile ranges now cover free positive-order parameters (energy, prefactor, scale, optional baseline; order only when fitted). Fixed orders and the non-identifiable zero-order prefactor/scale receive no interval. Ranges are withheld below 100 successful refits; this operational floor does not establish coverage. Not MCMC, Bayesian inference or microscopic kinetic Monte Carlo. |
+| Two-state and global fits | Exploratory numerical APIs | Correlated parameters, model inadequacy and error-model assumptions remain unresolved. Standard outputs have no parameter intervals and no general uncertainty validation. |
 | Simultaneous 1–3 positive-order components | Experimental full-spectrum GUI/API; independent PW populations with fixed per-component order/prefactor/coverage, jointly fitted energies/scales and shared offset/drift | Independent quadrature recovery, mixed-order, detector-unit, degeneracy, label-permutation, cancellation and export tests. Conditional local intervals withheld for diagnosed ambiguity; no experimental coverage validation, component Monte Carlo or multicomponent zero-order support. See MULTICOMPONENT_FITTING.md. |
 | Nonlinear ramps, automated mechanism assignment, calibrated coverage and general confidence limits | Not supported as validated claims | Require separate scientific development and independent experimental evidence. |
 
@@ -43,9 +43,11 @@ Wrong or ambiguous units; silent source/output loss; results paired with incorre
 
 ## Independent review still required
 
-Optional research benchmark and bootstrap tools from earlier development branches
-are preserved in the [repository's research notes](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/docs/RESEARCH_TOOLS.md). They are not connected to
-ordinary desktop analysis and do not supply validated experimental confidence
-limits. The separate research bootstrap rejects fixed zero order.
+Optional research benchmarks and the nonlinear bootstrap API are present in
+`main` and preserved in `docs/RESEARCH_TOOLS.md`. They are not
+connected to ordinary desktop analysis and do not supply validated experimental
+confidence limits. The bootstrap rejects fixed zero order. Explorer Monte Carlo
+is an optional desktop workflow, but its conditional refit ranges are likewise
+not experimental confidence limits.
 
 No independent human scientific sign-off, real-instrument validation, interval-coverage report, representative usability study or clean-machine acceptance is claimed. Human visual/DPI and independent Windows 10/11 installation acceptance remain outstanding.

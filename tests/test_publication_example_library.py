@@ -102,3 +102,11 @@ def test_figure_example_uses_nominal_time_not_measured_time():
     first = imported["Temperatura"].iloc[0] + 273.15
     expected_ms = (imported["Temperatura"] + 273.15 - first) / row["beta_K_s"] * 1000
     np.testing.assert_allclose(imported["ms"], expected_ms, atol=1e-6)
+
+def test_clean_synthetic_example_keeps_documented_leading_edge(root):
+    from tpd_spectra.workflow_gui import WorkflowApp
+    app = WorkflowApp(root)
+    dialog = app.open_example()
+    dialog.open()
+    settings = app.project.method_settings("Leading edge")
+    assert (settings["lower"], settings["upper"]) == (90., 110.)

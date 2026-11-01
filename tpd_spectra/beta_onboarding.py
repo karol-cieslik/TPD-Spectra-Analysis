@@ -170,8 +170,13 @@ class ExampleDialog:
                 for method in ('Leading edge', 'Redhead', 'Polanyi–Wigner'):
                     self.app.project.method_settings(method)['beta'] = meta['beta_K_s']
                 region = self.app.project.context()[1]
+                # Preserve the documented clean first-order leading edge;
+                # an entire peak is not a valid rising-edge regression window.
+                edge = ((90., 110.) if row['file'] == 'first_order_single_peak.csv'
+                        and region.lower <= 90. < 110. <= region.upper
+                        else (region.lower, region.upper))
                 self.app.project.method_settings('Leading edge').update(
-                    lower=region.lower, upper=region.upper)
+                    lower=edge[0], upper=edge[1])
                 self.app.project.method_settings('Polanyi–Wigner').update(energy=1.2, prefactor=1e13)
                 key = f'{dataset.id}/{self.app.project.active_region}'
                 from .workflow_modeling import DEFAULTS

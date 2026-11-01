@@ -75,7 +75,7 @@ class ComponentsController:
             return
         if self.window is not None and self.window.winfo_exists():
             if count is not None and len(self.rows)!=count:
-                self.message.set('Close this editor before starting a new two-peak hypothesis; current edits are retained.')
+                self.message.set('Apply any pending edits, then close this editor before reopening with a different component count.')
             self.window.lift()
             return
         self.editor_key=self.panel.key()
@@ -107,21 +107,29 @@ class ComponentsController:
             'Three visible features do not establish three physical states. Named regions do not crop this calculation.',
             wraplength=980).pack(fill='x',pady=8)
         settings=deepcopy(self.settings())
+        self._removed_rows={}
         dataset,_=self.app.project.context()
         t=dataset.spectrum.temperature_clean_c
         y=processed_signal(dataset,dataset.processing)
         if count is not None and len(settings['components'])!=count:
             settings['components']=[asdict(suggest_component(p,float(self.panel.variables['beta'].get()),label=f'Peak {i+1}'))
                 for i,p in enumerate(suggest_peak_positions(t,y,count))]
+        count_row=ttk.Frame(body)
+        count_row.pack(fill='x',pady=4)
+        ttk.Label(count_row,text='1. Number of kinetic components:').pack(side='left')
+        self.component_count=tk.IntVar(self.window,value=len(settings['components']))
+        for number in (1,2,3):
+            ttk.Radiobutton(count_row,text=str(number),variable=self.component_count,value=number,
+                command=self.set_component_count).pack(side='left',padx=(12,0))
         rate_row=ttk.Frame(body)
         rate_row.pack(fill='x',pady=4)
-        ttk.Label(rate_row,text='1. Verify heating rate (K/s):').pack(side='left')
+        ttk.Label(rate_row,text='2. Verify heating rate (K/s):').pack(side='left')
         ttk.Entry(rate_row,textvariable=self.panel.variables['beta'],width=10).pack(side='left',padx=6)
         suggestion=source_heating_rate(dataset)
         ttk.Button(rate_row,text=(f"Confirm source suggestion: {suggestion['beta_K_s']:g} K/s…" if suggestion
             else 'No source rate; enter verified value'),state='normal' if suggestion else 'disabled',
             command=self.confirm_rate).pack(side='left')
-        ttk.Label(body,text='2. Click approximate peak positions below (left click cycles through the rows), or edit °C positions.\n'
+        ttk.Label(body,text='3. Click approximate peak positions below (left click cycles through the rows), or edit °C positions.\n'
             'Auto hints may include a shoulder. They do not identify physical states. New rows use n=1, ν=1e13 s⁻¹, θ₀=1; saved assumptions are retained.',wraplength=940).pack(fill='x')
         self.position_figure=Figure(figsize=(8,2.2),dpi=100,layout='constrained')
         self.position_axis=self.position_figure.add_subplot(111)
@@ -143,8 +151,6 @@ class ComponentsController:
         self.advanced_toggle.pack(anchor='w')
         self.advanced_frame=ttk.Frame(body)
         self.rows=[]
-        row_options=ttk.Frame(self.advanced_frame)
-        row_options.pack(fill='x')
         self.rows_frame=ttk.Frame(self.advanced_frame)
         self.rows_frame.pack(fill='x',pady=8)
         for i,(title,topic) in enumerate(zip(
@@ -157,8 +163,6 @@ class ComponentsController:
             help_button(header,self.app,topic).pack(side='left',padx=(3,0))
         for definition in settings['components']:
             self.add_row(definition)
-        ttk.Button(row_options,text='Add component (up to 3)',command=self.add_row).pack(side='left')
-        ttk.Button(row_options,text='Remove last component',command=self.remove_row).pack(side='left',padx=6)
         self.fit_baseline=tk.BooleanVar(self.window,value=settings['fit_baseline'])
         self.fit_drift=tk.BooleanVar(self.window,value=settings['fit_drift'])
         for label,variable,topic in (
@@ -192,7 +196,7 @@ class ComponentsController:
             button.grid(row=index//3,column=index%3,padx=3,pady=3,sticky='ew')
             if index==1:
                 self.fit_button=button
-        self.message=tk.StringVar(self.window,value='Review the rate, select two positions, then Fit Both Peaks. Advanced edits are preserved until you use Re-estimate.')
+        self.message=tk.StringVar(self.window,value='Verify the rate and approximate positions, then fit the selected number of components. Advanced edits are preserved until you use Re-estimate.')
         message_label=ttk.Label(footer,textvariable=self.message,wraplength=980)
         message_label.pack(fill='x',pady=4)
         footer.bind('<Configure>',lambda e:message_label.configure(wraplength=max(300,e.width-16)))
@@ -210,6 +214,23 @@ class ComponentsController:
             self.advanced_frame.pack(fill='x',after=self.advanced_toggle)
         else:
             self.advanced_frame.pack_forget()
+
+    def set_component_count(self):
+        """Change the hypothesis count without discarding surviving row edits."""
+        try:
+            if self.app.job_busy or self.panel.key()!=self.editor_key:
+                raise ValueError('Finish the calculation and reopen this editor for the current dataset before changing the count.')
+            requested=int(self.component_count.get())
+            if requested not in (1,2,3):
+                raise ValueError('Choose 1, 2 or 3 kinetic components.')
+            while len(self.rows)>requested:
+                self.remove_row()
+            while len(self.rows)<requested:
+                self.add_row()
+            self.message.set(f'{requested} component(s) selected. Review positions and fixed assumptions before fitting.')
+        except ValueError as exc:
+            self.component_count.set(len(self.rows))
+            self.message.set(str(exc))
 
     def confirm_rate(self):
         if self.panel.key()!=self.editor_key:
@@ -242,7 +263,8 @@ class ComponentsController:
             ttk.Button(self.position_frame,text='Re-estimate from positions',command=self.estimate_positions).pack(side='left',padx=6)
             self.draw_positions()
             self.position_beta=beta
-            self.fit_button.configure(text='Fit Both Peaks' if len(self.rows)==2 else f'Fit {len(self.rows)} Components Together')
+            self.component_count.set(len(self.rows))
+            self.fit_button.configure(text=f'Fit {len(self.rows)} Component' + ('s' if len(self.rows)>1 else ''))
             self.fixed_summary.set('Retained fixed assumptions: '+ '; '.join(
                 f'{v[0].get()}: n={v[1].get()}, ν={v[3].get()} s⁻¹, θ₀={v[4].get()}' for v,_ in self.rows)
                 +'. Shared offset '+('on' if self.fit_baseline.get() else 'off')+', drift '+('on' if self.fit_drift.get() else 'off')+'.')
@@ -282,7 +304,7 @@ class ComponentsController:
             self.draw_positions()
             self.positions_dirty=False
             self.position_beta=float(self.panel.variables['beta'].get())
-            self.message.set('First-order energy guesses and ±30% search bounds updated. These are heuristic starts, not measured energies or uncertainty intervals. Fit Both Peaks to optimize.')
+            self.message.set('First-order energy guesses and ±30% search bounds updated. These are heuristic starts, not measured energies or uncertainty intervals. Fit the selected components to optimize.')
             return True
         except ValueError as exc:
             self.message.set(str(exc))
@@ -299,13 +321,15 @@ class ComponentsController:
         self.position_vars[index].set(f'{event.xdata:.3f}')
         if self.estimate_positions():
             self.next_position=(index+1)%len(self.position_vars)
-            self.message.set(f'Peak {index+1} selected at {event.xdata:.2f} °C. Next click selects Peak {self.next_position+1}. Review positions, then Fit Both Peaks.')
+            self.message.set(f'Peak {index+1} selected at {event.xdata:.2f} °C. Next click selects Peak {self.next_position+1}. Review positions, then fit the components.')
         else:
             self.position_vars[index].set(previous)
 
     def add_row(self,definition=None):
         if len(self.rows)>=3:
             return
+        if definition is None:
+            definition=self._removed_rows.pop(len(self.rows)+1,None)
         if definition is None:
             dataset,_=self.app.project.context()
             position=suggest_peak_positions(dataset.spectrum.temperature_clean_c,
@@ -326,7 +350,11 @@ class ComponentsController:
 
     def remove_row(self):
         if len(self.rows)>1:
-            _,widgets=self.rows.pop()
+            variables,widgets=self.rows.pop()
+            values=[variable.get() for variable in variables]
+            self._removed_rows[len(self.rows)+1]=dict(label=values[0],order=values[1],
+                energy_eV=values[2],prefactor_s_inv=values[3],initial_coverage=values[4],
+                energy_bounds=(values[5],values[6]))
             for widget in widgets:
                 widget.destroy()
             self.refresh_positions()

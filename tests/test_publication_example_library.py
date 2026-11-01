@@ -79,7 +79,7 @@ def test_menu_is_compact_and_publishable_examples_are_separate(root):
     assert "Published data opened" in app.status.get()
     root.update_idletasks()
     assert "Zaki" in app.example_source_note.cget("text")
-    assert app.example_source_note.winfo_ismapped()
+    assert app.example_source_note.grid_info()  # root mapping varies in CI
     assert sum(row["visible"] for row in app.spectra.values()) == 1
     xlo, xhi = app.axis.get_xlim()
     assert xlo < dataset.spectrum.temperature_clean_c.min()

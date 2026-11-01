@@ -97,6 +97,8 @@ jobs:
           run_tpd_spectra_gui.py
       - name: Verify frozen executable with shipped demo
         run: python scripts/verify_windows_build.py dist/TPD-Spectra-Studio.exe
+      - name: Refresh versioned Quick Start PDF
+        run: python scripts/generate_beta_guide.py
       - name: Assemble portable package
         shell: pwsh
         run: |

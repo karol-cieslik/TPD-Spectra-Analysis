@@ -55,6 +55,7 @@ def test_main_pr_gets_frozen_build_and_version_metadata():
     assert "branches: [main, 'fix/beta-feedback-14-17']" in workflow
     assert '--version-file output/windows-version.txt' in workflow
     assert 'scripts/prepare_windows_beta.py' in workflow
+    assert 'python scripts/generate_beta_guide.py' in workflow
     assert 'python scripts/beta_package.py release-package' in workflow
     assert 'write_checksums' in workflow
     assert "- 'docs/**'" in workflow

@@ -11,7 +11,7 @@ from importlib.metadata import distributions
 ROOT = Path(__file__).resolve().parents[1]
 FILES = (
     'README.md', 'CHANGELOG.md', 'CITATION.cff', 'LICENSE', 'ASSET-RIGHTS.md',
-    'START_HERE.md', 'tpd_spectra/assets/studio-mark.svg',
+    'START_HERE.md', 'tpd_spectra/assets/studio-mark.svg', 'assets/b7-synthetic-component-fit.png',
     'docs/USER_AND_SCIENTIFIC_MANUAL.md', 'docs/METHOD_STATUS.md',
     'docs/ZERO_ORDER_FITTING.md', 'docs/MULTICOMPONENT_FITTING.md',
     'docs/EXPLORER_MONTE_CARLO.md', 'docs/SUPPORT_AND_COMPATIBILITY.md',

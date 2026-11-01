@@ -1,12 +1,12 @@
 # TPD Spectra Studio — User and Scientific Methods Manual
 
-**Document status:** beta user and scientific manual · **Software source:** focused two-peak feature candidate based on `main` · **Current beta version:** 0.11.0b7 research beta (not publicly tagged)
+**Document status:** beta user and scientific manual · **Software source:** `main`, including merged PR #37 · **Current beta version:** 0.11.0b7 research-beta prerelease
 **Audience:** experimental surface scientists, TPD/TDS users, students, and developers.  
 **Scope:** current application behavior and defensible model assumptions. This is documentation, not a claim of experimental validation. Please open an issue for any discrepancy between this manual and the executable.
 
 For the default three-stage desktop, follow the [workflow guide](redesign/WORKFLOW_USER_GUIDE.md).
 Classic/batch controls described below remain available in **View → Classic / batch workspace**. File, Examples, View and Help menus keep less-frequent commands out of the analysis space.
-The b5 candidate opens a seeded noisy demo with a prepared region, provides visible
+The current beta opens a seeded noisy demo with a prepared region, provides visible
 Monte Carlo progress/cancellation and adds [simultaneous component fitting](MULTICOMPONENT_FITTING.md).
 
 ## 1. Purpose and scope
@@ -15,7 +15,7 @@ TPD Spectra Studio provides a reproducible workflow for importing temperature-pr
 
 The principal motivation is to reduce repetitive manual plotting and fitting while keeping assumptions, data choices, and diagnostic warnings visible. It is **not** an automatic chemical-mechanism identifier. A visually excellent fit does not demonstrate that a single desorption process, a specific reaction order, or a particular adsorption-site population is physically unique.
 
-### Features in the beta candidate
+### Features in the research beta
 
 - CSV/TSV/TXT delimited-text import with preview, channel/unit confirmation and row checks; multiple-trace overlay and small-multiple views.
 - Smoothing/normalization **for visual comparison** and selection of leading-edge / peak-search intervals.
@@ -192,7 +192,7 @@ The two-state fit represents two independent populations with separate energies,
 
 Outputs may include R², RMSE, normalized RMSE, AIC/AICc/BIC, Jacobian conditioning and flags for insufficiently constrained parameters. AIC/AICc/BIC comparisons should be interpreted only for fits to the same observations using compatible likelihood/error assumptions. Residual patterns, boundary solutions and parameter correlation can make nominal optimization success misleading.
 
-The beta candidate includes singular-value-based **numerical identifiability warnings** for one-state fits. These are screening metrics, not confidence intervals and not proof of structural identifiability.
+The research beta includes singular-value-based **numerical identifiability warnings** for one-state fits. These are screening metrics, not confidence intervals and not proof of structural identifiability.
 
 ### 6.7 Which reported parameters have uncertainty estimates?
 

@@ -1,8 +1,11 @@
 # TPD Spectra Studio 0.11.0b7 — research beta notes
 
-Current source: `main`. Use a fresh Windows desktop build for the current main commit; `VERSION.json` records its source commit and `SHA256SUMS.txt` records package file hashes. Earlier 0.11.0b5 packages used the same version name across different commits; b6 was the distinct beta for peak-switch/export improvements; b7 adds example-library and layout changes. This remains an informal research beta, not a stable release or experimental validation. See [START_HERE](../../START_HERE.md) for download and extraction instructions.
-
-The focused two-peak improvements below require a feature-PR build until reviewed and merged; earlier main artifacts with the same version do not include them.
+Public download: [v0.11.0b7 — Research Beta](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7).
+Extract the complete Windows ZIP and retain its docs/examples. `VERSION.json`
+records the source commit; the ZIP checksum and packaged `SHA256SUMS.txt` support
+integrity checks. The package includes the changes merged in PR #37. Earlier
+Actions artifacts sharing the b7 label may not include them. This remains a
+research beta; scientific estimates are conditional on the chosen model.
 
 ## Changes in b7
 
@@ -18,7 +21,7 @@ The focused two-peak improvements below require a feature-PR build until reviewe
   views; missing digitization points are omitted, not filled. Figure-derived
   time is an explicit nominal-ramp coordinate and is **not observed time**.
   CO correspondence and noncommercial/reuse-unclear figures remain excluded.
-- Candidate two-peak improvements: **Fit 2 Peaks… → verify rate → select
+- Two-peak improvements: **Fit 2 Peaks… → verify rate → select
   positions → Fit Both Peaks**, with numeric position entry and Advanced controls.
   First-order Redhead guesses and ±30% search bounds are initialization aids.
 - Published heating rates are suggestions requiring explicit confirmation.
@@ -34,8 +37,11 @@ The focused two-peak improvements below require a feature-PR build until reviewe
   PW model and separate one-peak engines are unchanged. See the updated
   [workflow, safeguards and validation](../MULTICOMPONENT_FITTING.md).
 
-This focused v0.11.0b7 work is a review candidate. A PR/build is not a release;
-no merge, tag or official release is included.
+This versioned prerelease is intended for public beta feedback. Independent
+experimental validation, calibrated uncertainty and broader human visual/DPI
+and clean-machine acceptance remain open. Please report bugs, suggestions or
+scientific discrepancies to **karol.j.cieslik@gmail.com** or use in-app Help →
+Report a bug / Send feedback.
 
 ## Fixes in b6
 

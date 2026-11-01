@@ -70,7 +70,7 @@ reporting smooth local-linear intervals in this implementation.
 
 ## Workflow and numerical safeguards
 
-### Quick two-peak workflow (v0.11.0b7 candidate)
+### Quick two-peak workflow (v0.11.0b7 research beta)
 
 1. Open a spectrum, select its dataset and a named navigation region, then use
    **Modeling → Fit 2 Peaks…**. Two rows are created; this button opens a

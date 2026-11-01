@@ -1,4 +1,4 @@
-## 0.11.0b7 — published examples and focused desktop navigation (unreleased beta)
+## 0.11.0b7 — published examples and focused desktop navigation (research-beta prerelease)
 
 - Add **Fit 2 Peaks…**, clickable/numeric positions, temperature-aware first-order
   energy guesses and heuristic bounds, with separate Advanced controls.
@@ -8,8 +8,8 @@
   baseline-only/poor-fit/collapsed-component diagnostics and distinct plot styles.
   Reproduce the Zaki flat-fit failure and retain its residual/model limitations.
   Single-state kinetic engines are unchanged. Update Help, manuals, Quick Start
-  and synthetic/experimental regression checks. This remains a beta candidate;
-  no release or merge is authorized by these changes.
+  and synthetic/experimental regression checks. Published as a versioned research
+  beta for feedback, with scientific limitations retained.
 - Replace the crowded two-row action strip with a compact File/Examples/View/Help
   menu and a short quick-action row, preserving exports and project controls.
 - Separate 21 simulated truth-known examples from nine publication-derived spectra

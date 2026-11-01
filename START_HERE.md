@@ -5,12 +5,11 @@ example first; no experimental data is needed. Use a build whose exact main
 commit has a successful Windows desktop workflow. Experimental validation and
 testing on different Windows displays are still in progress.
 
-The current main source includes PR #32's reviewed CSV/TSV/TXT import preview.
-Download the latest successful **main** artifact from
-[Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain).
-Check `VERSION.json` for its exact source commit and `SHA256SUMS.txt` for checksums.
-No public prerelease has been published. Human visual/DPI and clean-machine
-Windows acceptance remain outstanding; see [release notes](docs/beta/RELEASE_NOTES.md).
+**[Download the Windows ZIP](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/download/v0.11.0b7/tpd-spectra-windows-x64.zip)** from the [v0.11.0b7 Research Beta prerelease](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7).
+The package includes the merged two-peak improvements. Check `VERSION.json` for
+its source commit and `SHA256SUMS.txt` for package checksums. A separate checksum
+covers the downloaded ZIP. Broader visual/DPI and clean-machine testing remains
+ongoing; see [release notes](docs/beta/RELEASE_NOTES.md).
 
 1. Extract the **whole ZIP** to a writable folder. Keep the executable, `docs`
    and `examples` together. No Python installation is needed for the Windows build.
@@ -61,8 +60,8 @@ Monte Carlo is conditional parametric refitting, not microscopic kinetic MC or
 a validated confidence procedure. Overlap, drift and correlated noise require
 additional scrutiny. A good fit does not establish a physical mechanism.
 
-The following two-peak improvements require the focused feature-PR build until
-reviewed/merged; earlier b7 main artifacts do not include them.
+The versioned b7 prerelease includes the two-peak improvements merged in PR #37.
+Earlier development artifacts with the same version label may lack them.
 
 For two peaks, use **Fit 2 Peaks…** in Modeling, verify the heating rate,
 explicitly confirm any source suggestion, click both approximate positions

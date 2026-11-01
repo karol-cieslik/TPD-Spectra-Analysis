@@ -12,62 +12,46 @@ Built for surface-science researchers who need transparent fitting methods, repr
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2f855a.svg)](LICENSE)
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
-[![Development status](https://img.shields.io/badge/status-beta%20review%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/tree/main)
+[![Development status](https://img.shields.io/badge/status-research%20beta-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/tree/main)
 
-[**Download Windows beta 0.11.0b7**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/41296103371) · [**Get started**](START_HERE.md) · [**Worked examples**](docs/beta/WORKED_EXAMPLES.html) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contribute**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/CONTRIBUTING.md)
+[**Download Windows beta 0.11.0b7**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7) · [**Get started**](START_HERE.md) · [**Worked examples**](docs/beta/WORKED_EXAMPLES.html) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contribute**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## Try the beta — 0.11.0b7
+## Try the research beta — 0.11.0b7
 
-The current research beta source is on `main`, including merged PRs #19–21 and #32, the peak-switch/export corrections, and the streamlined example-library layout. It includes readable Results with parameter provenance, 41-topic offline scientific Help, five guided exercises, Monte Carlo progress/cancellation, constrained overlapping-component fitting, and a reviewed CSV/TSV/TXT import preview.
+**[Download the Windows ZIP](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/download/v0.11.0b7/tpd-spectra-windows-x64.zip)** · [Release notes and checksums](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7)
 
-**[Download TPD Spectra Studio 0.11.0b7 for Windows (verified `main` build)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/41296103371)**.
-Under **Artifacts**, select `tpd-spectra-windows-x64-beta-0.11.0b7` (GitHub sign-in may be required). Extract the entire ZIP and run `TPD-Spectra-Studio.exe`.
-Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for file
-checksums. Actions downloads expire; no tagged prerelease has been published.
-The executable is unsigned; follow your institution's software policy.
+1. Download and extract the **whole ZIP** into a writable folder. Keep `docs` and `examples` beside `TPD-Spectra-Studio.exe`.
+2. Run **TPD-Spectra-Studio.exe**. No Python installation is needed. The unsigned beta is subject to your institution’s software policy.
+3. Choose **Browse examples… → Simulated → first order single peak**. In **Kinetic Analysis → Redhead**, verify **1 K/s** and **1e13 s⁻¹**; the synthetic reference gives about **1.2 eV**.
+4. To fit both demo peaks, choose **Modeling → Fit 2 Peaks…**, verify the rate, select approximate positions and choose **Fit Both Peaks**. Inspect each contribution, their sum, residuals and warnings.
 
-Use the latest successful **main** Windows build; confirm its commit in `VERSION.json`. Older 0.11.0b5 artifacts shared a version label across different commits; use the new b7 package for the example library and streamlined top menu, alongside the peak-switching and report-feedback fixes. Automated build checks cover packaging and regression tests, while human visual/DPI acceptance and installation on Windows 10/11 without Python remain outstanding. Complete those checks on the exact package before colleague distribution. This beta does not claim independent experimental validation.
+Read [START_HERE](START_HERE.md), the [worked Quick Start](docs/beta/WORKED_EXAMPLES.html), or the [brief PDF](docs/beta/QUICK_START.pdf). `VERSION.json` records the exact source commit; `SHA256SUMS.txt` covers packaged files. The release ZIP also has a separate SHA-256 checksum.
 
-Start with [the five-minute walkthrough](START_HERE.md) and the
-[full worked Quick Start](docs/beta/WORKED_EXAMPLES.html) (offline HTML).
-The compact **File / Examples / View / Help** menu keeps the analysis area clear.
-**Browse examples…** separates [21 simulated spectra](examples/beta_collection/README.md)
-from [nine publication-derived traces](examples/publication_data/README.md), each
-showing its paper, figure, DOI, licence and limitations before loading.
-These experimental inputs are *not* known-ground-truth kinetic benchmarks.
+![Exported synthetic three-component fit](assets/b7-synthetic-component-fit.png)
 
-The default demo opens with a named first peak and seeded 2% detector noise.
-Monte Carlo has visible progress, elapsed/estimated time and cancellation.
-[Simultaneous physical component fitting](docs/MULTICOMPONENT_FITTING.md)
-models overlapping contributions jointly, with explicit fixed kinetic assumptions,
-individual curves, summed residuals and conservative uncertainty warnings.
-The focused b7 candidate adds **Fit 2 Peaks…** with interactive positions,
-source heating-rate confirmation, first-order energy hints, thermal multistart
-and prominent failed/collapsed-fit diagnostics. See the
-[two-peak workflow and retained Zaki stress test](docs/MULTICOMPONENT_FITTING.md).
-These changes require a build from this feature PR; the earlier linked main
-artifact does not contain them. No new release is published by this PR.
-The beta includes the three-stage workflow, model comparison, conditional
-Monte Carlo refitting, save/load projects, and PDF/CSV/JSON/figure exports.
-The beta includes parameter provenance (fitted versus assumed),
-readable Results tabs, searchable scientific Help and five in-app tutorials.
+*Actual PNG exported by the downloaded Windows build: a synthetic three-component reference with individual contributions, their complete sum and residuals. This is a numerical demonstration, not experimental validation.*
 
-**Feedback is welcome:** use **Help → Report a bug / Send feedback** in the application
-to inspect and copy a diagnostic report or save a ZIP. No account, automatic
-upload, or experimental spectrum is required. You can email
-**Dr. Karol Cieślik** at **karol.j.cieslik@gmail.com**. See the
-[short tester checklist](docs/beta/TESTER_CHECKLIST.md),
-[optional feedback form](docs/beta/FEEDBACK_FORM.md), and
-[release notes](docs/beta/RELEASE_NOTES.md).
+### Feedback and suggestions
 
-**Scientific status:** numerical and synthetic tests have passed, but independent
-experimental validation and hands-on acceptance on different Windows displays
-are ongoing. The beta does not automatically identify a physical mechanism or
-provide validated confidence intervals.
+**Trying it after seeing the LinkedIn post? I’d welcome your feedback.** Tell me what worked, what was confusing, and what would make the program more useful. Bug reports, feature ideas and scientific feedback are all welcome.
+
+📩 **[karol.j.cieslik@gmail.com](mailto:karol.j.cieslik@gmail.com)** · [Report a bug on GitHub](https://github.com/karol-cieslik/TPD-Spectra-Analysis/issues/new/choose)
+
+Inside the app, use **Help → Report a bug / Send feedback** to review and copy a diagnostic report or save a diagnostic ZIP. Nothing is sent automatically. Please include the app version and steps to reproduce; screenshots help, but exclude confidential data. No GitHub account or experimental spectrum is needed to email feedback.
+
+### What is included?
+
+The beta includes CSV/TSV/TXT import preview, interactive peak selection, one-peak methods, simultaneous fitting of up to three independent components, conditional Monte Carlo, projects and PDF/CSV/JSON/figure exports. Two-peak fitting offers clickable positions, temperature-aware first-order guesses, explicit confirmation of source heating rates and prominent inadequate-fit diagnostics.
+
+**Browse examples…** separates [21 synthetic spectra](examples/beta_collection/README.md) from [nine publication-derived traces](examples/publication_data/README.md). Publication examples show citations, source figures, licences, units and scientific limitations. They are not known-ground-truth kinetic benchmarks.
+
+**Scientific status:** this is a research beta. A low residual does not establish a mechanism or a physical state count. Experimental validation, uncertainty calibration and wider visual/DPI/clean-machine testing remain ongoing. See [method status](docs/METHOD_STATUS.md) and [component assumptions](docs/MULTICOMPONENT_FITTING.md).
+
+Developers can also use the latest successful **main** build from [GitHub Actions](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain); the versioned prerelease above is the recommended public download.
 
 ## Three-stage workflow
 
@@ -116,7 +100,7 @@ The desktop uses an original spectrum icon and a shared navy/teal identity.
 
 ### Option A — Windows desktop beta (no Python required)
 
-1. Open the [verified Windows 0.11.0b7 build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/41296103371) from `main`.
+1. Open the [verified Windows 0.11.0b7 build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7) from `main`.
 2. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b7`. GitHub sign-in may be needed.
 3. Extract the entire ZIP, keeping its folders together, and double-click `TPD-Spectra-Studio.exe`.
 4. Choose **Browse examples… → Simulated → first order single peak**, then **Open selected spectrum** and follow [START_HERE](START_HERE.md).
@@ -244,4 +228,4 @@ Use [GitHub Issues](https://github.com/karol-cieslik/TPD-Spectra-Analysis/issues
 
 ## 📖 Citation and license
 
-The project-authored source code is provided under the [MIT License](LICENSE), subject to the scope explained in [ASSET-RIGHTS.md](ASSET-RIGHTS.md). Citation metadata is maintained in [CITATION.cff](CITATION.cff). A citable tagged release and peer-reviewed software description are future milestones; neither is claimed for this beta candidate.
+The project-authored source code is provided under the [MIT License](LICENSE), subject to the scope explained in [ASSET-RIGHTS.md](ASSET-RIGHTS.md). Citation metadata is maintained in [CITATION.cff](CITATION.cff). Record the version and source commit when citing this research beta. A peer-reviewed software description and broader experimental validation remain future work.

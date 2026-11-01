@@ -1,6 +1,7 @@
 # Beta review status — TPD Spectra Studio
 
-**Status:** external research beta under review; not a published software release.
+**Status:** v0.11.0b7 research-beta prerelease prepared for public feedback.
+The versioned [release page](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7) is the public download; wider human and experimental validation remains ongoing.
 This note distinguishes implemented code, automated checks and evidence still
 needed before sending a new executable to colleagues.
 

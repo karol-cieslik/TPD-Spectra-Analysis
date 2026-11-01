@@ -3,7 +3,7 @@
   "product": "TPD Spectra Studio",
   "target_version": "0.11.0b7",
   "source_commit": null,
-  "status": "Focused two-peak beta candidate; use the package VERSION.json for the exact build commit. Scientific content remains method-conditional.",
+  "status": "Versioned v0.11.0b7 research beta; use the package VERSION.json for the exact build commit. Scientific content remains method-conditional.",
   "role_legend": {
     "input": "A value supplied by the user; it is not necessarily inferred from the data.",
     "initial_guess": "An optimizer starting point, not the final fitted result.",

@@ -32,7 +32,7 @@ questions. Use a fresh Windows desktop build for current `main`, not an older 0.
   Monte Carlo replicates (seed 42). A short run tests usability, not uncertainty coverage.
 - [ ] Watch the progress bar/count, elapsed time and Cancel state; check completion
   separates fitting failures from incomplete rankings and preserves prior output.
-- [ ] For the focused feature candidate, record the PR/build commit. Use **Fit 2 Peaks…**, select both positions, fit and inspect both styled components, sum, baseline and residuals. At minimum dialog size/high DPI check footer actions, scrolling and Advanced controls.
+- [ ] For the versioned prerelease, record the source commit from VERSION.json. Use **Fit 2 Peaks…**, select both positions, fit and inspect both styled components, sum, baseline and residuals. At minimum dialog size/high DPI check footer actions, scrolling and Advanced controls.
 - [ ] Open Zaki, reject the 3 K/s suggestion and confirm the current rate is retained; accept it and confirm Modeling changes explicitly. Kinetic Analysis remains separate. Check flat/poor/collapsed diagnostics and withheld intervals; the digitized curve does not establish two first-order states.
 - [ ] Optional: use the documented three-state synthetic exercise in
   `docs/MULTICOMPONENT_FITTING.md`, inspect individual curves/sum/residuals and

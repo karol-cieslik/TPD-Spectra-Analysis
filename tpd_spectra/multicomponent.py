@@ -11,8 +11,10 @@ from functools import lru_cache
 import numpy as np
 from scipy.optimize import least_squares, lsq_linear
 from scipy.stats import t as student_t
+from scipy.signal import find_peaks, savgol_filter
 
 from .kinetics import simulate_tpd, _fit_information_criteria
+from .analysis import redhead_energy
 
 
 @dataclass(frozen=True)
@@ -61,6 +63,50 @@ class ComponentCountCandidate:
     error: str | None
     delta_aicc: float | None = None
     akaike_weight: float | None = None
+
+
+def suggest_peak_positions(temperature_c, signal, count=2):
+    """Suggest visible maxima, filling missing shoulders with weighted quantiles.
+
+    This is a deterministic UI/numerical hint, never a physical state count.
+    Smoothing is used only to locate hints; fitting retains all observations.
+    """
+    t, y = np.asarray(temperature_c, float), np.asarray(signal, float)
+    if (t.ndim != 1 or y.shape != t.shape or t.size < 20
+            or not np.isfinite(t).all() or not np.isfinite(y).all()
+            or np.any(np.diff(t) <= 0) or t[0] <= -273.15):
+        raise ValueError('Peak suggestions need at least 20 finite, increasing temperatures above absolute zero.')
+    if isinstance(count, bool) or not isinstance(count,(int,np.integer)) or count not in (1, 2, 3):
+        raise ValueError('Suggest one to three peaks.')
+    smooth = savgol_filter(y, min(31, (len(y) // 10) * 2 + 1), 2)
+    weights = np.maximum(smooth - np.percentile(smooth, 10), 0)
+    if np.ptp(y) <= max(16 * np.finfo(float).eps * np.max(np.abs(y)), np.finfo(float).tiny):
+        raise ValueError('Signal must have a nonzero dynamic range.')
+    peaks, info = find_peaks(smooth, prominence=.08 * np.ptp(smooth), distance=max(1, len(t)//20))
+    chosen = [float(t[i]) for i in peaks[np.argsort(info['prominences'])[::-1]][:count]]
+    # Integrate on temperature, so irregular digitization density cannot bias hints.
+    mass = np.r_[0, np.cumsum((weights[1:] + weights[:-1]) * np.diff(t) / 2)]
+    candidates = np.interp(np.linspace(.2, .8, count), mass, t) if mass[-1] > 0 else np.linspace(t[0], t[-1], count+2)[1:-1]
+    for position in candidates:
+        if len(chosen) == count:
+            break
+        if all(abs(position - other) > .02 * np.ptp(t) for other in chosen):
+            chosen.append(float(position))
+    for position in np.linspace(t[0], t[-1], 2 * count + 3)[1:-1]:
+        if len(chosen) == count:
+            break
+        if all(abs(position - other) > .02 * np.ptp(t) for other in chosen):
+            chosen.append(float(position))
+    return sorted(chosen)
+
+
+def suggest_component(position_c, beta_k_s, *, label='Peak 1', prefactor_s_inv=1e13):
+    """First-order Redhead seed and heuristic ±30% bounds, not an interval."""
+    energy = redhead_energy(position_c, prefactor_s_inv, beta_k_s)
+    if not np.isfinite(energy) or energy <= 0:
+        raise ValueError('The selected temperature and kinetics give a nonpositive energy estimate; use Advanced settings.')
+    return ComponentDefinition(label, energy_eV=energy, prefactor_s_inv=prefactor_s_inv,
+                               energy_bounds=(.7 * energy, 1.3 * energy))
 
 
 def _definitions(components):
@@ -193,6 +239,11 @@ def fit_components(temperature_c, signal, beta_k_s: float, components, *,
     initial_energies = np.array([c.energy_eV for c in definitions], dtype=float)
     scale_units = []
     for i, energy in enumerate(initial_energies):
+        if count > 1 and multistart:
+            # Scale coordinates near the observed thermal range, rather than
+            # amplifying a vanishing out-of-range rate by many orders of magnitude.
+            energy = np.clip(redhead_energy(temp[np.argmax(sig)], definitions[i].prefactor_s_inv, beta_k_s),
+                             *definitions[i].energy_bounds)
         peak = float(np.max(rate(i, float(energy))))
         if peak <= np.finfo(float).tiny:
             raise ValueError(f'{definitions[i].label}: initial kinetics produce no signal in this interval; change the energy guess.')
@@ -247,6 +298,18 @@ def fit_components(temperature_c, signal, beta_k_s: float, components, *,
                             lower[:count] + 1e-9, upper[:count] - 1e-9)
             if not any(np.array_equal(start, existing) for existing in starts):
                 starts.append(start)
+        if count > 1:
+            positions = suggest_peak_positions(temp, sig, count)
+            thermal_positions = [positions,
+                np.linspace(temp[0] + .1 * temperature_span, temp[-1] - .1 * temperature_span, count),
+                np.clip(temp[np.argmax(sig)] + np.linspace(0, .25 * temperature_span, count),temp[0],temp[-1])]
+            for positions in thermal_positions:
+                thermal = np.array([redhead_energy(p, c.prefactor_s_inv, beta_k_s)
+                                    for p, c in zip(positions, definitions)])
+                for factor in (1.0, .92, 1.08):
+                    start = np.clip(thermal * factor, lower[:count] + 1e-9, upper[:count] - 1e-9)
+                    if not any(np.array_equal(start, existing) for existing in starts):
+                        starts.append(start)
     successful, errors = [], []
     for energies in starts:
         check_cancel()
@@ -285,9 +348,26 @@ def fit_components(temperature_c, signal, beta_k_s: float, components, *,
                             if min(parameters[i] - lower[i], upper[i] - parameters[i])
                             <= 1e-4 * (upper[i] - lower[i])]
     active_indices = sorted(set(np.flatnonzero(opt.active_mask).tolist() + energy_bound_indices))
+    initial_peak_indices = [int(np.argmax(rate(i,float(e)))) for i,e in enumerate(initial_energies)]
+    initial_edge_labels = [c.label for c,index in zip(definitions,initial_peak_indices)
+                           if index in (0,len(temp)-1)]
     integrals = np.array([np.trapezoid(c, temp) if hasattr(np, 'trapezoid') else np.trapz(c, temp)
                           for c in curves])
     fractions = integrals / max(float(integrals.sum()), np.finfo(float).tiny)
+    collapsed = [definitions[i].label for i, curve in enumerate(curves)
+                 if fractions[i] < .01 or float(np.max(curve)) < .01 * span]
+    null_columns = [np.ones(temp.size)] if fit_baseline else []
+    if fit_drift:
+        null_columns.append(x)
+    null_prediction = (np.column_stack(null_columns) @ lsq_linear(
+        np.column_stack(null_columns), sig / span,
+        bounds=(linear_lower[count:], linear_upper[count:])).x * span
+        if null_columns else np.zeros_like(sig))
+    null_rss = float(np.sum((sig - null_prediction) ** 2))
+    improvement = 1 - rss / max(null_rss, np.finfo(float).tiny)
+    baseline_only = (float(np.ptp(np.sum(curves, axis=0))) < .05 * span or improvement < .01)
+    quality = ('baseline_only' if baseline_only else 'poor_fit' if rmse / span > .15
+               else 'collapsed_components' if collapsed else 'review_required')
     similarities = []
     exchangeable_labels = []
     for i in range(count):
@@ -315,6 +395,10 @@ def fit_components(temperature_c, signal, beta_k_s: float, components, *,
                 'Orders, prefactors and initial coverages are fixed assumptions; energy/scale uncertainty is conditional on them.',
                 'Component-count AICc/BIC and relative weights are heuristic for constrained mixtures, not mechanism probabilities.']
     withheld = []
+    if baseline_only:
+        withheld.append('BASELINE-ONLY / UNUSABLE FIT: kinetic components explain essentially none of the signal beyond the selected baseline. Check heating rate, peak positions, energy bounds and model assumptions.')
+    if collapsed:
+        withheld.append('COLLAPSED COMPONENTS: ' + ', '.join(collapsed) + '. Negligible contributions do not support these components; try fewer components or different justified starting positions/bounds.')
     if rank < n_parameters or not np.isfinite(condition) or condition > 1e8:
         withheld.append('The joint Jacobian is rank deficient or poorly conditioned; component parameters are not reliably identifiable.')
     if not np.isfinite(covariance_unit).all():
@@ -323,6 +407,12 @@ def fit_components(temperature_c, signal, beta_k_s: float, components, *,
         withheld.append('Strong parameter correlation (absolute correlation > 0.95); component parameters are ambiguous.')
     if active_indices:
         withheld.append('One or more fitted parameters are at or near bounds; local symmetric intervals are invalid.')
+    if energy_bound_indices:
+        warnings.append('Energy at/near its search bound: '+', '.join(definitions[i].label for i in energy_bound_indices)
+                        +'. Review the allowed range rather than interpreting this as a resolved energy.')
+    if initial_edge_labels:
+        warnings.append('Initial predicted maximum lies at the temperature-grid boundary: '+', '.join(initial_edge_labels)
+                        +'. Starting kinetics may place peaks outside the observations; inspect selected positions, heating rate and bounds.')
     if np.any(fractions < 0.01):
         withheld.append('A component contributes less than 1% of integrated fitted desorption signal; its parameters may be unsupported.')
     if any(item['cosine_similarity'] > 0.995 for item in similarities):
@@ -368,6 +458,13 @@ def fit_components(temperature_c, signal, beta_k_s: float, components, *,
             signal_scale_interval_95=[float(scales[i] - multiplier * scale_se), float(scales[i] + multiplier * scale_se)] if scale_se is not None else None,
             integrated_signal_fraction=float(fractions[i]), fixed_parameters=['order', 'prefactor_s_inv', 'initial_coverage']))
     diagnostics = dict(jacobian_rank=rank, n_parameters=n_parameters,
+        fit_quality=quality, collapsed_components=collapsed,
+        baseline_only=bool(baseline_only), baseline_only_rss=null_rss,
+        relative_rss_improvement_over_baseline=improvement,
+        initial_energies_eV=initial_energies.tolist(), energy_starts_eV=[s.tolist() for s in starts],
+        initial_peak_temperatures_c=[float(temp[i]) for i in initial_peak_indices],
+        initial_peak_at_boundary_components=initial_edge_labels,
+        near_energy_bound_components=[definitions[i].label for i in energy_bound_indices],
         normalized_jacobian_condition_number=condition, maximum_absolute_parameter_correlation=maximum_correlation,
         parameter_correlation=correlation.tolist(), near_bound_parameter_indices=active_indices,
         component_profile_similarities=similarities, exchangeable_component_labels=exchangeable_labels,

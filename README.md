@@ -30,7 +30,7 @@ Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for file
 checksums. Actions downloads expire; no tagged prerelease has been published.
 The executable is unsigned; follow your institution's software policy.
 
-Use the latest successful Windows build for `main`; confirm its commit in `VERSION.json`. Older 0.11.0b5 artifacts shared a version label across different commits; use the new b7 package for the example library and streamlined top menu, alongside the peak-switching and report-feedback fixes. Automated build checks cover packaging and regression tests, while human visual/DPI acceptance and installation on Windows 10/11 without Python remain outstanding. Complete those checks on the exact package before colleague distribution. This beta does not claim independent experimental validation.
+Use the latest successful **main** Windows build; confirm its commit in `VERSION.json`. Older 0.11.0b5 artifacts shared a version label across different commits; use the new b7 package for the example library and streamlined top menu, alongside the peak-switching and report-feedback fixes. Automated build checks cover packaging and regression tests, while human visual/DPI acceptance and installation on Windows 10/11 without Python remain outstanding. Complete those checks on the exact package before colleague distribution. This beta does not claim independent experimental validation.
 
 Start with [the five-minute walkthrough](START_HERE.md) and the
 [full worked Quick Start](docs/beta/WORKED_EXAMPLES.html) (offline HTML).
@@ -45,6 +45,12 @@ Monte Carlo has visible progress, elapsed/estimated time and cancellation.
 [Simultaneous physical component fitting](docs/MULTICOMPONENT_FITTING.md)
 models overlapping contributions jointly, with explicit fixed kinetic assumptions,
 individual curves, summed residuals and conservative uncertainty warnings.
+The focused b7 candidate adds **Fit 2 Peaks…** with interactive positions,
+source heating-rate confirmation, first-order energy hints, thermal multistart
+and prominent failed/collapsed-fit diagnostics. See the
+[two-peak workflow and retained Zaki stress test](docs/MULTICOMPONENT_FITTING.md).
+These changes require a build from this feature PR; the earlier linked main
+artifact does not contain them. No new release is published by this PR.
 The beta includes the three-stage workflow, model comparison, conditional
 Monte Carlo refitting, save/load projects, and PDF/CSV/JSON/figure exports.
 The beta includes parameter provenance (fitted versus assumed),

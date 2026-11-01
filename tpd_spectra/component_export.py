@@ -12,7 +12,7 @@ def draw_components(axis, residual_axis, fit):
     plot_observations(axis,t,fit['observed'],label='Submitted observations (full spectrum)')
     colors = ('#2563eb','#059669','#9333ea')
     for index,(component,curve) in enumerate(zip(fit['components'],fit['component_predictions'])):
-        axis.plot(t,curve,color=colors[index],linestyle='--',linewidth=1.2,
+        axis.plot(t,curve,color=colors[index],linestyle=('--','-.',':')[index],linewidth=1.6,zorder=3,
                   label=f"{component['label']} (n={component['order']:g})")
     axis.plot(t,fit['baseline_prediction'],color='#a16207',linestyle=':',label='Shared baseline')
     axis.plot(t,fit['prediction'],color='#d35400',linewidth=1.9,label='Combined kinetic fit')
@@ -20,6 +20,14 @@ def draw_components(axis, residual_axis, fit):
     residual_axis.axhline(0,color='gray',linewidth=.7)
     axis.set(ylabel='Signal (instrument units)')
     residual_axis.set(xlabel='Temperature (°C)',ylabel='Residual')
+    quality=fit.get('diagnostics',{}).get('fit_quality')
+    if quality:
+        titles={'baseline_only':'UNUSABLE: baseline-only fit — main signal unexplained',
+                'poor_fit':'POOR FIT: substantial residual error — review assumptions',
+                'collapsed_components':'COLLAPSED COMPONENT: requested decomposition unsupported',
+                'review_required':'Joint fit converged — review residuals and assumptions'}
+        axis.set_title(titles[quality],fontsize=10,color='#b91c1c' if quality!='review_required' else '#334155')
+    residual_axis.legend(fontsize=7,loc='upper right')
     axis.legend(fontsize=7,ncol=2)
 
 

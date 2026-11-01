@@ -15,6 +15,7 @@ from .equation_help import EquationCard
 from .job_progress import MonteCarloProgress
 from .component_gui import ComponentsController
 from .scientific_help import help_button
+from .heating_rate import source_heating_rate, confirm_source_rate
 
 DEFAULTS = dict(beta='1', energy='1.25', prefactor='1e13', order='1', coverage='1',
                 amplitude='1', baseline='0', max_nfev='300', replicates='500', seed='42',
@@ -90,12 +91,17 @@ class ModelingPanel:
         self.components = ComponentsController(self)
         component_actions=ttk.Frame(workspace,padding=(4,4))
         component_actions.pack(fill='x')
+        two_peak_button=ttk.Button(component_actions,text='Fit 2 Peaks…',command=lambda:self.components.open(count=2))
+        two_peak_button.pack(side='left',padx=(0,4))
+        self.calculation_buttons.append(two_peak_button)
         component_button=ttk.Button(component_actions,text='Overlapping components…',command=self.components.open)
         component_button.pack(side='left')
         help_button(component_actions,app,'simultaneous_components').pack(side='left',padx=(0,8))
         self.calculation_buttons.append(component_button)
         ttk.Button(component_actions,text='Single-state view',command=self.show_single).pack(side='left',padx=4)
         ttk.Button(component_actions,text='Export component fit…',command=self.components.export).pack(side='left')
+        self.source_rate_button=ttk.Button(workspace,command=lambda:confirm_source_rate(self))
+        self.source_rate_button.pack(fill='x')
         # Keep feedback and cancellation visible even when the parameter sidebar scrolls.
         self.mc_progress = MonteCarloProgress()
         self.mc_active = False
@@ -266,6 +272,10 @@ class ModelingPanel:
     def render(self):
         # A region is an analysis prerequisite, never a prerequisite for viewing data.
         dataset = self.app.project.datasets.get(self.app.project.active_dataset)
+        suggestion=source_heating_rate(dataset) if dataset is not None else None
+        self.source_rate_button.configure(text=(f"Source suggests {suggestion['beta_K_s']:g} K/s — review and confirm…"
+            if suggestion else 'No source heating rate available — verify and enter it in Modeling'),
+            state='normal' if suggestion and not self.app.job_busy else 'disabled')
         self.fig.clear()
         ax = self.fig.add_subplot(211)
         residual = self.fig.add_subplot(212)

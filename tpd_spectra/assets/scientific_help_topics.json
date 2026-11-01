@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "product": "TPD Spectra Studio",
-  "target_version": "0.11.0b4",
-  "source_commit": "7139c46596b1cebd6adddbdae7ca7cf18972d13b",
-  "status": "Integrated scientific Help catalog for external beta; scientific content remains method-conditional.",
+  "target_version": "0.11.0b7",
+  "source_commit": null,
+  "status": "Focused two-peak beta candidate; use the package VERSION.json for the exact build commit. Scientific content remains method-conditional.",
   "role_legend": {
     "input": "A value supplied by the user; it is not necessarily inferred from the data.",
     "initial_guess": "An optimizer starting point, not the final fitted result.",
@@ -61,7 +61,7 @@
         "components"
       ],
       "short": "Enter the actual positive heating rate from your acquisition record, in kelvin per second.",
-      "detail": "The standard methods assume a constant linear temperature ramp. Heating rate links the depletion of adsorbate coverage to the temperature axis and affects peak position and fitted kinetics. The example chooser sets a value from metadata, but real experiments need manual verification.",
+      "detail": "The standard methods assume a positive constant linear ramp in K/s. Publication examples provide source-specific suggestions, including Zaki D2O/Fe3O4 at 3 K/s. Opening published data never silently applies the rate. Review and explicitly accept or reject Confirm source suggestion in Modeling. Confirmation changes only Modeling for this dataset/region; verify Kinetic Analysis settings separately. The rate is not inferred from the constructed time coordinate of a digitized figure. Unknown sources require manual verification.",
       "example": "Use 1 for a linear 1 K/s ramp; do not assume all experimental files used this setting.",
       "caution": "A nonlinear ramp is outside the constant-rate model used here."
     },
@@ -361,9 +361,9 @@
         "modeling"
       ],
       "short": "Fit 1-3 independent Polanyi-Wigner populations together on the full dataset.",
-      "detail": "For each component you enter a label, fixed positive order, fixed prefactor, fixed initial normalized coverage, energy guess and energy bounds. The program jointly optimizes each energy and nonnegative detector scale plus optional shared baseline terms. Conditional local intervals may be reported for energy and scale; fixed kinetic inputs and shared baseline/drift terms do not receive intervals. A named navigation peak does not crop this full-spectrum calculation.",
-      "example": "The clean three-state example has generating energies 1.18, 1.26 and 1.34 eV.",
-      "caution": "Independence excludes exchange, readsorption and many interactions; components need not correspond to physically distinct adsorption states."
+      "detail": "Choose Modeling > Fit 2 Peaks, verify the rate, and click approximate positions (or enter degrees Celsius), then Fit Both Peaks. New rows fix first order, prefactor 1e13 s^-1 and coverage one. First-order Redhead guesses and +/-30% search bounds are heuristic starts, not measured energies or uncertainty limits. Advanced settings preserves fixed positive orders/prefactors/coverages, energy bounds, baseline and optimizer controls; saved definitions are retained. Up to three rows are supported. The program jointly optimizes energies and nonnegative scales on the entire processed dataset; named regions do not crop it. Thermal multistart reduces initialization failures without proving a global optimum. Conditional local intervals may be withheld; fixed kinetics and baseline/drift have no intervals.",
+      "example": "The clean three-state example has generating energies 1.18, 1.26 and 1.34 eV. Zaki is a digitized stress test with a 3 K/s source suggestion and peak near -20 degrees Celsius; correlated residuals still limit interpretation.",
+      "caution": "Optimizer success is not fit adequacy. Baseline-only, poor-fit or collapsed-component titles/status require review. Distinct component colors/styles, complete sum, baseline and observation-minus-sum residuals expose failures. Independence excludes exchange, readsorption and interactions; components do not prove physical states. Local intervals and count rankings remain conditional."
     },
     {
       "id": "energy_bounds",
@@ -376,7 +376,7 @@
         "components"
       ],
       "short": "Restrict where the optimizer can place a component's energy.",
-      "detail": "Different justified ranges can help prevent component labels from swapping, but bounds condition the inference. The bound values and component order are exported as part of the hypothesis. An optimum on a bound is a warning sign for simple local uncertainty approximations.",
+      "detail": "Different justified ranges can help prevent component labels from swapping, but bounds condition the inference. The bound values and component order are exported as part of the hypothesis. An optimum on a bound is a warning sign for simple local uncertainty approximations. Two-peak position hints suggest +/-30% around a first-order seed. These are editable heuristic search limits, not confidence intervals. Multistart never relaxes supplied bounds.",
       "example": "The three-state tutorial uses 1.14-1.22, 1.22-1.30 and 1.30-1.38 eV.",
       "caution": "Never impose very narrow bounds only to obtain the parameter values you expect."
     },
@@ -409,7 +409,7 @@
         "components"
       ],
       "short": "A starting value for numerical fitting; compare it with the final estimate.",
-      "detail": "Nonlinear optimizers need a starting point. Different guesses can converge to different local minima or fail, particularly when physical parameters correlate. When the interface says Initial energy or Initial prefactor, that entered number should not be copied as if it were an estimated result.",
+      "detail": "Nonlinear optimizers need a starting point. Different guesses can converge to different local minima or fail, particularly when physical parameters correlate. When the interface says Initial energy or Initial prefactor, that entered number should not be copied as if it were an estimated result. In the two-peak dialog, clicked/numeric positions give first-order Redhead energy seeds using kelvin internally and the selected rate/prefactor. Re-estimate refuses non-first-order rows; use Advanced energy entry. Position hints do not count physical populations.",
       "example": "Start at 1.185 eV for a synthetic component generated at 1.18 eV.",
       "caution": "Truth-informed guesses verify a numerical pathway; they do not demonstrate blind recovery."
     },
@@ -425,7 +425,7 @@
         "components"
       ],
       "short": "Try multiple deterministic initial guesses to reduce dependence on one starting point.",
-      "detail": "Multistart can improve the chance of finding a lower-residual local optimum, but it increases computation and does not guarantee the global best solution. Record whether it was enabled when comparing runs.",
+      "detail": "Multistart can improve the chance of finding a lower-residual local optimum, but it increases computation and does not guarantee the global best solution. Record whether it was enabled when comparing runs. For simultaneous two/three components, deterministic thermal seeds span visible features, the temperature interval and a high-temperature-tail alternative, with +/-8% energy perturbations clipped to bounds. Starts and convergence counts are exported; choose the lowest residual sum among finite converged candidates. This is not a guarantee of global recovery.",
       "example": "Turn it off for the short first-order tutorial to keep computation brief.",
       "caution": "Successful convergence from several starts is not proof of physical identifiability."
     },

@@ -57,7 +57,7 @@ def test_click_two_positions_fits_both_and_preserves_single_state_path(root):
     assert len(controller.rows)==2
     assert not controller.advanced.get()
     assert not controller.rows_frame.winfo_ismapped()
-    assert controller.fit_button.cget('text')=='Fit Both Peaks'
+    assert controller.fit_button.cget('text')=='Fit 2 Components'
     # Real Matplotlib event dispatch exercises the connected callback.
     from matplotlib.backend_bases import MouseEvent
     for position in (170.,270.):
@@ -106,3 +106,43 @@ def test_invalid_and_coincident_positions_do_not_mutate_definitions(root):
     c.rows[0][0][1].set('2')
     assert not c.estimate_positions()
     assert 'first order' in c.message.get()
+
+
+def test_single_entry_count_selector_preserves_existing_rows_and_cached_edits(root):
+    """One entry point selects 1/2/3 without silently losing unsaved row edits."""
+    app=WorkflowApp(root)
+    app._load_paths([EXAMPLES.parent/'synthetic_two_peak_demo_clean.csv'])
+    if app.project.active_region is None:
+        t=app.project.datasets[app.project.active_dataset].spectrum.temperature_clean_c
+        app.project.add_region('Navigation',float(t[0]),float(t[-1]))
+    app.refresh_context()
+    panel=app.modeling_panel
+    labels=[button.cget('text') for button in panel.calculation_buttons]
+    assert labels.count('Fit Multiple Peaks…')==1
+    assert 'Fit 2 Peaks…' not in labels
+    assert 'Overlapping components…' not in labels
+    controller=panel.components
+    controller.open()
+    root.update()
+    assert controller.component_count.get()==2
+    assert len(controller.rows)==2
+    assert not controller.advanced.get()
+    saved_settings=controller.settings().copy()
+    controller.rows[0][0][0].set('Retained first state')
+    controller.rows[1][0][2].set('1.55')
+    controller.component_count.set(3)
+    controller.set_component_count()
+    assert len(controller.rows)==3
+    assert controller.fit_button.cget('text')=='Fit 3 Components'
+    controller.rows[2][0][0].set('Retained third state')
+    controller.component_count.set(1)
+    controller.set_component_count()
+    assert len(controller.rows)==1
+    assert controller.fit_button.cget('text')=='Fit 1 Component'
+    controller.component_count.set(3)
+    controller.set_component_count()
+    assert [row[0][0].get() for row in controller.rows]==[
+        'Retained first state', 'Peak 2', 'Retained third state']
+    assert controller.rows[1][0][2].get()=='1.55'
+    assert controller.settings()==saved_settings  # Count changes do not overwrite saved definitions.
+    controller.window.destroy()

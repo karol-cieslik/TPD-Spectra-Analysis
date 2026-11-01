@@ -81,6 +81,10 @@ def test_menu_is_compact_and_publishable_examples_are_separate(root):
     assert "Zaki" in app.example_source_note.cget("text")
     assert app.example_source_note.winfo_ismapped()
     assert sum(row["visible"] for row in app.spectra.values()) == 1
+    xlo, xhi = app.axis.get_xlim()
+    assert xlo < dataset.spectrum.temperature_clean_c.min()
+    assert xhi > dataset.spectrum.temperature_clean_c.max()
+    assert xhi - xlo < 1.1 * np.ptp(dataset.spectrum.temperature_clean_c)
 
 
 def test_figure_example_uses_nominal_time_not_measured_time():

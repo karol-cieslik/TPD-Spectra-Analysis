@@ -471,6 +471,17 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         if dataset and self.view_mode.get() == 'Small multiples' and dataset.path in visible:
             selected_axis = self.figure.axes[visible.index(dataset.path)]
         self._selected_plot_axis = selected_axis
+        # Legacy default selection bands can lie far outside a published
+        # low-temperature spectrum. Axis limits must follow the data, never
+        # arbitrary inherited guides from the startup example.
+        if self.x_mode.get() == "Temperature" and visible:
+            for i, axis in enumerate(self.figure.axes):
+                shown = visible if self.view_mode.get() != 'Small multiples' else visible[i:i + 1]
+                source_rows = [self.spectra[key]["spec"].temperature_clean_c for key in shown]
+                lo = min(float(values.min()) for values in source_rows)
+                hi = max(float(values.max()) for values in source_rows)
+                margin = max((hi - lo) * .025, .5)
+                axis.set_xlim(lo - margin, hi + margin)
         if self.x_mode.get() == "Temperature" and self.project.active_region in self.project.regions and dataset and dataset.path in visible:
             region = self.project.regions[self.project.active_region]
             selected_axis.axvspan(region.lower, region.upper, color="teal", alpha=.12, label=region.label)

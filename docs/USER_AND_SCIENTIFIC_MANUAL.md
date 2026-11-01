@@ -236,6 +236,10 @@ non-first-order reference model. Agreement between methods using the same
 spectrum is an internal consistency check, not experimental validation.
 Re-fitting Polanyi–Wigner is optional and may simply reproduce the same
 model fit. Review each method's assumptions and window sensitivity.
+Saving a labeled kinetic run retains its current model cross-check in the
+JSON and PDF report provenance; reopening a saved run displays the
+original recorded cross-check, rather than silently replacing it with a
+later comparison.
 
 ## 7. Outputs and reproducibility
 

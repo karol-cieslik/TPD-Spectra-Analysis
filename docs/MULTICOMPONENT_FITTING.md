@@ -70,11 +70,14 @@ reporting smooth local-linear intervals in this implementation.
 
 ## Workflow and numerical safeguards
 
-### Quick two-peak workflow (v0.11.0b7 research beta)
+### Unified 1–3 component workflow (v0.11.0b7 research beta)
 
 1. Open a spectrum, select its dataset and a named navigation region, then use
-   **Modeling → Fit 2 Peaks…**. Two rows are created; this button opens a
-   configuration dialog and does not start fitting automatically.
+   **Modeling → Fit Multiple Peaks…**. Select **1, 2 or 3** components in the
+   visible count control (default **2** for a new hypothesis). This opens a
+   configuration dialog and does not start fitting automatically. Changing
+   the count retains edits in surviving rows; temporarily removed rows can be
+   restored before closing the dialog.
 2. Verify the heating rate in K/s. For recognized publication examples, review
    **Confirm source suggestion…** and explicitly accept or reject it. Opening
    published data never silently applies the rate. Confirmation changes Modeling
@@ -86,20 +89,21 @@ reporting smooth local-linear intervals in this implementation.
    the energy guesses and bounds; Fit also applies pending position edits.
    New rows fix first order, prefactor `1e13 s^-1` and coverage one. Existing
    definitions are retained and their fixed assumptions are displayed.
-4. **Fit Both Peaks** fits the entire processed dataset. Inspect the individual
-   blue dashed / green dash-dot components, orange complete sum, separate dotted
-   baseline and observation-minus-sum residual panel. Colors and line styles
-   both distinguish components in live and exported plots.
+4. **Fit N Components** (N = selected count) fits the entire processed dataset.
+   For two components inspect the blue dashed / green dash-dot curves, orange
+   complete sum, separate dotted baseline and observation-minus-sum residual
+   panel. Colors and line styles distinguish components in live/exported plots.
 5. Read the quality title/status and **Assumptions & warnings**. Convergence is
    not model adequacy. Export the fit or save the project to retain the source
    rate confirmation, settings, individual curves, multistart seeds and diagnostics.
 
-**Advanced settings** reveals fixed kinetic parameters, energy bounds, component
-count, offset/drift, evaluation budget and multistart. Use **Overlapping
-components…** for an existing one- or three-row hypothesis. The two-peak shortcut
-replaces the dialog's row count only when needed; it does not overwrite stored
-results. Apply/refit to record new definitions. Named single-peak regions do not
-crop a simultaneous fit. **Single-state view** retains the original workflow.
+**Advanced settings** reveals fixed kinetic parameters, energy bounds,
+offset/drift, evaluation budget and multistart. The component count is always
+visible; the previously separate quick-two-peak and overlapping-component
+entry points now use this single dialog. Opening the dialog and changing the
+count do not overwrite stored results. Apply/refit to record new definitions.
+Named single-peak regions do not crop a simultaneous fit.
+**Single-state view** retains the original workflow.
 
 For each selected position, the seed uses the existing *first-order* Redhead
 approximation `E = k_B T_p [ln(nu T_p / beta) - 3.64]`, with `T_p` in kelvin.

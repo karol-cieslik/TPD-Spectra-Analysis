@@ -212,6 +212,38 @@ Uncertainty is method-specific; the program does **not** automatically calculate
 
 The Explorer Monte Carlo extension estimates intervals for every **free parameter it refits** in eligible positive-order models. These are conditional simulated-refit ranges, not a universal uncertainty calculation. No available method propagates all statistical, structural, calibration, heating-rate, preprocessing and model-selection uncertainty into every output parameter.
 
+### 6.8 Transferring fitted starting guesses and interpreting kinetic results
+
+In **Modeling & Order Identification**, **Use selected / best fit → Kinetic Analysis**
+transfers energy, prefactor, order, baseline-fit choice and heating rate from
+the current converged single-state comparison. A selected model row takes
+priority; otherwise the best converged candidate is used automatically.
+It does not change raw data or claim an additional independent estimate.
+
+After a complete, current Monte Carlo run, **Use MC medians → Kinetic Analysis**
+instead transfers median energy and, for positive-order models, median
+log-prefactor (converted to a prefactor); fractional-order models also transfer
+median order. At least 100 successful refits for the chosen model are required.
+Zero-order keeps only the conditional median energy and the original
+representative point-fit prefactor because prefactor and signal scale cannot be
+separately identified. Signal scale/baseline amplitudes are not transferred as
+optimizer initial guesses because the Kinetic Analysis controls do not expose
+them. These marginal Monte Carlo medians may not be a jointly optimal parameter
+set: they are **starting guesses only**, not experimentally validated estimates.
+
+Kinetic Analysis shows provenance beside the transferred inputs, and its
+result notes compare the method-specific energy with the selected modeling
+candidate's energy on the same peak. Differences and heating-rate mismatches
+are flagged. Classical first-order Redhead must not be used to confirm a
+non-first-order reference model. Agreement between methods using the same
+spectrum is an internal consistency check, not experimental validation.
+Re-fitting Polanyi–Wigner is optional and may simply reproduce the same
+model fit. Review each method's assumptions and window sensitivity.
+Saving a labeled kinetic run retains its current model cross-check in the
+JSON and PDF report provenance; reopening a saved run displays the
+original recorded cross-check, rather than silently replacing it with a
+later comparison.
+
 ## 7. Outputs and reproducibility
 
 A complete batch run may produce:

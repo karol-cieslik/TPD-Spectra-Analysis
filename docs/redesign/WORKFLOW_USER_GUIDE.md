@@ -23,8 +23,7 @@ The desktop opens `synthetic_two_peak_demo.csv` with a prepared 70–210 °C
 first-peak interval. Simulate parameters, compare the checked model hypotheses,
 then run seeded Monte Carlo. For a quick software check use only first order,
 multistart off, 2 replicates and seed 42; parameter uncertainty needs substantially
-more refits. Select a converged row to transfer initial guesses to Kinetic Analysis,
-then explicitly fit. This single-state approximation does not explain both peaks.
+more refits. Use **Use selected / best fit → Kinetic Analysis** to transfer a converged point-fit estimate (select a row or let the app choose the best converged candidate). After at least 100 successful refits for a model, **Use MC medians → Kinetic Analysis** transfers conditional median values as starting guesses. The subsequent Polanyi–Wigner fit is optional and is not an independent method validation. This single-state approximation does not explain both peaks.
 The original spectrum stays visible in Modeling and Kinetic Analysis, including
 when no region exists. Arbitrary imports require an explicit named interval:
 enter bounds and **Add peak** in Spectra & Preparation. Region selection does not
@@ -124,9 +123,9 @@ does not move its result to the newly selected peak. Open projects and dataset
 removal wait until work finishes. Classic and workflow numerical workspaces are
 used separately because the legacy LSODA integrator is not reentrant.
 
-Select a converged row and choose **Use selected model in Kinetic Analysis**.
-This explicitly transfers a hypothesis and initial guesses; it does not create
-a final fit. In Stage C press **Calculate / Fit selected peak** to optimize.
+Choose **Use selected / best fit → Kinetic Analysis** to carry a current comparison's point-fit parameters into the matching dataset/peak without retyping energy, prefactor, order and heating rate. Selecting a row overrides the automatic best-fit choice.
+After a *completed, current* Monte Carlo run, choose **Use MC medians → Kinetic Analysis**. The selected model is used, or the MC generating/reference model when no row is selected. This action requires at least 100 successful refits for that model; zero-order only receives a median energy, since its prefactor/scale are not separately identifiable. The transferred medians are marginal heuristic starting guesses, not a jointly optimized parameter vector, proof of accuracy, or a validated confidence interval.
+Both routes populate the Kinetic Analysis Polanyi–Wigner controls, switch to that tab and show the provenance near the inputs. They do not silently rerun fitting or replace an existing method result. **Calculate / Fit selected peak** is optional when the analyst wants a new single-state fit with the transferred guesses or changed assumptions.
 
 ## Overlapping contributions
 
@@ -171,6 +170,14 @@ methods and Monte Carlo remain available in **Single-state view**. See
 [scientific assumptions and validation](../MULTICOMPONENT_FITTING.md).
 
 ## Kinetic interpretation
+
+Kinetic Analysis now explicitly presents method-specific cross-checks. Its notes compare
+the method-specific activation energy with the current selected/best Modeling
+candidate, show the signed difference, expose a heating-rate mismatch and (when
+available) the conditional Monte Carlo energy range. This is a same-spectrum
+consistency check, not independent experimental validation. A first-order
+Redhead value is flagged as incompatible with a non-first-order reference
+model. Leading-edge window dependence and shared data remain important.
 
 The parameter panels show the equation for the selected method above its inputs.
 Modeling shows the Polanyi–Wigner rate, coverage depletion and detector-signal

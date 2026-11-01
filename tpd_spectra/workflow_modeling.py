@@ -2,6 +2,7 @@
 from copy import deepcopy
 from dataclasses import asdict
 import json
+import math
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
@@ -38,6 +39,60 @@ def comparison(dataset, snapshot, cancelled):
         initial_energy_ev=float(s['energy']), initial_prefactor_s_inv=float(s['prefactor']),
         fit_baseline=s['fit_baseline'], max_nfev=int(s['max_nfev']), multistart=s['multistart'], cancelled=cancelled)
     return serial(dict(snapshot=snapshot, temperature=t, signal=y, candidates=models))
+
+
+def transfer_starting_values(candidate, mc_result=None):
+    """Return initial guesses, never independent kinetic estimates.
+
+    Monte Carlo refits provide marginal parameter medians. These do not form
+    a joint optimum and therefore must only initialize a subsequent fit.
+    """
+    fit = candidate.get('fit')
+    if candidate.get('error') or not fit:
+        raise ValueError('Only a converged model can supply starting parameters.')
+    name = candidate['name']
+    values = dict(energy=float(fit['activation_energy_eV']),
+                  prefactor=float(fit['prefactor_s_inv']),
+                  order=float(fit['reaction_order']),
+                  free_order=name == 'fractional')
+    if not math.isfinite(values['energy']) or values['energy'] <= 0:
+        raise ValueError('The selected model has an invalid activation energy.')
+    if not math.isfinite(values['prefactor']) or values['prefactor'] <= 0:
+        raise ValueError('The selected model has an invalid prefactor.')
+    if mc_result is None:
+        return values, f'{name} model point fit; refitting is optional when assumptions change.'
+
+    if mc_result.get('cancelled') or mc_result.get('replicates_completed', 0) < mc_result.get('replicates_requested', 0):
+        raise ValueError('Use a completed Monte Carlo run before transferring medians.')
+    records = [row for row in mc_result.get('replicate_records', ())
+               if row.get('model') == name and not row.get('error')
+               and row.get('energy_eV') is not None
+               and math.isfinite(float(row['energy_eV']))]
+    minimum = max(100, int(mc_result.get('minimum_successful_refits', 100)))
+    if len(records) < minimum:
+        raise ValueError(f'Monte Carlo has only {len(records)} successful {name} refits; '
+                         f'at least {minimum} are required for median starting values. '
+                         'Use the point-fit transfer or run more replicates.')
+    values['energy'] = float(np.median([row['energy_eV'] for row in records]))
+    if name != 'zero':
+        logs = [float(row['log10_prefactor']) for row in records
+                if row.get('log10_prefactor') is not None
+                and math.isfinite(float(row['log10_prefactor']))]
+        if len(logs) < minimum:
+            raise ValueError('Monte Carlo has insufficient valid prefactor refits.')
+        values['prefactor'] = float(10.0 ** np.median(logs))
+    if name == 'fractional':
+        orders = [float(row['order']) for row in records
+                  if row.get('order') is not None and math.isfinite(float(row['order']))]
+        if len(orders) < minimum:
+            raise ValueError('Monte Carlo has insufficient valid fractional-order refits.')
+        values['order'] = float(np.median(orders))
+    caution = (' Zero-order prefactor remains the representative point-fit value; '
+               'it is not separately identifiable.' if name == 'zero' else '')
+    return values, (f'{name}: medians of {len(records)} successful Monte Carlo refits '
+                    f'(seed {mc_result["seed"]}; generating model {mc_result["reference_model"]}). '
+                    'Marginal medians are heuristic initial guesses, not a joint fit or '
+                    'confidence interval.' + caution)
 
 
 class ModelingPanel:
@@ -83,7 +138,7 @@ class ModelingPanel:
         ttk.Label(sidebar, text='Fits normalize initial coverage to one and optimize signal scale. Simulation coverage/amplitude/baseline apply only to manual preview.', wraplength=280).pack(fill='x', pady=8)
         self.calculation_buttons = []
         for title, callback in (('Simulate parameters',self.simulate), ('Compare models',self.compare),
-                                ('Use selected model in Kinetic Analysis',self.transfer)):
+                                ('Use selected / best fit → Kinetic Analysis',self.transfer)):
             button = ttk.Button(sidebar, text=title, command=callback)
             button.pack(fill='x', pady=3)
             self.calculation_buttons.append(button)
@@ -112,6 +167,9 @@ class ModelingPanel:
         self.mc_run.grid(row=0, column=1, padx=4)
         self.mc_cancel = ttk.Button(self.progress_frame, text='Cancel', command=self.cancel_job, state='disabled')
         self.mc_cancel.grid(row=0, column=2)
+        self.mc_transfer = ttk.Button(self.progress_frame, text='Use MC medians → Kinetic Analysis',
+                                      command=lambda: self.transfer(monte_carlo=True))
+        self.mc_transfer.grid(row=1, column=3, rowspan=2, padx=4, sticky='n')
         help_button(self.progress_frame,app,'mc_progress').grid(row=0,column=3,padx=4)
         self.progress_bar = ttk.Progressbar(self.progress_frame, mode='determinate', maximum=100)
         self.progress_bar.grid(row=0, column=0, sticky='ew', padx=(0,8))
@@ -173,7 +231,7 @@ class ModelingPanel:
             self.app.status.set(str(exc))
 
     def set_job_busy(self, busy):
-        for button in [*self.calculation_buttons, self.mc_run]:
+        for button in [*self.calculation_buttons, self.mc_run, self.mc_transfer]:
             button.configure(state='disabled' if busy else 'normal')
         self.mc_cancel.configure(state='normal' if busy else 'disabled')
 
@@ -456,31 +514,48 @@ class ModelingPanel:
         except (ValueError,KeyError) as exc:
             self.app.status.set(str(exc))
 
-    def transfer(self):
+    def transfer(self, monte_carlo=False):
+        """Carry current fitted guesses into the same peak's kinetic workspace."""
         try:
+            if self.app.job_busy:
+                raise ValueError('Wait for the running calculation before transferring parameters.')
             session = self.session()
-            if session.get('display_mode')=='components':
-                raise ValueError('Simultaneous components are retained and exported in Modeling. Use Single-state view before transferring an isolated-peak hypothesis.')
+            if session.get('display_mode') == 'components':
+                raise ValueError('Component results are not single-state starting guesses. '
+                                 'Switch to Single-state view first.')
             result = session.get('comparison')
             if not result or not self.current(result):
                 raise ValueError('Compare current settings before transferring a candidate.')
+            mc = session.get('monte_carlo') if monte_carlo else None
+            if monte_carlo and (not mc or not self.current(mc)):
+                raise ValueError('Run Monte Carlo on the current comparison before transferring medians.')
+            candidates = result['candidates']
             selection = self.table.selection()
-            if not selection:
-                raise ValueError('Select a candidate row to transfer.')
-            candidate = result['candidates'][int(selection[0])]
-            if candidate['error'] or not candidate['fit']:
-                raise ValueError('Only a converged candidate can be transferred.')
-            fit = candidate['fit']
+            selected = next((candidates[int(item)] for item in selection
+                             if item.isdigit() and int(item) < len(candidates)), None)
+            if selected is None:
+                preferred = mc['result']['reference_model'] if mc else None
+                selected = next((row for row in candidates if row['name'] == preferred
+                                 and row['fit'] and not row['error']), None)
+                if selected is None:
+                    selected = next((row for row in candidates if row['fit'] and not row['error']), None)
+            if selected is None:
+                raise ValueError('No converged model is available for transfer.')
+            values, description = transfer_starting_values(selected, mc['result'] if mc else None)
             settings = self.app.project.method_settings('Polanyi–Wigner')
-            settings.update(beta=result['snapshot']['settings']['beta'],energy=fit['activation_energy_eV'],
-                            prefactor=fit['prefactor_s_inv'],order=fit['reaction_order'],
-                            free_order=candidate['name']=='fractional',fit_baseline=result['snapshot']['settings']['fit_baseline'])
-            session['selected_hypothesis'] = deepcopy(candidate)
+            settings.update(beta=result['snapshot']['settings']['beta'],
+                            energy=values['energy'], prefactor=values['prefactor'],
+                            order=values['order'], free_order=values['free_order'],
+                            fit_baseline=result['snapshot']['settings']['fit_baseline'])
+            session['selected_hypothesis'] = deepcopy(selected)
+            session['kinetic_transfer'] = {'model': selected['name'],
+                                           'description': description,
+                                           'source': 'monte_carlo' if monte_carlo else 'point_fit'}
             self.app.method.set('Polanyi–Wigner')
             self.app.stages.select(2)
             self.app.refresh_context()
-            self.app.status.set('Candidate transferred as initial guesses. Run an explicit fit to produce a kinetic analysis result.')
-        except (ValueError,KeyError) as exc:
+            self.app.status.set('Starting values transferred: ' + description)
+        except (ValueError, KeyError, OverflowError) as exc:
             self.app.status.set(str(exc))
 
     def sort(self,column):

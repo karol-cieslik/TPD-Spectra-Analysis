@@ -71,7 +71,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
     def _build(self):
         # Scientific desktop tools keep infrequent commands in a discoverable
         # menu and reserve the working surface for spectra and analysis.
-        menu = tk.Menu(self.root)
+        menu = tk.Menu(self.root, tearoff=False)
         file_menu = tk.Menu(menu, tearoff=False)
         file_menu.add_command(label="Open spectrum…", accelerator="Ctrl+O", command=self._import_files)
         file_menu.add_command(label="Add folder…", command=self._import_folder)

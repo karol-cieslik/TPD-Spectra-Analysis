@@ -164,6 +164,55 @@ def test_leading_edge_cannot_escape_selected_peak():
         calculate(dataset, project.snapshot('Leading edge'))
 
 
+def test_monte_carlo_medians_transfer_only_as_initial_guesses():
+    from tpd_spectra.workflow_modeling import transfer_starting_values
+    candidate = {'name': 'fractional', 'error': None,
+                 'fit': {'activation_energy_eV': 1.1, 'prefactor_s_inv': 1e13,
+                         'reaction_order': 1.5}}
+    mc = {'seed': 42, 'reference_model': 'fractional', 'cancelled': False,
+          'replicates_requested': 100, 'replicates_completed': 100,
+          'minimum_successful_refits': 100,
+          'replicate_records': [
+              {'model': 'fractional', 'error': None, 'energy_eV': energy,
+               'log10_prefactor': lognu, 'order': order}
+              for energy, lognu, order in
+              ([(1.18, 12., 1.4)] * 49 + [(1.20, 13., 1.6)] * 2
+               + [(1.25, 14., 1.8)] * 49)]}
+    values, description = transfer_starting_values(candidate, mc)
+    assert values['energy'] == 1.20
+    assert values['prefactor'] == pytest.approx(1e13)
+    assert values['order'] == 1.6
+    assert values['free_order'] is True
+    assert 'heuristic initial guesses' in description
+    assert 'joint fit' in description
+    mc['minimum_successful_refits'] = 101
+    with pytest.raises(ValueError, match='at least 101'):
+        transfer_starting_values(candidate, mc)
+    mc['minimum_successful_refits'] = 100
+    mc['cancelled'] = True
+    with pytest.raises(ValueError, match='completed Monte Carlo'):
+        transfer_starting_values(candidate, mc)
+
+
+def test_zero_order_monte_carlo_never_invents_unique_prefactor():
+    from tpd_spectra.workflow_modeling import transfer_starting_values
+    candidate = {'name': 'zero', 'error': None,
+                 'fit': {'activation_energy_eV': 0.9, 'prefactor_s_inv': 2e10,
+                         'reaction_order': 0.0}}
+    mc = {'seed': 9, 'reference_model': 'zero', 'cancelled': False,
+          'replicates_requested': 100, 'replicates_completed': 100,
+          'minimum_successful_refits': 100,
+          'replicate_records': [
+              {'model': 'zero', 'error': None, 'energy_eV': energy,
+               'log10_prefactor': None, 'order': 0.0}
+              for energy in ([0.8] * 50 + [1.0] * 50)]}
+    values, note = transfer_starting_values(candidate, mc)
+    assert values['energy'] == pytest.approx(0.9)
+    assert values['prefactor'] == 2e10
+    assert not values['free_order']
+    assert 'not separately identifiable' in note
+
+
 def test_modeling_comparison_transfer_and_monte_carlo_route(root, monkeypatch):
     from tpd_spectra.workflow_modeling import comparison
     app = WorkflowApp(root)
@@ -196,6 +245,32 @@ def test_modeling_comparison_transfer_and_monte_carlo_route(root, monkeypatch):
     mc = panel.session()['monte_carlo']['result']
     assert mc['seed'] == 17 and mc['replicates_completed'] == 2
     assert mc['parameter_intervals'] == {'first': {}}
+    # The user does not need to pick a row: current Monte Carlo reference is selected.
+    panel.table.selection_remove(panel.table.selection())
+    # A two-refit smoke run cannot masquerade as a precise parameter estimate.
+    panel.transfer(monte_carlo=True)
+    assert 'at least 100' in app.status.get()
+    # Exercising the new one-click transfer with sufficient successful samples.
+    # Supply a completed, 100-replicate fixture to exercise transfer UI.
+    panel.variables['replicates'].set('100')
+    panel.session()['monte_carlo']['snapshot'] = panel.snapshot()
+    mc['replicates_requested'] = 100
+    mc['replicates_completed'] = 100
+    mc['minimum_successful_refits'] = 100
+    mc['replicate_records'] = (
+        [{'model': 'first', 'error': None, 'energy_eV': 1.1,
+          'log10_prefactor': 12., 'order': 1.0}] * 50
+        + [{'model': 'first', 'error': None, 'energy_eV': 1.3,
+            'log10_prefactor': 14., 'order': 1.0}] * 50)
+    panel.mc_transfer.invoke()
+    transferred = app.project.method_settings('Polanyi–Wigner')
+    assert transferred['energy'] == pytest.approx(1.2)
+    assert transferred['prefactor'] == pytest.approx(1e13)
+    assert 'Transferred starting guesses' in app.transfer_summary.get()
+    assert app.project.current_results == {}
+    # Point-fit transfer is still available with no selected row.
+    panel.transfer()
+    assert app.project.method_settings('Polanyi–Wigner')['energy'] == result['candidates'][0]['fit']['activation_energy_eV']
     app.project.add_region('Second',230,350)
     app.refresh_context()
     assert panel.table.get_children() == ()

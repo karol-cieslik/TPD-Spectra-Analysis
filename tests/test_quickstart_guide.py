@@ -28,7 +28,7 @@ def test_full_html_is_offline_and_in_package_path():
     assert '<html' in html.lower()
     assert 'first result' in html.lower()
     assert 'Run Monte Carlo' in html
-    assert 'Overlapping components' in html
+    assert 'Fit Multiple Peaks' in html
     assert '<style>' in html
     # No remote fonts, scripts or screenshots are required for rendering.
     assert 'src="http' not in html

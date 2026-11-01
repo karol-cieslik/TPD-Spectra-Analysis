@@ -10,7 +10,17 @@ from .run_session import proposed_run_folder
 class ProjectMixin:
     def setup_project_actions(self):
         for title,command in (('Open project…',self.open_project),('Save project…',self.save_project),('Report / Export…',self.report_dialog)):
-            ttk.Button(self.project_actions,text=title,command=command).pack(side='left',padx=3)
+            button = ttk.Button(self.project_actions,text=title,command=command)
+            button.pack(side='left',padx=3)
+            if title.startswith('Report / Export'):
+                self.report_button = button
+        self.refresh_report_action()
+
+    def refresh_report_action(self):
+        """Keep the export prerequisite visible at the point of action."""
+        if hasattr(self, 'report_button'):
+            count = len(self.project.runs)
+            self.report_button.configure(text=f'Report / Export… ({count} saved)')
 
     def save_project(self):
         path=filedialog.asksaveasfilename(parent=self.root,title='Save portable project',defaultextension='.tpd.json',filetypes=[('TPD project','*.tpd.json')])
@@ -48,7 +58,12 @@ class ProjectMixin:
 
     def report_dialog(self):
         if not self.project.runs:
+            instruction = ('No saved analysis runs are available.\n\n'
+                           'In Kinetic Analysis, calculate or preview the selected peak, '
+                           'scroll down and click Save labeled result…; then return to Report / Export.\n\n'
+                           'A preview alone is not added to a report automatically.')
             self.status.set('Save one or more labeled analysis results before preparing a report.')
+            messagebox.showinfo('Nothing to export yet', instruction, parent=self.root)
             return
         dialog=tk.Toplevel(self.root)
         dialog.title('Review report selection and export destination')

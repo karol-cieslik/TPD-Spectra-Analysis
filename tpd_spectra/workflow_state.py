@@ -87,7 +87,20 @@ class WorkflowProject:
     def update_region(self, region_id, label, lower, upper):
         region = self.regions[region_id]
         self.validate_bounds(region.dataset_id, lower, upper)
-        region.label, region.lower, region.upper = label.strip() or region.label, float(lower), float(upper)
+        previous = (region.lower, region.upper)
+        low, high = float(lower), float(upper)
+        region.label, region.lower, region.upper = label.strip() or region.label, low, high
+        # A region edit keeps its identity and saved-result provenance, but a
+        # previous leading-edge interval may now refer to a different peak.
+        settings = self.settings.get(f'{region.dataset_id}/{region.id}/Leading edge')
+        if settings is not None:
+            try:
+                edge = (float(settings['lower']), float(settings['upper']))
+                usable = np.isfinite(edge).all() and low <= edge[0] < edge[1] <= high
+            except (KeyError, TypeError, ValueError):
+                edge, usable = (None, None), False
+            if not usable or np.allclose(edge, previous):
+                settings['lower'], settings['upper'] = low, high
 
     def set_processing(self, recipe):
         dataset = self.datasets[self.active_dataset]

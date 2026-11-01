@@ -6,7 +6,7 @@ needed before sending a new executable to colleagues.
 
 ## Current source and completed integration
 
-Current beta: **0.11.0b5 on main**. PR #19 (noisy demo/progress/components),
+Current beta: **0.11.0b6 on main**. PR #19 (noisy demo/progress/components),
 PR #20 (Results/Help/tutorials) and PR #21 (b5 identity/frozen acceptance) were
 merged on 27 October 2026. Historical PR descriptions and acceptance records
 describe their original development state, not current download instructions.

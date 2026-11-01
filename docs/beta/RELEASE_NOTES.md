@@ -1,8 +1,15 @@
-# TPD Spectra Studio 0.11.0b5 — research beta notes
+# TPD Spectra Studio 0.11.0b6 — research beta notes
 
-Current source: `main`. Use a fresh Windows desktop build for the current main commit; `VERSION.json` records its source commit and `SHA256SUMS.txt` records package file hashes. Earlier 0.11.0b5 packages predate PR #32 and do not include the delimited-text import preview. This remains an informal research beta, not a stable release or experimental validation. See [START_HERE](../../START_HERE.md) for download and extraction instructions.
+Current source: `main`. Use a fresh Windows desktop build for the current main commit; `VERSION.json` records its source commit and `SHA256SUMS.txt` records package file hashes. Earlier 0.11.0b5 packages used the same version name across different commits; b6 is the distinct beta for the peak-switch/export improvements. This remains an informal research beta, not a stable release or experimental validation. See [START_HERE](../../START_HERE.md) for download and extraction instructions.
 
-## Included in b5
+## Fixes in b6
+
+- Report / Export shows an explicit explanation if no labeled analysis run has been saved and displays the saved-run count next to the button.
+- Updating an existing peak interval refreshes invalid leading-edge limits to the new bounds; custom subintervals within those bounds are preserved.
+- Modeling plots focus on the selected peak interval; stale comparisons remain retained but no longer replace the current plotted data.
+- Manual simulations and fitted comparisons use separate display modes so an oversized simulation does not squash the fitted curves. A warning explains large simulation-to-data amplitude differences.
+
+## Features carried over from b5
 
 - Structured Results tabs distinguish fitted, assumed and calculated quantities
   and retain submitted settings and scientific cautions.

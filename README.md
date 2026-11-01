@@ -20,19 +20,19 @@ Built for surface-science researchers who need transparent fitting methods, repr
 
 ---
 
-## Try the beta — 0.11.0b5 candidate
+## Try the beta — 0.11.0b6 candidate
 
-The current research beta source is on `main`, including merged PRs #19–21 and #32. It includes readable Results with parameter provenance, 41-topic offline scientific Help, five guided exercises, Monte Carlo progress/cancellation, constrained overlapping-component fitting, and a reviewed CSV/TSV/TXT import preview.
+The current research beta source is on `main`, including merged PRs #19–21 and #32 plus the peak-switch/export feedback corrections. It includes readable Results with parameter provenance, 41-topic offline scientific Help, five guided exercises, Monte Carlo progress/cancellation, constrained overlapping-component fitting, and a reviewed CSV/TSV/TXT import preview.
 
 Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain),
 choose the latest **successful main** run, and download
-`tpd-spectra-windows-x64-beta-0.11.0b5` under **Artifacts** (GitHub sign-in may
+`tpd-spectra-windows-x64-beta-0.11.0b6` under **Artifacts** (GitHub sign-in may
 be required). Extract the entire ZIP and run `TPD-Spectra-Studio.exe`.
 Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for file
 checksums. Actions downloads expire; no tagged prerelease has been published.
 The executable is unsigned; follow your institution's software policy.
 
-Use the latest successful Windows build for `main`; confirm its commit in `VERSION.json`. Older 0.11.0b5 artifacts predate PR #32 and lack the import preview. Automated build checks cover packaging and regression tests, while human visual/DPI acceptance and installation on Windows 10/11 without Python remain outstanding. Complete those checks on the exact package before colleague distribution. This beta does not claim independent experimental validation.
+Use the latest successful Windows build for `main`; confirm its commit in `VERSION.json`. Older 0.11.0b5 artifacts shared a version label across different commits; use the new b6 package for peak-switching and report-feedback fixes. Automated build checks cover packaging and regression tests, while human visual/DPI acceptance and installation on Windows 10/11 without Python remain outstanding. Complete those checks on the exact package before colleague distribution. This beta does not claim independent experimental validation.
 
 Start with [the five-minute walkthrough](START_HERE.md) and the
 [full worked Quick Start](docs/beta/WORKED_EXAMPLES.html) (offline HTML), then explore the
@@ -109,11 +109,11 @@ The desktop uses an original spectrum icon and a shared navy/teal identity.
 ### Option A — Windows desktop beta (no Python required)
 
 1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain) and choose the latest successful **main** run.
-2. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b5`. GitHub sign-in may be needed.
+2. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b6`. GitHub sign-in may be needed.
 3. Extract the entire ZIP, keeping its folders together, and double-click `TPD-Spectra-Studio.exe`.
 4. Click **Open Example Dataset**, choose **first order single peak**, and follow [START_HERE](START_HERE.md).
 
-The current Windows b5 package includes Results, scientific Help and the guided Quick Start.
+The current Windows b6 package includes Results, scientific Help, the guided Quick Start, peak-aware model plots and visible export prerequisites.
 
 The package opens `examples/synthetic_two_peak_demo.csv`: a clearly labeled two-population Polanyi–Wigner simulation with seeded 2% detector noise and known inputs. Clean and graded-noise references remain available. Follow the [demo walkthrough](examples/README.md) for settings and expected results. Synthetic tests do not replace experimental validation. The executable is currently unsigned; follow institutional software policy.
 
@@ -215,7 +215,7 @@ pyinstaller --clean --noconfirm --onefile --windowed --name TPD-Spectra-Studio r
 | [Windows desktop build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) | Selected branch pushes and manual dispatch | Installs dependencies, runs tests, performs startup checks, packages an EXE and uploads a ZIP |
 | [Scientific tests](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/explorer-tests.yml) | Repository changes under the configured test paths | Numerical regression and benchmark tests across supported Python versions |
 
-PRs #19, #20 and #21 are merged into `main`; the current beta version is 0.11.0b5.
+PRs #19, #20 and #21 are merged into `main`; the current beta version is 0.11.0b6.
 `main` is a development branch, **not** a stable public release. Passing automated tests does not replace hands-on or independent scientific review.
 
 ```text

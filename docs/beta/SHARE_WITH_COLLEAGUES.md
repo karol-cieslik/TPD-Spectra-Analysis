@@ -1,6 +1,6 @@
 # Sharing the next Windows research beta
 
-This maintainer handoff describes the current **0.11.0b5 research beta on main**.
+This maintainer handoff describes the current **0.11.0b6 research beta on main**.
 PRs #19, #20 and #21 are merged. Results, scientific Help and guided exercises
 are included. Historical b4 artifacts **do not contain** that interface:
 **Do not send that old ZIP as the updated colleague beta.**

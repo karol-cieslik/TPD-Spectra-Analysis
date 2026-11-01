@@ -278,14 +278,20 @@ class ModelingPanel:
         self.table.delete(*self.table.get_children())
         try:
             session = self.session()
-            component_result=session.get('components')
-            if component_result and session.get('display_mode')=='components':
-                self.components.render(ax,residual,component_result)
+            component_result = session.get('components')
+            stale_component = bool(component_result and session.get('display_mode') == 'components'
+                                   and not self.components.current(component_result))
+            if component_result and session.get('display_mode') == 'components' and not stale_component:
+                self.components.render(ax, residual, component_result)
                 self.canvas.draw_idle()
                 return
             result = session.get('comparison')
+            comparison_current = bool(result and self.current(result))
+            # A stale result stays in the project for provenance, but must not
+            # replace the data from the newly selected peak in the live plot.
+            show_comparison = comparison_current and session.get('display_mode') != 'simulation'
             dataset, _ = self.app.project.context()
-            t,y = selected_arrays(dataset,self.snapshot()) if not result else (result['temperature'],result['signal'])
+            t, y = (result['temperature'], result['signal']) if show_comparison else selected_arrays(dataset, self.snapshot())
         except ValueError:
             guidance = ('In Spectra & Preparation, enter a peak name and bounds, then Add peak (or use Drag interval). '
                         'The original spectrum remains visible; calculations need a named region.'
@@ -296,22 +302,38 @@ class ModelingPanel:
             self.note(guidance)
             self.canvas.draw_idle()
             return
-        plot_observations(ax,t,y,label='Comparison input (submitted snapshot)' if result else 'Selected processed signal')
+        plot_observations(ax, t, y, label='Comparison input (submitted snapshot)' if show_comparison else 'Selected processed signal')
+        plotted_signals = [np.asarray(y, dtype=float)]
         notes = 'A ranking does not prove a mechanism. Single-state fits assume a linear heating ramp and coverage one at the interval start.\nZero-order fits search the depletion edge; displayed prefactors are representative, with conditional ranges rather than unique values. Edge-model AICc rankings are heuristic.\n'
+        if stale_component:
+            notes += 'STALE component fit — showing the current peak data; refit components for the new interval.\n'
         if result:
-            notes += ('Current comparison.\n' if self.current(result) else 'STALE comparison — original interval/settings plotted. Compare again before transfer or Monte Carlo.\n')
-            notes += 'Compared interval: ' + str(result['snapshot']['region']) + ' °C; β = ' + str(result['snapshot']['settings']['beta']) + ' K/s\n'
+            if not comparison_current:
+                notes += 'STALE comparison — showing current peak data, not old fitted curves. Re-run Compare models for the changed interval/settings.\n'
+            elif show_comparison:
+                notes += 'Current comparison.\n'
+            else:
+                notes += 'A current comparison is retained; manual simulation is shown separately. Click Compare models to return to fitted curves.\n'
+            notes += 'Stored comparison interval: ' + str(result['snapshot']['region']) + ' °C; β = ' + str(result['snapshot']['settings']['beta']) + ' K/s\n'
+        if show_comparison:
             for index,c in enumerate(result['candidates']):
                 fit = c['fit']
                 vals = [c['name']] + ([fit['reaction_order'],fit['activation_energy_eV'],fit['prefactor_s_inv'],fit['rmse_signal'],c['delta_aicc']] if fit else ['—']*5)
                 self.table.insert('','end',iid=str(index),values=vals+[c['error'] or '; '.join(c['warnings'])])
                 if c['prediction'] is not None and not c['error']:
-                    ax.plot(t,c['prediction'],linestyle=('-', '--', '-.', ':')[index%4],
+                    predicted = np.asarray(c['prediction'], dtype=float)
+                    plotted_signals.append(predicted)
+                    ax.plot(t,predicted,linestyle=('-', '--', '-.', ':')[index%4],
                             linewidth=1.5,label=c['name'])
-                    residual.plot(t,np.asarray(y)-np.asarray(c['prediction']),label=c['name'])
+                    residual.plot(t,np.asarray(y)-predicted,label=c['name'])
         simulation = session.get('simulation')
-        if simulation and self.current(simulation):
-            ax.plot(simulation['temperature'],simulation['prediction'],'--',label='Manual simulation (not fitted)')
+        if simulation and self.current(simulation) and not show_comparison:
+            prediction = np.asarray(simulation['prediction'], dtype=float)
+            plotted_signals.append(prediction)
+            ax.plot(simulation['temperature'], prediction, '--', label='Manual simulation (not fitted)')
+            observed_scale = max(float(np.max(np.abs(y))), 1e-12)
+            if float(np.max(np.abs(prediction))) > 20 * observed_scale:
+                notes += 'Manual simulation greatly exceeds measured signal; adjust Simulation signal scale. This is not a fitted curve.\n'
         mc = session.get('monte_carlo')
         if mc:
             r = mc['result']
@@ -320,6 +342,23 @@ class ModelingPanel:
             notes += 'Conditional parameter ranges: ' + json.dumps(r['parameter_intervals']) + '\n'
             notes += ('MC settings are current. ' if self.current(mc) else 'MC settings are stale. ')
         notes += 'Monte Carlo uses iid Gaussian residual noise around the lowest-AICc converged reference; ranges withheld below 100 successful refits. Frequencies are not mechanism probabilities.'
+        # Always focus the live axes on the selected peak, not the full source
+        # spectrum or the previous interval. Autoscale from visible data and
+        # displayed curves, excluding hidden/stale simulations.
+        temperature = np.asarray(t, dtype=float)
+        finite_t = temperature[np.isfinite(temperature)]
+        if finite_t.size:
+            low_t, high_t = float(finite_t.min()), float(finite_t.max())
+            pad_t = max((high_t - low_t) * .025, .01)
+            for axis in (ax, residual):
+                axis.set_xlim(low_t - pad_t, high_t + pad_t)
+        finite_y = [array[np.isfinite(array)] for array in plotted_signals]
+        finite_y = [array for array in finite_y if array.size]
+        if finite_y:
+            values = np.concatenate(finite_y)
+            low_y, high_y = float(values.min()), float(values.max())
+            pad_y = max((high_y - low_y) * .08, max(abs(low_y), abs(high_y)) * .02, 1e-9)
+            ax.set_ylim(low_y - pad_y, high_y + pad_y)
         ax.legend(fontsize=7,ncol=2)
         self.note(notes)
         self.canvas.draw_idle()
@@ -369,8 +408,8 @@ class ModelingPanel:
         key = f"{snap['dataset_id']}/{snap['region_id']}"
         session = self.app.project.modeling[key]
         session[kind] = result
-        if kind in ('comparison','components','simulation'):
-            session['display_mode']='components' if kind=='components' else 'single'
+        if kind in ('comparison', 'components', 'simulation'):
+            session['display_mode'] = kind
         if kind == 'comparison':
             session.pop('monte_carlo',None)
         self.render()

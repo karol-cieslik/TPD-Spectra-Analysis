@@ -1,6 +1,6 @@
 # TPD Spectra Studio — User and Scientific Methods Manual
 
-**Document status:** beta user and scientific manual · **Software source:** `main` (PRs #19–21 merged) · **Current beta version:** 0.11.0b5 research beta (not publicly tagged)
+**Document status:** beta user and scientific manual · **Software source:** `main` (PRs #19–21 merged) · **Current beta version:** 0.11.0b6 research beta (not publicly tagged)
 **Audience:** experimental surface scientists, TPD/TDS users, students, and developers.  
 **Scope:** current application behavior and defensible model assumptions. This is documentation, not a claim of experimental validation. Please open an issue for any discrepancy between this manual and the executable.
 
@@ -36,7 +36,7 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 
 1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
 2. Choose the latest successful **main** run in the Windows desktop workflow.
-3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b5`. GitHub sign-in may be required.
+3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b6`. GitHub sign-in may be required.
 4. Extract the archive completely, then launch `TPD-Spectra-Studio.exe`. No separate Python installation should be required.
 5. Keep the package contents together, including licenses and documentation. The executable is not digitally signed; verify its GitHub origin and follow your institution's software policy.
 

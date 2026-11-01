@@ -1,3 +1,15 @@
+## Unreleased — kinetic interpretation and Monte Carlo starting-guess transfer
+
+- Add one-click transfer of the current selected or automatically best-ranked model
+  point fit into the matching Kinetic Analysis region.
+- Transfer medians from a completed, current Monte Carlo run as optional initial
+  guesses only, with a minimum successful-refit threshold, zero-order
+  identifiability safeguards and visible source/provenance text.
+- Distinguish Kinetic Analysis as method-specific cross-checking; show energy
+  differences, conditional MC ranges and heating-rate mismatch warnings.
+  Flag first-order Redhead comparisons against non-first-order models as
+  incompatible. Keep explicit fitting, existing results and saves unchanged.
+
 ## 0.11.0b7 — published examples and focused desktop navigation (research-beta prerelease)
 
 - Add **Fit 2 Peaks…**, clickable/numeric positions, temperature-aware first-order

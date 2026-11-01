@@ -18,6 +18,10 @@ def main(output):
     output.mkdir(parents=True,exist_ok=False)
     catalog=json.loads(resource('examples/beta_collection/catalog.json').read_text(encoding='utf-8'))
     assert len(catalog)>=19
+    publication_catalog=json.loads(resource('examples/publication_data/catalog.json').read_text(encoding='utf-8'))
+    assert len(publication_catalog)==9
+    assert all(entry['citation'] and entry['doi'] and entry['license'] for entry in publication_catalog)
+    assert resource('examples/publication_data/README.md').is_file()
     assert {'first_order_low_noise.csv','first_order_moderate_noise.csv','first_order_high_noise.csv'} <= {entry['file'] for entry in catalog}
     for entry in catalog:
         assert len(load_spectrum(resource('examples/beta_collection/'+entry['file'])).signal)==801
@@ -79,8 +83,9 @@ def main(output):
         from .workflow_report import export_report
         from .kinetics_uncertainty import run_kinetics_monte_carlo
         example=app.open_example()
-        example.list.selection_clear(0,'end')
-        example.list.selection_set(0)
+        synthetic_tree=example.trees['synthetic']
+        synthetic_tree.selection_set('0')
+        synthetic_tree.focus('0')
         example.open()
         app.method.set('Polanyi–Wigner')
         app.project.method_settings('Polanyi–Wigner').update(order=0.,fit_baseline=False)
@@ -140,6 +145,7 @@ def main(output):
         assert not errors,errors
         record={'identity':build_identity(),'examples_imported':len(catalog),
             'frozen_executable':bool(getattr(sys,'frozen',False)),
+            'publication_examples_with_provenance':len(publication_catalog),
             'scientific_help_41_topics_and_keyboard_browser_passed':True,
             'resource_lookup_from_unrelated_cwd':Path.cwd().resolve()!=resource('START_HERE.md').parent,
             'redhead_reference_passed':True,

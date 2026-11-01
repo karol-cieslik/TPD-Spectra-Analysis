@@ -8,7 +8,8 @@
 - Distinguish Kinetic Analysis as method-specific cross-checking; show energy
   differences, conditional MC ranges and heating-rate mismatch warnings.
   Flag first-order Redhead comparisons against non-first-order models as
-  incompatible. Keep explicit fitting, existing results and saves unchanged.
+  incompatible. Save the cross-check with labeled runs for JSON/PDF report
+  provenance. Keep explicit fitting and preexisting results unchanged.
 
 ## 0.11.0b7 — published examples and focused desktop navigation (research-beta prerelease)
 

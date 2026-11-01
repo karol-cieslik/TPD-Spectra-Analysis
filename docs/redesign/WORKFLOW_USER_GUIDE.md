@@ -1,7 +1,7 @@
-# Three-stage workflow guide — 0.11.0b7 candidate
+# Three-stage workflow guide — 0.11.0b8 candidate
 
 TPD Spectra Studio by **Karol Cieślik**. This guide describes the three-stage
-workflow in the 0.11.0b7 research beta on main (PRs #19–21 merged). It is intended for practical
+workflow in the 0.11.0b8 research beta on main (including PRs #38–39). It is intended for practical
 testing, not as a claim of validated experimental analysis.
 
 ## Navigation and example provenance

@@ -14,20 +14,18 @@ Built for surface-science researchers who need transparent fitting methods, repr
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
 [![Development status](https://img.shields.io/badge/status-beta%20review%20candidate-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/tree/main)
 
-[**Windows beta builds**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) · [**Get started**](START_HERE.md) · [**Worked examples**](docs/beta/WORKED_EXAMPLES.html) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contribute**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/CONTRIBUTING.md)
+[**Download Windows beta 0.11.0b7**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/41296103371) · [**Get started**](START_HERE.md) · [**Worked examples**](docs/beta/WORKED_EXAMPLES.html) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contribute**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## Try the beta — 0.11.0b7 candidate
+## Try the beta — 0.11.0b7
 
 The current research beta source is on `main`, including merged PRs #19–21 and #32, the peak-switch/export corrections, and the streamlined example-library layout. It includes readable Results with parameter provenance, 41-topic offline scientific Help, five guided exercises, Monte Carlo progress/cancellation, constrained overlapping-component fitting, and a reviewed CSV/TSV/TXT import preview.
 
-Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain),
-choose the latest **successful main** run, and download
-`tpd-spectra-windows-x64-beta-0.11.0b7` under **Artifacts** (GitHub sign-in may
-be required). Extract the entire ZIP and run `TPD-Spectra-Studio.exe`.
+**[Download TPD Spectra Studio 0.11.0b7 for Windows (verified `main` build)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/41296103371)**.
+Under **Artifacts**, select `tpd-spectra-windows-x64-beta-0.11.0b7` (GitHub sign-in may be required). Extract the entire ZIP and run `TPD-Spectra-Studio.exe`.
 Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for file
 checksums. Actions downloads expire; no tagged prerelease has been published.
 The executable is unsigned; follow your institution's software policy.
@@ -112,12 +110,12 @@ The desktop uses an original spectrum icon and a shared navy/teal identity.
 
 ### Option A — Windows desktop beta (no Python required)
 
-1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain) and choose the latest successful **main** run.
+1. Open the [verified Windows 0.11.0b7 build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/runs/41296103371) from `main`.
 2. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b7`. GitHub sign-in may be needed.
 3. Extract the entire ZIP, keeping its folders together, and double-click `TPD-Spectra-Studio.exe`.
-4. Click **Open Example Dataset**, choose **first order single peak**, and follow [START_HERE](START_HERE.md).
+4. Choose **Browse examples… → Simulated → first order single peak**, then **Open selected spectrum** and follow [START_HERE](START_HERE.md).
 
-The current Windows b6 package includes Results, scientific Help, the guided Quick Start, peak-aware model plots and visible export prerequisites.
+The Windows b7 package includes Results, scientific Help, the guided Quick Start, peak-aware model plots, visible export prerequisites, the revised menu and the curated publication-derived example library.
 
 The package opens `examples/synthetic_two_peak_demo.csv`: a clearly labeled two-population Polanyi–Wigner simulation with seeded 2% detector noise and known inputs. Clean and graded-noise references remain available. Follow the [demo walkthrough](examples/README.md) for settings and expected results. Synthetic tests do not replace experimental validation. The executable is currently unsigned; follow institutional software policy.
 

@@ -1,5 +1,6 @@
 """Method-scoped results controller and cancellable background work."""
 from copy import deepcopy
+import math
 import queue
 import threading
 import tkinter as tk
@@ -38,6 +39,55 @@ class ResultsMixin:
         self.result_text.insert('end', text)
         self.result_text.configure(state='disabled')
 
+    def _model_cross_check(self, result):
+        """Same-data comparison, not independent experimental validation."""
+        if not self.project.result_is_current(result):
+            return ''
+        snap = result['snapshot']
+        session = self.project.modeling.get(f"{snap['dataset_id']}/{snap['region_id']}", {})
+        comparison = session.get('comparison')
+        try:
+            if not comparison or not self.modeling_panel.current(comparison):
+                return '\nModel cross-check: no current model comparison for this peak.'
+            usable = [candidate for candidate in comparison['candidates']
+                      if candidate['fit'] and not candidate['error']]
+            if not usable:
+                return '\nModel cross-check: no converged candidate.'
+            transferred = session.get('kinetic_transfer', {}).get('model')
+            model = next((candidate for candidate in usable
+                          if candidate['name'] == transferred), usable[0])
+            model_energy = float(model['fit']['activation_energy_eV'])
+            method_energy = result['values'].get('energy_ev',
+                                                  result['values'].get('activation_energy_eV'))
+            lines = ['', 'Model cross-check (same spectrum; not independent validation):',
+                     f"Reference model: {model['name']} — E = {model_energy:.5g} eV."]
+            if method_energy is not None and math.isfinite(float(method_energy)):
+                delta = float(method_energy) - model_energy
+                lines.append(f"{snap['method']}: E = {float(method_energy):.5g} eV; "
+                             f"difference {delta:+.5g} eV ({delta / model_energy:+.2%}).")
+            if snap['method'] == 'Redhead' and model['name'] != 'first':
+                lines.append('INCOMPATIBLE ASSUMPTIONS: classical Redhead assumes first order; '
+                             'a non-first-order reference fit cannot validate this estimate.')
+            if snap['method'] == 'Polanyi–Wigner':
+                lines.append('Both values come from Polanyi–Wigner fitting; agreement is '
+                             'not an independent method check.')
+            beta_model = float(comparison['snapshot']['settings']['beta'])
+            beta_method = float(snap['settings']['beta'])
+            if not math.isclose(beta_model, beta_method, rel_tol=1e-9):
+                lines.append(f'HEATING-RATE MISMATCH: Modeling {beta_model:g} K/s versus '
+                             f'Kinetic Analysis {beta_method:g} K/s.')
+            mc = session.get('monte_carlo')
+            if mc and self.modeling_panel.current(mc):
+                interval = mc['result'].get('parameter_intervals', {}).get(model['name'], {}).get('energy_eV')
+                if interval:
+                    lines.append(f"Monte Carlo conditional energy refit range: "
+                                 f"{float(interval[0]):.5g}–{float(interval[1]):.5g} eV; "
+                                 "not a validated experimental confidence interval.")
+            return '\n'.join(lines)
+        except (KeyError, ValueError, TypeError, ZeroDivisionError):
+            return '\nModel cross-check unavailable; inspect current Modeling settings.'
+
+
     def copy_result_summary(self):
         """Copy only the submitted result; no implicit recomputation or export mutation."""
         if self.displayed_result is None:
@@ -50,7 +100,7 @@ class ResultsMixin:
                  f"Dataset: {result['snapshot'].get('dataset', '')}",
                  'Parameter\tValue\tUnit\tHow obtained']
         lines += ['\t'.join(row) for row in parameter_rows(result)]
-        lines += ['', scientific_notes(result, current)]
+        lines += ['', scientific_notes(result, current), self._model_cross_check(result)]
         self.root.clipboard_clear()
         self.root.clipboard_append('\n'.join(lines))
         self.status.set('Parameter summary and scientific cautions copied to clipboard.')
@@ -193,12 +243,13 @@ class ResultsMixin:
                     bbox=dict(boxstyle='round,pad=0.5',facecolor='white',edgecolor='#087E8B',alpha=.9))
             for row in parameter_rows(result):
                 self.result_table.insert('', 'end', values=row)
-            self.result_message(scientific_notes(result, current))
+            self.result_message(scientific_notes(result, current) + self._model_cross_check(result))
         else:
             self.result_state.set('Not calculated for this dataset / peak / method.')
             self.result_message('Not calculated for this dataset / peak / method.\n\n'
                                 'Select a named peak and method, then calculate or fit.\n'
-                                'Model comparisons and Monte Carlo results remain in Modeling & Order Identification.')
+                                'Model comparisons and Monte Carlo remain in Modeling & Order Identification.\n'
+                                'Use the applicable kinetic methods here for cross-checks, not another order assignment.')
             dataset = self.project.datasets.get(self.project.active_dataset)
             if dataset is not None:
                 ax = self.result_figure.add_subplot(111)

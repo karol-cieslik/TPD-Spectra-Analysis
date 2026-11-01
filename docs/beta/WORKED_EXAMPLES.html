@@ -334,12 +334,12 @@ physical truth.</p>
 <p><strong>Purpose:</strong> Learn the difference between selecting a named peak and decomposing a complete overlapping spectrum.</p>
 <h3 id="start-with-two-peaks">Start with two peaks</h3>
 <p>Open the default two-peak demo or its clean variant. In <strong>Modeling</strong> click
-<strong>Fit 2 Peaks…</strong>, verify 1 K/s, then click approximate positions near 172 and
+<strong>Fit Multiple Peaks…</strong>, select <strong>2 components</strong>, verify 1 K/s, then click approximate positions near 172 and
 276 °C on the dialog spectrum. Numeric °C entry is also available. Clicks cycle
 between Peak 1 and Peak 2. <strong>Re-estimate from positions</strong> updates first-order
 energy guesses and ±30% heuristic bounds; pending position edits are also
 applied by Fit. These bounds are search limits, not confidence intervals.
-New rows fix order one, prefactor <code>1e13 s⁻¹</code> and coverage one. <strong>Fit Both Peaks</strong>
+New rows fix order one, prefactor <code>1e13 s⁻¹</code> and coverage one. <strong>Fit 2 Components</strong>
 optimizes both energies and nonnegative detector scales on the entire dataset.</p>
 <p>Inspect the blue dashed and green dash-dot components, orange complete sum,
 separate dotted baseline and observation-minus-sum residuals. Read the quality
@@ -356,8 +356,8 @@ residuals and is not proof of two states or experimental energy accuracy.</p>
 <h3 id="advanced-three-population-exercise">Advanced three-population exercise</h3>
 <p><strong>Dataset:</strong> <strong>Browse examples…</strong> → <strong>three overlapping peaks</strong>. It is a clean, synthetic 801-point trace between 50 and 450 °C. Its generating model has three independent additive first-order populations with the inputs below. A moderate-noise variant is also available for a harder test.</p>
 <ol>
-<li>In <strong>Modeling &amp; Order Identification</strong>, click <strong>Overlapping components...</strong>.</li>
-<li>Open <strong>Advanced settings</strong> and define <strong>three component rows</strong>. Use the following trial inputs for this truth-informed numerical exercise:</li>
+<li>In <strong>Modeling &amp; Order Identification</strong>, click <strong>Fit Multiple Peaks…</strong> and select <strong>3 components</strong>.</li>
+<li>Open <strong>Advanced settings</strong> and edit the <strong>three component rows</strong>. Use the following trial inputs for this truth-informed numerical exercise:</li>
 </ol>
 <table>
 <thead>
@@ -534,7 +534,7 @@ r_i(T)=ν_i\theta_i(T)^{n_i}\exp\left(-\frac{E_i}{k_B T}\right),\qquad
 </tr>
 <tr>
 <td align="left">The first peak fit does not explain both peaks</td>
-<td align="left">The default region is a single-state approximation. Use <strong>Overlapping components...</strong> for a justified joint hypothesis.</td>
+<td align="left">The default region is a single-state approximation. Use <strong>Fit Multiple Peaks…</strong> for a justified joint hypothesis.</td>
 </tr>
 <tr>
 <td align="left">Parameters appear different after switching methods</td>

@@ -21,8 +21,9 @@ research beta; scientific estimates are conditional on the chosen model.
   views; missing digitization points are omitted, not filled. Figure-derived
   time is an explicit nominal-ramp coordinate and is **not observed time**.
   CO correspondence and noncommercial/reuse-unclear figures remain excluded.
-- Two-peak improvements: **Fit 2 Peaks… → verify rate → select
-  positions → Fit Both Peaks**, with numeric position entry and Advanced controls.
+- Unified 1–3 component workflow: **Fit Multiple Peaks… → choose count →
+  verify rate → select positions → Fit N Components**, with numeric position
+  entry and Advanced controls. This supersedes the two formerly separate entry points.
   First-order Redhead guesses and ±30% search bounds are initialization aids.
 - Published heating rates are suggestions requiring explicit confirmation.
   Zaki D₂O/Fe₃O₄ suggests **3 K/s**; Modeling and Kinetic Analysis have separate

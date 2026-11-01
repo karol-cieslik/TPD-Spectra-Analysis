@@ -39,20 +39,20 @@ A low residual or favorable AICc does not establish a unique desorption mechanis
 6. Inspect successful versus failed refits and model-ranking counts.
 
 This program refits noisy simulated spectra around a fitted reference. Ranges are withheld below 100 successful refits. Frequencies are not mechanism probabilities or experimentally calibrated confidence intervals. More replicates may take minutes.'''),
-    ('Overlapping and export', '''1. For two peaks open the default demo, then Modeling → Fit 2 Peaks….
-2. Verify 1 K/s; click approximate positions near 172 and 276 °C (or type positions), then Fit Both Peaks.
+    ('Overlapping and export', '''1. For two peaks open the default demo, then Modeling → Fit Multiple Peaks… and select 2 components.
+2. Verify 1 K/s; click approximate positions near 172 and 276 °C (or type positions), then Fit 2 Components.
 3. First-order energy guesses and ±30% search bounds are heuristic, not measured values or uncertainty intervals.
 4. Read the quality title, individual curves, sum, baseline, residuals and Assumptions & warnings. Baseline-only, collapsed or poor fits are unsupported even after convergence.
 5. For Zaki D₂O/Fe₃O₄, explicitly accept/reject the source suggestion of 3 K/s. Opening published data never applies it silently. Modeling and Kinetic Analysis have separate rates. Correlated residuals still limit this stress test.
 
 Advanced three-state exercise:
 1. Use Open Example Dataset → three overlapping peaks.
-2. In Modeling click Overlapping components → Advanced settings and create three component rows.
+2. In Modeling click Fit Multiple Peaks → select 3 components → Advanced settings.
 3. Fix each order to 1 and prefactor to 1e13 s⁻¹; set starting coverages 1.0, 0.7 and 0.5.
 4. Enter starting energies 1.185, 1.265 and 1.345 eV.
 5. Use energy bounds 1.14–1.22, 1.22–1.30 and 1.30–1.38 eV.
 6. Set heating rate to 1 K/s, Multistart off and maximum evaluations to 300.
-7. Fit 3 Components Together, then inspect individual curves, their sum, residuals and warnings.
+7. Fit 3 Components, then inspect individual curves, their sum, residuals and warnings.
 8. Export component fit and Save project to preserve the full configuration.
 
 The joint model fits the entire spectrum. Order, prefactor and coverage are fixed hypotheses; component energies and nonnegative scales are fitted. This is a truth-informed numerical exercise, not blind identification.'''),

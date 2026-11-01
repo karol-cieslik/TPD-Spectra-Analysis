@@ -169,15 +169,18 @@ The detector model applies an optimized signal scaling factor and optionally a c
 
 ### 6.5 Multiple populations and multiple heating rates
 
-For the current workflow, **Modeling → Fit 2 Peaks…** opens two rows with
-clickable and numeric approximate positions. Verify the rate and explicitly
-accept a source suggestion before using it (Zaki D₂O/Fe₃O₄: 3 K/s). Modeling
+For the current workflow, **Modeling → Fit Multiple Peaks…** opens the unified
+component dialog. Select **1, 2 or 3** rows at the top (default **2** for new
+hypotheses), then specify approximate positions by clicking the plot or typing
+temperatures. Switching counts retains surviving edits and temporarily caches
+removed rows within the open dialog. Verify the rate and explicitly accept a
+source suggestion before using it (Zaki D₂O/Fe₃O₄: 3 K/s). Modeling
 confirmation applies only to that dataset/region; Kinetic Analysis settings
-remain separate. Published examples no longer silently set analysis rates.
+remain separate. Published examples never silently set analysis rates.
 New first-order rows use Redhead position-based energy guesses and ±30%
 heuristic search bounds, not uncertainty limits. Advanced settings preserves
 control of fixed orders/prefactors/coverages, energies, bounds and baseline.
-**Fit Both Peaks** fits the full processed spectrum. Components differ in
+**Fit N Components** fits the full processed spectrum. Components differ in
 color and line style; the complete sum includes the separately drawn baseline.
 The residual is observation minus that sum. Read prominent baseline-only,
 poor-fit or collapsed-component diagnostics even when the optimizer converges.

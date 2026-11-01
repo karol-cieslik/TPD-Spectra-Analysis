@@ -14,15 +14,15 @@ Built for surface-science researchers who need transparent fitting methods, repr
 [![Windows desktop](https://img.shields.io/badge/Desktop-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions)
 [![Development status](https://img.shields.io/badge/status-research%20beta-f59e0b)](https://github.com/karol-cieslik/TPD-Spectra-Analysis/tree/main)
 
-[**Download Windows beta 0.11.0b7**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7) · [**Get started**](START_HERE.md) · [**Worked examples**](docs/beta/WORKED_EXAMPLES.html) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contribute**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/CONTRIBUTING.md)
+[**Download Windows beta 0.11.0b8**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8) · [**Get started**](START_HERE.md) · [**Worked examples**](docs/beta/WORKED_EXAMPLES.html) · [**Scientific methods**](#-scientific-methods-and-limitations) · [**Contribute**](https://github.com/karol-cieslik/TPD-Spectra-Analysis/blob/main/CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## Try the research beta — 0.11.0b7
+## Try the research beta — 0.11.0b8
 
-**[Download the Windows ZIP](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/download/v0.11.0b7/tpd-spectra-windows-x64.zip)** · [Release notes and checksums](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7)
+**[Download the Windows ZIP](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/download/v0.11.0b8/tpd-spectra-windows-x64.zip)** · [Release notes and checksums](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8)
 
 1. Download and extract the **whole ZIP** into a writable folder. Keep `docs` and `examples` beside `TPD-Spectra-Studio.exe`.
 2. Run **TPD-Spectra-Studio.exe**. No Python installation is needed. The unsigned beta is subject to your institution’s software policy.
@@ -100,12 +100,12 @@ The desktop uses an original spectrum icon and a shared navy/teal identity.
 
 ### Option A — Windows desktop beta (no Python required)
 
-1. Open the [verified Windows 0.11.0b7 build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7) from `main`.
-2. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b7`. GitHub sign-in may be needed.
+1. Open the [Windows 0.11.0b8 Research Beta prerelease](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8).
+2. Under **Assets**, download `tpd-spectra-windows-x64.zip` and its `.sha256` checksum. No GitHub sign-in is required.
 3. Extract the entire ZIP, keeping its folders together, and double-click `TPD-Spectra-Studio.exe`.
 4. Choose **Browse examples… → Simulated → first order single peak**, then **Open selected spectrum** and follow [START_HERE](START_HERE.md).
 
-The Windows b7 package includes Results, scientific Help, the guided Quick Start, peak-aware model plots, visible export prerequisites, the revised menu and the curated publication-derived example library.
+The Windows b8 package includes Results, scientific Help, the guided Quick Start, peak-aware model plots, visible export prerequisites, the revised menu and the curated publication-derived example library.
 
 The package opens `examples/synthetic_two_peak_demo.csv`: a clearly labeled two-population Polanyi–Wigner simulation with seeded 2% detector noise and known inputs. Clean and graded-noise references remain available. Follow the [demo walkthrough](examples/README.md) for settings and expected results. Synthetic tests do not replace experimental validation. The executable is currently unsigned; follow institutional software policy.
 
@@ -207,7 +207,7 @@ pyinstaller --clean --noconfirm --onefile --windowed --name TPD-Spectra-Studio r
 | [Windows desktop build](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml) | Selected branch pushes and manual dispatch | Installs dependencies, runs tests, performs startup checks, packages an EXE and uploads a ZIP |
 | [Scientific tests](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/explorer-tests.yml) | Repository changes under the configured test paths | Numerical regression and benchmark tests across supported Python versions |
 
-PRs #19, #20 and #21 are merged into `main`; the current beta version is 0.11.0b7.
+The current research beta is 0.11.0b8 and includes the unified peak-fitting dialog (PR #38) and Monte Carlo-to-kinetic starting-guess transfer (PR #39).
 `main` is a development branch, **not** a stable public release. Passing automated tests does not replace hands-on or independent scientific review.
 
 ```text

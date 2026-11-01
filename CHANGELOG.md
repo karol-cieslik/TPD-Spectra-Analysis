@@ -1,5 +1,8 @@
-## Unreleased — kinetic interpretation and Monte Carlo starting-guess transfer
+## 0.11.0b8 — unified multiple-peak fitting and kinetic cross-checks (research beta)
 
+- Consolidate the two separate multi-peak buttons into **Fit Multiple Peaks…**,
+  with a visible 1–3 component selector (default 2), preserved row edits and
+  the existing collapsible Advanced kinetic settings. The joint fitter itself is unchanged.
 - Add one-click transfer of the current selected or automatically best-ranked model
   point fit into the matching Kinetic Analysis region.
 - Transfer medians from a completed, current Monte Carlo run as optional initial
@@ -13,9 +16,6 @@
 
 ## 0.11.0b7 — published examples and focused desktop navigation (research-beta prerelease)
 
-- Consolidate the two separate multi-peak buttons into **Fit Multiple Peaks…**,
-  with a visible 1–3 component selector (default 2), preserved row edits and
-  the existing collapsible Advanced kinetic settings. The joint fitter itself is unchanged.
 - Add **Fit 2 Peaks…**, clickable/numeric positions, temperature-aware first-order
   energy guesses and heuristic bounds, with separate Advanced controls.
 - Suggest source heating rates with explicit confirmation, including Zaki 3 K/s;

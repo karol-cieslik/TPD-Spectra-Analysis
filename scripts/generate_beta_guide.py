@@ -20,7 +20,7 @@ def generate(font_directory=None):
     pdfmetrics.registerFont(TTFont('GuideBold',str(fonts/'DejaVuSans-Bold.ttf')))
     pdfmetrics.registerFontFamily('Guide',normal='Guide',bold='GuideBold')
     c=Canvas(str(OUT),pagesize=(595.28,841.89))
-    c.setTitle('TPD Spectra Studio - Quick Start 0.11.0b7 (review guide)')
+    c.setTitle('TPD Spectra Studio - Quick Start 0.11.0b8 (review guide)')
     c.setAuthor('Karol Cieślik')
     c.setCreator('TPD Spectra Studio')
     c.setSubject('Five-page Quick Start for informal research beta testing')
@@ -31,7 +31,7 @@ def generate(font_directory=None):
         nonlocal y
         c.setFillColor(HexColor('#11283e'));c.rect(0,726,596,116,fill=1,stroke=0)
         c.setFillColor(HexColor('#73d6d3'));c.setFont('GuideBold',10)
-        c.drawString(42,808,'TPD SPECTRA STUDIO  /  0.11.0b7')
+        c.drawString(42,808,'TPD SPECTRA STUDIO  /  0.11.0b8')
         c.setFillColor(HexColor('#ffffff'));c.setFont('GuideBold',23);c.drawString(42,772,title)
         c.setFont('Guide',10);c.drawString(42,746,subtitle)
         c.setFillColor(HexColor('#657482'));c.setFont('Guide',8)
@@ -45,8 +45,8 @@ def generate(font_directory=None):
         paragraph.drawOn(c,42,y-h);y-=h+gap
     start(1,'Your first useful result','A five-to-ten-minute starting exercise using clearly labeled synthetic data')
     p('1  Extract and launch',heading)
-    p('Open the <link href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7" color="#087e8b">v0.11.0b7 Research Beta release</link> and download <b>tpd-spectra-windows-x64.zip</b>. No GitHub sign-in or Python installation is needed. Extract the whole ZIP, keeping <b>docs</b> and <b>examples</b> beside <b>TPD-Spectra-Studio.exe</b>. Double-click the executable. The noisy two-peak demo opens with its first peak selected. Check VERSION.json for the source commit and the separate ZIP checksum for integrity. The unsigned beta must comply with your institution’s software policy.')
-    p('This prerelease includes the two-peak improvements merged in PR #37. Earlier development artifacts with the same b7 version label may lack them. Experimental validation and wider user testing remain ongoing.')
+    p('Open the <link href="https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8" color="#087e8b">v0.11.0b8 Research Beta release</link> and download <b>tpd-spectra-windows-x64.zip</b>. No GitHub sign-in or Python installation is needed. Extract the whole ZIP, keeping <b>docs</b> and <b>examples</b> beside <b>TPD-Spectra-Studio.exe</b>. Double-click the executable. The noisy two-peak demo opens with its first peak selected. Check VERSION.json for the source commit and the separate ZIP checksum for integrity. The unsigned beta must comply with your institution’s software policy.')
+    p('This prerelease includes the two-peak improvements from PR #37, the unified 1-3 component dialog from PR #38, and the optional Monte Carlo-to-kinetic starting-guess transfer from PR #39. Experimental validation and wider user testing remain ongoing.')
     p('2  Open the clean example',heading)
     p('Click <b>Browse examples…</b>. Keep <b>first order single peak</b> and open it. You should see 801 points and a named full-trace interval, 50–450 °C. The chooser supplies the documented 1 K/s ramp. These are simulated rates, not measurements.')
     p('3  Read an energy estimate',heading)

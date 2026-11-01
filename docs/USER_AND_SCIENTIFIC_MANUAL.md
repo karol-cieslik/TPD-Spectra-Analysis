@@ -1,6 +1,6 @@
 # TPD Spectra Studio — User and Scientific Methods Manual
 
-**Document status:** beta user and scientific manual · **Software source:** `main`, including merged PR #37 · **Current beta version:** 0.11.0b7 research-beta prerelease
+**Document status:** beta user and scientific manual · **Software source:** `main`, including merged PRs #37–39 · **Current beta version:** 0.11.0b8 research-beta prerelease
 **Audience:** experimental surface scientists, TPD/TDS users, students, and developers.  
 **Scope:** current application behavior and defensible model assumptions. This is documentation, not a claim of experimental validation. Please open an issue for any discrepancy between this manual and the executable.
 
@@ -34,11 +34,10 @@ The principal motivation is to reduce repetitive manual plotting and fitting whi
 
 ### Portable Windows application
 
-1. Open [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml).
-2. Choose the latest successful **main** run in the Windows desktop workflow.
-3. Under **Artifacts**, download `tpd-spectra-windows-x64-beta-0.11.0b7`. GitHub sign-in may be required.
-4. Extract the archive completely, then launch `TPD-Spectra-Studio.exe`. No separate Python installation should be required.
-5. Keep the package contents together, including licenses and documentation. The executable is not digitally signed; verify its GitHub origin and follow your institution's software policy.
+1. Open the [v0.11.0b8 Research Beta release](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8).
+2. Under **Assets**, download `tpd-spectra-windows-x64.zip` and its checksum file; no sign-in is needed.
+3. Extract the archive completely, then launch `TPD-Spectra-Studio.exe`. No separate Python installation should be required.
+4. Keep the package contents together, including licenses and documentation. The executable is not digitally signed; verify its GitHub origin and follow your institution's software policy.
 
 A GitHub Actions green check confirms CI and packaging steps, **not** successful execution on every Windows machine. Confirm launch, imports, fits and export locally before distributing to colleagues.
 

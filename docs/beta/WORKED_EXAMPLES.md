@@ -4,13 +4,13 @@
 **Research beta prerelease | updated 1 November 2026**<br>
 Dr. Karol Cieślik
 
-> **Research beta 0.11.0b7.** Current source is `main`, including merged PRs #19–21 and the Results, Help and guided exercises. Confirm the exact build in `VERSION.json`. Human Windows visual/DPI acceptance, independent installation without Python and experimental validation remain incomplete. The exercises here use synthetic data; the separately labeled publication-derived examples are not known-ground-truth validation.
+> **Research beta 0.11.0b8.** Current source is `main`, including the updates through PR #39 and the Results, Help and guided exercises. Confirm the exact build in `VERSION.json`. Human Windows visual/DPI acceptance, independent installation without Python and experimental validation remain incomplete. The exercises here use synthetic data; the separately labeled publication-derived examples are not known-ground-truth validation.
 
-> **Versioned public beta:** use the [v0.11.0b7 prerelease](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7), which includes merged PR #37. Earlier b7 development artifacts may lack the two-peak improvements.
+> **Versioned public beta:** use the [v0.11.0b8 prerelease](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8), which includes merged PRs #37–39. The older b7 prerelease lacks the unified dialog and MC transfer.
 
 ## Start here: your first result in five minutes
 
-1. Download `tpd-spectra-windows-x64-beta-0.11.0b7` from the [Research Beta prerelease](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7); the Windows asset is named `tpd-spectra-windows-x64.zip`. Verify its separate SHA-256 checksum. Check `VERSION.json` for the source commit and `SHA256SUMS.txt` for package file hashes. Extract **the entire archive**; leave `docs` and `examples` beside the executable. No GitHub sign-in is needed for the public release asset.
+1. Download `tpd-spectra-windows-x64-beta-0.11.0b8` from the [Research Beta prerelease](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8); the Windows asset is named `tpd-spectra-windows-x64.zip`. Verify its separate SHA-256 checksum. Check `VERSION.json` for the source commit and `SHA256SUMS.txt` for package file hashes. Extract **the entire archive**; leave `docs` and `examples` beside the executable. No GitHub sign-in is needed for the public release asset.
 2. Double-click **TPD-Spectra-Studio.exe**. No Python installation is needed. This development executable is unsigned: follow your institution's software-security policy.
 3. Click **Browse examples…**, choose **first order single peak**, then **Open selected spectrum**. This loads 801 simulated points from 50 to 450 °C, with an already selected full-trace interval and a heating rate of 1 K/s.
 4. Go to **Kinetic Analysis** and select **Redhead**. Check **Heating rate = 1 K/s** and **Assumed prefactor = 1e13 s⁻¹**. An energy estimate should appear after the preview updates; if needed click **Calculate / Fit selected peak**.

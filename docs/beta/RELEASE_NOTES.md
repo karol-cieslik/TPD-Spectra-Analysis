@@ -1,11 +1,25 @@
-# TPD Spectra Studio 0.11.0b7 — research beta notes
+# TPD Spectra Studio 0.11.0b8 — research beta notes
 
-Public download: [v0.11.0b7 — Research Beta](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7).
+Public download: [v0.11.0b8 — Research Beta](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8).
 Extract the complete Windows ZIP and retain its docs/examples. `VERSION.json`
 records the source commit; the ZIP checksum and packaged `SHA256SUMS.txt` support
-integrity checks. The package includes the changes merged in PR #37. Earlier
-Actions artifacts sharing the b7 label may not include them. This remains a
+integrity checks. The package includes the fixes merged through PR #39. The previous
+v0.11.0b7 release predates PRs #38–39. This remains a
 research beta; scientific estimates are conditional on the chosen model.
+
+## Changes in b8
+
+- Replace the two overlapping peak-fitting entry points with one **Fit Multiple Peaks…**
+  dialog and an explicit 1–3 component selector. Preserve component edits while
+  switching counts; the joint kinetic fitting engine is unchanged (PR #38).
+- Add one-click transfer of the best converged Modeling fit or current conditional
+  Monte Carlo medians (at least 100 successful per-model refits) to Polanyi–Wigner
+  Kinetic Analysis as **initial guesses**, without silently running a new fit.
+  Zero-order representative prefactors remain non-identifiable (PR #39).
+- Label kinetic comparisons as same-data cross-checks, with source provenance,
+  heating-rate mismatch, first-order Redhead incompatibility and conditional
+  energy-range cautions. MC medians are not jointly optimal, physically validated
+  uncertainties or proof of a mechanism.
 
 ## Changes in b7
 
@@ -21,10 +35,6 @@ research beta; scientific estimates are conditional on the chosen model.
   views; missing digitization points are omitted, not filled. Figure-derived
   time is an explicit nominal-ramp coordinate and is **not observed time**.
   CO correspondence and noncommercial/reuse-unclear figures remain excluded.
-- Unified 1–3 component workflow: **Fit Multiple Peaks… → choose count →
-  verify rate → select positions → Fit N Components**, with numeric position
-  entry and Advanced controls. This supersedes the two formerly separate entry points.
-  First-order Redhead guesses and ±30% search bounds are initialization aids.
 - Published heating rates are suggestions requiring explicit confirmation.
   Zaki D₂O/Fe₃O₄ suggests **3 K/s**; Modeling and Kinetic Analysis have separate
   settings. Opening a published example no longer silently applies its rate.

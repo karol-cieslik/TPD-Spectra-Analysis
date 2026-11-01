@@ -1,4 +1,4 @@
-# Scientific scope and method status — 0.11.0b7 candidate
+# Scientific scope and method status — 0.11.0b8 research beta
 
 Maintainer: Karol Cieślik. This is a research beta, not a validated instrument system.
 Method status describes the available evidence, not regulatory certification.

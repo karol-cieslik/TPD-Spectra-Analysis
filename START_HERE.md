@@ -60,19 +60,21 @@ Monte Carlo is conditional parametric refitting, not microscopic kinetic MC or
 a validated confidence procedure. Overlap, drift and correlated noise require
 additional scrutiny. A good fit does not establish a physical mechanism.
 
-The versioned b7 prerelease includes the two-peak improvements merged in PR #37.
-Earlier development artifacts with the same version label may lack them.
+The current development branch incorporates the two-peak improvements from
+PR #37 and the unified component-count dialog from PR #38. Older Windows
+packages may still show the previous two separate buttons.
 
-For two peaks, use **Fit 2 Peaks…** in Modeling, verify the heating rate,
-explicitly confirm any source suggestion, click both approximate positions
-and choose **Fit Both Peaks**. Energy guesses/bounds use a first-order heuristic;
-Advanced settings retains scientific control. Read the quality title and warnings:
-baseline-only, collapsed components or poor residuals do not support a decomposition.
-The Zaki example suggests **3 K/s**; it is a difficult digitized stress test,
-not evidence for two first-order states. Kinetic Analysis has separate rate settings.
-Use **Overlapping components…** in Modeling to fit up to three
-independent physical populations together on the full spectrum. Orders,
-prefactors and coverages are fixed hypotheses; energies/scales are fitted.
+To fit components, use **Fit Multiple Peaks…** in Modeling and choose
+**1, 2 or 3** kinetic components (default **2** for a new hypothesis).
+Verify the heating rate, explicitly confirm any source suggestion, click
+approximate positions and choose **Fit N Components**. Energy guesses/bounds
+use a first-order heuristic; Advanced settings retains scientific control.
+Read the quality title and warnings: baseline-only, collapsed components or
+poor residuals do not support a decomposition. The Zaki example suggests
+**3 K/s**; it is a difficult digitized stress test, not evidence for two
+first-order states. Kinetic Analysis has separate rate settings. The joint
+model uses the full spectrum, with fixed orders/prefactors/coverages and
+optimized energies/scales.
 Read [the component workflow and limits](docs/MULTICOMPONENT_FITTING.md).
 
 Use **Help → Report a bug / Send feedback** to inspect, copy or save a diagnostic report.

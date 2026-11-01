@@ -52,3 +52,24 @@ One focused GUI PR per stage (or smaller). Avoid simultaneous edits to kinetic c
 
 ## Immediate next implementation
 GUI-1: user workflow review and layout improvements without replacing the GUI framework. Prepare a short usability checklist and a first testable improvement before rethinking the whole design.
+## 1 November 2026: navigation and literature examples
+
+Design references: [Mantid Workbench's main menus and task-specific toolboxes](https://docs.mantidproject.org/v6.12.0/workbench/index.html)
+keep workspaces and algorithms accessible without turning every command into
+a large permanent button. [Igor Pro's Data Browser and data folder hierarchy](https://docs.wavemetrics.com/igorpro/igor-basics/data-folders)
+show how source data can be organized by meaningful scientific grouping.
+The beta therefore uses a native File/Examples/View/Help menu and only three
+visible quick actions, instead of building a heavyweight custom Office-style
+ribbon in Tkinter. The scientific stage notebook remains the main task area.
+
+The example browser separates truth-known simulations from licensed
+publication-derived traces. A two-category browser is sufficient at this
+collection size; the detail pane reports precise paper, figure, source units,
+licence, limitations and DOI before loading. The active literature source is
+also shown beneath the dataset selector. Source-coordinate preservation,
+explicit time reconstruction and excluded rights/mismatch cases are documented
+in `examples/publication_data/README.md`.
+
+This is an information-architecture implementation, not a completed usability
+study. Real Windows scaling/keyboard checks and independent scientific
+acceptance remain release gates.

@@ -33,7 +33,7 @@ Commons licence, independent of the software MIT licence:
   [DOI 10.3847/1538-4357/adc7b6](https://doi.org/10.3847/1538-4357/adc7b6).
   Digits from **arXiv:2504.01102v1**, not final layout:
   [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-- Kruczkiewicz et al. (2024), *Astron. Astrophys.* 686, A236,
+- Kruczkiewicz et al. (2024), *Comprehensive laboratory constraints on thermal desorption of interstellar ice analogues*, *Astron. Astrophys.* 686, A236,
   [DOI 10.1051/0004-6361/202346948](https://doi.org/10.1051/0004-6361/202346948),
   Figs. 2b/3a: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 - Fulker & Brown (2024), *RSC Advances* 14, 35373–35385,

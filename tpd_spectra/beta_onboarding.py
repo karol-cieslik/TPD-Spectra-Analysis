@@ -36,10 +36,11 @@ class ExampleDialog:
         info.grid(row=3, column=0, sticky='ew', padx=14, pady=(9, 2))
         info.columnconfigure(0, weight=1)
         self.details = tk.Text(info, height=7, wrap='word', font=('Segoe UI', 9),
-                               relief='flat', background='#f8fafc', padx=10, pady=7,
-                               takefocus=False)
+                               relief='flat', background='#f8fafc', padx=10, pady=7)
         self.details.grid(row=0, column=0, sticky='ew')
-        self.details.configure(state='disabled')
+        scrollbar = ttk.Scrollbar(info, orient='vertical', command=self.details.yview)
+        scrollbar.grid(row=0, column=1, sticky='ns')
+        self.details.configure(yscrollcommand=scrollbar.set, state='disabled')
         buttons = ttk.Frame(self.win, padding=(14, 8, 14, 12))
         buttons.grid(row=4, column=0, sticky='ew')
         self.description = tk.StringVar(self.win)

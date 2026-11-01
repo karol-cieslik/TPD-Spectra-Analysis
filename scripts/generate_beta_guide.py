@@ -81,7 +81,7 @@ def generate(font_directory=None):
     c.showPage()
     start(4,'Fit overlapping components','Explicit independent physical populations on one full experimental spectrum')
     p('Define physical hypotheses',heading)
-    p('In Modeling choose <b>Fit 2 Peaks…</b>. Verify the rate, click approximate positions (or type °C values), then <b>Fit Both Peaks</b>. New rows fix n=1, prefactor 1e13 s⁻¹ and coverage one. Redhead energy guesses and ±30% bounds are heuristic search aids, not uncertainty intervals. <b>Advanced settings</b> reveals fixed kinetics, bounds, baseline and optimizer controls. <b>Overlapping components…</b> supports one to three rows.')
+    p('In Modeling choose <b>Fit Multiple Peaks…</b> and select 1, 2 or 3 components (default 2). Verify the rate, click approximate positions (or type °C values), then <b>Fit N Components</b>. New rows fix n=1, prefactor 1e13 s⁻¹ and coverage one. Redhead energy guesses and ±30% bounds are heuristic search aids, not uncertainty intervals. <b>Advanced settings</b> reveals fixed kinetics, bounds, baseline and optimizer controls.')
     p('Try the three-state synthetic reference',heading)
     p('Open <b>three overlapping peaks</b>; in Advanced add a third row. Fix first order, prefactor <b>1e13 s⁻¹</b>, coverage one; energies <b>1.185, 1.265, 1.345 eV</b>; bounds <b>1.14–1.22, 1.22–1.30, 1.30–1.38 eV</b>; 1 K/s; multistart off; 300 evaluations. Choose <b>Fit 3 Components Together</b>. This known-input software exercise does not establish blind physical identification.')
     p('Inspect the whole fitted signal',heading)

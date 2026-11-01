@@ -284,6 +284,32 @@ def test_modeling_comparison_transfer_and_monte_carlo_route(root, monkeypatch):
     assert 'Compare current settings' in app.status.get()
 
 
+def test_kinetic_cross_check_is_recorded_with_saved_run(root, monkeypatch):
+    from tpd_spectra.workflow_modeling import comparison
+    from tpd_spectra import workflow_results_gui
+    app = WorkflowApp(root)
+    app._load_paths([DEMO])
+    app.project.add_region('First', 100, 210)
+    app.refresh_context()
+    panel = app.modeling_panel
+    for key in ('zero', 'second', 'fractional', 'multistart'):
+        panel.variables[key].set(False)
+    modeled = comparison(app.project.context()[0], panel.snapshot(), lambda: False)
+    panel.complete('comparison', modeled)
+    app.method.set('Redhead')
+    app.refresh_context()
+    result = calculate(app.project.context()[0], app.project.snapshot('Redhead'))
+    app.project.accept_result(result)
+    app.restore_result()
+    assert 'Model cross-check (same spectrum' in app.result_text.get('1.0', 'end')
+    monkeypatch.setattr(workflow_results_gui.simpledialog, 'askstring',
+                        lambda *args, **kwargs: 'Redhead cross-check')
+    app.save_current_result()
+    saved = next(iter(app.project.runs.values()))
+    assert 'Model cross-check (same spectrum' in saved['model_cross_check']
+    assert 'Reference model: first' in saved['model_cross_check']
+
+
 def test_live_preview_and_saved_runs_restore_their_own_settings(root):
     app=WorkflowApp(root)
     app._load_paths([DEMO])

@@ -105,7 +105,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
 
         header = tk.Frame(self.root, bg=NAVY, padx=12, pady=5)
         header.pack(fill="x")
-        self.brand_mark = brand_image(header, 38)
+        self.brand_mark = brand_image(header, 32)
         tk.Label(header, image=self.brand_mark, bg=NAVY).pack(side="left", padx=(0, 10))
         ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel").pack(side="left")
         ttk.Label(header, text=f"EXTERNAL BETA  {__version__}", style="Subtitle.TLabel").pack(side="right")

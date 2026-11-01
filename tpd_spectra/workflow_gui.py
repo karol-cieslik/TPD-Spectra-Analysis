@@ -1,5 +1,6 @@
 """Three-stage desktop workflow; the classic workspace remains available."""
 from pathlib import Path
+import json
 import tkinter as tk
 from tkinter import ttk, messagebox
 from matplotlib.figure import Figure
@@ -128,6 +129,14 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.region_combo.bind("<<ComboboxSelected>>", self.select_region)
         self.context_label = ttk.Label(context, text="Import a spectrum and define a peak.")
         self.context_label.grid(row=1, column=0, columnspan=4, sticky="w", pady=(5, 0))
+        self.example_source_note = ttk.Label(context, text="", wraplength=1100)
+        self.example_source_note.grid(row=2, column=0, columnspan=4, sticky="w")
+        self.example_source_note.grid_remove()
+        try:
+            rows = json.loads(resource('examples/publication_data/catalog.json').read_text(encoding='utf-8'))
+        except (FileNotFoundError, OSError, ValueError):
+            rows = []
+        self.published_examples = {row['file']: row for row in rows}
         self.stages = ttk.Notebook(self.root)
         self.stages.pack(fill="both", expand=True, padx=12)
         self.stage_frames = [ttk.Frame(self.stages) for _ in STAGES]
@@ -327,6 +336,15 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         else:
             self.region_choice.set("")
             self.context_label.configure(text="Define a named peak using numeric bounds or drag an interval.")
+        dataset = self.project.datasets.get(self.project.active_dataset)
+        source = (self.published_examples.get(Path(dataset.path).name)
+                  if dataset is not None and Path(dataset.path).parent.name == 'publication_data' else None)
+        if source:
+            self.example_source_note.configure(
+                text=f"Publication-derived · {source['short_source']} · {source['description']} · DOI {source['doi']}")
+            self.example_source_note.grid()
+        else:
+            self.example_source_note.grid_remove()
         self.refresh_method()
         self.modeling_panel.restore()
         self._draw_plot()

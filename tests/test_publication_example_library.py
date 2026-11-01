@@ -77,6 +77,9 @@ def test_menu_is_compact_and_publishable_examples_are_separate(root):
     assert dataset.spectrum.temperature_c.min() < 0
     assert region.label == CATALOG[0]["peak_label"]
     assert "Published data opened" in app.status.get()
+    assert "Zaki" in app.example_source_note.cget("text")
+    assert app.example_source_note.winfo_ismapped()
+    assert sum(row["visible"] for row in app.spectra.values()) == 1
 
 
 def test_figure_example_uses_nominal_time_not_measured_time():

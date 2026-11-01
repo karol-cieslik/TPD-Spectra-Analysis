@@ -130,7 +130,14 @@ class ExampleDialog:
             folder = 'examples/publication_data/' if kind == 'publication' else 'examples/beta_collection/'
             path = resource(folder + row['file'])
             self.app._load_paths([path])
-            dataset = next(d for d in self.app.project.datasets.values() if d.path == str(path.resolve()))
+            # A literature spectrum may be hundreds of degrees away from the
+            # startup demo. Focus on the chosen trace without deleting others.
+            selected_path = str(path.resolve())
+            for key, trace in self.app.spectra.items():
+                visible = (key == selected_path)
+                trace['visible'] = visible
+                self.app.file_table.set(key, 'visible', '✓' if visible else '—')
+            dataset = next(d for d in self.app.project.datasets.values() if d.path == selected_path)
             self.app.project.select_dataset(dataset.id)
             if kind == 'publication':
                 if not any(r.dataset_id == dataset.id for r in self.app.project.regions.values()):

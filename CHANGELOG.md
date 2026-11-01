@@ -1,3 +1,17 @@
+## 0.11.0b7 — published examples and focused desktop navigation (unreleased beta)
+
+- Replace the crowded two-row action strip with a compact File/Examples/View/Help
+  menu and a short quick-action row, preserving exports and project controls.
+- Separate 21 simulated truth-known examples from nine publication-derived spectra
+  across six cited sources, with per-curve bibliographic details, figures,
+  heating rates, units, reuse conditions and scientific limitations.
+- Package source numeric coordinates and reversible import-compatible views.
+  No missing figure points are silently filled. The time coordinate constructed
+  for digitized figures is explicitly *not acquisition time*; the deposited
+  AgY D₂ record retains measured time and warns of a nonlinear ramp.
+- Keep rights-unclear/noncommercial assets and the unresolved CO paper/deposit
+  mismatch outside the researcher package; numerical models are unchanged.
+
 ## Unreleased — JOSS preparation and scientific-output correction
 
 - Improve positive-order single-state kinetic initialization by comparing the

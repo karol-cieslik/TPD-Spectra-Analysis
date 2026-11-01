@@ -1,5 +1,6 @@
 """Three-stage desktop workflow; the classic workspace remains available."""
 from pathlib import Path
+import json
 import tkinter as tk
 from tkinter import ttk, messagebox
 from matplotlib.figure import Figure
@@ -68,24 +69,52 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             return None
 
     def _build(self):
-        header = tk.Frame(self.root, bg=NAVY, padx=16, pady=10)
+        # Scientific desktop tools keep infrequent commands in a discoverable
+        # menu and reserve the working surface for spectra and analysis.
+        menu = tk.Menu(self.root, tearoff=False)
+        file_menu = tk.Menu(menu, tearoff=False)
+        file_menu.add_command(label="Open spectrum…", accelerator="Ctrl+O", command=self._import_files)
+        file_menu.add_command(label="Add folder…", command=self._import_folder)
+        file_menu.add_separator()
+        file_menu.add_command(label="Open project…", command=self.open_project)
+        file_menu.add_command(label="Save project…", accelerator="Ctrl+S", command=self.save_project)
+        file_menu.add_command(label="Report / Export…", command=self.report_dialog)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=self.root.destroy)
+        menu.add_cascade(label="File", menu=file_menu)
+        examples_menu = tk.Menu(menu, tearoff=False)
+        examples_menu.add_command(label="Browse example library…", command=self.open_example)
+        examples_menu.add_command(label="Simulated spectra…", command=lambda: self.open_example("synthetic"))
+        examples_menu.add_command(label="Publication-derived spectra…", command=lambda: self.open_example("publication"))
+        menu.add_cascade(label="Examples", menu=examples_menu)
+        view_menu = tk.Menu(menu, tearoff=False)
+        view_menu.add_command(label="Classic / batch workspace", command=self.open_classic)
+        menu.add_cascade(label="View", menu=view_menu)
+        help_menu = tk.Menu(menu, tearoff=False)
+        help_menu.add_command(label="Quick start", accelerator="F1", command=self.workflow_help)
+        help_menu.add_command(label="Scientific Help / Parameters", command=self.open_scientific_help)
+        help_menu.add_command(label="Worked examples", command=self.open_worked_examples)
+        help_menu.add_separator()
+        help_menu.add_command(label="About", command=self._show_about)
+        help_menu.add_command(label="Report a bug / Send feedback", command=self._show_feedback)
+        menu.add_cascade(label="Help", menu=help_menu)
+        self.root.configure(menu=menu)
+        self.root.bind("<Control-o>", lambda _e: self._import_files())
+        self.root.bind("<Control-s>", lambda _e: self.save_project())
+        self.root.bind("<F1>", lambda _e: self.workflow_help())
+
+        header = tk.Frame(self.root, bg=NAVY, padx=12, pady=5)
         header.pack(fill="x")
-        self.brand_mark = brand_image(header, 48)
-        tk.Label(header, image=self.brand_mark, bg=NAVY).pack(side="left", padx=(0, 12))
+        self.brand_mark = brand_image(header, 32)
+        tk.Label(header, image=self.brand_mark, bg=NAVY).pack(side="left", padx=(0, 10))
         ttk.Label(header, text="TPD Spectra Studio", style="Title.TLabel").pack(side="left")
         ttk.Label(header, text=f"EXTERNAL BETA  {__version__}", style="Subtitle.TLabel").pack(side="right")
-        actions = ttk.Frame(self.root, padding=10)
+        actions = ttk.Frame(self.root, padding=(10, 7, 10, 8))
         actions.pack(fill="x")
-        ttk.Button(actions, text="Open Spectrum…", command=self._import_files).pack(side="left")
-        ttk.Button(actions, text="Add folder…", command=self._import_folder).pack(side="left", padx=5)
-        ttk.Button(actions,text='Open Example Dataset',command=self.open_example).pack(side='left',padx=4)
-        ttk.Button(actions, text="Classic / batch workspace", command=self.open_classic).pack(side="right")
-        ttk.Button(actions, text="About", command=self._show_about).pack(side="right", padx=5)
-        self.project_actions = ttk.Frame(self.root,padding=(10,0,10,8))
-        self.project_actions.pack(fill='x')
-        ttk.Button(self.project_actions,text='Workflow quick start',command=self.workflow_help).pack(side='right')
-        ttk.Button(self.project_actions,text='Scientific Help / Parameters',
-                   command=self.open_scientific_help).pack(side='right',padx=(0,8))
+        ttk.Button(actions, text="Open spectrum…", command=self._import_files).pack(side="left")
+        ttk.Button(actions, text="Browse examples…", command=self.open_example).pack(side="left", padx=7)
+        self.project_actions = ttk.Frame(actions)
+        self.project_actions.pack(side="right")
         context = ttk.Frame(self.root, padding=(12, 0, 12, 8))
         context.pack(fill="x")
         context.columnconfigure(1, weight=1)
@@ -100,6 +129,14 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self.region_combo.bind("<<ComboboxSelected>>", self.select_region)
         self.context_label = ttk.Label(context, text="Import a spectrum and define a peak.")
         self.context_label.grid(row=1, column=0, columnspan=4, sticky="w", pady=(5, 0))
+        self.example_source_note = ttk.Label(context, text="", wraplength=1100)
+        self.example_source_note.grid(row=2, column=0, columnspan=4, sticky="w")
+        self.example_source_note.grid_remove()
+        try:
+            rows = json.loads(resource('examples/publication_data/catalog.json').read_text(encoding='utf-8'))
+        except (FileNotFoundError, OSError, ValueError):
+            rows = []
+        self.published_examples = {row['file']: row for row in rows}
         self.stages = ttk.Notebook(self.root)
         self.stages.pack(fill="both", expand=True, padx=12)
         self.stage_frames = [ttk.Frame(self.stages) for _ in STAGES]
@@ -110,7 +147,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         self._build_kinetic(self.stage_frames[2])
         self.status = tk.StringVar(self.root, value="Import spectra to begin.")
         ttk.Label(self.root, textvariable=self.status, padding=10, wraplength=1100).pack(fill="x")
-        ttk.Button(self.root,text='Report a Bug / Send Feedback',command=self._show_feedback).pack(anchor='e',padx=12,pady=(0,6))
+
         self.stages.bind("<<NotebookTabChanged>>", lambda _e: self.refresh_context())
 
     def _build_preparation(self, frame):
@@ -299,6 +336,15 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         else:
             self.region_choice.set("")
             self.context_label.configure(text="Define a named peak using numeric bounds or drag an interval.")
+        dataset = self.project.datasets.get(self.project.active_dataset)
+        source = (self.published_examples.get(Path(dataset.path).name)
+                  if dataset is not None and Path(dataset.path).parent.name == 'publication_data' else None)
+        if source:
+            self.example_source_note.configure(
+                text=f"Publication-derived · {source['short_source']} · {source['description']} · DOI {source['doi']}")
+            self.example_source_note.grid()
+        else:
+            self.example_source_note.grid_remove()
         self.refresh_method()
         self.modeling_panel.restore()
         self._draw_plot()
@@ -425,6 +471,17 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         if dataset and self.view_mode.get() == 'Small multiples' and dataset.path in visible:
             selected_axis = self.figure.axes[visible.index(dataset.path)]
         self._selected_plot_axis = selected_axis
+        # Legacy default selection bands can lie far outside a published
+        # low-temperature spectrum. Axis limits must follow the data, never
+        # arbitrary inherited guides from the startup example.
+        if self.x_mode.get() == "Temperature" and visible:
+            for i, axis in enumerate(self.figure.axes):
+                shown = visible if self.view_mode.get() != 'Small multiples' else visible[i:i + 1]
+                source_rows = [self.spectra[key]["spec"].temperature_clean_c for key in shown]
+                lo = min(float(values.min()) for values in source_rows)
+                hi = max(float(values.max()) for values in source_rows)
+                margin = max((hi - lo) * .025, .5)
+                axis.set_xlim(lo - margin, hi + margin)
         if self.x_mode.get() == "Temperature" and self.project.active_region in self.project.regions and dataset and dataset.path in visible:
             region = self.project.regions[self.project.active_region]
             selected_axis.axvspan(region.lower, region.upper, color="teal", alpha=.12, label=region.label)
@@ -488,9 +545,9 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         except (OSError, ValueError) as exc:
             self.status.set('Worked examples unavailable: ' + str(exc))
 
-    def open_example(self):
+    def open_example(self, section="synthetic"):
         try:
-            return ExampleDialog(self)
+            return ExampleDialog(self, section=section)
         except Exception as exc:
             self.status.set(str(exc))
 

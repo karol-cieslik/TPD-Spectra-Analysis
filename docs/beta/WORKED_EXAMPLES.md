@@ -4,13 +4,13 @@
 **External beta candidate | updated 1 November 2026**  
 Dr. Karol Cieślik
 
-> **Research beta 0.11.0b6.** Current source is `main`, including merged PRs #19–21 and the Results, Help and guided exercises. Confirm the exact build in `VERSION.json`. Human Windows visual/DPI acceptance, independent installation without Python and experimental validation remain incomplete. All tutorial spectra are synthetic; they do not establish a physical mechanism.
+> **Research beta 0.11.0b7.** Current source is `main`, including merged PRs #19–21 and the Results, Help and guided exercises. Confirm the exact build in `VERSION.json`. Human Windows visual/DPI acceptance, independent installation without Python and experimental validation remain incomplete. The exercises here use synthetic data; the separately labeled publication-derived examples are not known-ground-truth validation.
 
 ## Start here: your first result in five minutes
 
-1. Use the newly supplied `tpd-spectra-windows-x64-beta-0.11.0b6` ZIP. Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for the executable checksum. Get the latest successful **main** run from [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain). Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable. No tagged prerelease has been published; Actions artifacts expire and may require GitHub sign-in.
+1. Use the newly supplied `tpd-spectra-windows-x64-beta-0.11.0b7` ZIP. Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for the executable checksum. Get the latest successful **main** run from [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain). Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable. No tagged prerelease has been published; Actions artifacts expire and may require GitHub sign-in.
 2. Double-click **TPD-Spectra-Studio.exe**. No Python installation is needed. This development executable is unsigned: follow your institution's software-security policy.
-3. Click **Open Example Dataset**, choose **first order single peak**, then **Open selected example**. This loads 801 simulated points from 50 to 450 °C, with an already selected full-trace interval and a heating rate of 1 K/s.
+3. Click **Browse examples…**, choose **first order single peak**, then **Open selected spectrum**. This loads 801 simulated points from 50 to 450 °C, with an already selected full-trace interval and a heating rate of 1 K/s.
 4. Go to **Kinetic Analysis** and select **Redhead**. Check **Heating rate = 1 K/s** and **Assumed prefactor = 1e13 s⁻¹**. An energy estimate should appear after the preview updates; if needed click **Calculate / Fit selected peak**.
 5. In the updated interface, open **Parameter summary** to find the estimate with its units and scientific role; use **Spectrum & residuals** to inspect the plotted signal. The expected Redhead estimate is **approximately 1.2 eV, within 2.5% of the synthetic input**. This is an approximate first-order estimate, not an independently measured activation energy or confidence interval.
 6. Click **Save labeled result...**, enter a descriptive run name, then **Report / Export...**. Select the saved run, click **Choose destination and generate report...**, choose a new folder, and inspect the PDF and associated CSV/JSON/figure files.
@@ -20,9 +20,23 @@ Dr. Karol Cieślik
 
 
 
+## Exploring cited publication-derived examples
+
+Open **Examples → Publication-derived spectra…**. Inspect the citation, DOI,
+specific figure, original signal units, licence and limitations before loading.
+The 9 curated spectra span five figure-digitized study groups and one deposited
+numeric record (including four 2-propanol exposure traces). Most source
+temperatures are in kelvin and are explicitly converted to °C. The figure
+versions use an *artificial nominal-ramp time coordinate* for importer
+compatibility; it must not be treated as measured acquisition time. The
+deposited AgY D₂ data retain their measured time but violate a single constant
+ramp over the full trace. Read [publication example provenance](../../examples/publication_data/README.md)
+for usage limits. Figure fits are model-conditioned explorations, not recovered
+physical truth.
+
 ## Using Help inside the program
 
-The follow-up beta adds **Scientific Help / Parameters** beside **Workflow quick start**. It opens an offline searchable reference covering 40 topics. Focus a **?** button next to a field to read its definition, unit, whether it is assumed or fitted, a numerical example and scientific limitations. Start with **Monte Carlo seed**, **Replicates** and **Activation energy** if those terms are unfamiliar. Help does not change any inputs or run calculations.
+Use **Help → Scientific Help / Parameters** or **Help → Quick start** from the compact menu. It opens an offline searchable reference covering 40 topics. Focus a **?** button next to a field to read its definition, unit, whether it is assumed or fitted, a numerical example and scientific limitations. Start with **Monte Carlo seed**, **Replicates** and **Activation energy** if those terms are unfamiliar. Help does not change any inputs or run calculations.
 
 ## Understand the three-stage workspace
 
@@ -59,7 +73,7 @@ The default two-peak demonstration begins with **Demo - first peak (single-state
 
 **Purpose:** Learn where a parameter comes from, where it appears and how to save it.
 
-**Dataset:** **Open Example Dataset** → **first order single peak**. Source truth: first order, (E=1.2 eV), (ν=10^{13} s⁻¹), (β=1 K/s), normalized initial coverage 1, no noise or baseline. All 801 points cover 50-450 °C.
+**Dataset:** **Browse examples…** → **first order single peak**. Source truth: first order, (E=1.2 eV), (ν=10^{13} s⁻¹), (β=1 K/s), normalized initial coverage 1, no noise or baseline. All 801 points cover 50-450 °C.
 
 ### A. First-order Redhead estimate
 
@@ -126,7 +140,7 @@ The default two-peak demonstration begins with **Demo - first peak (single-state
 
 **Purpose:** Learn the difference between selecting a named peak and decomposing a complete overlapping spectrum.
 
-**Dataset:** **Open Example Dataset** → **three overlapping peaks**. It is a clean, synthetic 801-point trace between 50 and 450 °C. Its generating model has three independent additive first-order populations with the inputs below. A moderate-noise variant is also available for a harder test.
+**Dataset:** **Browse examples…** → **three overlapping peaks**. It is a clean, synthetic 801-point trace between 50 and 450 °C. Its generating model has three independent additive first-order populations with the inputs below. A moderate-noise variant is also available for a harder test.
 
 
 

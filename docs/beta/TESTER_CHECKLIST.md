@@ -12,7 +12,14 @@ questions. Use a fresh Windows desktop build for current `main`, not an older 0.
 - [ ] Import CSV, TSV and TXT samples; check the detected layout, correct a channel mapping, confirm source units, and review accepted/rejected row counts.
 - [ ] Check that the default demo has a selected first-peak region and retains its
   raw trace in Modeling, including during simulation and cancellation.
-- [ ] Find About, the developer contact, Quick Start and feedback actions.
+- [ ] Check that **File / Examples / View / Help** menus are accessible,
+  while the top row shows only Open spectrum, Browse examples and Report / Export.
+  Test at 1100×720 and 125–150% Windows display scaling.
+- [ ] In **Browse examples…**, switch between **Simulated** and **Publication-derived**.
+  Open a Zaki or Ayling figure-derived trace; confirm DOI, citation, licence,
+  original Kelvin units, limitations and artificial nominal-ramp time warning.
+  Open the Becker/AgY deposited trace and check that the nonconstant ramp is flagged.
+- [ ] Find About, the developer contact, Quick Start and feedback under **Help**.
 - [ ] Open **Scientific Help / Parameters**, search for `seed`, and try a
   field-level **?** button. Does it explain units, roles and scientific cautions?
 - [ ] Open the clean first-order example and obtain an approximately 1.2 eV

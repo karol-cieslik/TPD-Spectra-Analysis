@@ -1,5 +1,10 @@
 # Synthetic two-peak TPD examples
 
+These are the **simulated** examples only. For cited figure-derived experimental
+curves and a deposited numerical trace, see the separate [publication-derived
+example collection](publication_data/README.md). The two sections are kept
+separate in the app under **Examples → Browse example library…**.
+
 **Generated observations, not experimental measurements.** The default
 `synthetic_two_peak_demo.csv` now includes reproducible detector noise with a
 standard deviation of **2% of the maximum clean signal**. It retains the same
@@ -24,7 +29,7 @@ two physical first-order populations and 601-point temperature ramp.
    Kinetic Analysis**, then calculate the explicit fit. Save the project or
    an analysis run and export its report from Kinetic Analysis.
 
-The separate **Open Example Dataset** chooser retains the clean isolated
+The **Browse examples… → Simulated** section retains the clean isolated
 first-order reference for a first check of method equations. It also offers
 low-, moderate- and high-noise first-order examples and noisy overlap examples.
 

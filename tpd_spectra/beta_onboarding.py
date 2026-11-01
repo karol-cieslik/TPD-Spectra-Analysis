@@ -141,6 +141,20 @@ class ExampleDialog:
             dataset = next(d for d in self.app.project.datasets.values() if d.path == selected_path)
             self.app.project.select_dataset(dataset.id)
             if kind == 'publication':
+                # Saved runs and PDF/JSON reports retain the citation and
+                # artificial-time warning, not just the example-browser text.
+                dataset.spectrum.import_report['publication_example'] = {
+                    'citation': row['citation'], 'doi': row['doi'],
+                    'source_figure': row['figure'], 'license': row['license'],
+                    'original_signal_units': row['signal_units'],
+                    'heating_rate_note': row['heating_note'],
+                    'time_coordinate': row['time_coordinate'],
+                    'source_numeric_path_in_package': row['source_csv'],
+                    'scientific_limitations': row['limitations'],
+                    'origin': ('deposited measurement' if row['source_time_column']
+                               else 'digitized publication figure'),
+                }
+                dataset.spectrum.import_report['unit_contract']['signal'] = row['signal_units']
                 if not any(r.dataset_id == dataset.id for r in self.app.project.regions.values()):
                     lo, hi = row['region_K']
                     self.app.project.add_region(row['peak_label'], lo - 273.15, hi - 273.15)

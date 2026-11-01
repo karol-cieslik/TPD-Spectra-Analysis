@@ -85,6 +85,12 @@ def test_menu_is_compact_and_publishable_examples_are_separate(root):
     assert xlo < dataset.spectrum.temperature_clean_c.min()
     assert xhi > dataset.spectrum.temperature_clean_c.max()
     assert xhi - xlo < 1.1 * np.ptp(dataset.spectrum.temperature_clean_c)
+    publication = dataset.spectrum.import_report["publication_example"]
+    assert publication["doi"] == CATALOG[0]["doi"]
+    assert publication["time_coordinate"] == CATALOG[0]["time_coordinate"]
+    from tpd_spectra.workflow_io import project_payload
+    saved = project_payload(app.project)["datasets"][0]["spectrum"]["import_report"]
+    assert saved["publication_example"]["citation"] == CATALOG[0]["citation"]
 
 
 def test_figure_example_uses_nominal_time_not_measured_time():

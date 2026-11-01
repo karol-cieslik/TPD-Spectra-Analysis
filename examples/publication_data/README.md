@@ -15,6 +15,10 @@ the application's `ms,DHTA+,Temperatura` internal format. Their first column is:
   be described as such. Temperature is converted from K to °C; signal amplitudes
   retain their source units/normalization (the GUI treats them as generic signal).
 
+When opened through the library, the citation, source identity, units and warnings
+are also attached to the dataset's import provenance so they survive saved
+projects and appear in labeled analysis-run reports.
+
 The `catalog.json` records each published citation, DOI, exact figure or source,
 licence, heating rate, original columns, accepted/omitted points, and important
 scientific limitations. `scripts/generate_publication_examples.py` regenerates

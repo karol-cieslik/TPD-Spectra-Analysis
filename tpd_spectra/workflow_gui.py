@@ -343,6 +343,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
             self.project.context()
             self.project.update_region(self.project.active_region, self.region_name.get(), self.region_low.get(), self.region_high.get())
             self.refresh_context()
+            self.status.set('Peak interval updated. Previous fits are retained but stale; re-run Compare models for the new range. Use Add peak to retain both peaks.')
         except ValueError as exc:
             messagebox.showerror("Invalid peak", str(exc), parent=self.root)
 

@@ -1,14 +1,14 @@
 # TPD Spectra Studio
 
 **Practical Quick Start and worked examples**  
-**External beta candidate | updated 27 October 2026**  
+**External beta candidate | updated 1 November 2026**  
 Dr. Karol Cieślik
 
-> **Research beta 0.11.0b5.** Current source is `main`, including merged PRs #19–21 and the Results, Help and guided exercises. Confirm the exact build in `VERSION.json`. Human Windows visual/DPI acceptance, independent installation without Python and experimental validation remain incomplete. All tutorial spectra are synthetic; they do not establish a physical mechanism.
+> **Research beta 0.11.0b6.** Current source is `main`, including merged PRs #19–21 and the Results, Help and guided exercises. Confirm the exact build in `VERSION.json`. Human Windows visual/DPI acceptance, independent installation without Python and experimental validation remain incomplete. All tutorial spectra are synthetic; they do not establish a physical mechanism.
 
 ## Start here: your first result in five minutes
 
-1. Use the newly supplied `tpd-spectra-windows-x64-beta-0.11.0b5` ZIP. Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for the executable checksum. Get the latest successful **main** run from [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain). Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable. No tagged prerelease has been published; Actions artifacts expire and may require GitHub sign-in.
+1. Use the newly supplied `tpd-spectra-windows-x64-beta-0.11.0b6` ZIP. Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for the executable checksum. Get the latest successful **main** run from [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain). Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable. No tagged prerelease has been published; Actions artifacts expire and may require GitHub sign-in.
 2. Double-click **TPD-Spectra-Studio.exe**. No Python installation is needed. This development executable is unsigned: follow your institution's software-security policy.
 3. Click **Open Example Dataset**, choose **first order single peak**, then **Open selected example**. This loads 801 simulated points from 50 to 450 °C, with an already selected full-trace interval and a heating rate of 1 K/s.
 4. Go to **Kinetic Analysis** and select **Redhead**. Check **Heating rate = 1 K/s** and **Assumed prefactor = 1e13 s⁻¹**. An energy estimate should appear after the preview updates; if needed click **Calculate / Fit selected peak**.

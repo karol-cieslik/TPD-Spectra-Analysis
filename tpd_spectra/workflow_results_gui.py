@@ -212,6 +212,7 @@ class ResultsMixin:
     def refresh_saved_runs(self):
         self.saved_ids = list(self.project.runs)
         self.saved_combo.configure(values=[self.project.runs[i]['label'] for i in self.saved_ids])
+        self.refresh_report_action()
 
     def save_current_result(self):
         if self.displayed_result is None:
@@ -222,6 +223,7 @@ class ResultsMixin:
             self.project.save_result(self.displayed_result, label)
             self.refresh_saved_runs()
             self.saved_combo.current(len(self.saved_ids)-1)
+            self.status.set('Analysis run saved. Use Report / Export at the top to generate the report bundle.')
 
     def reopen_selected_run(self):
         index = self.saved_combo.current()

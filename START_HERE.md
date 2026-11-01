@@ -1,4 +1,4 @@
-# Welcome to TPD Spectra Studio 0.11.0b5
+# Welcome to TPD Spectra Studio 0.11.0b6
 
 **Informal research beta** by **Karol Cieślik**. Please try the synthetic
 example first; no experimental data is needed. Use a build whose exact main
@@ -30,7 +30,7 @@ Windows acceptance remain outstanding; see [release notes](docs/beta/RELEASE_NOT
    Open its PDF; CSV, JSON, PNG and SVG exports accompany it.
 6. **Save project…** retains your data, settings and results for reopening.
 
-For a measured spectrum, choose CSV, TSV or TXT and review the preview before importing. Check the detected delimiter and header, correct channel mappings if needed, explicitly confirm time and temperature units when headers do not specify them, and inspect accepted/rejected row counts. Older 0.11.0b5 packages lack this preview; use the latest successful main artifact and verify `VERSION.json`.\n\nThen try the noisy two-peak example. In Modeling, compare First order for the
+For a measured spectrum, choose CSV, TSV or TXT and review the preview before importing. Check the detected delimiter and header, correct channel mappings if needed, explicitly confirm time and temperature units when headers do not specify them, and inspect accepted/rejected row counts. Older 0.11.0b6 packages lack this preview; use the latest successful main artifact and verify `VERSION.json`.\n\nThen try the noisy two-peak example. In Modeling, compare First order for the
 first named interval; set Monte Carlo replicates to 20 and seed to 42 for a
 short tutorial. Watch progress and inspect failures. This demonstrates the
 workflow, not uncertainty coverage; conditional ranges require at least 100

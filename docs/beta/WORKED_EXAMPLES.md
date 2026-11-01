@@ -145,12 +145,13 @@ The default two-peak demonstration begins with **Demo - first peak (single-state
 ### Start with two peaks
 
 Open the default two-peak demo or its clean variant. In **Modeling** click
-**Fit 2 Peaks…**, verify 1 K/s, then click approximate positions near 172 and
-276 °C on the dialog spectrum. Numeric °C entry is also available. Clicks cycle
+**Fit Multiple Peaks…**, select **2 components**, verify 1 K/s, then click
+approximate positions near 172 and 276 °C on the dialog spectrum.
+Numeric °C entry is also available. Clicks cycle
 between Peak 1 and Peak 2. **Re-estimate from positions** updates first-order
 energy guesses and ±30% heuristic bounds; pending position edits are also
 applied by Fit. These bounds are search limits, not confidence intervals.
-New rows fix order one, prefactor `1e13 s⁻¹` and coverage one. **Fit Both Peaks**
+New rows fix order one, prefactor `1e13 s⁻¹` and coverage one. **Fit 2 Components**
 optimizes both energies and nonnegative detector scales on the entire dataset.
 
 Inspect the blue dashed and green dash-dot components, orange complete sum,
@@ -173,8 +174,8 @@ residuals and is not proof of two states or experimental energy accuracy.
 
 
 
-1. In **Modeling & Order Identification**, click **Overlapping components...**.
-2. Open **Advanced settings** and define **three component rows**. Use the following trial inputs for this truth-informed numerical exercise:
+1. In **Modeling & Order Identification**, click **Fit Multiple Peaks…** and select **3 components**.
+2. Open **Advanced settings** and edit the **three component rows**. Use the following trial inputs for this truth-informed numerical exercise:
 
 | Component | Fixed order | Fixed prefactor | Fixed initial coverage | Initial energy | Energy bounds |
 |:---|---:|---:|---:|---:|:---|
@@ -251,7 +252,7 @@ In a simultaneous fit, the detected signal is a sum of independent rates multipl
 | Modeling shows no useful fit | Confirm a dataset and named peak region; verify candidate selection; inspect **Assumptions & warnings**. |
 | **Run Monte Carlo** is unavailable | Complete a model comparison for the **current** settings first; let another running job finish or cancel. |
 | No Monte Carlo parameter intervals appear | Fewer than 100 successful refits, failed fits, or numerical/identifiability restrictions can suppress them. |
-| The first peak fit does not explain both peaks | The default region is a single-state approximation. Use **Overlapping components...** for a justified joint hypothesis. |
+| The first peak fit does not explain both peaks | The default region is a single-state approximation. Use **Fit Multiple Peaks…** for a justified joint hypothesis. |
 | Parameters appear different after switching methods | Check the selected dataset, named peak, method and **STALE** status; previous sessions retain their original snapshots. |
 | Dragging a region does nothing | Turn off the plot toolbar's pan/zoom mode, enable **Drag interval**, and save with Add/Update peak. |
 | Your exported report is missing | Select and label a completed run, choose a new destination, and check export status; do not assume the preview is the rendered PDF. |

@@ -70,6 +70,49 @@ reporting smooth local-linear intervals in this implementation.
 
 ## Workflow and numerical safeguards
 
+### Quick two-peak workflow (v0.11.0b7 candidate)
+
+1. Open a spectrum, select its dataset and a named navigation region, then use
+   **Modeling → Fit 2 Peaks…**. Two rows are created; this button opens a
+   configuration dialog and does not start fitting automatically.
+2. Verify the heating rate in K/s. For recognized publication examples, review
+   **Confirm source suggestion…** and explicitly accept or reject it. Opening
+   published data never silently applies the rate. Confirmation changes Modeling
+   for this dataset/region only; Kinetic Analysis has separate settings. Exact
+   bundled CSV bytes or attached publication metadata identify the suggestion;
+   a familiar filename alone is insufficient. Unknown rates require user input.
+3. Click approximate positions on the dialog spectrum (clicks cycle Peak 1,
+   Peak 2), or type the positions in °C. **Re-estimate from positions** refreshes
+   the energy guesses and bounds; Fit also applies pending position edits.
+   New rows fix first order, prefactor `1e13 s^-1` and coverage one. Existing
+   definitions are retained and their fixed assumptions are displayed.
+4. **Fit Both Peaks** fits the entire processed dataset. Inspect the individual
+   blue dashed / green dash-dot components, orange complete sum, separate dotted
+   baseline and observation-minus-sum residual panel. Colors and line styles
+   both distinguish components in live and exported plots.
+5. Read the quality title/status and **Assumptions & warnings**. Convergence is
+   not model adequacy. Export the fit or save the project to retain the source
+   rate confirmation, settings, individual curves, multistart seeds and diagnostics.
+
+**Advanced settings** reveals fixed kinetic parameters, energy bounds, component
+count, offset/drift, evaluation budget and multistart. Use **Overlapping
+components…** for an existing one- or three-row hypothesis. The two-peak shortcut
+replaces the dialog's row count only when needed; it does not overwrite stored
+results. Apply/refit to record new definitions. Named single-peak regions do not
+crop a simultaneous fit. **Single-state view** retains the original workflow.
+
+For each selected position, the seed uses the existing *first-order* Redhead
+approximation `E = k_B T_p [ln(nu T_p / beta) - 3.64]`, with `T_p` in kelvin.
+The ±30% energy bounds are heuristic search limits, **not confidence intervals**
+or physical prior evidence. At −20 °C, `nu=1e13 s^-1`, `beta=3 K/s`, the guess
+is about 0.67 eV, rather than the 1.25/1.55 eV synthetic-demo inputs. Change
+bounds if scientifically justified. Position re-estimation refuses non-first-order
+rows; edit their energies in Advanced. Automatic maxima/shoulder hints are
+numerical aids, never a state-count or mechanism determination. Hint smoothing
+does not alter the fitted observations.
+
+### Advanced truth-informed exercise
+
 1. Open `three_overlapping_peaks.csv` or its moderate-noise variant from
    **Open Example Dataset**. Inspect the full signal and known synthetic truth.
 2. Inspect the entire selected dataset: this is the common grid used by the
@@ -96,6 +139,43 @@ energy starts reduce sensitivity to a single guess, without guaranteeing a
 global optimum. Failed starts are counted; if none converges, the calculation
 raises a clear error and supplies no successful result. Cancellation is checked
 during residuals, derivatives and physical rate evaluations.
+
+For two/three components, multistart now adds first-order thermal seeds from
+visible features, the measured temperature span, and the maximum plus its
+high-temperature tail, with ±8% energy perturbations. Seeds are clipped to each
+supplied component's bounds; no bounds are silently relaxed. For non-first-order
+rows these are only numerical starts, not Redhead energy estimates for that order.
+Scale coordinates are normalized at a temperature-informed reference rather than
+an exponentially vanishing demo-parameter rate. The best finite, successfully
+converged result is selected by residual sum of squares. Attempts and seeds are
+exported. Turning multistart off retains the supplied energy start. The existing
+one-component starts and the separate single-state kinetic engines are unchanged.
+
+### Failure screening and Zaki stress test
+
+`success` records optimizer convergence. `diagnostics.fit_quality` separately
+reports `baseline_only`, `poor_fit`, `collapsed_components` or `review_required`.
+Baseline-only means fitted kinetic variation is below 5% of observed range or
+the relative RSS improvement over the same allowed baseline-only model is below
+1%. A component is collapsed if its integrated fraction is below 1% or its peak
+height is below 1% of observed range. Normalized RMSE above 0.15 flags poor fit.
+Bounds, correlations, indistinguishable/exchangeable profiles and residual
+autocorrelation remain separately diagnosed. These are engineering screens;
+`review_required` is not a scientific acceptance certificate. Failed/cancelled
+optimization preserves prior results. Converged but inadequate fits remain
+inspectable/exportable with warnings; they must not be reported as supported
+decompositions merely because count-ranking weights exist.
+
+The bundled [Zaki et al. (2018)](https://doi.org/10.1039/C8CP02333F) D₂O/Fe₃O₄(111)
+digitization has a measured graphical maximum at −17.65 °C and source catalog
+heating rate 3 K/s. Supplying demo guesses 1.25/1.55 eV to the old narrow search
+reproduces a nearly constant baseline ≈0.212, negligible components and normalized
+RMSE ≈0.261. New thermal multistart gives ≈0.126 on this retained trace. Residuals
+remain strongly serially correlated and labeled uncertainty is withheld. This
+is a numerical regression/stress test, **not experimental energy truth or proof
+of two independent first-order populations**. Digitized time is constructed
+from the nominal ramp, not measured acquisition time. Normalized figure height,
+multiple populations and recombination limit physical interpretation.
 
 Labels remain in the supplied order. There is no energy sorting that could
 silently exchange a first-order component with a second-order component.
@@ -172,6 +252,14 @@ conditional interval availability, ambiguous components, sub-first-order edges,
 model-count consistency, nonconvergence, cancellation, deterministic starts,
 invalid input, exchangeable-label ambiguity, parameter/detector-unit scaling
 and strict JSON serialization.
+
+`tests/test_two_peak_fitting.py` adds independent low-temperature quadrature
+recovery (0.002 eV / 2% tolerances), the retained Zaki failure/rescue, excluded-peak
+bounds, baseline-only data, invalid guesses, and source-rate identity checks.
+`tests/test_two_peak_workflow.py` checks real Matplotlib click dispatch, explicit
+accept/reject, rate-confirmation persistence, invalid/coincident positions,
+non-first-order protection and the original single-state view. Existing tests
+cover worker failure/cancellation, count comparison, project round trips and exports.
 
 These truth-informed synthetic checks verify numerical consistency under the
 specified model. They do not validate blind decomposition of arbitrary spectra,

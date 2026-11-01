@@ -148,6 +148,7 @@ class ExampleDialog:
                     'source_figure': row['figure'], 'license': row['license'],
                     'original_signal_units': row['signal_units'],
                     'heating_rate_note': row['heating_note'],
+                    'beta_K_s': row['beta_K_s'],
                     'time_coordinate': row['time_coordinate'],
                     'source_numeric_path_in_package': row['source_csv'],
                     'scientific_limitations': row['limitations'],
@@ -158,11 +159,8 @@ class ExampleDialog:
                 if not any(r.dataset_id == dataset.id for r in self.app.project.regions.values()):
                     lo, hi = row['region_K']
                     self.app.project.add_region(row['peak_label'], lo - 273.15, hi - 273.15)
-                if row['beta_K_s'] is not None:
-                    for method in ('Leading edge', 'Redhead', 'Polanyi–Wigner'):
-                        self.app.project.method_settings(method)['beta'] = row['beta_K_s']
                 note = ("Published data opened, not a known-ground-truth validation. "
-                        + row['limitations'] + " Review the source, region, baseline and heating rate.")
+                        + row['limitations'] + " Review the source, region and baseline. Confirm the suggested heating rate in Modeling; verify Kinetic Analysis separately.")
             else:
                 meta = json.loads(resource(folder + row['metadata']).read_text(encoding='utf-8'))
                 if not any(r.dataset_id == dataset.id for r in self.app.project.regions.values()):

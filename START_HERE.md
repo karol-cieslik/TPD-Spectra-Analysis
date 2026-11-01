@@ -61,7 +61,17 @@ Monte Carlo is conditional parametric refitting, not microscopic kinetic MC or
 a validated confidence procedure. Overlap, drift and correlated noise require
 additional scrutiny. A good fit does not establish a physical mechanism.
 
-For overlap, use **Overlapping components…** in Modeling to fit up to three
+The following two-peak improvements require the focused feature-PR build until
+reviewed/merged; earlier b7 main artifacts do not include them.
+
+For two peaks, use **Fit 2 Peaks…** in Modeling, verify the heating rate,
+explicitly confirm any source suggestion, click both approximate positions
+and choose **Fit Both Peaks**. Energy guesses/bounds use a first-order heuristic;
+Advanced settings retains scientific control. Read the quality title and warnings:
+baseline-only, collapsed components or poor residuals do not support a decomposition.
+The Zaki example suggests **3 K/s**; it is a difficult digitized stress test,
+not evidence for two first-order states. Kinetic Analysis has separate rate settings.
+Use **Overlapping components…** in Modeling to fit up to three
 independent physical populations together on the full spectrum. Orders,
 prefactors and coverages are fixed hypotheses; energies/scales are fitted.
 Read [the component workflow and limits](docs/MULTICOMPONENT_FITTING.md).

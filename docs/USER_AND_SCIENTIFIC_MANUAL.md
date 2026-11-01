@@ -1,6 +1,6 @@
 # TPD Spectra Studio — User and Scientific Methods Manual
 
-**Document status:** beta user and scientific manual · **Software source:** `main` (PRs #19–21 merged) · **Current beta version:** 0.11.0b7 research beta (not publicly tagged)
+**Document status:** beta user and scientific manual · **Software source:** focused two-peak feature candidate based on `main` · **Current beta version:** 0.11.0b7 research beta (not publicly tagged)
 **Audience:** experimental surface scientists, TPD/TDS users, students, and developers.  
 **Scope:** current application behavior and defensible model assumptions. This is documentation, not a claim of experimental validation. Please open an issue for any discrepancy between this manual and the executable.
 
@@ -168,6 +168,23 @@ The detector model applies an optimized signal scaling factor and optionally a c
 **Units caveat:** for general coverage expressed in physical rather than dimensionless units, the kinetic coefficient's dimensions depend on reaction order. The present implementation uses normalized dimensionless coverage, with `s⁻¹` as a computational convention. It must not be mistaken for a universally dimensioned physical pre-exponential factor for arbitrary order.
 
 ### 6.5 Multiple populations and multiple heating rates
+
+For the current workflow, **Modeling → Fit 2 Peaks…** opens two rows with
+clickable and numeric approximate positions. Verify the rate and explicitly
+accept a source suggestion before using it (Zaki D₂O/Fe₃O₄: 3 K/s). Modeling
+confirmation applies only to that dataset/region; Kinetic Analysis settings
+remain separate. Published examples no longer silently set analysis rates.
+New first-order rows use Redhead position-based energy guesses and ±30%
+heuristic search bounds, not uncertainty limits. Advanced settings preserves
+control of fixed orders/prefactors/coverages, energies, bounds and baseline.
+**Fit Both Peaks** fits the full processed spectrum. Components differ in
+color and line style; the complete sum includes the separately drawn baseline.
+The residual is observation minus that sum. Read prominent baseline-only,
+poor-fit or collapsed-component diagnostics even when the optimizer converges.
+Temperature-informed multistart reduces initialization failures without
+establishing a global optimum or a physical state count. The Zaki digitization
+remains a model-limit stress test with correlated residuals, not energy truth.
+See [the detailed workflow and numerical screens](MULTICOMPONENT_FITTING.md).
 
 The two-state fit represents two independent populations with separate energies, prefactors and scales. Two fitted components do **not** prove two real adsorption sites. The Python API also includes a global fitting method for several nominally linear ramps with shared kinetic parameters and trace-specific signal scales/baselines. These models can be highly correlated and should be compared under consistent data and residual assumptions.
 

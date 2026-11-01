@@ -1,5 +1,15 @@
 ## 0.11.0b7 — published examples and focused desktop navigation (unreleased beta)
 
+- Add **Fit 2 Peaks…**, clickable/numeric positions, temperature-aware first-order
+  energy guesses and heuristic bounds, with separate Advanced controls.
+- Suggest source heating rates with explicit confirmation, including Zaki 3 K/s;
+  opening published data no longer silently applies its rate to analysis settings.
+- Add thermal multistart seeds and stable component scaling, plus prominent
+  baseline-only/poor-fit/collapsed-component diagnostics and distinct plot styles.
+  Reproduce the Zaki flat-fit failure and retain its residual/model limitations.
+  Single-state kinetic engines are unchanged. Update Help, manuals, Quick Start
+  and synthetic/experimental regression checks. This remains a beta candidate;
+  no release or merge is authorized by these changes.
 - Replace the crowded two-row action strip with a compact File/Examples/View/Help
   menu and a short quick-action row, preserving exports and project controls.
 - Separate 21 simulated truth-known examples from nine publication-derived spectra
@@ -10,7 +20,7 @@
   for digitized figures is explicitly *not acquisition time*; the deposited
   AgY D₂ record retains measured time and warns of a nonlinear ramp.
 - Keep rights-unclear/noncommercial assets and the unresolved CO paper/deposit
-  mismatch outside the researcher package; numerical models are unchanged.
+  mismatch outside the researcher package; the physical PW model is unchanged.
 
 ## Unreleased — JOSS preparation and scientific-output correction
 

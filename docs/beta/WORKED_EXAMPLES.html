@@ -216,6 +216,7 @@ guided exercises. Confirm the exact build in <code>VERSION.json</code>.
 Human Windows visual/DPI acceptance, independent installation without
 Python and experimental validation remain incomplete. The tutorial exercises are synthetic; the separately labeled publication-derived examples are not known-ground-truth validation.</p>
 </blockquote>
+<blockquote><p><strong>Focused two-peak candidate:</strong> the new Fit 2 Peaks workflow requires a build from the feature PR until reviewed and merged. Earlier main artifacts with the same b7 version do not contain it. No release or merge is part of this change.</p></blockquote>
 <h2 id="start-here-your-first-result-in-five-minutes">Start here: your
 first result in five minutes</h2>
 <ol type="1">
@@ -481,95 +482,80 @@ ranges below <strong>100 successful refits</strong>. Even ranges from
 Gaussian noise - they are not validated experimental confidence
 intervals. A previously recorded 500-run test took about three minutes
 on one Windows environment; your machine may differ.</p>
-<h2 id="exercise-3-fit-three-overlapping-populations-together">Exercise
-3: fit three overlapping populations together</h2>
-<p><strong>Purpose:</strong> Learn the difference between selecting a
-named peak and decomposing a complete overlapping spectrum.</p>
-<p><strong>Dataset:</strong> <strong>Browse examples…</strong> →
-<strong>three overlapping peaks</strong>. It is a clean, synthetic
-801-point trace between 50 and 450 °C. Its generating model has three
-independent additive first-order populations with the inputs below. A
-moderate-noise variant is also available for a harder test.</p>
-<ol type="1">
-<li>In <strong>Modeling &amp; Order Identification</strong>, click
-<strong>Overlapping components...</strong>.</li>
-<li>Define <strong>three component rows</strong>. Use the following
-trial inputs for this truth-informed numerical exercise:</li>
+<h2 id="exercise-3-fit-three-overlapping-populations-together">Exercise 3: fit two peaks, then inspect a three-population reference</h2>
+<p><strong>Purpose:</strong> Learn the difference between selecting a named peak and decomposing a complete overlapping spectrum.</p>
+<h3>Start with two peaks</h3>
+<p>Open the default two-peak demo or its clean variant. In <strong>Modeling</strong> click
+<strong>Fit 2 Peaks…</strong>, verify 1 K/s, then click approximate positions near 172 and
+276 °C on the dialog spectrum. Numeric °C entry is also available. Clicks cycle
+between Peak 1 and Peak 2. <strong>Re-estimate from positions</strong> updates first-order
+energy guesses and ±30% heuristic bounds; pending position edits are also
+applied by Fit. These bounds are search limits, not confidence intervals.
+New rows fix order one, prefactor <code>1e13 s⁻¹</code> and coverage one. <strong>Fit Both Peaks</strong>
+optimizes both energies and nonnegative detector scales on the entire dataset.</p>
+<p>Inspect the blue dashed and green dash-dot components, orange complete sum,
+separate dotted baseline and observation-minus-sum residuals. Read the quality
+title and <strong>Assumptions &amp; warnings</strong>. Baseline-only, collapsed components and
+poor fits remain diagnosable even after optimizer convergence. Parameter
+intervals may be withheld and a low residual does not identify physical states.</p>
+<p>For a published stress test, choose <strong>Publication-derived → D₂O on magnetite ·
+Zaki 2018</strong>. Opening it does not change the fitting rate. Review <strong>Confirm source
+suggestion: 3 K/s…</strong> and explicitly accept or reject it. This changes Modeling
+for this dataset/region only; verify Kinetic Analysis separately. The graphical
+maximum is −17.65 °C. A first-order seed near −20 °C is about 0.67 eV, not the
+demo&#39;s 1.25/1.55 eV. The independent-population fit still leaves correlated
+residuals and is not proof of two states or experimental energy accuracy.</p>
+<h3>Advanced three-population exercise</h3>
+<p><strong>Dataset:</strong> <strong>Browse examples…</strong> → <strong>three overlapping peaks</strong>. It is a clean, synthetic 801-point trace between 50 and 450 °C. Its generating model has three independent additive first-order populations with the inputs below. A moderate-noise variant is also available for a harder test.</p>
+<ol>
+<li>In <strong>Modeling &amp; Order Identification</strong>, click <strong>Overlapping components...</strong>.</li>
+<li>Open <strong>Advanced settings</strong> and define <strong>three component rows</strong>. Use the following trial inputs for this truth-informed numerical exercise:</li>
 </ol>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Component</th>
-<th style="text-align: right;">Fixed order</th>
-<th style="text-align: right;">Fixed prefactor</th>
-<th style="text-align: right;">Fixed initial coverage</th>
-<th style="text-align: right;">Initial energy</th>
-<th style="text-align: left;">Energy bounds</th>
+<th align="left">Component</th>
+<th align="right">Fixed order</th>
+<th align="right">Fixed prefactor</th>
+<th align="right">Fixed initial coverage</th>
+<th align="right">Initial energy</th>
+<th align="left">Energy bounds</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td style="text-align: left;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;"><code>1e13 s⁻¹</code></td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">1.185 eV</td>
-<td style="text-align: left;">1.14-1.22 eV</td>
+<tbody><tr>
+<td align="left">1</td>
+<td align="right">1</td>
+<td align="right"><code>1e13 s⁻¹</code></td>
+<td align="right">1.0</td>
+<td align="right">1.185 eV</td>
+<td align="left">1.14-1.22 eV</td>
 </tr>
 <tr>
-<td style="text-align: left;">2</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;"><code>1e13 s⁻¹</code></td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">1.265 eV</td>
-<td style="text-align: left;">1.22-1.30 eV</td>
+<td align="left">2</td>
+<td align="right">1</td>
+<td align="right"><code>1e13 s⁻¹</code></td>
+<td align="right">0.7</td>
+<td align="right">1.265 eV</td>
+<td align="left">1.22-1.30 eV</td>
 </tr>
 <tr>
-<td style="text-align: left;">3</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;"><code>1e13 s⁻¹</code></td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">1.345 eV</td>
-<td style="text-align: left;">1.30-1.38 eV</td>
+<td align="left">3</td>
+<td align="right">1</td>
+<td align="right"><code>1e13 s⁻¹</code></td>
+<td align="right">0.5</td>
+<td align="right">1.345 eV</td>
+<td align="left">1.30-1.38 eV</td>
 </tr>
-</tbody>
-</table>
-<ol start="3" type="1">
-<li>Confirm <strong>Heating rate = 1 K/s</strong>, turn Multistart off
-and use <strong>Maximum evaluations = 300</strong> in Modeling. For this
-clean reference the generating baseline is zero; do not add an arbitrary
-drift term.</li>
-<li>Click <strong>Fit components together</strong>. The energies and
-nonnegative detector scales are optimized jointly against the
-<strong>whole selected dataset</strong>, regardless of the named
-single-peak navigation region.</li>
-<li>In <strong>Spectrum &amp; residuals</strong>, inspect each fitted
-component, their sum, the observations and the observation-minus-sum
-residuals.</li>
-<li>In <strong>Parameters &amp; models</strong>, compare estimated
-energies with the generating values <strong>1.18, 1.26, 1.34
-eV</strong>. Inspect scales and any withheld local uncertainty
-intervals.</li>
-<li>Optionally click <strong>Compare component counts</strong>. This
-compares the first 1, 2 and 3 defined component hypotheses. Inspect
-errors, convergence and the relevant fixed assumptions; AICc/BIC results
-are <strong>heuristics</strong>, not probabilities of physical state
-counts.</li>
-<li>Click <strong>Export component fit...</strong> and choose a
-destination for component parameters, curves, residuals, provenance and
-figures. Save the project if you want to restore this
-configuration.</li>
+</tbody></table>
+<ol start="3">
+<li>Confirm <strong>Heating rate = 1 K/s</strong>, turn Multistart off and use <strong>Maximum evaluations = 300</strong> in Modeling. For this clean reference the generating baseline is zero; do not add an arbitrary drift term.</li>
+<li>Click <strong>Fit 3 Components Together</strong>. The energies and nonnegative detector scales are optimized jointly against the <strong>whole selected dataset</strong>, regardless of the named single-peak navigation region.</li>
+<li>In <strong>Spectrum &amp; residuals</strong>, inspect each fitted component, their sum, the observations and the observation-minus-sum residuals.</li>
+<li>In <strong>Parameters &amp; models</strong>, compare estimated energies with the generating values <strong>1.18, 1.26, 1.34 eV</strong>. Inspect scales and any withheld local uncertainty intervals.</li>
+<li>Optionally click <strong>Compare component counts</strong>. This compares the first 1, 2 and 3 defined component hypotheses. Inspect errors, convergence and the relevant fixed assumptions; AICc/BIC results are <strong>heuristics</strong>, not probabilities of physical state counts.</li>
+<li>Click <strong>Export component fit...</strong> and choose a destination for component parameters, curves, residuals, provenance and figures. Save the project if you want to restore this configuration.</li>
 </ol>
-<p><strong>Interpretation:</strong> Here the order, prefactor and
-coverage are <em>fixed</em>; only energy, nonnegative signal scale and
-optional common baseline parameters are fitted. The example has known
-generating truth and deliberately helpful initial guesses/bounds, so it
-tests numerical consistency, not blind identification. Actual
-overlapping TPD signals may involve readsorption, interactions,
-exchange, coverage-dependent energies or instrument response. Three
-visible shoulders do <strong>not</strong> establish three physical
-states. This beta does not offer multicomponent Monte Carlo or
-multicomponent zero-order depletion fitting.</p>
+<p><strong>Interpretation:</strong> Here the order, prefactor and coverage are <em>fixed</em>; only energy, nonnegative signal scale and optional common baseline parameters are fitted. The example has known generating truth and deliberately helpful initial guesses/bounds, so it tests numerical consistency, not blind identification. Actual overlapping TPD signals may involve readsorption, interactions, exchange, coverage-dependent energies or instrument response. Three visible shoulders do <strong>not</strong> establish three physical states. This beta does not offer multicomponent Monte Carlo or multicomponent zero-order depletion fitting.</p>
 <h2
 id="exercise-4-noise-baselines-and-what-uncertainty-does-not-tell-you">Exercise
 4: noise, baselines and what uncertainty does not tell you</h2>

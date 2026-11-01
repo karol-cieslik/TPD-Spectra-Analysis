@@ -6,6 +6,8 @@ Dr. Karol Cieślik
 
 > **Research beta 0.11.0b7.** Current source is `main`, including merged PRs #19–21 and the Results, Help and guided exercises. Confirm the exact build in `VERSION.json`. Human Windows visual/DPI acceptance, independent installation without Python and experimental validation remain incomplete. The exercises here use synthetic data; the separately labeled publication-derived examples are not known-ground-truth validation.
 
+> **Focused two-peak candidate:** the new Fit 2 Peaks workflow requires a build from the feature PR until reviewed and merged. Earlier main artifacts with the same b7 version do not contain it. No release or merge is part of this change.
+
 ## Start here: your first result in five minutes
 
 1. Use the newly supplied `tpd-spectra-windows-x64-beta-0.11.0b7` ZIP. Check `VERSION.json` for the exact source commit and `SHA256SUMS.txt` for the executable checksum. Get the latest successful **main** run from [Windows beta builds](https://github.com/karol-cieslik/TPD-Spectra-Analysis/actions/workflows/desktop-build.yml?query=branch%3Amain). Extract **the entire archive** into a writable folder; leave `docs` and `examples` beside the executable. No tagged prerelease has been published; Actions artifacts expire and may require GitHub sign-in.
@@ -136,16 +138,43 @@ The default two-peak demonstration begins with **Demo - first peak (single-state
 **Important:** A seed is the initial state of the pseudo-random number generator. Using the same seed and settings reproduces the random sequence in the same computational environment. It is **not** a fitted TPD parameter. Twenty replicates are only a workflow demonstration; this implementation withholds parameter ranges below **100 successful refits**. Even ranges from 500 refits are conditional on the assumed reference model and iid Gaussian noise - they are not validated experimental confidence intervals. A previously recorded 500-run test took about three minutes on one Windows environment; your machine may differ.
 
 
-## Exercise 3: fit three overlapping populations together
+## Exercise 3: fit two peaks, then inspect a three-population reference
 
 **Purpose:** Learn the difference between selecting a named peak and decomposing a complete overlapping spectrum.
+
+### Start with two peaks
+
+Open the default two-peak demo or its clean variant. In **Modeling** click
+**Fit 2 Peaks…**, verify 1 K/s, then click approximate positions near 172 and
+276 °C on the dialog spectrum. Numeric °C entry is also available. Clicks cycle
+between Peak 1 and Peak 2. **Re-estimate from positions** updates first-order
+energy guesses and ±30% heuristic bounds; pending position edits are also
+applied by Fit. These bounds are search limits, not confidence intervals.
+New rows fix order one, prefactor `1e13 s⁻¹` and coverage one. **Fit Both Peaks**
+optimizes both energies and nonnegative detector scales on the entire dataset.
+
+Inspect the blue dashed and green dash-dot components, orange complete sum,
+separate dotted baseline and observation-minus-sum residuals. Read the quality
+title and **Assumptions & warnings**. Baseline-only, collapsed components and
+poor fits remain diagnosable even after optimizer convergence. Parameter
+intervals may be withheld and a low residual does not identify physical states.
+
+For a published stress test, choose **Publication-derived → D₂O on magnetite ·
+Zaki 2018**. Opening it does not change the fitting rate. Review **Confirm source
+suggestion: 3 K/s…** and explicitly accept or reject it. This changes Modeling
+for this dataset/region only; verify Kinetic Analysis separately. The graphical
+maximum is −17.65 °C. A first-order seed near −20 °C is about 0.67 eV, not the
+demo's 1.25/1.55 eV. The independent-population fit still leaves correlated
+residuals and is not proof of two states or experimental energy accuracy.
+
+### Advanced three-population exercise
 
 **Dataset:** **Browse examples…** → **three overlapping peaks**. It is a clean, synthetic 801-point trace between 50 and 450 °C. Its generating model has three independent additive first-order populations with the inputs below. A moderate-noise variant is also available for a harder test.
 
 
 
 1. In **Modeling & Order Identification**, click **Overlapping components...**.
-2. Define **three component rows**. Use the following trial inputs for this truth-informed numerical exercise:
+2. Open **Advanced settings** and define **three component rows**. Use the following trial inputs for this truth-informed numerical exercise:
 
 | Component | Fixed order | Fixed prefactor | Fixed initial coverage | Initial energy | Energy bounds |
 |:---|---:|---:|---:|---:|:---|
@@ -154,7 +183,7 @@ The default two-peak demonstration begins with **Demo - first peak (single-state
 | 3 | 1 | `1e13 s⁻¹` | 0.5 | 1.345 eV | 1.30-1.38 eV |
 
 3. Confirm **Heating rate = 1 K/s**, turn Multistart off and use **Maximum evaluations = 300** in Modeling. For this clean reference the generating baseline is zero; do not add an arbitrary drift term.
-4. Click **Fit components together**. The energies and nonnegative detector scales are optimized jointly against the **whole selected dataset**, regardless of the named single-peak navigation region.
+4. Click **Fit 3 Components Together**. The energies and nonnegative detector scales are optimized jointly against the **whole selected dataset**, regardless of the named single-peak navigation region.
 5. In **Spectrum & residuals**, inspect each fitted component, their sum, the observations and the observation-minus-sum residuals.
 6. In **Parameters & models**, compare estimated energies with the generating values **1.18, 1.26, 1.34 eV**. Inspect scales and any withheld local uncertainty intervals.
 7. Optionally click **Compare component counts**. This compares the first 1, 2 and 3 defined component hypotheses. Inspect errors, convergence and the relevant fixed assumptions; AICc/BIC results are **heuristics**, not probabilities of physical state counts.

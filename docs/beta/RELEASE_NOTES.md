@@ -2,6 +2,8 @@
 
 Current source: `main`. Use a fresh Windows desktop build for the current main commit; `VERSION.json` records its source commit and `SHA256SUMS.txt` records package file hashes. Earlier 0.11.0b5 packages used the same version name across different commits; b6 was the distinct beta for peak-switch/export improvements; b7 adds example-library and layout changes. This remains an informal research beta, not a stable release or experimental validation. See [START_HERE](../../START_HERE.md) for download and extraction instructions.
 
+The focused two-peak improvements below require a feature-PR build until reviewed and merged; earlier main artifacts with the same version do not include them.
+
 ## Changes in b7
 
 - Reduced the header and replaced the two-row, nine-button command strip with
@@ -16,7 +18,24 @@ Current source: `main`. Use a fresh Windows desktop build for the current main c
   views; missing digitization points are omitted, not filled. Figure-derived
   time is an explicit nominal-ramp coordinate and is **not observed time**.
   CO correspondence and noncommercial/reuse-unclear figures remain excluded.
-- Scientific fitting and the underlying numerical models have not changed.
+- Candidate two-peak improvements: **Fit 2 Peaks… → verify rate → select
+  positions → Fit Both Peaks**, with numeric position entry and Advanced controls.
+  First-order Redhead guesses and ±30% search bounds are initialization aids.
+- Published heating rates are suggestions requiring explicit confirmation.
+  Zaki D₂O/Fe₃O₄ suggests **3 K/s**; Modeling and Kinetic Analysis have separate
+  settings. Opening a published example no longer silently applies its rate.
+- Thermal multistart and coordinate scaling address flat, baseline-dominated
+  fits. Titles/status flag baseline-only, poor fits and collapsed components;
+  every component, sum, baseline and residual has distinct styling. Inspect the
+  full diagnostics and fixed assumptions before interpreting any result.
+- The retained Zaki stress test improves numerically (normalized RMSE ≈0.261
+  to ≈0.126), but correlated residuals still withhold intervals. It does not
+  validate two first-order populations or experimental energies. The physical
+  PW model and separate one-peak engines are unchanged. See the updated
+  [workflow, safeguards and validation](../MULTICOMPONENT_FITTING.md).
+
+This focused v0.11.0b7 work is a review candidate. A PR/build is not a release;
+no merge, tag or official release is included.
 
 ## Fixes in b6
 

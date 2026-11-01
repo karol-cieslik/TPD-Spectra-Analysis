@@ -97,6 +97,8 @@ def test_editor_multiple_components_validation_and_context_guard(root,joint_app,
     callback_errors=[]
     root.report_callback_exception=lambda *args:callback_errors.append(args)
     controller.open()
+    controller.advanced.set(True)
+    controller.toggle_advanced()
     controller.window.geometry('860x560')
     root.update()
     assert not callback_errors
@@ -108,9 +110,9 @@ def test_editor_multiple_components_validation_and_context_guard(root,joint_app,
     for widget in children(controller.window):
         if widget.winfo_class()=='TButton':
             assert widget.winfo_ismapped()
-            # Field Help is inside the deliberately scrollable editor. Keep
-            # primary action visibility strict; test Help reachability below.
-            if widget.cget('text') == '?':
+            # The basic plot and Advanced controls deliberately scroll. Keep
+            # the fixed footer actions visible at minimum size/high DPI.
+            if str(widget).startswith(str(controller.editor_canvas)):
                 continue
             assert widget.winfo_rootx()+widget.winfo_width()<=controller.window.winfo_rootx()+controller.window.winfo_width()
             assert widget.winfo_rooty()+widget.winfo_height()<=controller.window.winfo_rooty()+controller.window.winfo_height()

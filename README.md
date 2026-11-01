@@ -29,7 +29,7 @@ Built for surface-science researchers who need transparent fitting methods, repr
 3. Choose **Browse examples… → Simulated → first order single peak**. In **Kinetic Analysis → Redhead**, verify **1 K/s** and **1e13 s⁻¹**; the synthetic reference gives about **1.2 eV**.
 4. To fit both demo peaks, choose **Modeling → Fit Multiple Peaks…**, select **2** components, verify the rate, select approximate positions and choose **Fit 2 Components**. Inspect each contribution, their sum, residuals and warnings.
 
-Read [START_HERE](START_HERE.md), the [worked Quick Start](docs/beta/WORKED_EXAMPLES.html), or the [brief PDF](docs/beta/QUICK_START.pdf). `VERSION.json` records the exact source commit; `SHA256SUMS.txt` covers packaged files. The release ZIP also has a separate SHA-256 checksum.
+Read [START_HERE](START_HERE.md) and the [worked Quick Start](docs/beta/WORKED_EXAMPLES.html). A refreshed brief PDF is generated inside each Windows ZIP. `VERSION.json` records the exact source commit; `SHA256SUMS.txt` covers packaged files. The release ZIP also has a separate SHA-256 checksum.
 
 ![Exported synthetic three-component fit](assets/b7-synthetic-component-fit.png)
 

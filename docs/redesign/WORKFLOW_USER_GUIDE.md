@@ -1,8 +1,21 @@
-# Three-stage workflow guide — 0.11.0b6 candidate
+# Three-stage workflow guide — 0.11.0b7 candidate
 
 TPD Spectra Studio by **Karol Cieślik**. This guide describes the three-stage
-workflow in the 0.11.0b6 research beta on main (PRs #19–21 merged). It is intended for practical
+workflow in the 0.11.0b7 research beta on main (PRs #19–21 merged). It is intended for practical
 testing, not as a claim of validated experimental analysis.
+
+## Navigation and example provenance
+
+The normal workspace has **File / Examples / View / Help** menus and a short
+quick-action strip (Open spectrum, Browse examples, Report / Export).
+Use **File** for project load/save, **View** for the classic batch workspace,
+and **Help** for the guide, scientific parameter reference, About and feedback.
+
+The **Browse examples…** dialog separates **Simulated** traces (known inputs)
+from **Publication-derived** spectra. Literature entries show full citation,
+DOI, figure, ramp, units, licence and scientific caveats. Source digitized
+figure coordinates are not instrument readings, and their nominal-ramp time
+is not measured; see [publication data](../../examples/publication_data/README.md).
 
 ## First run with the synthetic example
 
@@ -28,7 +41,7 @@ the clean first-order chooser example for the numerical walkthrough below.
 Markers identify observations, solid/dashed curves identify fitted models,
 and residuals show observation minus prediction.
 
-1. Click **Open Example Dataset** and select **first order single peak**. The
+1. Click **Browse examples…** and select **first order single peak**. The
    chooser loads a synthetic 801-point spectrum with a 1 K/s ramp and a named
    full-trace interval. The source time unit is milliseconds; temperature is Celsius.
 2. In **Spectra & Preparation**, inspect the plot, selected dataset and named

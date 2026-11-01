@@ -105,7 +105,8 @@ def write_checksums(package):
 def verify_resources(package, expected_commit=None):
     package = Path(package)
     required = (*FILES, 'TPD-Spectra-Studio.exe', 'VERSION.json', 'SHA256SUMS.txt',
-                'THIRD-PARTY-LICENSES', 'examples/beta_collection/catalog.json')
+                'THIRD-PARTY-LICENSES', 'examples/beta_collection/catalog.json',
+                'examples/publication_data/catalog.json', 'examples/publication_data/README.md')
     for item in required:
         assert (package / item).exists(), f'Missing package resource: {item}'
     for item in INTERNAL:

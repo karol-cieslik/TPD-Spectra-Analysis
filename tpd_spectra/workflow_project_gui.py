@@ -9,11 +9,10 @@ from .run_session import proposed_run_folder
 
 class ProjectMixin:
     def setup_project_actions(self):
-        for title,command in (('Open project…',self.open_project),('Save project…',self.save_project),('Report / Export…',self.report_dialog)):
-            button = ttk.Button(self.project_actions,text=title,command=command)
-            button.pack(side='left',padx=3)
-            if title.startswith('Report / Export'):
-                self.report_button = button
+        # File menu owns infrequent project operations. Keep export discoverable
+        # in one compact action without consuming a second toolbar row.
+        self.report_button = ttk.Button(self.project_actions, command=self.report_dialog)
+        self.report_button.pack(side='right')
         self.refresh_report_action()
 
     def refresh_report_action(self):

@@ -1,6 +1,6 @@
 # Sharing the next Windows research beta
 
-This maintainer handoff describes the current **0.11.0b6 research beta on main**.
+This maintainer handoff describes the current **0.11.0b7 research beta on main**.
 PRs #19, #20 and #21 are merged. Results, scientific Help and guided exercises
 are included. Historical b4 artifacts **do not contain** that interface:
 **Do not send that old ZIP as the updated colleague beta.**
@@ -10,8 +10,13 @@ Download instructions live in [START_HERE](../../START_HERE.md).
 
 - [x] PRs #19–21 merged into main on 27 October 2026. Preserve their historical evidence.
 - [ ] Run all automated scientific tests and Windows packaging checks on one **specified reviewed commit**. Confirm their outcomes and link the CI job. Do not treat the older b4 build as evidence for a new commit.
-- [ ] Check that the new ZIP includes `TPD-Spectra-Studio.exe`, `VERSION.json`, `SHA256SUMS.txt`, `START_HERE.md`, `docs/beta/WORKED_EXAMPLES.html`, `docs/beta/SCIENTIFIC_HELP_TOPICS.json`, `docs/beta/FEEDBACK_FORM.md` and the synthetic examples. Compare the executable SHA-256 digest with the checksum file.
+- [ ] Check that the new ZIP includes `TPD-Spectra-Studio.exe`, `VERSION.json`, `SHA256SUMS.txt`, `START_HERE.md`, `docs/beta/WORKED_EXAMPLES.html`, `docs/beta/SCIENTIFIC_HELP_TOPICS.json`, `docs/beta/FEEDBACK_FORM.md` and both the synthetic and licensed publication-derived example collections. Compare the executable SHA-256 digest with the checksum file.
 - [ ] On a clean Windows machine without Python, **run the actual executable**: startup default two-peak example, switch Selection → Modeling → Results, choose a named peak, compute a first-order Redhead example near 1.2 eV, open Help and search for `seed`, run a short Monte Carlo and observe progress/Cancel, test an overlapping three-component fit, inspect residual/assumed-versus-fitted values, save/reopen a project, and export one report.
+- [ ] In the new **Examples** library, verify that synthetic and publication-derived
+  sources are separated; each published item shows a citation, DOI, specific
+  figure, CC licence, units, missing-point/provenance limitations and any
+  artificial time-axis warning. Validate that CO-mismatched and CC BY-NC
+  sources are absent from the distributed package.
 - [ ] Open offline worked examples from the package. Inspect the user interface at normal and high display scaling for clipped text, inaccessible buttons or frozen windows. Verify feedback can be previewed without automatic submission or spectral attachments.
 - [ ] Resolve any blocker found above, rebuilding and repeating the acceptance checks as needed. Preserve failing logs and the earlier working artifact.
 - [ ] Provide one **verified, stable download URL** (ideally a reviewed GitHub pre-release asset) and identify its commit. Do not circulate an unreviewed action artifact or a guessed URL. Public pre-release publication requires separate approval.

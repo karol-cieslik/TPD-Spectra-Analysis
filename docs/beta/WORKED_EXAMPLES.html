@@ -210,18 +210,17 @@
 <strong>External beta candidate | updated 1 November 2026</strong><br />
 Dr. Karol Cieślik</p>
 <blockquote>
-<p><strong>Research beta 0.11.0b6.</strong> Current source is
+<p><strong>Research beta 0.11.0b7.</strong> Current source is
 <code>main</code>, including merged PRs #19–21 and the Results, Help and
 guided exercises. Confirm the exact build in <code>VERSION.json</code>.
 Human Windows visual/DPI acceptance, independent installation without
-Python and experimental validation remain incomplete. All tutorial
-spectra are synthetic; they do not establish a physical mechanism.</p>
+Python and experimental validation remain incomplete. The tutorial exercises are synthetic; the separately labeled publication-derived examples are not known-ground-truth validation.</p>
 </blockquote>
 <h2 id="start-here-your-first-result-in-five-minutes">Start here: your
 first result in five minutes</h2>
 <ol type="1">
 <li>Use the newly supplied
-<code>tpd-spectra-windows-x64-beta-0.11.0b6</code> ZIP. Check
+<code>tpd-spectra-windows-x64-beta-0.11.0b7</code> ZIP. Check
 <code>VERSION.json</code> for the exact source commit and
 <code>SHA256SUMS.txt</code> for the executable checksum. Get the latest
 successful <strong>main</strong> run from <a
@@ -233,8 +232,8 @@ artifacts expire and may require GitHub sign-in.</li>
 <li>Double-click <strong>TPD-Spectra-Studio.exe</strong>. No Python
 installation is needed. This development executable is unsigned: follow
 your institution's software-security policy.</li>
-<li>Click <strong>Open Example Dataset</strong>, choose <strong>first
-order single peak</strong>, then <strong>Open selected example</strong>.
+<li>Click <strong>Browse examples…</strong>, choose <strong>first
+order single peak</strong>, then <strong>Open selected spectrum</strong>.
 This loads 801 simulated points from 50 to 450 °C, with an already
 selected full-trace interval and a heating rate of 1 K/s.</li>
 <li>Go to <strong>Kinetic Analysis</strong> and select
@@ -259,10 +258,17 @@ files.</li>
 preserve the data, intervals, settings and results for another session,
 use <strong>Save project...</strong> to create a <code>.tpd.json</code>
 project file.</p>
-<h2 id="using-help-inside-the-program">Using Help inside the
-program</h2>
-<p>The follow-up beta adds <strong>Scientific Help / Parameters</strong>
-beside <strong>Workflow quick start</strong>. It opens an offline
+<h2 id="exploring-cited-publication-derived-examples">Exploring cited publication-derived examples</h2>
+<p>Open <strong>Examples → Publication-derived spectra…</strong>. Inspect each citation, DOI, figure,
+signal units, licence and limitations before loading. The nine entries span five
+digitized study groups and one deposited numeric record, including four
+2-propanol exposure traces. Source temperatures are converted from K to °C.
+Figure-derived time is an artificial nominal-ramp coordinate, not measured time.
+The deposited AgY D₂ record retains measured time but has a nonconstant ramp.
+See the <a href="../../examples/publication_data/README.md">publication example provenance</a>.
+These do not independently validate kinetic models.</p>
+<h2 id="using-help-inside-the-program">Using Help inside the program</h2>
+<p>Use <strong>Help → Scientific Help / Parameters</strong> or <strong>Help → Quick start</strong> from the compact top menu. It opens an offline
 searchable reference covering 40 topics. Focus a <strong>?</strong>
 button next to a field to read its definition, unit, whether it is
 assumed or fitted, a numerical example and scientific limitations. Start
@@ -353,7 +359,7 @@ change stages or cancel a calculation.</p>
 peak, two simple kinetic methods</h2>
 <p><strong>Purpose:</strong> Learn where a parameter comes from, where
 it appears and how to save it.</p>
-<p><strong>Dataset:</strong> <strong>Open Example Dataset</strong> →
+<p><strong>Dataset:</strong> <strong>Browse examples…</strong> →
 <strong>first order single peak</strong>. Source truth: first order,
 (E=1.2 eV), (ν=10^{13} s⁻¹), (β=1 K/s), normalized initial coverage 1,
 no noise or baseline. All 801 points cover 50-450 °C.</p>
@@ -479,7 +485,7 @@ on one Windows environment; your machine may differ.</p>
 3: fit three overlapping populations together</h2>
 <p><strong>Purpose:</strong> Learn the difference between selecting a
 named peak and decomposing a complete overlapping spectrum.</p>
-<p><strong>Dataset:</strong> <strong>Open Example Dataset</strong> →
+<p><strong>Dataset:</strong> <strong>Browse examples…</strong> →
 <strong>three overlapping peaks</strong>. It is a clean, synthetic
 801-point trace between 50 and 450 °C. Its generating model has three
 independent additive first-order populations with the inputs below. A

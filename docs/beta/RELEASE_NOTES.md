@@ -1,6 +1,22 @@
-# TPD Spectra Studio 0.11.0b6 — research beta notes
+# TPD Spectra Studio 0.11.0b7 — research beta notes
 
-Current source: `main`. Use a fresh Windows desktop build for the current main commit; `VERSION.json` records its source commit and `SHA256SUMS.txt` records package file hashes. Earlier 0.11.0b5 packages used the same version name across different commits; b6 is the distinct beta for the peak-switch/export improvements. This remains an informal research beta, not a stable release or experimental validation. See [START_HERE](../../START_HERE.md) for download and extraction instructions.
+Current source: `main`. Use a fresh Windows desktop build for the current main commit; `VERSION.json` records its source commit and `SHA256SUMS.txt` records package file hashes. Earlier 0.11.0b5 packages used the same version name across different commits; b6 was the distinct beta for peak-switch/export improvements; b7 adds example-library and layout changes. This remains an informal research beta, not a stable release or experimental validation. See [START_HERE](../../START_HERE.md) for download and extraction instructions.
+
+## Changes in b7
+
+- Reduced the header and replaced the two-row, nine-button command strip with
+  **File / Examples / View / Help** menus and only three quick actions.
+  Import, project, export, scientific help, about, classic view and feedback
+  remain available; keyboard shortcuts include Ctrl+O, Ctrl+S and F1.
+- Split **Browse examples…** into **Simulated** (21 known-input models) and
+  **Publication-derived** (nine licensed curves from six sources), with citations,
+  DOI, figure, units, heating rate, licence and methodological warnings in
+  a readable detail pane.
+- Package original licensed numeric CSV coordinates beside instrument-compatible
+  views; missing digitization points are omitted, not filled. Figure-derived
+  time is an explicit nominal-ramp coordinate and is **not observed time**.
+  CO correspondence and noncommercial/reuse-unclear figures remain excluded.
+- Scientific fitting and the underlying numerical models have not changed.
 
 ## Fixes in b6
 
@@ -55,7 +71,7 @@ outstanding. Run those checks on the exact downloaded ZIP before sharing it.
 - About/contact/contribution links for Dr. Karol Cieślik.
 - Twenty-one physical synthetic datasets with independent generation, per-file truth,
   seeds, units, noise/baseline descriptions and automated import/recovery checks.
-- Open Example Dataset, parameter hints, accessible Quick Start and feedback.
+- Browse examples (synthetic and cited publication-derived spectra), parameter hints, accessible Quick Start and feedback.
 - Updated Quick Start, short START_HERE and optional colleague test checklist.
 - Preserved classic/batch functionality, three-stage workflow, project/report
   exports and seeded parametric Monte Carlo. Positive-order integration and

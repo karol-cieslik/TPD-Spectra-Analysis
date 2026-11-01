@@ -6,7 +6,7 @@ needed before sending a new executable to colleagues.
 
 ## Current source and completed integration
 
-Current beta: **0.11.0b6 on main**. PR #19 (noisy demo/progress/components),
+Current beta: **0.11.0b7 on main**. PR #19 (noisy demo/progress/components),
 PR #20 (Results/Help/tutorials) and PR #21 (b5 identity/frozen acceptance) were
 merged on 27 October 2026. Historical PR descriptions and acceptance records
 describe their original development state, not current download instructions.
@@ -21,7 +21,11 @@ the run and exact commit; do not reuse older b4 evidence for a later build.
 
 - Three connected workflow stages and independent dataset/peak/method settings.
 - Synthetic first-order, noisy, drift, zero-order and overlapping examples with
-  documented generating inputs and caveats.
+  documented generating inputs and caveats; nine separate CC BY-licensed
+  publication-derived traces retain citations, source coordinate files and
+  explicit caveats, without claiming independent energy validation.
+- Compact File / Examples / View / Help menus leave scientific controls and plot
+  space visible; examples are browsed by provenance category.
 - Leading-edge/Redhead estimates, single-state Polanyi–Wigner fitting, model
   comparisons, selected Monte Carlo refitting, and constrained joint components.
 - Fit cancellation, progress updates, saved-run/project persistence and exports.
@@ -36,7 +40,7 @@ the run and exact commit; do not reuse older b4 evidence for a later build.
 - Automated release gate: the Windows workflow builds and verifies each final
   source commit, frozen executable, portable resources, hashes and links before
   uploading its artifact. Follow the latest successful main run in START_HERE.
-- [ ] Human visual first-run, all five tutorials, Help scrolling, Results labels
+- [ ] Human visual first-run, published/simulated library and source descriptions, all five tutorials, Help scrolling, Results labels
       and Monte Carlo controls at ordinary and high display scaling.
 - [ ] Independent Windows 10/11 acceptance without Python on the exact ZIP.
 - [ ] Independent scientific review, experimental benchmarks with permission

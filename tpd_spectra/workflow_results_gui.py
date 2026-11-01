@@ -41,6 +41,8 @@ class ResultsMixin:
 
     def _model_cross_check(self, result):
         """Same-data comparison, not independent experimental validation."""
+        if result.get('model_cross_check'):
+            return '\nRecorded at save time (original model settings):\n' + result['model_cross_check']
         if not self.project.result_is_current(result):
             return ''
         snap = result['snapshot']
@@ -271,7 +273,11 @@ class ResultsMixin:
             return
         label = simpledialog.askstring('Save analysis run', 'Run label (original settings are preserved):', parent=self.root)
         if label is not None:
-            self.project.save_result(self.displayed_result, label)
+            recorded = deepcopy(self.displayed_result)
+            comparison_note = self._model_cross_check(recorded)
+            if comparison_note:
+                recorded['model_cross_check'] = comparison_note.strip()
+            self.project.save_result(recorded, label)
             self.refresh_saved_runs()
             self.saved_combo.current(len(self.saved_ids)-1)
             self.status.set('Analysis run saved. Use Report / Export at the top to generate the report bundle.')

@@ -96,6 +96,7 @@ def export_report(project,run_ids,directory):
                     writer.writerow([x,y,predicted[j] if predicted else '',y-predicted[j] if predicted else ''])
             detail = dict(label=run['label'],status=run['status'],created_utc=run['created_utc'],software_version=run['version'],
                           calculation_dependencies=run.get('dependencies','not available'),values=run['values'],warnings=run['warnings'],
+                          model_cross_check=run.get('model_cross_check'),
                           provenance=snap,import_report={k:(f'{len(v)} records; complete list in results.json' if isinstance(v,list) and len(v)>20 else v) for k,v in run.get('import_report',{}).items()})
             pages.text(title+' - parameters, assumptions and provenance',json.dumps(detail,indent=2,ensure_ascii=False,allow_nan=False))
             for parameter,value in run['values'].items():

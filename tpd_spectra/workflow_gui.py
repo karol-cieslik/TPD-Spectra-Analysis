@@ -203,6 +203,15 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
         panes.add(controls, weight=0)
         panes.add(workspace, weight=1)
         sidebar = self._scroll_panel(controls)
+        ttk.Label(sidebar, text="Kinetic interpretation & cross-check", style="Section.TLabel").pack(anchor="w")
+        ttk.Label(sidebar,
+                  text="Compare applicable leading-edge or Redhead estimates with the model fit. "
+                       "Polanyi–Wigner refitting is optional; matching numbers from one spectrum "
+                       "are not independent experimental validation.",
+                  wraplength=290, padding=(0, 8)).pack(fill="x")
+        self.transfer_summary = tk.StringVar(self.root, value="Modeling guesses not transferred.")
+        ttk.Label(sidebar, textvariable=self.transfer_summary, wraplength=290,
+                  padding=(0, 8)).pack(fill="x")
         ttk.Label(sidebar, text="Analysis method", style="Section.TLabel").pack(anchor="w")
         selector = ttk.Combobox(sidebar, textvariable=self.method, values=METHODS, state="readonly", width=24)
         selector.pack(fill="x", pady=8)
@@ -216,7 +225,7 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
                                ("max_nfev", "Maximum evaluations")]}
         help_text = {METHODS[0]: "Apparent slope energy requires a suitable rate signal and approximately unchanged coverage. It is not a zero-order assignment.",
                      METHODS[1]: "Classical first-order Redhead estimate with an assumed prefactor and linear ramp. No measured confidence interval is inferred.",
-                     METHODS[2]: "Single-state linear-ramp fit; normalized initial coverage is one. Energy/prefactor may be non-identifiable. Fixed zero order uses a depletion-edge search. Its prefactor/scale are representative values with conditional ranges, not unique estimates. Inspect residuals and assumptions."}
+                     METHODS[2]: "Optional single-state refit using starting guesses, including transferred Monte Carlo medians. These medians are not joint fitted estimates. Fixed zero order uses a depletion-edge search; prefactor/scale are not unique. Inspect residuals and assumptions."}
         for method in METHODS:
             panel = ttk.Frame(sidebar)
             self.method_panels[method] = panel
@@ -422,9 +431,15 @@ class WorkflowApp(ProjectMixin, ResultsMixin, TpdSpectraApp):
                 var.set(str(settings[key]))
             for key, var in self.method_flags.items():
                 var.set(settings[key])
-            self.result_title.configure(text=f"Results for {Path(dataset.path).name} / {region.label} / {self.method.get()}")
+            self.result_title.configure(text=f"Interpretation for {Path(dataset.path).name} / {region.label} / {self.method.get()}")
+            session = self.project.modeling.get(f"{dataset.id}/{region.id}", {})
+            transfer = session.get("kinetic_transfer") if self.method.get() == "Polanyi–Wigner" else None
+            self.transfer_summary.set(
+                "Transferred starting guesses: " + transfer["description"] if transfer
+                else "No transfer for this method. Compare only methods whose physical assumptions apply.")
         except ValueError:
             self.result_title.configure(text="Results · select a dataset and peak")
+            self.transfer_summary.set("Choose a dataset and peak before interpreting kinetics.")
         finally:
             self.restoring = False
         self.result_text.configure(state="normal")

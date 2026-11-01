@@ -352,7 +352,7 @@
     {
       "id": "simultaneous_components",
       "group": "Methods",
-      "title": "Overlapping components",
+      "title": "Simultaneous component fitting",
       "symbol": "I(T) = Σ Aᵢ rᵢ(T) + baseline",
       "unit": "component energies in eV and scales in detector units",
       "role": "fitted",
@@ -361,7 +361,7 @@
         "modeling"
       ],
       "short": "Fit 1-3 independent Polanyi-Wigner populations together on the full dataset.",
-      "detail": "Choose Modeling > Fit 2 Peaks, verify the rate, and click approximate positions (or enter degrees Celsius), then Fit Both Peaks. New rows fix first order, prefactor 1e13 s^-1 and coverage one. First-order Redhead guesses and +/-30% search bounds are heuristic starts, not measured energies or uncertainty limits. Advanced settings preserves fixed positive orders/prefactors/coverages, energy bounds, baseline and optimizer controls; saved definitions are retained. Up to three rows are supported. The program jointly optimizes energies and nonnegative scales on the entire processed dataset; named regions do not crop it. Thermal multistart reduces initialization failures without proving a global optimum. Conditional local intervals may be withheld; fixed kinetics and baseline/drift have no intervals.",
+      "detail": "Choose Modeling > Fit Multiple Peaks and select 1, 2 or 3 components (default 2). Verify the rate and click approximate positions (or enter degrees Celsius), then Fit N Components. New rows fix first order, prefactor 1e13 s^-1 and coverage one. First-order Redhead guesses and +/-30% search bounds are heuristic starts, not measured energies or uncertainty limits. Advanced settings preserves fixed positive orders/prefactors/coverages, energy bounds, baseline and optimizer controls; saved definitions are retained. Up to three rows are supported. The program jointly optimizes energies and nonnegative scales on the entire processed dataset; named regions do not crop it. Thermal multistart reduces initialization failures without proving a global optimum. Conditional local intervals may be withheld; fixed kinetics and baseline/drift have no intervals.",
       "example": "The clean three-state example has generating energies 1.18, 1.26 and 1.34 eV. Zaki is a digitized stress test with a 3 K/s source suggestion and peak near -20 degrees Celsius; correlated residuals still limit interpretation.",
       "caution": "Optimizer success is not fit adequacy. Baseline-only, poor-fit or collapsed-component titles/status require review. Distinct component colors/styles, complete sum, baseline and observation-minus-sum residuals expose failures. Independence excludes exchange, readsorption and interactions; components do not prove physical states. Local intervals and count rankings remain conditional."
     },

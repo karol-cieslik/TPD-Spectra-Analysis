@@ -521,7 +521,7 @@ class ModelingPanel:
                 raise ValueError('Wait for the running calculation before transferring parameters.')
             session = self.session()
             if session.get('display_mode') == 'components':
-                raise ValueError('Component results are not single-state starting guesses. '
+                raise ValueError('Simultaneous components are not single-state starting guesses. '
                                  'Switch to Single-state view first.')
             result = session.get('comparison')
             if not result or not self.current(result):

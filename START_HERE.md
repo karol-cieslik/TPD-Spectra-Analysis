@@ -1,11 +1,11 @@
-# Welcome to TPD Spectra Studio 0.11.0b7
+# Welcome to TPD Spectra Studio 0.11.0b8
 
 **Informal research beta** by **Karol Cieślik**. Please try the synthetic
 example first; no experimental data is needed. Use a build whose exact main
 commit has a successful Windows desktop workflow. Experimental validation and
 testing on different Windows displays are still in progress.
 
-**[Download the Windows ZIP](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/download/v0.11.0b7/tpd-spectra-windows-x64.zip)** from the [v0.11.0b7 Research Beta prerelease](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b7).
+**[Download the Windows ZIP](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/download/v0.11.0b8/tpd-spectra-windows-x64.zip)** from the [v0.11.0b8 Research Beta prerelease](https://github.com/karol-cieslik/TPD-Spectra-Analysis/releases/tag/v0.11.0b8).
 The package includes the merged two-peak improvements. Check `VERSION.json` for
 its source commit and `SHA256SUMS.txt` for package checksums. A separate checksum
 covers the downloaded ZIP. Broader visual/DPI and clean-machine testing remains
@@ -60,9 +60,10 @@ Monte Carlo is conditional parametric refitting, not microscopic kinetic MC or
 a validated confidence procedure. Overlap, drift and correlated noise require
 additional scrutiny. A good fit does not establish a physical mechanism.
 
-The current development branch incorporates the two-peak improvements from
-PR #37 and the unified component-count dialog from PR #38. Older Windows
-packages may still show the previous two separate buttons.
+This research-beta release includes the two-peak improvements from PR #37,
+the unified component-count dialog from PR #38 and the kinetic interpretation
+and Monte Carlo starting-guess transfer from PR #39. Older beta packages
+may still show the two former buttons or lack one-click MC transfer.
 
 To fit components, use **Fit Multiple Peaks…** in Modeling and choose
 **1, 2 or 3** kinetic components (default **2** for a new hypothesis).
@@ -76,6 +77,13 @@ first-order states. Kinetic Analysis has separate rate settings. The joint
 model uses the full spectrum, with fixed orders/prefactors/coverages and
 optimized energies/scales.
 Read [the component workflow and limits](docs/MULTICOMPONENT_FITTING.md).
+
+For a single-state peak, Modeling can transfer the best converged point fit
+or, after at least 100 successful current per-model Monte Carlo refits,
+conditional MC medians to Kinetic Analysis as **starting guesses**. Check the
+source note, method compatibility and heating rate, then explicitly run the
+kinetic fit. MC medians are not joint optimum parameters, an independent
+measurement or validated confidence intervals.
 
 Use **Help → Report a bug / Send feedback** to inspect, copy or save a diagnostic report.
 Email drafts are addressed to **Dr. Karol Cieślik**, **karol.j.cieslik@gmail.com**.

@@ -130,22 +130,23 @@ a final fit. In Stage C press **Calculate / Fit selected peak** to optimize.
 
 ## Overlapping contributions
 
-For two peaks choose **Fit 2 Peaks…**, verify the rate in K/s, and explicitly
-confirm any cited source suggestion. Zaki D₂O/Fe₃O₄ suggests 3 K/s; its constructed
-time coordinate is not measured time. Confirmation updates Modeling only;
-Kinetic Analysis has separate settings. Click both approximate positions on
-the dialog spectrum or type °C values, then choose **Fit Both Peaks**.
-First-order Redhead guesses and ±30% search bounds are heuristic starting aids.
-Advanced settings reveals fixed assumptions, bounds, offset/drift and multistart.
-Baseline-only, poor-fit and collapsed-component titles/status require review;
-optimizer convergence does not support a physical decomposition. The Zaki
-stress test still has correlated residuals and withheld uncertainty.
-
-Use **Overlapping components…** in Modeling to define up to three independent
-physical populations. Add/remove/name rows, supply each fixed order, prefactor
-and initial coverage, and choose energy guesses and bounds in **Advanced settings**.
-The **Fit N Components Together** action optimizes energies and nonnegative detector scales jointly against
-the **entire selected spectrum**, regardless of the named navigation region.
+Choose **Modeling → Fit Multiple Peaks…** and select **1, 2 or 3** kinetic
+components at the top of the dialog (default **2** for a new hypothesis).
+Changing the count retains edits in surviving rows; temporarily removed rows
+are restored if you increase the count again before closing. Verify the rate
+in K/s and explicitly confirm any cited source suggestion. Zaki D₂O/Fe₃O₄
+suggests 3 K/s; its constructed time coordinate is not measured time.
+Confirmation updates Modeling only; Kinetic Analysis has separate settings.
+Click approximate positions on the dialog spectrum or type °C values, then
+choose **Fit N Components** (where N is the selected count). First-order
+Redhead guesses and ±30% search bounds are heuristic starting aids.
+**Advanced settings** reveals fixed orders, prefactors, coverages, energy
+guesses/bounds, offset/drift and multistart. The fit optimizes energies and
+nonnegative detector scales jointly against the **entire selected spectrum**,
+regardless of the named navigation region. Baseline-only, poor-fit and
+collapsed-component titles/status require review; optimizer convergence does
+not support a physical decomposition. The Zaki stress test still has
+correlated residuals and withheld uncertainty.
 The plot shows observations, individual contributions, their sum, the shared
 baseline and observation-minus-sum residuals. The table and notes show conditional
 uncertainty or explain why it is withheld. Definitions and results are retained

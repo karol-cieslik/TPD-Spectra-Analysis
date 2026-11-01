@@ -7,7 +7,7 @@ abstract: >-
   Polanyi-Wigner fitting, exploratory model comparison, conditional Monte Carlo
   refitting, and reproducible analysis exports.
 type: software
-version: 0.11.0b7
+version: 0.11.0b8
 repository-code: "https://github.com/karol-cieslik/TPD-Spectra-Analysis"
 authors:
   - family-names: Cieślik

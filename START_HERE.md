@@ -30,9 +30,11 @@ Windows acceptance remain outstanding; see [release notes](docs/beta/RELEASE_NOT
    Open its PDF; CSV, JSON, PNG and SVG exports accompany it.
 6. **Save project…** retains your data, settings and results for reopening.
 
-For a measured spectrum, choose CSV, TSV or TXT and review the preview before importing. Check the detected delimiter and header, correct channel mappings if needed, explicitly confirm time and temperature units when headers do not specify them, and inspect accepted/rejected row counts. Older 0.11.0b6 packages lack this preview; use the latest successful main artifact and verify `VERSION.json`.\n\nThen try the noisy two-peak example. In Modeling, compare First order for the
+For a measured spectrum, choose CSV, TSV or TXT and review the preview before importing. Check the detected delimiter and header, correct channel mappings if needed, explicitly confirm time and temperature units when headers do not specify them, and inspect accepted/rejected row counts. Some older 0.11.0b5 artifacts lack this preview; use the latest successful main artifact and verify `VERSION.json`.
+
+Then try the noisy two-peak example. In Modeling, compare First order for the
 first named interval; set Monte Carlo replicates to 20 and seed to 42 for a
-short tutorial. Watch progress and inspect failures. This demonstrates the
+short tutorial. To analyze the second demo peak, return to **Spectra & Preparation**, drag a new interval around the second peak, give it a distinct name and click **Add peak**. Use **Update peak** only if you intend to change the selected peak; previous results then become stale and must be recalculated. Watch progress and inspect failures. This demonstrates the
 workflow, not uncertainty coverage; conditional ranges require at least 100
 successful refits. Use the in-app **Workflow quick start** for five guided
 exercises and **Scientific Help / Parameters** or the **?** buttons for units,
